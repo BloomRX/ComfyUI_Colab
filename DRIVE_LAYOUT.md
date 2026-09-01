@@ -123,7 +123,11 @@ sempre atualizados sem você mexer em nada.
 O notebook se adapta sozinho. Fluxo:
 
 1. Commite o `.json` em `Workflows/` (ou solte em `ComfyUI_Data/workflows/` no Drive).
-2. Rode as células. Ele aparece na lista da Célula 3 automaticamente.
+2. Rode as células. Ele aparece na lista numerada da Célula 3 automaticamente.
+
+A Célula 3 só **lista**; a escolha é na Célula 4, escrevendo os números (`1`, `1,3`, `all`).
+Se a lista vier vazia, a Célula 2 imprime quantos workflows achou em cada pasta —
+isso diz na hora se o problema foi o clone do repo ou a pasta do Drive.
 
 Para descobrir os custom nodes, há **três camadas**, nesta ordem:
 
