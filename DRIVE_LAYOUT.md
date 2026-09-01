@@ -404,3 +404,67 @@ Sem essa flag o ComfyUI tenta inicializar CUDA e quebra no boot.
 
 > Trocar o ambiente **reinicia a sessão**: é preciso rodar as células 1..5 de novo.
 > Nada que já esteja no Drive é baixado outra vez, então costuma ser rápido.
+
+---
+
+# Baixar um modelo avulso do HuggingFace
+
+Exemplo: `https://huggingface.co/ShinoharaHare/Waifu-Inpaint-XL`
+
+Esse repo tem duas particularidades comuns que vale saber reconhecer.
+
+## 1. É "gated" — precisa de token
+
+A página diz *"You need to agree to share your contact information to access this
+model"*. Ele é público, mas exige aceite. Sem isso, o download retorna **401/403**.
+
+Passos:
+1. Logue no HuggingFace e abra a página do modelo.
+2. Aceite as condições (botão *Agree and access repository*). É uma vez só, por conta.
+3. Gere um token em **huggingface.co/settings/tokens** (tipo *Read* basta).
+4. Cole em **`HF_TOKEN`** na Célula 5.
+
+## 2. Tem dois formatos no mesmo repo — pegue o certo
+
+| O que é | Serve no ComfyUI? |
+|---|---|
+| `Waifu-Inpaint-XL.safetensors` (6.94 GB) | **Sim** — é este que você quer |
+| pastas `unet/`, `vae/`, `text_encoder/`, `scheduler/`... | Não — formato `diffusers`, para Python |
+
+O ComfyUI carrega **checkpoint de arquivo único**. Ignore as pastas.
+
+## Como baixar
+
+Na **Célula 5**:
+- `URL_EXTRA` = link do arquivo
+- `PASTA_EXTRA` = `checkpoints`
+- `HF_TOKEN` = seu token
+
+```
+https://huggingface.co/ShinoharaHare/Waifu-Inpaint-XL/resolve/main/Waifu-Inpaint-XL.safetensors
+```
+
+A célula aceita também o link `/blob/` (o que aparece ao clicar no arquivo) e
+converte sozinha para `/resolve/`. Se você colar a URL da **página do repo**, ela
+avisa em vez de baixar um HTML de 200 KB com nome de `.safetensors` — erro clássico,
+que só aparece depois como "checkpoint corrompido".
+
+Como pegar o link certo: aba **Files** → clique no `.safetensors` → botão **download**
+→ copiar endereço do link.
+
+## Onde cada tipo vai
+
+| Tipo | `PASTA_EXTRA` |
+|---|---|
+| Checkpoint SD/SDXL (arquivo único) | `checkpoints` |
+| LoRA | `loras` |
+| VAE avulso | `vae` |
+| ControlNet | `controlnet` |
+| Upscaler (`.pth`) | `upscale_models` |
+| UNet/GGUF isolado | `unet` ou `diffusion_models` |
+
+## Inpaint: cuidado com o workflow
+
+Modelo de inpaint SDXL não funciona num grafo txt2img comum. Precisa de
+`VAEEncodeForInpaint` (ou `SetLatentNoiseMask`) e de uma máscara. Nos templates do
+ComfyUI: *Workflow → Browse Templates → Inpainting*.
