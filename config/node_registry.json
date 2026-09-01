@@ -380,6 +380,22 @@
         "size": "335 MB",
         "url": "https://huggingface.co/stabilityai/sdxl-vae/resolve/main/sdxl_vae.safetensors"
       }
+    ],
+    "WaifuVroid_FromConcept.json": [
+      {
+        "file": "CLIP-ViT-H-14-laion2B-s32B-b79K.safetensors",
+        "dir": "clip_vision",
+        "size": "2.53 GB",
+        "url": "https://huggingface.co/h94/IP-Adapter/resolve/main/models/image_encoder/model.safetensors",
+        "note": "CLIP Vision ViT-H. O nome do arquivo IMPORTA: o IPAdapter procura por este nome."
+      },
+      {
+        "file": "ip-adapter-plus_sdxl_vit-h.safetensors",
+        "dir": "ipadapter",
+        "size": "848 MB",
+        "url": "https://huggingface.co/h94/IP-Adapter/resolve/main/sdxl_models/ip-adapter-plus_sdxl_vit-h.safetensors",
+        "note": "Corresponde ao preset PLUS (high strength) para SDXL."
+      }
     ]
   },
   "model_notes": {

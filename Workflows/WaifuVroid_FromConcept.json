@@ -1208,7 +1208,7 @@
       ],
       "size": [
         880,
-        470
+        560
       ],
       "flags": {},
       "order": 0,
@@ -1219,7 +1219,7 @@
         "Node name for S&R": "Note"
       },
       "widgets_values": [
-        "WaifuVroid_FromConcept - usa uma IMAGEM de referencia\n\nDIFERENCA para o WaifuVroid normal: aqui o seu concept entra como\nreferencia visual via IPAdapter. O modelo OLHA a imagem, nao so le o texto.\n\nPASSO 1 - PREPARE A IMAGEM (importante!)\nNAO use a folha de concept inteira. Ela tem varias poses, texto e paleta -\no IPAdapter vai tentar copiar tudo isso, inclusive as letras.\nRecorte UMA imagem limpa: o full body sozinho, ou so o rosto.\nSalve em ComfyUI/input/ e selecione no no 2.\nDica: gere DOIS arquivos - um recorte do rosto e um do corpo inteiro.\n\nPASSO 2 - AJUSTE O WEIGHT (no 4)\n0.5  = inspiracao solta, muita liberdade\n0.75 = equilibrado (padrao daqui)\n1.0+ = copia agressiva, tende a repetir a pose da referencia\nSe sair identico demais e sem variar de angulo, ABAIXE o weight.\nSe perder a cara do personagem, SUBA.\n\nPASSO 3 - weight_type\n'linear' = padrao. 'style transfer' pega o estilo e solta a composicao,\nbom quando o angulo nao quer mudar.\n\nCUSTOM NODE: ComfyUI_IPAdapter_plus (a celula 3 instala).\nNa 1a execucao o no 3 baixa os modelos IPAdapter + CLIP Vision (~2.5 GB).\n\nQUANDO PARAR DE USAR ISSO\nIPAdapter e a ponte ate voce ter ~20 imagens boas e treinar a LoRA.\nCom LoRA a consistencia e muito melhor. Use isto para CHEGAR la."
+        "WaifuVroid_FromConcept - usa uma IMAGEM de referencia\n\n### ANTES DE RODAR: BAIXE OS 2 MODELOS ###\nO no 3 NAO baixa nada sozinho - ele so procura no disco.\nSe faltar, da: 'Exception: ClipVision model not found.'\nA Celula 5 do notebook baixa os dois automaticamente.\nManual: Manager > Model Manager > procure 'ipadapter' e 'clip vision'.\n\n1) models/clip_vision/CLIP-ViT-H-14-laion2B-s32B-b79K.safetensors  (2.5 GB)\n   O NOME DO ARQUIVO IMPORTA. Baixado de h94/IP-Adapter, o arquivo\n   chama 'model.safetensors' - RENOMEIE para o nome acima.\n2) models/ipadapter/ip-adapter-plus_sdxl_vit-h.safetensors  (848 MB)\n\nDIFERENCA para o WaifuVroid normal: aqui o seu concept entra como\nreferencia visual via IPAdapter. O modelo OLHA a imagem, nao so le o texto.\n\nPASSO 1 - PREPARE A IMAGEM\nNAO use a folha de concept inteira. Ela tem varias poses, texto e paleta -\no IPAdapter tenta copiar tudo isso, inclusive as letras.\nRecorte UMA imagem limpa: o full body sozinho, ou so o rosto.\nSalve em ComfyUI_Data/input/ e selecione no no 2.\n\nPASSO 2 - AJUSTE O WEIGHT (no 4)\n0.5  = inspiracao solta   0.75 = equilibrado   1.0+ = copia agressiva\nOs 4 angulos sairam iguais? Weight alto demais - abaixe para 0.6.\nPerdeu a cara do personagem? Suba.\n\nQUANDO PARAR DE USAR ISSO\nIPAdapter e a ponte ate voce ter ~25 imagens boas e treinar a LoRA.\nCom LoRA a consistencia e muito melhor. Use isto para CHEGAR la."
       ],
       "title": "LEIA PRIMEIRO",
       "color": "#432",

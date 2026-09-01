@@ -992,3 +992,43 @@ concept (GPT/desenho)
 Sem imagens consistentes nao da para treinar LoRA; e sem LoRA nao da para ter
 consistencia real. O IPAdapter quebra esse circulo: ele produz o dataset inicial.
 Depois que a LoRA existir, este workflow deixa de ser necessario.
+
+---
+
+## Erro: "ClipVision model not found." (IPAdapter)
+
+**Causa:** o `IPAdapterUnifiedLoader` **nao baixa nada**. Ele so procura os
+modelos no disco e lanca excecao se nao achar. O nome "UnifiedLoader" sugere que
+ele resolve tudo sozinho — nao resolve.
+
+**Solucao:** rode a **Celula 5** com `WaifuVroid_FromConcept` selecionado. Ela
+baixa os dois arquivos, ja com o nome certo:
+
+| Arquivo | Pasta | Tamanho |
+|---|---|---|
+| `CLIP-ViT-H-14-laion2B-s32B-b79K.safetensors` | `models/clip_vision` | 2.53 GB |
+| `ip-adapter-plus_sdxl_vit-h.safetensors` | `models/ipadapter` | 848 MB |
+
+**O nome do CLIP Vision importa.** O IPAdapter identifica o encoder pelo nome do
+arquivo. No repositorio `h94/IP-Adapter` ele se chama `model.safetensors` — se
+voce baixar manualmente e nao renomear, o no continua dizendo que nao encontrou.
+A Celula 5 ja salva com o nome correto (usa o campo `file` do registry, nao o
+nome remoto).
+
+Alternativa manual: **Manager > Model Manager**, procure por `ipadapter` e por
+`clip vision`, e instale `IPAdapter plus SDXL` + `CLIP-ViT-H-14`.
+
+**Conferir se deu certo:**
+
+```
+ls -la /content/drive/MyDrive/ComfyUI_Data/models/clip_vision/
+ls -la /content/drive/MyDrive/ComfyUI_Data/models/ipadapter/
+```
+
+Os dois caminhos ja aparecem nos `extra search path` do log de boot, entao basta
+o arquivo estar la. Se voce baixou com o servidor no ar, **reinicie a Celula 6** —
+o ComfyUI indexa os modelos no boot.
+
+**Escolha do preset (no 3):** `PLUS (high strength)` casa com
+`ip-adapter-plus_sdxl_vit-h`. Se trocar o preset, o par de arquivos muda — e o
+erro volta. Mantenha o preset ou baixe o modelo correspondente.
