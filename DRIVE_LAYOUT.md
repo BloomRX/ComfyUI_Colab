@@ -716,3 +716,134 @@ O fluxo já está pronto para isso:
 > Cuidado com licença: vários modelos de anime têm restrição de uso comercial ou
 > proíbem redistribuição. Se for usar para algo além de teste pessoal, leia a
 > licença na página do modelo.
+
+---
+
+# Waifu para o Project AIRI: Live2D ou 3D (VRM)?
+
+O AIRI aceita os dois: **Live2D** e **VRM** (e, nas versoes recentes, tambem MMD,
+Spine 2D e "Tachie"). Os dois tem auto-blink, look-at, idle e lip-sync. Ou seja:
+pelo lado do AIRI, nao ha um vencedor. A escolha e sobre **producao**, nao sobre
+suporte.
+
+## O ponto que costuma ser mal entendido
+
+**O ComfyUI nao gera Live2D nem VRM.** Ele nao produz o arquivo final em nenhum
+dos dois casos. O que ele faz e produzir a **materia-prima**:
+
+- Live2D -> a arte da personagem, ja **separada em partes** (cabelo, olhos, boca,
+  braco esquerdo, etc.), em PNG com transparencia.
+- 3D/VRM -> a **referencia visual** (e, opcionalmente, uma malha bruta).
+
+O rig — o que faz a personagem se mexer — e feito **fora** do ComfyUI:
+Cubism Editor (Live2D) ou Blender/VRoid Studio (VRM). Nao existe atalho para
+essa parte hoje.
+
+## Comparacao honesta
+
+| | Live2D | 3D / VRM |
+|---|---|---|
+| Fidelidade ao seu desenho | **altissima** — e literalmente o seu desenho | media — o estilo passa por um filtro 3D |
+| Trabalho para o primeiro resultado | alto (rig manual, camada por camada) | **baixo** se usar VRoid Studio |
+| Angulos | so o angulo desenhado (~30 graus de giro) | **qualquer** angulo, camera livre |
+| Custo de mudar a personagem depois | alto | baixo |
+| Ferramenta de rig | Cubism (versao gratis limita parametros) | VRoid Studio / Blender (gratis) |
+| Curva de aprendizado | ingreme | suave |
+| Cara de "VTuber classica" | sim | mais "jogo" |
+
+## Recomendacao pratica
+
+**Comece pelo 3D (VRM), mesmo que voce prefira Live2D no fim.**
+
+O motivo nao e estetico, e de risco. Com o **VRoid Studio** (gratis) voce tem
+uma VRM funcional rodando dentro do AIRI **no mesmo dia** — e ai voce descobre
+coisas que so aparecem no uso real: se a personalidade combina, se a proporcao
+funciona na tela, se voce se cansa do design. Um rig Live2D decente leva
+**semanas** e trava o design: se voce mudar de ideia sobre o penteado, refaz
+boa parte do rig.
+
+Ou seja: use a VRM como **protótipo jogável** do conceito. Se depois de umas
+semanas convivendo com ela voce ainda quiser o visual 2D, ai sim investe no
+Live2D — e ai voce ja vai saber exatamente qual design quer rigar.
+
+## Como os SEUS workflows se encaixam
+
+Isso e o que mais importa: voce ja tem as duas trilhas montadas.
+
+### Trilha comum (defina a personagem) — faca isso primeiro
+
+| Workflow | Papel |
+|---|---|
+| `Efaces_Pony_XL_V01` ou `PotatCats-inpaint ANIMA` | gerar a personagem a partir do seu conceito |
+| `Detailer` | consertar rosto/olhos (ADetailer) |
+| `WaifuInpaintXL` | corrigir pedacos pontuais sem refazer tudo |
+
+Saida desejada: um **character sheet** — a mesma personagem de frente, 3/4,
+perfil e costas, com o mesmo outfit. Isso e o insumo das duas trilhas. Gaste
+tempo aqui; e o unico passo que nao da para refazer barato depois.
+
+Dica de consistencia: fixe a **seed** e o prompt, mude so a pose/angulo. Se a
+personagem "escorregar" entre as imagens, gere uma vez, e use `WaifuInpaintXL` /
+`Detailer` para trazer as outras de volta ao mesmo rosto.
+
+### Trilha Live2D
+
+| Workflow | Papel |
+|---|---|
+| `CharDesignandPartSplitting` | **este e o coracao da trilha 2D** — separa a personagem em partes |
+| `WaifuInpaintXL` | preencher o que fica escondido atras de outra camada |
+
+Aquele segundo workflow tem um papel que nao e obvio: no Live2D, quando o braco
+se move, aparece o pedaco do torso que estava atras dele. Esse pedaco **nunca
+foi desenhado**. O inpaint serve exatamente para inventar essas areas ocultas —
+e sem isso o rig fica com buracos. Depois disso, os PNGs vao para o **Cubism
+Editor**, e o `.model3.json` resultante voce importa no AIRI.
+
+Custo: `CharDesignandPartSplitting` puxa o Krea-2, **~19 GB**. Cabe no T4, mas
+demora para baixar. Vale deixar no Drive.
+
+### Trilha 3D
+
+| Workflow | Papel |
+|---|---|
+| `Mesh_Processing` | imagem -> malha 3D (Trellis2) |
+| `Skintoken` | texturas de pele |
+
+**Aviso importante e ja conhecido:** `Mesh_Processing` **nao roda no T4** (usa
+flux-2-klein-9b + Trellis2; precisa de A100). E o `Skintoken` exige Blender no
+PATH. Nenhum dos dois esta disponivel para voce hoje no Colab gratuito.
+
+E aqui vai a parte contraintuitiva: **isso nao te bloqueia**. A malha que o
+Trellis2 gera e uma malha bruta, sem esqueleto, sem blendshapes de expressao,
+sem os "spring bones" do cabelo — ou seja, **nao e uma VRM** e ainda daria muito
+trabalho no Blender. Para uma waifu de companhia, o **VRoid Studio** e o caminho
+mais curto e melhor: exporta VRM ja rigada, com expressoes e fisica de cabelo
+prontas. Voce usa o character sheet do ComfyUI so como **referencia visual** e
+recria no VRoid.
+
+Traduzindo: no seu hardware atual, a trilha 3D e **ComfyUI para o conceito +
+VRoid para o modelo**. O `Mesh_Processing` fica guardado para o dia que voce
+tiver uma GPU maior — e ainda assim seria mais util para props/cenario do que
+para a personagem.
+
+## Caminho sugerido
+
+1. Gerar a personagem (`Efaces` ou `ANIMA`) + `Detailer` -> travar o design.
+2. Fazer o character sheet em 4 angulos, mesma seed.
+3. Recriar no **VRoid Studio** -> exportar `.vrm` -> importar no AIRI.
+   *Voce tem uma waifu funcional aqui.*
+4. Conviver com ela algumas semanas.
+5. Se ainda quiser 2D: `CharDesignandPartSplitting` + inpaint das areas
+   ocultas -> **Cubism** -> importar no AIRI.
+
+Passos 1-3 sao viaveis no seu Colab hoje. O passo 5 tambem (o Cubism e local, no
+seu PC). Nada disso depende do `Mesh_Processing`.
+
+## Selecao no notebook
+
+Para a trilha comum + Live2D, selecione na Celula 3:
+`CharDesignandPartSplitting`, `Detailer`, `Efaces_Pony_XL_V01`, `WaifuInpaintXL`.
+
+Cuidado: o `Efaces_Pony_XL_V01` traz **14 packs** e e o mais propenso a conflito
+de dependencias (numpy/opencv). Se der erro de import, rode-o **sozinho**, em
+sessao separada dos outros.
