@@ -37,7 +37,8 @@
     "mikey_nodes": "https://github.com/bash-j/mikey_nodes",
     "sd-perturbed-attention": "https://github.com/pamparamm/sd-perturbed-attention",
     "ComfyI2I": "https://github.com/ManglerFTW/ComfyI2I",
-    "ComfyUI-Cosmos-Reference": "https://github.com/kijai/ComfyUI-Cosmos-Reference"
+    "ComfyUI-Cosmos-Reference": "https://github.com/kijai/ComfyUI-Cosmos-Reference",
+    "ComfyUI-Image-Saver": "https://github.com/alexopus/ComfyUI-Image-Saver"
   },
   "class_map": {
     "Reroute (rgthree)": "rgthree-comfy",
@@ -135,7 +136,46 @@
     "Image Inset Crop (rgthree)": "rgthree-comfy",
     "Power Puter (rgthree)": "rgthree-comfy",
     "SDXL Empty Latent Image (rgthree)": "rgthree-comfy",
-    "FreeU_V2 (Advanced)": "sd-perturbed-attention"
+    "FreeU_V2 (Advanced)": "sd-perturbed-attention",
+    "DetailerForEachDebug": "ComfyUI-Impact-Pack",
+    "FromBasicPipe": "ComfyUI-Impact-Pack",
+    "ToBasicPipe": "ComfyUI-Impact-Pack",
+    "MaskToSEGS": "ComfyUI-Impact-Pack",
+    "SegsToCombinedMask": "ComfyUI-Impact-Pack",
+    "MaskPreview": "ComfyUI-Impact-Pack",
+    "ImpactImageInfo": "ComfyUI-Impact-Pack",
+    "FromBasicPipe_v2": "ComfyUI-Impact-Pack",
+    "ToBasicPipe_v2": "ComfyUI-Impact-Pack",
+    "EditBasicPipe": "ComfyUI-Impact-Pack",
+    "SEGSPreview": "ComfyUI-Impact-Pack",
+    "SEGSToImageList": "ComfyUI-Impact-Pack",
+    "ImpactSEGSOrderedFilter": "ComfyUI-Impact-Pack",
+    "ImpactDilateMask": "ComfyUI-Impact-Pack",
+    "ImpactGaussianBlurMask": "ComfyUI-Impact-Pack",
+    "Constant Number": "was-node-suite-comfyui",
+    "Image Resize": "was-node-suite-comfyui",
+    "Images to RGB": "was-node-suite-comfyui",
+    "Text Concatenate": "was-node-suite-comfyui",
+    "Number to Text": "was-node-suite-comfyui",
+    "Text Multiline": "was-node-suite-comfyui",
+    "Image Blend by Mask": "was-node-suite-comfyui",
+    "Mask Crop Region": "was-node-suite-comfyui",
+    "Combine and Paste": "ComfyI2I",
+    "Inpaint Segments": "ComfyI2I",
+    "Cut By Mask": "masquerade-nodes-comfyui",
+    "GrowMaskWithBlur": "ComfyUI-KJNodes",
+    "ColorMatchV2": "ComfyUI-KJNodes",
+    "ApplyCosmosReferenceLatent": "ComfyUI-Cosmos-Reference",
+    "DifferentialDiffusionAdvanced": "ComfyUI-KJNodes",
+    "Concat Text _O": "ComfyUI-QualityOfLifeSuit_Omar92",
+    "Textbox": "ComfyUI-Chibi-Nodes",
+    "MathExpression|pysssss": "ComfyUI-Custom-Scripts",
+    "Save Image With Prompt Data": "ComfyUI-Image-Saver",
+    "Automatic CFG - Post rescale only": "ComfyUI-AutomaticCFG",
+    "CLIP Temperature": "Stable-Diffusion-temperature-settings",
+    "PerturbedAttention": "sd-perturbed-attention",
+    "SamplerSupreme": "ComfyUI-Extra-Samplers",
+    "SamplerCustomNoise": "ComfyUI-Extra-Samplers"
   },
   "native_ignore": [
     "SaveImage",
@@ -217,7 +257,25 @@
     "FreeU",
     "PerturbedAttentionGuidance",
     "InpaintModelConditioning",
-    "DifferentialDiffusion"
+    "DifferentialDiffusion",
+    "BasicScheduler",
+    "GITSScheduler",
+    "CLIPTextEncodeSDXL",
+    "CLIPTextEncodeSDXLRefiner",
+    "PatchModelAddDownscale",
+    "ImageBlend",
+    "ImageCompositeMasked",
+    "SamplerCustom",
+    "SplitSigmas",
+    "FlipSigmas",
+    "ImageScaleToMaxDimension",
+    "ConditioningSetAreaPercentage",
+    "LatentFromBatch",
+    "RepeatLatentBatch",
+    "ImageSharpen",
+    "ImageBlur",
+    "ImageQuantize",
+    "PorterDuffImageComposite"
   ],
   "pack_extras": {
     "ComfyUI-SkinTokens": {
@@ -297,13 +355,52 @@
         "dir": "vae",
         "url": "https://huggingface.co/black-forest-labs/FLUX.2-small-decoder/resolve/main/full_encoder_small_decoder.safetensors"
       }
+    ],
+    "WaifuInpaintXL.json": [
+      {
+        "file": "Waifu-Inpaint-XL.safetensors",
+        "dir": "checkpoints",
+        "size": "6.94 GB",
+        "gated": true,
+        "url": "https://huggingface.co/ShinoharaHare/Waifu-Inpaint-XL/resolve/main/Waifu-Inpaint-XL.safetensors"
+      }
+    ],
+    "Detailer.json": [
+      {
+        "file": "v1-5-pruned-emaonly-fp16.safetensors",
+        "dir": "checkpoints",
+        "size": "2.13 GB",
+        "url": "https://huggingface.co/Comfy-Org/stable-diffusion-v1-5-archive/resolve/main/v1-5-pruned-emaonly-fp16.safetensors"
+      }
+    ],
+    "Efaces_Pony_XL_V01.json": [
+      {
+        "file": "sdxl_vae.safetensors",
+        "dir": "vae",
+        "size": "335 MB",
+        "url": "https://huggingface.co/stabilityai/sdxl-vae/resolve/main/sdxl_vae.safetensors"
+      }
     ]
   },
   "model_notes": {
     "wan_2.1_vae.safetensors": "VAE do Wan 2.1, usado so num ramo alternativo. O caminho principal usa qwen_image_vae. Se o node reclamar, aponte para qwen_image_vae ou bypasse o ramo.",
     "Detailer-KREA2.safetensors": "LoRA de detalhe opcional (nao esta no repo oficial Comfy-Org/Krea-2). Bypasse o LoraLoaderModelOnly ou procure no Manager > Model Manager.",
     "Alb_LoRaV3_000004750.safetensors": "LoRA custom do autor do tutorial; normalmente distribuida no Patreon/Discord dele.",
-    "flux-2-klein-9b.safetensors": "9B; junto com qwen_3_8b nao cabe na RAM de 13 GB do Colab T4."
+    "flux-2-klein-9b.safetensors": "9B; junto com qwen_3_8b nao cabe na RAM de 13 GB do Colab T4.",
+    "waiIllustriousSDXL_v160.safetensors": "checkpoint do Civitai (WAI-NSFW-illustrious-SDXL). Baixe no Civitai e ponha em models/checkpoints.",
+    "Eyeful_v2-Paired.pt": "detector YOLO de olhos (Civitai). Vai em models/ultralytics/bbox.",
+    "aaaautismPonyFinetune_v4.safetensors": "checkpoint Pony do Civitai -> models/checkpoints.",
+    "Expressive_H-000001.safetensors": "LoRA do Civitai -> models/loras.",
+    "detailed_notrigger.safetensors": "LoRA de detalhe (Civitai) -> models/loras.",
+    "tcd.safetensors": "LoRA TCD. Ver h1t/TCD-SDXL-LoRA no HuggingFace -> models/loras.",
+    "4x-AnimeSharp.pth": "upscaler ESRGAN (Kim2091/4x-AnimeSharp no HF) -> models/upscale_models.",
+    "anima-base-v1.0.safetensors": "modelo ANIMA do workflow do PotatCat; siga o link do autor.",
+    "anima-preview3-base.safetensors": "idem ANIMA.",
+    "AnimeEditV2.safetensors": "modelo do workflow ANIMA; siga o link do autor.",
+    "qwen_3_06b_base.safetensors": "text encoder Qwen3 0.6B usado pelo ANIMA.",
+    "Flux2-Klein-9B-consistency-V2.safetensors": "LoRA de consistencia do Flux2 Klein.",
+    "flux-2-klein-9b-nvfp4.safetensors": "variante nvfp4 (Blackwell). No T4 use a versao normal.",
+    "flux2-vae.safetensors": "VAE do Flux2 -> models/vae."
   },
   "never_install": [
     "ComfyUI",

@@ -609,3 +609,57 @@ quebrar depois de rodá-lo, é o primeiro suspeito — rode-o numa sessão isola
 
 Não precisa de nenhum custom node, só do checkpoint de 6.94 GB. Como é *gated*,
 configure o secret `HF_TOKEN` antes (veja a seção acima).
+
+---
+
+# Validação dos 7 workflows (todos no Git)
+
+Rodei o parser real em cada um. Resultado: **zero nós sem fonte**.
+
+| # | Workflow | Pacotes | Observação |
+|---|---|---|---|
+| 1 | CharDesignandPartSplitting | 1 | Krea-2, ~19 GB |
+| 2 | Detailer | 3 | Impact Pack + Subpack |
+| 3 | Efaces_Pony_XL_V01 | **14** | o mais arriscado |
+| 4 | Mesh_Processing | 6 | não cabe em T4 |
+| 5 | PotatCats-inpaint ANIMA | 8 | modelos ANIMA são do autor |
+| 6 | Skintoken | 1 | precisa de Blender |
+| 7 | WaifuInpaintXL | **0** | só nós nativos |
+
+Foram 32 nós desconhecidos mapeados nesta rodada. Os grupos maiores:
+- **Impact Pack**: `ToBasicPipe`, `FromBasicPipe`, `MaskToSEGS`, `SegsToCombinedMask`,
+  `DetailerForEachDebug`, `MaskPreview`, `ImpactImageInfo`.
+- **WAS Suite**: `Constant Number`, `Image Resize`, `Images to RGB`.
+- **Nativos do core** (não eram custom node): `BasicScheduler`, `GITSScheduler`,
+  `CLIPTextEncodeSDXL`, `PatchModelAddDownscale`, `ImageBlend`, `ImageCompositeMasked`.
+
+Registry hoje: **38 pacotes, 135 nós, 98 nativos**.
+
+## Downloads automáticos adicionados
+
+| Workflow | Arquivo | Tamanho |
+|---|---|---|
+| WaifuInpaintXL | `Waifu-Inpaint-XL.safetensors` | 6.94 GB (**gated**) |
+| Detailer | `v1-5-pruned-emaonly-fp16.safetensors` | 2.13 GB |
+| Efaces | `sdxl_vae.safetensors` | 335 MB |
+
+A Célula 5 agora **detecta modelo gated sem token** e explica o que fazer, em vez
+de tentar baixar e salvar um HTML de erro com nome de `.safetensors`.
+
+## O que continua manual (Civitai / autor)
+
+Civitai não tem URL estável para download direto, então estes ficam com nota:
+`waiIllustriousSDXL_v160`, `Eyeful_v2-Paired.pt` (vai em `models/ultralytics/bbox`),
+`aaaautismPonyFinetune_v4`, `Expressive_H-000001`, `detailed_notrigger`,
+e os modelos ANIMA (`anima-base-v1.0`, `AnimeEditV2`, `qwen_3_06b_base`).
+
+Baixe manualmente e coloque na pasta indicada, ou use `URL_EXTRA` + `PASTA_EXTRA`
+se tiver link direto.
+
+## Recomendação de ordem
+
+1. **WaifuInpaintXL** — zero custom nodes, 1 modelo. Melhor teste inicial.
+2. **Detailer** — 3 pacotes estáveis.
+3. **CharDesign** — pesado mas automático.
+4. **Efaces** — 14 pacotes: rode isolado, é o candidato natural a conflito.
+5. **Mesh_Processing** — só em GPU maior que T4.
