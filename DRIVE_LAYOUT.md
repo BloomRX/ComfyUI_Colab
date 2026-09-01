@@ -185,3 +185,30 @@ uma flag não derruba mais o notebook.
 
 Ela também detecta `--enable-manager`: nas versões novas o ComfyUI-Manager vem
 integrado ao core e precisa dessa flag para ligar a UI dele.
+
+---
+
+# 403 no link do cloudflared
+
+Sintoma: o ComfyUI sobe, o log mostra `To see the GUI go to: http://127.0.0.1:8188`,
+mas o link `*.trycloudflare.com` responde **HTTP ERROR 403**.
+
+Causa: `--listen 127.0.0.1` faz o ComfyUI aceitar só requisições cujo `Host` seja
+localhost. O túnel encaminha o `Host: xxx.trycloudflare.com`, o servidor considera
+isso um ataque de DNS-rebinding e devolve 403 — antes mesmo de servir a página.
+
+Correção na Célula 6: **`--listen 0.0.0.0`** (+ `--enable-cors-header *`).
+Continua seguro: nada da VM do Colab é exposto além do túnel, que é efêmero.
+
+# Manager não aparecia
+
+O log trazia:
+
+```
+To use the `--enable-manager` feature, the `comfyui-manager` package must be installed first.
+```
+
+Desde as versões novas o ComfyUI-Manager virou **pacote pip do core** — clonar em
+`custom_nodes/` não basta. A Célula 6 agora roda
+`pip install -r manager_requirements.txt` antes de subir, e o ícone de plugin aparece
+(ou em *Menu → Manage Extensions*).
