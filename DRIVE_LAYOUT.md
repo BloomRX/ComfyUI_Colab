@@ -220,7 +220,7 @@ Desde as versões novas o ComfyUI-Manager virou **pacote pip do core** — clona
 O Colab **guarda em cache** o `.ipynb` aberto via `colab.research.google.com/github/...`.
 Reexecutar a célula roda o código velho — o commit novo não chega sozinho.
 
-Como saber: a Célula 6 imprime `Notebook Celula 6: v5-listen0000` na primeira linha.
+Como saber: a Célula 6 imprime `Notebook Celula 6: v6-wf-inject` na primeira linha.
 Se esse marcador não aparecer, ou o comando ecoado mostrar `--listen 127.0.0.1`,
 você está numa cópia antiga.
 
@@ -231,3 +231,24 @@ Como forçar a versão nova (qualquer uma serve):
 
 Se você salvou uma cópia no Drive, ela **não** recebe atualizações do Git — nesse caso
 apague a cópia e reabra pelo link do GitHub.
+
+---
+
+# Aba "Workflows" vazia
+
+A aba lê de `<user-directory>/default/workflows/`, que no nosso caso é
+`ComfyUI_Data/user/default/workflows/`. Os workflows do repo ficam em outro lugar,
+então a aba nascia vazia.
+
+A Célula 4 agora **copia os workflows selecionados para lá** automaticamente.
+Ao abrir a UI eles já aparecem na aba, sem precisar de *Load* ou arrastar arquivo.
+
+Detalhes:
+- Só copia o que foi selecionado — a aba fica com os da sessão, não com tudo.
+- Como a pasta está no Drive, o que você editar e salvar **persiste** entre sessões.
+- Se o arquivo já existe e é idêntico, não sobrescreve (não perde suas edições).
+- Workflows em **formato API** não aparecem na aba (limitação da UI). O aviso é
+  impresso na Célula 4. Seus 3 são formato UI, então todos aparecem.
+
+> Cuidado: se você editar um workflow na UI e quiser versionar a mudança, copie de
+> volta para `Workflows/` no repo e commite. A pasta do Drive não é o Git.
