@@ -919,3 +919,76 @@ personagem de varios angulos**, para entender o volume. E exatamente o que o
 O que o ComfyUI **nao** faz: gerar a malha rigada. `Mesh_Processing` (Trellis2)
 produz malha bruta, sem esqueleto nem blendshapes — e nao roda em T4. Para uma
 waifu de companhia o VRoid continua o caminho mais curto.
+
+---
+
+# WaifuVroid_FromConcept.json — partindo de uma imagem de concept
+
+Mesma estrutura do `WaifuVroid`, mas com uma **imagem de referencia** entrando
+via **IPAdapter**. Serve para quem ja tem um concept art (feito no GPT/DALL-E,
+Midjourney, PixAI, ou desenhado a mao) e quer que o ComfyUI produza **aquele**
+personagem, nao um parecido.
+
+A diferenca conceitual: no `WaifuVroid` o modelo so **le** o texto; aqui ele
+tambem **olha** a imagem.
+
+Pack necessario: `ComfyUI_IPAdapter_plus` (a Celula 3 instala). Na primeira
+execucao o `IPAdapterUnifiedLoader` baixa sozinho os modelos IPAdapter +
+CLIP Vision (~2.5 GB).
+
+## Preparar a imagem (o passo que as pessoas pulam)
+
+**Nao jogue a folha de concept inteira no `LoadImage`.** Uma folha tipica tem
+varias poses, texto, barra de paleta e close-ups. O IPAdapter nao entende
+"isso e um documento" — ele trata tudo como referencia visual e tenta reproduzir
+o conjunto, **inclusive as letras**. O resultado costuma ser uma colagem borrada.
+
+Recorte **uma** imagem limpa, so o personagem, sem texto:
+- um recorte do **full body** -> referencia de roupa e proporcao;
+- um recorte do **rosto** -> referencia de identidade facial.
+
+Salve em `ComfyUI/input/` e escolha no no 2. Vale gerar os dois arquivos e
+testar qual funciona melhor: o recorte do rosto costuma dar identidade mais
+forte, o de corpo inteiro acerta melhor a roupa.
+
+## Ajustar o weight (no 4)
+
+| Weight | Efeito |
+|---|---|
+| 0.4–0.5 | inspiracao solta, muita liberdade criativa |
+| **0.75** | equilibrado — padrao do arquivo |
+| 1.0+ | copia agressiva; tende a repetir a **pose** da referencia |
+
+Sintoma tipico: os 4 angulos saem quase iguais, todos de frente. Causa: weight
+alto demais — a referencia esta impondo a pose. **Abaixe** para ~0.6. Se em vez
+disso o personagem perder a cara, suba.
+
+O parametro `weight_type` tambem ajuda: `linear` e o padrao; `style transfer`
+pega o estilo e solta a composicao, util justamente quando o angulo nao quer
+mudar.
+
+## Limitacao honesta
+
+IPAdapter da **semelhanca forte**, nao identidade travada. Detalhes pequenos —
+um brasao especifico, um acessorio incomum, um padrao de olho — vao variar entre
+as geracoes. Isso e esperado.
+
+Corrija com o que voce ja tem: `Detailer` para o rosto e `WaifuInpaintXL` para
+consertos pontuais.
+
+## O papel disto no projeto
+
+IPAdapter e a **ponte**, nao o destino:
+
+```
+concept (GPT/desenho)
+   -> WaifuVroid_FromConcept  (IPAdapter: ~20 imagens boas)
+   -> Detailer / WaifuInpaintXL  (limpar as imperfeicoes)
+   -> treinar a LoRA do personagem
+   -> WaifuVroid + LoRA  (consistencia real, character sheet final)
+   -> VRoid Studio -> .vrm -> AIRI
+```
+
+Sem imagens consistentes nao da para treinar LoRA; e sem LoRA nao da para ter
+consistencia real. O IPAdapter quebra esse circulo: ele produz o dataset inicial.
+Depois que a LoRA existir, este workflow deixa de ser necessario.
