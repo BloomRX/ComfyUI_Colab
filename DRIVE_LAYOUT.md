@@ -564,3 +564,48 @@ Manager** ficam ativos até você desativá-los.
 
 Se quiser sessão 100% limpa, rode a Célula 4 de novo — ela renomeia para
 `.disabled` tudo que não pertence aos workflows marcados.
+
+---
+
+# Workflows 4–7: o que aconteceu
+
+Aquela listagem saiu de uma sessão **anterior ao fix `v13`**, por isso o pacote
+fantasma `ComfyUI` aparecia em quase todos. Já está corrigido.
+
+Também ampliei o registry: **37 pacotes** (era 25) e **96 nós** mapeados, cobrindo
+Comfyroll, tinyterra, mikey, WAS, ComfyMath, Chibi, AutomaticCFG, Extra-Samplers,
+QualityOfLife, temperature-settings, perturbed-attention, ComfyI2I e Cosmos-Reference.
+
+## Duas novas camadas de dedução
+
+Os "sem fonte" eram quase todos **display names**, não class types:
+
+| Antes | Agora |
+|---|---|
+| `Lora Loader Stack (rgthree)` | sufixo `(rgthree)` → `rgthree-comfy` |
+| `Image Comparer (rgthree)` | idem |
+| `CR Apply LoRA Stack` | prefixo `CR ` → `ComfyUI_Comfyroll_CustomNodes` |
+| `PrimitiveNode` | reconhecido como nativo do core |
+| `FreeU_V2 (Advanced)` | mapeado para `sd-perturbed-attention` |
+
+Prefixos conhecidos ficam em `prefix_hints` no registry (`CR `, `ttN `, `Mikey`,
+`WAS `, `Chibi`, `CM_`). Isso faz packs inteiros serem reconhecidos sem eu precisar
+listar nó por nó.
+
+Ordem de resolução agora: **registry → mapa do Manager → prefixo → sufixo `(pack)`**.
+
+## Sobre os workflows novos
+
+Eles estão só no seu Drive — no Git há apenas os 3 originais. Funciona, mas se
+commitar em `Workflows/` você ganha versionamento e eu consigo validar cada um.
+
+## Atenção ao `Efaces_Pony_XL_V01`
+
+São **15 pacotes** num workflow só. Isso multiplica o risco de conflito de
+dependência (vários deles mexem em `numpy`/`opencv`) e o tempo de import. Se algo
+quebrar depois de rodá-lo, é o primeiro suspeito — rode-o numa sessão isolada.
+
+## `WaifuInpaintXL` — só nós nativos
+
+Não precisa de nenhum custom node, só do checkpoint de 6.94 GB. Como é *gated*,
+configure o secret `HF_TOKEN` antes (veja a seção acima).
