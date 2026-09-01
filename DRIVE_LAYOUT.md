@@ -212,3 +212,22 @@ Desde as versões novas o ComfyUI-Manager virou **pacote pip do core** — clona
 `custom_nodes/` não basta. A Célula 6 agora roda
 `pip install -r manager_requirements.txt` antes de subir, e o ícone de plugin aparece
 (ou em *Menu → Manage Extensions*).
+
+---
+
+# "Corrigi o notebook mas o erro é o mesmo"
+
+O Colab **guarda em cache** o `.ipynb` aberto via `colab.research.google.com/github/...`.
+Reexecutar a célula roda o código velho — o commit novo não chega sozinho.
+
+Como saber: a Célula 6 imprime `Notebook Celula 6: v5-listen0000` na primeira linha.
+Se esse marcador não aparecer, ou o comando ecoado mostrar `--listen 127.0.0.1`,
+você está numa cópia antiga.
+
+Como forçar a versão nova (qualquer uma serve):
+1. Fechar a aba do Colab e reabrir o link do GitHub;
+2. *Arquivo → Reverter para a versão salva*;
+3. Abrir o link com um parâmetro qualquer no fim, ex: `...ipynb?v=2`.
+
+Se você salvou uma cópia no Drive, ela **não** recebe atualizações do Git — nesse caso
+apague a cópia e reabra pelo link do GitHub.
