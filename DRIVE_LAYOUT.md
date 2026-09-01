@@ -102,7 +102,7 @@ não é questão de organização, é questão de não caber mesmo em GPU pequen
 **Direto do Git, sem baixar nada.** Abra:
 
 ```
-https://colab.research.google.com/github/BloomRX/ComfyUI_Collab/blob/arena/01a05a82-comfyui-collab/notebooks/ComfyUI_Colab_Limpo.ipynb
+https://colab.research.google.com/github/BloomRX/ComfyUI_Colab/blob/arena/01a05a82-comfyui-collab/notebooks/ComfyUI_Colab_Limpo.ipynb
 ```
 
 Regra: troque `github.com` por `colab.research.google.com/github`.
