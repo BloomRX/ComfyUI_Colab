@@ -1079,3 +1079,64 @@ Existe um limite real: **IPAdapter e referencia, nao controle de pose.** Para
 angulo garantido seria preciso ControlNet (OpenPose) com uma pose de costas. Para
 dataset de LoRA, porem, isso nao e critico — se um angulo nao sair, gere mais
 seeds e aproveite o que vier. Variedade importa mais que os 4 angulos exatos.
+
+---
+
+## "Pacotes de nós ausentes" e o botao Instalar do Manager nao funciona
+
+Sintoma: o Manager acusa `ComfyUI_IPAdapter_plus` como ausente; voce clica em
+**Instalar** e nada acontece (ou ele diz que instalou, mas o erro continua).
+
+**O pack nao sumiu — ele foi DESATIVADO pela Celula 4.**
+
+No fim da Celula 4 existe este bloco, que e o coracao do "so os nodes da sessao":
+
+```python
+for d in sorted(os.listdir(CN)):
+    if d == 'ComfyUI-Manager' or d in need: continue
+    os.rename(pth, pth + '.disabled')
+```
+
+Ou seja: **tudo que nao pertence aos workflows selecionados vira `.disabled`.**
+Se voce rodou a Celula 4 de novo sem marcar o `WaifuVroid_FromConcept`, a pasta
+virou `ComfyUI_IPAdapter_plus.disabled` e os nos sumiram da UI.
+
+**Por que o botao Instalar do Manager falha:** a pasta `.disabled` ainda esta
+la. O `git clone` do Manager recusa gravar num destino em conflito, e o
+ComfyUI so carrega o diretorio com o nome exato. Instalar por cima nao resolve.
+
+### Conserto (o jeito certo)
+
+Rode a **Celula 3**, veja o numero do `WaifuVroid_FromConcept` na lista, e rode a
+**Celula 4** com esse numero na `SELECAO`. Ela detecta o `.disabled` e reativa:
+
+```
+reativado ComfyUI_IPAdapter_plus
+```
+
+Depois **reinicie a Celula 6**. Custom node so e carregado no boot — reativar
+com o servidor no ar nao adianta.
+
+Para usar varios workflows juntos, liste todos: `SELECAO = "2,3,9"`.
+Ou `SELECAO = "all"` para ativar tudo (mais lento no boot, porem sem surpresa).
+
+### Conserto manual (uma celula avulsa)
+
+```python
+import os
+CN='/content/ComfyUI/custom_nodes'
+for d in os.listdir(CN):
+    if d.endswith('.disabled'):
+        os.rename(f'{CN}/{d}', f'{CN}/{d[:-9]}')
+        print('reativado', d[:-9])
+```
+
+Reativa **todos** de uma vez. Reinicie a Celula 6 depois. Util para destravar
+rapido, mas lembre que na proxima Celula 4 eles voltam a ser desativados se nao
+estiverem na selecao — isso e o comportamento desejado, nao um bug.
+
+### Regra pratica
+
+> A selecao da Celula 4 e a **fonte da verdade** de quais nodes existem.
+> Instalou algo pela UI do Manager? Ou adicione o workflow correspondente a
+> selecao, ou nao rode a Celula 4 de novo naquela sessao.
