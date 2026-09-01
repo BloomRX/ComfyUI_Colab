@@ -377,7 +377,7 @@
         777,
         "fixed",
         28,
-        7.0,
+        4.5,
         "dpmpp_2m",
         "karras",
         1.0
@@ -588,7 +588,7 @@
         777,
         "fixed",
         28,
-        7.0,
+        4.5,
         "dpmpp_2m",
         "karras",
         1.0
@@ -799,7 +799,7 @@
         777,
         "fixed",
         28,
-        7.0,
+        4.5,
         "dpmpp_2m",
         "karras",
         1.0
@@ -1010,7 +1010,7 @@
         777,
         "fixed",
         28,
-        7.0,
+        4.5,
         "dpmpp_2m",
         "karras",
         1.0
@@ -1108,7 +1108,7 @@
         "Node name for S&R": "Note"
       },
       "widgets_values": [
-        "WaifuVroid - character sheet 4 angulos\n\nCOMO USAR\n1. No no 1 escolha o checkpoint (anime SDXL: waiIllustrious, Pony, etc).\n2. No no 3 escreva a identidade do personagem. NAO escreva angulo aqui.\n3. Rode. Se gostar de um resultado, copie a seed e ponha nos 4 KSamplers.\n4. Os 4 KSamplers precisam da MESMA seed - e isso que segura a consistencia.\n\nPOR QUE FUNCIONA\nA identidade e codificada UMA vez (no 3) e o angulo entra por\nConditioningConcat. Assim o texto da identidade e identico nos 4,\ne so o trecho do angulo muda.\n\nLORA\nCom lora_name = None o no 2 so repassa. Quando voce treinar a LoRA do\npersonagem, selecione ela ali e a consistencia melhora MUITO.\n\nFUNDO BRANCO E LUZ CHAPADA sao de proposito: isso e referencia para\nmodelagem, nao arte final. Sombra dura atrapalha na hora de modelar.\n\nSO NOS NATIVOS - nao precisa de nenhum custom node.\n\nT4: 832x1216 x4 ~ 2-3 min. Se faltar VRAM, use 768x1152."
+        "WaifuVroid - character sheet 4 angulos\n\nCOMO USAR\n1. No no 1 escolha o checkpoint (anime SDXL: waiIllustrious, Pony, etc).\n2. No no 3 escreva a identidade do personagem. NAO escreva angulo aqui.\n3. Rode. Se gostar de um resultado, copie a seed e ponha nos 4 KSamplers.\n4. Os 4 KSamplers precisam da MESMA seed - e isso que segura a consistencia.\n\nPOR QUE FUNCIONA\nA identidade e codificada UMA vez (no 3) e o angulo entra por\nConditioningConcat. Assim o texto da identidade e identico nos 4,\ne so o trecho do angulo muda.\n\nLORA\nCom lora_name = None o no 2 so repassa. Quando voce treinar a LoRA do\npersonagem, selecione ela ali e a consistencia melhora MUITO.\n\nFUNDO BRANCO E LUZ CHAPADA sao de proposito: isso e referencia para\nmodelagem, nao arte final. Sombra dura atrapalha na hora de modelar.\n\nSO NOS NATIVOS - nao precisa de nenhum custom node.\n\nT4: 832x1216 x4 ~ 2-3 min. Se faltar VRAM, use 768x1152.\n\nCFG: 4.5 (Illustrious/Pony). CFG 7 QUEIMA a imagem nesses modelos:\ncores neon, pele vermelha. Se ainda queimar, use 3.5."
       ],
       "title": "LEIA",
       "color": "#432",

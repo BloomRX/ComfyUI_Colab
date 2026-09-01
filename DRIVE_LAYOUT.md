@@ -1032,3 +1032,50 @@ o ComfyUI indexa os modelos no boot.
 **Escolha do preset (no 3):** `PLUS (high strength)` casa com
 `ip-adapter-plus_sdxl_vit-h`. Se trocar o preset, o par de arquivos muda — e o
 erro volta. Mantenha o preset ou baixe o modelo correspondente.
+
+---
+
+## Imagem "queimada": cores neon, pele vermelha, fundo saturado
+
+**Causa: CFG alto demais.** Modelos **Illustrious e Pony** trabalham com CFG
+muito mais baixo que o SDXL base. CFG 7 — o padrao que se ve em tutorial de
+SD1.5 — satura as cores nesses modelos: pele fica vermelha, o fundo vira um
+amarelo/laranja neon, tudo ganha contraste artificial.
+
+| Modelo | CFG saudavel |
+|---|---|
+| SD 1.5 | 7 – 9 |
+| SDXL base | 6 – 8 |
+| **Illustrious / Pony** | **3.5 – 5.0** |
+| Turbo / Lightning / LCM | 1 – 2 |
+
+Os dois `WaifuVroid` agora vem com **CFG 4.5**. Se ainda queimar, baixe para 3.5
+e troque o sampler para `euler_a`.
+
+Sintoma parecido, causa diferente: se a imagem sair *cinzenta e sem contraste*, o
+CFG esta baixo **demais**. Suba um pouco.
+
+Tambem adicionei ao negative: `oversaturated, neon colors, burnt colors,
+high contrast, glowing skin, red skin`. Ajuda, mas **nao substitui** corrigir o
+CFG — negative nao conserta parametro errado.
+
+## O angulo "back" veio de frente
+
+O IPAdapter esta **impondo a pose** da imagem de referencia. Se o seu recorte e
+um full body de frente, com weight alto ele forca todas as saidas para frente,
+ignorando `from behind` no prompt.
+
+Solucao, em ordem:
+
+1. **Abaixe o weight** do no 4: 0.75 -> **0.6** (ja e o padrao agora) -> 0.4.
+2. Mude `weight_type` para **`style transfer`** — pega o estilo e solta a
+   composicao. E o ajuste mais eficaz quando o angulo nao muda.
+3. Reforce o texto do angulo. Os presets ja foram reforcados:
+   `from behind, back view, facing away from viewer, head turned away,
+   back of head, hair from behind, no face visible`.
+4. Acrescente ao negative, so no ramo `back`: `looking at viewer, face, frontal`.
+
+Existe um limite real: **IPAdapter e referencia, nao controle de pose.** Para
+angulo garantido seria preciso ControlNet (OpenPose) com uma pose de costas. Para
+dataset de LoRA, porem, isso nao e critico — se um angulo nao sair, gere mais
+seeds e aproveite o que vier. Variedade importa mais que os 4 angulos exatos.
