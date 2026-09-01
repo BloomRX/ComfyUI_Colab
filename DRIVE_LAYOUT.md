@@ -170,3 +170,18 @@ O que **não** dá para portar: as wheels pré-compiladas (`cumesh`, `nvdiffrast
 `install.py` precisa compilar — é lento e pode falhar. Alvo do `.bat` é
 Torch 2.8.0 + CUDA 12.8 + Python 3.12; se o Colab divergir muito disso, o Trellis2
 é o primeiro a quebrar.
+
+---
+
+# Flags do `main.py` — cuidado
+
+**`--normalvram` não existe.** O modo normal é o padrão do ComfyUI: você não passa
+flag nenhuma. As flags reais são `--highvram`, `--lowvram`, `--novram`, `--gpu-only`, `--cpu`.
+Por isso a Célula 6 usa `auto` como padrão (= não passa nada).
+
+A Célula 6 agora roda `main.py --help` antes de subir e **descarta qualquer flag que
+aquela versão não reconheça**. Assim uma atualização do ComfyUI que remova ou renomeie
+uma flag não derruba mais o notebook.
+
+Ela também detecta `--enable-manager`: nas versões novas o ComfyUI-Manager vem
+integrado ao core e precisa dessa flag para ligar a UI dele.
