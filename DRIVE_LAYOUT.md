@@ -468,3 +468,64 @@ Como pegar o link certo: aba **Files** → clique no `.safetensors` → botão *
 Modelo de inpaint SDXL não funciona num grafo txt2img comum. Precisa de
 `VAEEncodeForInpaint` (ou `SetLatentNoiseMask`) e de uma máscara. Nos templates do
 ComfyUI: *Workflow → Browse Templates → Inpainting*.
+
+---
+
+# Como pegar o token do HuggingFace
+
+## 1. Criar o token (no site)
+
+1. Crie a conta / logue em **huggingface.co**.
+2. Vá em **huggingface.co/settings/tokens**
+   (ou: sua foto no canto superior direito → *Settings* → *Access Tokens*).
+3. **Create new token**.
+4. Tipo: **Read** — é o suficiente para baixar. Nunca use *Write* aqui.
+5. Dê um nome (ex: `colab-comfyui`) e crie.
+6. **Copie na hora.** O HF mostra o token uma única vez; depois só resta gerar outro.
+   Formato: `hf_` seguido de ~34 caracteres.
+
+Antes de baixar um modelo *gated*, ainda é preciso abrir a página dele logado e
+clicar em **Agree and access repository**. O token sozinho não pula esse aceite.
+
+## 2. Guardar o token (no Colab) — sem colar no notebook
+
+**Não** existe mais campo de texto para o token no notebook. Isso foi proposital:
+um `#@param` grava o valor **dentro do arquivo .ipynb**, e se você salvasse uma
+cópia no Drive ou commitasse no Git, o token ia junto, em texto puro.
+
+Use o cofre do Colab:
+
+1. Painel esquerdo → ícone de **chave 🔑** (*Secrets*).
+2. **+ Adicionar novo secret**.
+3. Nome: **`HF_TOKEN`** (exatamente assim). Valor: o token.
+4. Ligue a chavinha **"Acesso ao notebook"**.
+5. Rode a Célula 5 de novo.
+
+Confirmação no log:
+```
+HF_TOKEN carregado de: Colab Secrets (…a1b2)
+```
+Só os 4 últimos caracteres aparecem — o suficiente para conferir qual token é,
+sem expor nada.
+
+O secret fica na sua conta Google, não no arquivo: vale para todos os notebooks,
+sobrevive à troca de sessão e nunca é commitado.
+
+### Alternativa para uma vez só
+
+Se não quiser criar o secret, rode numa célula nova:
+
+```python
+pedir_token()
+```
+
+Abre um campo mascarado (`getpass`), guarda só na memória da sessão e some quando
+o runtime reinicia. Depois é só reexecutar a Célula 5.
+
+## Ordem de busca do token
+
+1. **Colab Secrets** (`HF_TOKEN`) — recomendado
+2. Variável de ambiente `HF_TOKEN`
+3. `pedir_token()` na hora
+
+Sem nenhum dos três, a célula avisa e segue baixando só o que é público.
