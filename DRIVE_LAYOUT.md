@@ -334,3 +334,35 @@ para ver quantos GB vão entrar.
 uma fonte pública estável — aí eu adiciono em `workflow_models` com a URL e uma nota.
 Modelo de Patreon/Discord/civitai privado nunca dá para automatizar: baixe manual,
 ou use `URL_EXTRA` + `PASTA_EXTRA` na Célula 5 se tiver link direto.
+
+---
+
+# Barras de progresso (sem spam no log)
+
+Módulo `config/nbui.py`, importado por todas as células.
+
+O spam que você viu vem de duas fontes: `wget --show-progress` e barras tipo `tqdm`
+dentro de scripts de instalação. No Colab, cada atualização vira **uma linha nova**
+porque a saída é bufferizada por linha, não é um terminal de verdade.
+
+Solução: no Colab usamos `ipywidgets.FloatProgress` — um objeto que se atualiza
+**no lugar**, ocupando uma linha só de verdade. Fora do Colab cai para `\r`.
+
+O que cada célula mostra agora:
+
+| Célula | Barra |
+|---|---|
+| 1 | `Preparando ambiente: 3/4` + uma barra por git/pip |
+| 4 | `Instalando pacotes: 2/6` + barra por clone, deps e `install.py` |
+| 5 | `Modelos: 1/4` + barra por download com **MB, MB/s e ETA** |
+| 6 | barra durante o pip do Manager |
+
+Detalhes do downloader próprio (substitui o `wget`):
+- Mostra `1.2GB/13.5GB · 8.3MB/s · ETA 1470s` numa linha só.
+- Baixa para `.part` e só renomeia no fim — **arquivo truncado nunca é confundido
+  com download completo** (o `wget -c` antigo deixava lixo pela metade).
+- Retoma de onde parou via header `Range` se a sessão cair no meio.
+
+Comandos (`git clone`, `pip`, `install.py`) mostram uma barra viva com a última
+linha do log ao lado. **Se falhar, aí sim imprime as últimas 12 linhas** — silencioso
+quando dá certo, verboso quando quebra, que é quando você precisa.
