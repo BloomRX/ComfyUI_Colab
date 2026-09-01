@@ -252,3 +252,57 @@ Detalhes:
 
 > Cuidado: se você editar um workflow na UI e quiser versionar a mudança, copie de
 > volta para `Workflows/` no repo e commite. A pasta do Drive não é o Git.
+
+---
+
+# Os 2 tipos de erro ao abrir um workflow
+
+## A) "Pacotes de nós ausentes" — eu resolvo (registry)
+
+Era um bug meu, em duas partes:
+
+1. Marquei `FluxKleinOneNode` e `ResolutionSelector` como **nativos** no
+   `native_ignore`. Não são: vêm de `yanokusnir-ai/one-node-flux-2-klein`.
+   Como estavam na lista de ignorados, o notebook nunca instalava o pacote.
+2. **O parser não entrava em subgraphs.** O workflow tem um nó com nome de UUID
+   (`53a025e4-...`) que é um subgraph com **21 nós dentro** — todos invisíveis
+   para o parser. Corrigido: agora ele desce em `definitions.subgraphs`.
+
+Depois da correção, os 3 workflows resolvem com **zero nós desconhecidos**.
+
+**Quando me chamar:** sempre que a Célula 3 imprimir `[!] sem fonte: ...`, ou a UI
+acusar pacote ausente. É sinal de registry incompleto, e o conserto é no repo —
+não adianta você contornar na UI, porque na próxima sessão volta.
+
+Alternativa imediata (funciona, mas não persiste): Manager → *Install Missing
+Custom Nodes* → Restart.
+
+## B) "Modelos Ausentes" — a Célula 5 resolve
+
+Modelo é arquivo de peso, não código: nunca vem no `git clone`. Agora a **Célula 5
+baixa os modelos dos workflows selecionados**, direto para o Drive, pulando o que
+já existe. Para o `CharDesignandPartSplitting`:
+
+| Arquivo | Pasta | Tamanho |
+|---|---|---|
+| `krea2_turbo_int8_convrot.safetensors` | `diffusion_models` | 13.5 GB |
+| `qwen3vl_4b_fp8_scaled.safetensors` | `text_encoders` | 4.88 GB |
+| `krea2_turbo_lora_rank_64_bf16.safetensors` | `loras` | 469 MB |
+| `qwen_image_vae.safetensors` | `vae` | 254 MB |
+
+**~19 GB.** Baixa uma vez, fica no Drive. Confira sua cota antes.
+
+### Os que a UI listou e não têm download automático
+
+- **`krea2_raw_int8_convrot`** — existe no repo oficial (13.5 GB), mas é a variante
+  *raw*, alternativa à *turbo*. Baixar as duas = 27 GB. Está marcado `optional`;
+  desmarque `PULAR_OPCIONAIS` se quiser. Ou aponte o `UNETLoader` para a turbo.
+- **`wan_2.1_vae`** — de um ramo alternativo do grafo. O caminho principal usa
+  `qwen_image_vae`. Troque no node ou bypasse o ramo.
+- **`Detailer-KREA2`** — LoRA de detalhe, não está no repo oficial. Bypasse o
+  `LoraLoaderModelOnly` (Ctrl+B) ou procure no Manager → Model Manager.
+
+**Regra prática:** modelo em repo público conhecido → me avise que eu ponho em
+`workflow_models` e passa a baixar sozinho. Modelo de Patreon/Discord/civitai
+privado → baixe manualmente e jogue na pasta certa do Drive; use a `URL_EXTRA`
+da Célula 5 se tiver link direto.

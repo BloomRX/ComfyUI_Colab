@@ -24,7 +24,8 @@
     "ComfyUI-Trellis2": "https://github.com/visualbruno/ComfyUI-Trellis2",
     "ComfyUI-Trellis2-GGUF": "https://github.com/Aero-Ex/ComfyUI-Trellis2-GGUF",
     "ComfyUI-SkinTokens": "https://github.com/Aero-Ex/ComfyUI-SkinTokens",
-    "Texture_Projection-Nodes": "https://github.com/Aero-Ex/Texture_Projection-Nodes"
+    "Texture_Projection-Nodes": "https://github.com/Aero-Ex/Texture_Projection-Nodes",
+    "one-node-flux-2-klein": "https://github.com/yanokusnir-ai/one-node-flux-2-klein"
   },
   "class_map": {
     "Reroute (rgthree)": "rgthree-comfy",
@@ -64,7 +65,6 @@
     "FILM VFI": "ComfyUI-Frame-Interpolation",
     "RIFE VFI": "ComfyUI-Frame-Interpolation",
     "GetMaskFromImage": "comfyui-tooling-nodes",
-    "PreviewAny": "ComfyUI-Custom-Scripts",
     "ShowText|pysssss": "ComfyUI-Custom-Scripts",
     "StringFunction|pysssss": "ComfyUI-Custom-Scripts",
     "ImageCrop+": "ComfyUI_essentials",
@@ -104,7 +104,9 @@
     "Trellis2ShapeGenerator": "ComfyUI-Trellis2",
     "Trellis2SimplifyMesh": "ComfyUI-Trellis2",
     "Trellis2SimplifyTrimeshAdvanced": "ComfyUI-Trellis2",
-    "Trellis2SparseGenerator": "ComfyUI-Trellis2"
+    "Trellis2SparseGenerator": "ComfyUI-Trellis2",
+    "FluxKleinOneNode": "one-node-flux-2-klein",
+    "ResolutionSelector": "one-node-flux-2-klein"
   },
   "native_ignore": [
     "SaveImage",
@@ -121,8 +123,37 @@
     "ImageCompare",
     "ImageGridComposite6",
     "ImageGridSplit6",
-    "ResolutionSelector",
-    "FluxKleinOneNode"
+    "CLIPTextEncode",
+    "EmptyLatentImage",
+    "KSampler",
+    "VAEDecode",
+    "CLIPLoader",
+    "VAELoader",
+    "ConditioningZeroOut",
+    "StringConcatenate",
+    "PrimitiveStringMultiline",
+    "UNETLoader",
+    "LoraLoaderModelOnly",
+    "CheckpointLoaderSimple",
+    "LoadImage",
+    "VAEEncode",
+    "CLIPSetLastLayer",
+    "GetImageSize",
+    "SamplerCustomAdvanced",
+    "EmptyFlux2LatentImage",
+    "KSamplerSelect",
+    "Flux2Scheduler",
+    "InvertMask",
+    "CFGGuider",
+    "RandomNoise",
+    "ReferenceLatent",
+    "JoinImageWithAlpha",
+    "ImageScaleToTotalPixels",
+    "RemoveBackground",
+    "LoadBackgroundRemovalModel",
+    "PreviewAny",
+    "ComfySwitchNode",
+    "TextGenerate"
   ],
   "pack_extras": {
     "ComfyUI-SkinTokens": {
@@ -147,6 +178,67 @@
     },
     "ComfyUI-Trellis2": {
       "note": "compila cumesh/nvdiffrast/flex_gemm/o_voxel; demora"
+    },
+    "one-node-flux-2-klein": {
+      "note": "nodes FluxKleinOneNode/ResolutionSelector"
     }
+  },
+  "workflow_models": {
+    "CharDesignandPartSplitting.json": [
+      {
+        "file": "krea2_turbo_int8_convrot.safetensors",
+        "dir": "diffusion_models",
+        "size": "13.5 GB",
+        "url": "https://huggingface.co/Comfy-Org/Krea-2/resolve/main/diffusion_models/krea2_turbo_int8_convrot.safetensors"
+      },
+      {
+        "file": "krea2_raw_int8_convrot.safetensors",
+        "dir": "diffusion_models",
+        "size": "13.5 GB",
+        "optional": true,
+        "url": "https://huggingface.co/Comfy-Org/Krea-2/resolve/main/diffusion_models/krea2_raw_int8_convrot.safetensors"
+      },
+      {
+        "file": "krea2_turbo_lora_rank_64_bf16.safetensors",
+        "dir": "loras",
+        "size": "469 MB",
+        "url": "https://huggingface.co/Comfy-Org/Krea-2/resolve/main/loras/krea2_turbo_lora_rank_64_bf16.safetensors"
+      },
+      {
+        "file": "qwen3vl_4b_fp8_scaled.safetensors",
+        "dir": "text_encoders",
+        "size": "4.88 GB",
+        "url": "https://huggingface.co/Comfy-Org/Krea-2/resolve/main/text_encoders/qwen3vl_4b_fp8_scaled.safetensors"
+      },
+      {
+        "file": "qwen_image_vae.safetensors",
+        "dir": "vae",
+        "size": "254 MB",
+        "url": "https://huggingface.co/Comfy-Org/Krea-2/resolve/main/vae/qwen_image_vae.safetensors"
+      }
+    ],
+    "Mesh_Processing.json": [
+      {
+        "file": "birefnet.safetensors",
+        "dir": "birefnet",
+        "url": "https://huggingface.co/Comfy-Org/BiRefNet/resolve/main/background_removal/birefnet.safetensors"
+      },
+      {
+        "file": "qwen_3_8b_fp8mixed.safetensors",
+        "dir": "text_encoders",
+        "url": "https://huggingface.co/Comfy-Org/flux2-klein-9B/resolve/main/split_files/text_encoders/qwen_3_8b_fp8mixed.safetensors"
+      },
+      {
+        "file": "full_encoder_small_decoder.safetensors",
+        "dir": "vae",
+        "url": "https://huggingface.co/black-forest-labs/FLUX.2-small-decoder/resolve/main/full_encoder_small_decoder.safetensors"
+      }
+    ]
+  },
+  "model_notes": {
+    "wan_2.1_vae.safetensors": "VAE do Wan 2.1, usado so num ramo alternativo. O caminho principal usa qwen_image_vae. Se o node reclamar, aponte para qwen_image_vae ou bypasse o ramo.",
+    "Detailer-KREA2.safetensors": "LoRA de detalhe opcional (nao esta no repo oficial Comfy-Org/Krea-2). Bypasse o LoraLoaderModelOnly ou procure no Manager > Model Manager.",
+    "Alb_LoRaV3_000004750.safetensors": "LoRA custom do autor do tutorial; normalmente distribuida no Patreon/Discord dele.",
+    "flux-2-klein-9b.safetensors": "9B; junto com qwen_3_8b nao cabe na RAM de 13 GB do Colab T4."
   }
 }
