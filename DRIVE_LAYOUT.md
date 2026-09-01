@@ -663,3 +663,56 @@ se tiver link direto.
 3. **CharDesign** — pesado mas automático.
 4. **Efaces** — 14 pacotes: rode isolado, é o candidato natural a conflito.
 5. **Mesh_Processing** — só em GPU maior que T4.
+
+---
+
+# PixAI, Civitai e afins — de onde dá para puxar
+
+## PixAI (pixai.art)
+
+É uma **plataforma de geração**, não um repositório de modelos. Você gera na nuvem
+deles, com os modelos deles. Isso muda o que dá para trazer:
+
+| O que | Dá? |
+|---|---|
+| **Workflow ComfyUI** | **Não.** O PixAI não usa ComfyUI. Não existe JSON para exportar. |
+| **Prompt + parâmetros** | Sim — ficam visíveis na página da imagem (quando o autor compartilha). |
+| **LoRA / checkpoint** | **Às vezes.** Depende do autor ter permitido download. |
+
+Se o download existir, fica no menu de três pontinhos (`...`) na página do modelo.
+Muitos são "somente geração no site" e não têm essa opção — não há truque, é
+decisão de quem subiu.
+
+**O caminho mais produtivo:** a maioria das LoRAs de anime populares no PixAI é
+reupload (ou tem equivalente) no **Civitai** ou no **HuggingFace**. Procure pelo nome
+lá primeiro — quase sempre acha, e com download direto.
+
+O que sempre dá para aproveitar é a **receita**: prompt, negative, sampler, steps,
+CFG, LoRAs usadas e pesos. Isso você reproduz no seu ComfyUI com os modelos
+equivalentes.
+
+## Onde cada fonte se encaixa
+
+| Fonte | Modelos | Workflow ComfyUI | Download automatizável |
+|---|---|---|---|
+| **HuggingFace** | sim | às vezes | **sim** (Célula 5) |
+| **Civitai** | sim | sim (aba *Workflows*) | não (URL instável) |
+| **PixAI** | parcial | não | não |
+| **OpenArt / Comfy Workflows** | não | **sim**, feitos para ComfyUI | n/a |
+
+Para **workflows** prontos de ComfyUI, os lugares certos são
+`openart.ai/workflows`, `comfyworkflows.com`, a aba *Workflows* do Civitai e os
+templates embutidos (*Workflow → Browse Templates*).
+
+## Trazendo um workflow de fora
+
+O fluxo já está pronto para isso:
+1. Baixe o `.json` (ou arraste o **PNG** gerado pelo ComfyUI — ele carrega o grafo
+   embutido nos metadados).
+2. Ponha em `Workflows/` no repo, ou em `ComfyUI_Data/workflows/` no Drive.
+3. Rode as Células 3 → 4 → 5. Os custom nodes e os modelos conhecidos são
+   resolvidos automaticamente.
+
+> Cuidado com licença: vários modelos de anime têm restrição de uso comercial ou
+> proíbem redistribuição. Se for usar para algo além de teste pessoal, leia a
+> licença na página do modelo.
