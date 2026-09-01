@@ -20,9 +20,11 @@
     "ComfyUI-Custom-Scripts": "https://github.com/pythongosssss/ComfyUI-Custom-Scripts",
     "ComfyUI_essentials": "https://github.com/cubiq/ComfyUI_essentials",
     "ComfyUI-GGUF": "https://github.com/city96/ComfyUI-GGUF",
-    "ComfyUI-TRELLIS2": "https://github.com/PozzettiAndrea/ComfyUI-TRELLIS2",
-    "ComfyUI-SkinToken": "https://github.com/Rizzlord/ComfyUI-SkinToken",
-    "comfyui-deno-custom-nodes": "https://github.com/Deno2026/comfyui-deno-custom-nodes"
+    "comfyui-deno-custom-nodes": "https://github.com/Deno2026/comfyui-deno-custom-nodes",
+    "ComfyUI-Trellis2": "https://github.com/visualbruno/ComfyUI-Trellis2",
+    "ComfyUI-Trellis2-GGUF": "https://github.com/Aero-Ex/ComfyUI-Trellis2-GGUF",
+    "ComfyUI-SkinTokens": "https://github.com/Aero-Ex/ComfyUI-SkinTokens",
+    "Texture_Projection-Nodes": "https://github.com/Aero-Ex/Texture_Projection-Nodes"
   },
   "class_map": {
     "Reroute (rgthree)": "rgthree-comfy",
@@ -75,34 +77,34 @@
     "Fast Groups Muter (rgthree)": "rgthree-comfy",
     "ImageResizeKJv2": "ComfyUI-KJNodes",
     "RTXVideoSuperResolution": "comfyui-deno-custom-nodes",
-    "SkinTokensGenerator": "ComfyUI-SkinToken",
-    "SkinTokensLoadMesh": "ComfyUI-SkinToken",
-    "SkinTokensModelLoader": "ComfyUI-SkinToken",
-    "SkinTokensRigPreviewer": "ComfyUI-SkinToken",
-    "CuMeshUVUnWrap": "ComfyUI-TRELLIS2",
-    "Texture_ProjectionBakeTextures": "ComfyUI-TRELLIS2",
-    "Texture_ProjectionHighToLowBake": "ComfyUI-TRELLIS2",
-    "Texture_ProjectionRenderConditions": "ComfyUI-TRELLIS2",
-    "Trellis2AutoRemesher_GGUF": "ComfyUI-TRELLIS2",
-    "Trellis2DecodeLatents": "ComfyUI-TRELLIS2",
-    "Trellis2DecodeLatents_GGUF": "ComfyUI-TRELLIS2",
-    "Trellis2ExportMesh": "ComfyUI-TRELLIS2",
-    "Trellis2FillHolesNicelyWithMeshlib": "ComfyUI-TRELLIS2",
-    "Trellis2FillHolesWithCuMesh": "ComfyUI-TRELLIS2",
-    "Trellis2ImageCondGenerator": "ComfyUI-TRELLIS2",
-    "Trellis2LoadImageWithTransparency": "ComfyUI-TRELLIS2",
-    "Trellis2LoadMesh": "ComfyUI-TRELLIS2",
-    "Trellis2LoadMesh_GGUF": "ComfyUI-TRELLIS2",
-    "Trellis2LoadModel_GGUF": "ComfyUI-TRELLIS2",
-    "Trellis2MeshTexturing": "ComfyUI-TRELLIS2",
-    "Trellis2MeshWithVoxelToTrimesh": "ComfyUI-TRELLIS2",
-    "Trellis2PreProcessImage": "ComfyUI-TRELLIS2",
-    "Trellis2ReconstructMeshWithQuad": "ComfyUI-TRELLIS2",
-    "Trellis2ShapeCascadeGenerator": "ComfyUI-TRELLIS2",
-    "Trellis2ShapeGenerator": "ComfyUI-TRELLIS2",
-    "Trellis2SimplifyMesh": "ComfyUI-TRELLIS2",
-    "Trellis2SimplifyTrimeshAdvanced": "ComfyUI-TRELLIS2",
-    "Trellis2SparseGenerator": "ComfyUI-TRELLIS2"
+    "SkinTokensGenerator": "ComfyUI-SkinTokens",
+    "SkinTokensLoadMesh": "ComfyUI-SkinTokens",
+    "SkinTokensModelLoader": "ComfyUI-SkinTokens",
+    "SkinTokensRigPreviewer": "ComfyUI-SkinTokens",
+    "CuMeshUVUnWrap": "ComfyUI-Trellis2",
+    "Texture_ProjectionBakeTextures": "Texture_Projection-Nodes",
+    "Texture_ProjectionHighToLowBake": "Texture_Projection-Nodes",
+    "Texture_ProjectionRenderConditions": "Texture_Projection-Nodes",
+    "Trellis2AutoRemesher_GGUF": "ComfyUI-Trellis2-GGUF",
+    "Trellis2DecodeLatents": "ComfyUI-Trellis2",
+    "Trellis2DecodeLatents_GGUF": "ComfyUI-Trellis2-GGUF",
+    "Trellis2ExportMesh": "ComfyUI-Trellis2",
+    "Trellis2FillHolesNicelyWithMeshlib": "ComfyUI-Trellis2",
+    "Trellis2FillHolesWithCuMesh": "ComfyUI-Trellis2",
+    "Trellis2ImageCondGenerator": "ComfyUI-Trellis2",
+    "Trellis2LoadImageWithTransparency": "ComfyUI-Trellis2",
+    "Trellis2LoadMesh": "ComfyUI-Trellis2",
+    "Trellis2LoadMesh_GGUF": "ComfyUI-Trellis2-GGUF",
+    "Trellis2LoadModel_GGUF": "ComfyUI-Trellis2-GGUF",
+    "Trellis2MeshTexturing": "ComfyUI-Trellis2",
+    "Trellis2MeshWithVoxelToTrimesh": "ComfyUI-Trellis2",
+    "Trellis2PreProcessImage": "ComfyUI-Trellis2",
+    "Trellis2ReconstructMeshWithQuad": "ComfyUI-Trellis2",
+    "Trellis2ShapeCascadeGenerator": "ComfyUI-Trellis2",
+    "Trellis2ShapeGenerator": "ComfyUI-Trellis2",
+    "Trellis2SimplifyMesh": "ComfyUI-Trellis2",
+    "Trellis2SimplifyTrimeshAdvanced": "ComfyUI-Trellis2",
+    "Trellis2SparseGenerator": "ComfyUI-Trellis2"
   },
   "native_ignore": [
     "SaveImage",
@@ -121,5 +123,30 @@
     "ImageGridSplit6",
     "ResolutionSelector",
     "FluxKleinOneNode"
-  ]
+  ],
+  "pack_extras": {
+    "ComfyUI-SkinTokens": {
+      "apt": [
+        "blender"
+      ],
+      "note": "precisa Blender 4.2+; install.py baixa os ckpt"
+    },
+    "ComfyUI-Trellis2-GGUF": {
+      "hf_models": [
+        {
+          "repo_url": "https://huggingface.co/PIA-SPACE-LAB/dinov3-vitl-pretrain-lvd1689m",
+          "files": [
+            "model.safetensors",
+            "config.json",
+            "preprocessor_config.json"
+          ],
+          "dest": "facebook/dinov3-vitl16-pretrain-lvd1689m"
+        }
+      ],
+      "note": "wheels dos .bat sao win_amd64; no Colab compila via install.py"
+    },
+    "ComfyUI-Trellis2": {
+      "note": "compila cumesh/nvdiffrast/flex_gemm/o_voxel; demora"
+    }
+  }
 }

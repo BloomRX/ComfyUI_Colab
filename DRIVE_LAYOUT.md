@@ -94,3 +94,75 @@ Sua estimativa de 6 GB não bate com o que os workflows pedem:
 
 Ou seja: mais um motivo forte para uma sessão por workflow — e o `Mesh_Processing`
 não é questão de organização, é questão de não caber mesmo em GPU pequena.
+
+---
+
+# Como rodar o notebook no Colab
+
+**Direto do Git, sem baixar nada.** Abra:
+
+```
+https://colab.research.google.com/github/BloomRX/ComfyUI_Collab/blob/arena/01a05a82-comfyui-collab/notebooks/ComfyUI_Colab_Limpo.ipynb
+```
+
+Regra: troque `github.com` por `colab.research.google.com/github`.
+
+Isso abre em **modo leitura** — roda normalmente, mas `Ctrl+S` não volta para o Git.
+Para manter suas edições: *Arquivo → Salvar uma cópia no Drive*.
+
+Você **não precisa** editar o notebook para adicionar workflows (veja abaixo), então
+na prática dá para sempre abrir pelo link do GitHub e ter a versão mais recente.
+
+O notebook clona este repo dentro do Colab, então workflows e registry chegam
+sempre atualizados sem você mexer em nada.
+
+---
+
+# Adicionar workflows depois — sem me avisar
+
+O notebook se adapta sozinho. Fluxo:
+
+1. Commite o `.json` em `Workflows/` (ou solte em `ComfyUI_Data/workflows/` no Drive).
+2. Rode as células. Ele aparece na lista da Célula 3 automaticamente.
+
+Para descobrir os custom nodes, há **três camadas**, nesta ordem:
+
+| Camada | O que é | Cobre |
+|---|---|---|
+| 1. `config/node_registry.json` | mapa curado, com deps extras (Blender, DINOv3...) | seus 3 workflows, 100% |
+| 2. `extension-node-map.json` do Manager | ~2.3 MB, milhares de nodes da comunidade | quase todo node público |
+| 3. Manager na UI | *Install Missing Custom Nodes* | o resto |
+
+A camada 2 é o que faz a adaptação automática: um node que eu nunca vi, mas que existe
+no ecossistema, é resolvido sem intervenção. Na Célula 3 ele aparece marcado `(auto: ...)`.
+Se nem o Manager conhecer, aparece `[!] sem fonte` e aí é instalação manual.
+
+**Quando me chamar:** só se o node precisar de algo além de `git clone` +
+`requirements.txt` — como o SkinTokens, que precisa de Blender via `apt`, ou o
+Trellis2-GGUF, que precisa dos pesos do DINOv3. Essas coisas ficam em `pack_extras`
+no registry, e são o único caso que exige curadoria.
+
+---
+
+# O que os installers do tutorial revelaram
+
+Os `.bat` são para **ComfyUI Easy Install no Windows** (`python_embeded`, wheels
+`win_amd64`, PATH do Blender). Nada disso roda no Colab. Mas eles corrigiram os
+repositórios — meu chute inicial estava errado:
+
+| Antes (errado) | Correto, segundo o `.bat` |
+|---|---|
+| `PozzettiAndrea/ComfyUI-TRELLIS2` | `visualbruno/ComfyUI-Trellis2` (wheels) + `Aero-Ex/ComfyUI-Trellis2-GGUF` (nodes `*_GGUF`) |
+| `Rizzlord/ComfyUI-SkinToken` | `Aero-Ex/ComfyUI-SkinTokens` |
+| *(faltando)* | `Aero-Ex/Texture_Projection-Nodes` |
+
+Também extraí dos `.bat` e coloquei em `pack_extras`:
+- **DINOv3** (`PIA-SPACE-LAB/dinov3-vitl-pretrain-lvd1689m`) → baixado para
+  `models/facebook/dinov3-vitl16-pretrain-lvd1689m/`, exigido pelo Trellis2-GGUF.
+- **Blender** → instalado via `apt` quando o SkinTokens é selecionado.
+
+O que **não** dá para portar: as wheels pré-compiladas (`cumesh`, `nvdiffrast`,
+`flex_gemm`, `o_voxel`, `flash_attn`) são todas `cp312-win_amd64`. No Linux o
+`install.py` precisa compilar — é lento e pode falhar. Alvo do `.bat` é
+Torch 2.8.0 + CUDA 12.8 + Python 3.12; se o Colab divergir muito disso, o Trellis2
+é o primeiro a quebrar.
