@@ -240,5 +240,14 @@
     "Detailer-KREA2.safetensors": "LoRA de detalhe opcional (nao esta no repo oficial Comfy-Org/Krea-2). Bypasse o LoraLoaderModelOnly ou procure no Manager > Model Manager.",
     "Alb_LoRaV3_000004750.safetensors": "LoRA custom do autor do tutorial; normalmente distribuida no Patreon/Discord dele.",
     "flux-2-klein-9b.safetensors": "9B; junto com qwen_3_8b nao cabe na RAM de 13 GB do Colab T4."
-  }
+  },
+  "never_install": [
+    "ComfyUI",
+    "comfyui",
+    "ComfyUI-Manager",
+    "comfyui-manager",
+    "ComfyUI_frontend",
+    "comfyui-frontend",
+    "ComfyUI-frontend"
+  ]
 }

@@ -529,3 +529,38 @@ o runtime reinicia. Depois é só reexecutar a Célula 5.
 3. `pedir_token()` na hora
 
 Sem nenhum dos três, a célula avisa e segue baixando só o que é público.
+
+---
+
+# `IMPORT FAILED: custom_nodes/ComfyUI`
+
+Erro no log:
+
+```
+FileNotFoundError: '/content/ComfyUI/custom_nodes/ComfyUI/__init__.py'
+Cannot import /content/ComfyUI/custom_nodes/ComfyUI module for custom nodes
+0.0 seconds (IMPORT FAILED): /content/ComfyUI/custom_nodes/ComfyUI
+```
+
+Causa: no `extension-node-map.json` do Manager, os nós **do core** aparecem
+apontando para o repo `comfyanonymous/ComfyUI`. O auto-resolve pegava esse link,
+extraía o basename `ComfyUI` e clonava para `custom_nodes/ComfyUI` — uma cópia do
+ComfyUI inteiro dentro da pasta de custom nodes. Sem `__init__.py` na raiz, o
+import falha.
+
+Era inofensivo (só barulho no log), mas desperdiçava download e podia confundir.
+
+Correções:
+- Lista `never_install` no registry (`ComfyUI`, `ComfyUI-Manager`, frontend).
+- `resolve()` devolve `None` para qualquer coisa que aponte para o repo do core.
+- A Célula 4 **apaga** `custom_nodes/ComfyUI` inválido, se já existir.
+
+## Custom nodes "sobrando" no log
+
+O log também mostrou `ComfyUI-Impact-Pack` e `ComfyUI-Impact-Subpack` carregando,
+mesmo sem estarem nos workflows selecionados. Isso é esperado: o notebook só
+desativa o que ele mesmo instalou naquela sessão. Nodes instalados **pela UI do
+Manager** ficam ativos até você desativá-los.
+
+Se quiser sessão 100% limpa, rode a Célula 4 de novo — ela renomeia para
+`.disabled` tudo que não pertence aos workflows marcados.
