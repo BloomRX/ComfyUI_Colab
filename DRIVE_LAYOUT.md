@@ -302,7 +302,35 @@ já existe. Para o `CharDesignandPartSplitting`:
 - **`Detailer-KREA2`** — LoRA de detalhe, não está no repo oficial. Bypasse o
   `LoraLoaderModelOnly` (Ctrl+B) ou procure no Manager → Model Manager.
 
-**Regra prática:** modelo em repo público conhecido → me avise que eu ponho em
-`workflow_models` e passa a baixar sozinho. Modelo de Patreon/Discord/civitai
-privado → baixe manualmente e jogue na pasta certa do Drive; use a `URL_EXTRA`
-da Célula 5 se tiver link direto.
+### Workflows futuros: a Célula 5 se adapta sozinha
+
+Você estava certo em desconfiar — na primeira versão, `workflow_models` era uma
+lista fixa e um workflow novo não baixaria nada. Agora são **três camadas**, igual
+ao que já fazemos com custom nodes:
+
+| Camada | O que faz | Cobre |
+|---|---|---|
+| 1. `workflow_models` no registry | curado por mim, com notas e `optional` | seus workflows atuais |
+| 2. `model-list.json` do Manager | ~281 KB, milhares de modelos conhecidos | SDXL, VAEs, upscalers, ControlNets, Flux... |
+| 3. Aviso explícito | lista o que sobrou e por quê | LoRA de Patreon, arquivo privado |
+
+Como a camada 2 funciona: a célula varre o JSON do workflow atrás de qualquer
+string terminada em `.safetensors`, `.ckpt`, `.gguf`, `.pt`, `.pth`, `.bin`, `.onnx`,
+pega o nome do arquivo e procura na base do Manager. Achou, baixa para a pasta
+certa (deduz de `save_path`/`type`) e marca `[auto]` no log.
+
+Testado com um workflow inventado: resolveu `sd_xl_base_1.0` e `4x-UltraSharp`
+sozinho, detectou que o VAE já existia no Drive e **não** rebaixou, e listou só a
+LoRA fictícia como sem fonte.
+
+Também há **deduplicação por nome em todo o `models/`**: se o arquivo já está no
+Drive em qualquer subpasta, ele pula — não importa se você baixou pelo Manager,
+manualmente ou por outro workflow.
+
+`SO_LISTAR = True` mostra o plano sem baixar nada. Use antes de um workflow pesado
+para ver quantos GB vão entrar.
+
+**Quando ainda me chamar:** só se o modelo não estiver na base do Manager e vier de
+uma fonte pública estável — aí eu adiciono em `workflow_models` com a URL e uma nota.
+Modelo de Patreon/Discord/civitai privado nunca dá para automatizar: baixe manual,
+ou use `URL_EXTRA` + `PASTA_EXTRA` na Célula 5 se tiver link direto.
