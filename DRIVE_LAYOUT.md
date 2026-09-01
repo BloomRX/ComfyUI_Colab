@@ -366,3 +366,41 @@ Detalhes do downloader próprio (substitui o `wget`):
 Comandos (`git clone`, `pip`, `install.py`) mostram uma barra viva com a última
 linha do log ao lado. **Se falhar, aí sim imprime as últimas 12 linhas** — silencioso
 quando dá certo, verboso quando quebra, que é quando você precisa.
+
+---
+
+# Checagem de ambiente (GPU x CPU) na Célula 6
+
+Antes de subir o servidor, a Célula 6 imprime um resumo:
+
+```
+================================================================
+  AMBIENTE DE EXECUCAO
+================================================================
+  Acelerador : GPU — Tesla T4
+  VRAM       : 15360 MB
+  PyTorch    : 2.11.0+cu128  | CUDA disponivel: True
+  RAM        : 12.9 GB   | Disco livre: 78.2 GB
+================================================================
+```
+
+**Com GPU:** segue direto, sem perguntar nada.
+
+**Sem GPU:** explica as consequências e **pergunta antes de ligar**, com dois botões
+(*Sim, ligar em CPU* / *Não, vou trocar para GPU*). Sem resposta em 120s, não liga.
+Fora do Colab cai para `input()`; sem stdin, cancela — nunca sobe por acidente.
+
+O aviso é específico, não genérico:
+- geração ~20x a 100x mais lenta;
+- Trellis2 e SkinTokens **não rodam** em CPU (dependem de kernels CUDA);
+- Krea-2 / Flux2 provavelmente estouram a RAM.
+
+Detecção cruzada: `nvidia-smi` **e** `torch.cuda.is_available()`. Se o `nvidia-smi`
+enxerga a placa mas o torch não acessa CUDA, isso é dito explicitamente — é um caso
+real (torch CPU-only instalado por engano) que passaria despercebido.
+
+Quando o modo CPU é confirmado, o notebook adiciona **`--cpu`** ao `main.py`.
+Sem essa flag o ComfyUI tenta inicializar CUDA e quebra no boot.
+
+> Trocar o ambiente **reinicia a sessão**: é preciso rodar as células 1..5 de novo.
+> Nada que já esteja no Drive é baixado outra vez, então costuma ser rápido.
