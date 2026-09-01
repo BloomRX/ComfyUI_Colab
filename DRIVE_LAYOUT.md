@@ -847,3 +847,75 @@ Para a trilha comum + Live2D, selecione na Celula 3:
 Cuidado: o `Efaces_Pony_XL_V01` traz **14 packs** e e o mais propenso a conflito
 de dependencias (numpy/opencv). Se der erro de import, rode-o **sozinho**, em
 sessao separada dos outros.
+
+---
+
+# WaifuVroid.json — character sheet de 4 angulos
+
+Workflow proprio deste repo (nao veio do tutorial). Gera o **mesmo personagem em
+4 angulos** — front, 3/4, side, back — para servir de referencia de modelagem.
+
+**Zero custom nodes.** So nos nativos: `CheckpointLoaderSimple`, `LoraLoader`,
+`CLIPTextEncode`, `ConditioningConcat`, `EmptyLatentImage`, `KSampler`,
+`VAEDecode`, `SaveImage`. Roda em qualquer ComfyUI limpo.
+
+## Como funciona
+
+O truque esta no `ConditioningConcat`. A **identidade** do personagem e
+codificada **uma unica vez** (no no 3) e reaproveitada nos 4 ramos; so o trecho
+do **angulo** muda e e concatenado depois. Isso garante que o texto de identidade
+seja byte-a-byte identico nos quatro — se voce escrevesse quatro prompts
+completos, pequenas diferencas de tokenizacao ja fariam o personagem escorregar.
+
+Combinado com a **mesma seed** nos 4 KSamplers, e o maximo de consistencia que
+da para conseguir sem LoRA.
+
+## Como usar
+
+1. No **no 1**, escolha o checkpoint (anime SDXL — `waiIllustriousSDXL_v160`,
+   Pony, etc).
+2. No **no 3**, escreva a identidade do personagem. **Nao** escreva angulo ali.
+3. Rode. Gostou de um resultado? Copie a seed e coloque nos 4 KSamplers.
+4. Quando tiver a LoRA do personagem, selecione no **no 2** — a consistencia
+   melhora muito.
+
+Fundo branco e luz chapada sao propositais: isso e **referencia para modelagem**,
+nao arte final. Sombra dura atrapalha na hora de modelar.
+
+Custo no T4: 832x1216 x4 = ~2-3 min. Faltou VRAM? Use 768x1152.
+
+## "Preciso gerar as partes separadas para o VRoid?"
+
+**Nao.** Essa e a confusao mais comum, e vale entender a diferenca:
+
+| | Live2D (Cubism) | 3D / VRM (VRoid) |
+|---|---|---|
+| Precisa de partes separadas? | **Sim** — PNGs com alpha, camada por camada | **Nao** |
+| O que o ComfyUI entrega | os recortes de fato | so **referencia visual** |
+| Workflow | `CharDesignandPartSplitting` | `WaifuVroid` |
+
+No **Live2D** as partes recortadas *sao* o material final — elas viram camadas
+que o rig move. Por isso existe o `CharDesignandPartSplitting`.
+
+No **VRoid** e outra logica: voce nao monta a personagem colando imagens. Voce
+**esculpe** a malha e **pinta** a textura dentro do proprio VRoid, usando presets
+(blazer, saia plissada, meia knee-high ja existem prontos). A imagem do ComfyUI
+serve so para voce **olhar enquanto modela** — igual a um artista com a
+referencia aberta na segunda tela.
+
+Uma imagem 2D recortada nao ajuda a modelar 3D. O que ajuda e ver **o mesmo
+personagem de varios angulos**, para entender o volume. E exatamente o que o
+`WaifuVroid` entrega.
+
+**Onde o ComfyUI ainda ajuda no 3D:**
+- **Referencia de angulos** — o `WaifuVroid` (este workflow).
+- **Close-ups de detalhe** — rosto, brasao, acessorio. Rode o workflow mudando o
+  texto do angulo para `close-up of face` / `close-up of the emblem`. Util para
+  pintar detalhe pequeno na textura.
+- **Texturas planas** — padrao de tecido, estampa, o brasao isolado em fundo
+  branco para importar como decal.
+- **Pele** — o `Skintoken` faz isso, mas exige Blender no PATH.
+
+O que o ComfyUI **nao** faz: gerar a malha rigada. `Mesh_Processing` (Trellis2)
+produz malha bruta, sem esqueleto nem blendshapes — e nao roda em T4. Para uma
+waifu de companhia o VRoid continua o caminho mais curto.

@@ -1,0 +1,1476 @@
+{
+  "id": "waifu-vroid-0001",
+  "revision": 0,
+  "last_node_id": 26,
+  "last_link_id": 44,
+  "nodes": [
+    {
+      "id": 1,
+      "type": "CheckpointLoaderSimple",
+      "pos": [
+        40,
+        40
+      ],
+      "size": [
+        340,
+        98
+      ],
+      "flags": {},
+      "order": 0,
+      "mode": 0,
+      "inputs": [],
+      "outputs": [
+        {
+          "name": "MODEL",
+          "type": "MODEL",
+          "links": [
+            1
+          ],
+          "slot_index": 0
+        },
+        {
+          "name": "CLIP",
+          "type": "CLIP",
+          "links": [
+            2
+          ],
+          "slot_index": 0
+        },
+        {
+          "name": "VAE",
+          "type": "VAE",
+          "links": [
+            13,
+            23,
+            33,
+            43
+          ],
+          "slot_index": 0
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "CheckpointLoaderSimple"
+      },
+      "widgets_values": [
+        "waiIllustriousSDXL_v160.safetensors"
+      ],
+      "title": "1. Checkpoint (troque aqui)"
+    },
+    {
+      "id": 2,
+      "type": "LoraLoader",
+      "pos": [
+        40,
+        190
+      ],
+      "size": [
+        340,
+        126
+      ],
+      "flags": {},
+      "order": 0,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "model",
+          "type": "MODEL",
+          "link": 1
+        },
+        {
+          "name": "clip",
+          "type": "CLIP",
+          "link": 2
+        }
+      ],
+      "outputs": [
+        {
+          "name": "MODEL",
+          "type": "MODEL",
+          "links": [
+            8,
+            18,
+            28,
+            38
+          ],
+          "slot_index": 0
+        },
+        {
+          "name": "CLIP",
+          "type": "CLIP",
+          "links": [
+            3,
+            4,
+            5,
+            15,
+            25,
+            35
+          ],
+          "slot_index": 0
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "LoraLoader"
+      },
+      "widgets_values": [
+        "None",
+        0.85,
+        0.85
+      ],
+      "title": "2. LoRA do personagem (None = desligado)"
+    },
+    {
+      "id": 3,
+      "type": "CLIPTextEncode",
+      "pos": [
+        40,
+        370
+      ],
+      "size": [
+        430,
+        260
+      ],
+      "flags": {},
+      "order": 0,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "clip",
+          "type": "CLIP",
+          "link": 3
+        }
+      ],
+      "outputs": [
+        {
+          "name": "CONDITIONING",
+          "type": "CONDITIONING",
+          "links": [
+            6,
+            16,
+            26,
+            36
+          ],
+          "slot_index": 0
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "CLIPTextEncode"
+      },
+      "widgets_values": [
+        "1girl, solo, long wavy magenta hair, parted bangs, hair clip, crimson pink eyes, detailed eyes, black blazer, open blazer, white collared shirt, wine red ribbon bow, wine red pleated skirt, high waist skirt, gold buttons, black knee-high socks, black loafers, full body, standing, arms at sides, simple background, white background, flat lighting, no shadows, character reference sheet, masterpiece, best quality, very aesthetic, absurdres"
+      ],
+      "title": "3. IDENTIDADE (edite so aqui)",
+      "color": "#232",
+      "bgcolor": "#232"
+    },
+    {
+      "id": 4,
+      "type": "CLIPTextEncode",
+      "pos": [
+        40,
+        670
+      ],
+      "size": [
+        430,
+        220
+      ],
+      "flags": {},
+      "order": 0,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "clip",
+          "type": "CLIP",
+          "link": 4
+        }
+      ],
+      "outputs": [
+        {
+          "name": "CONDITIONING",
+          "type": "CONDITIONING",
+          "links": [
+            10,
+            20,
+            30,
+            40
+          ],
+          "slot_index": 0
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "CLIPTextEncode"
+      },
+      "widgets_values": [
+        "pantyhose, thighhighs, bare legs, short hair, twintails, ponytail, blonde hair, red hair, heterochromia, plain skirt, long skirt, necktie, dynamic pose, perspective, foreshortening, cropped, out of frame, dramatic lighting, hard shadows, busy background, extra fingers, bad hands, bad anatomy, watermark, signature, text, lowres, jpeg artifacts, blurry"
+      ],
+      "title": "4. Negative",
+      "color": "#322",
+      "bgcolor": "#322"
+    },
+    {
+      "id": 5,
+      "type": "EmptyLatentImage",
+      "pos": [
+        40,
+        930
+      ],
+      "size": [
+        340,
+        106
+      ],
+      "flags": {},
+      "order": 0,
+      "mode": 0,
+      "inputs": [],
+      "outputs": [
+        {
+          "name": "LATENT",
+          "type": "LATENT",
+          "links": [
+            11,
+            21,
+            31,
+            41
+          ],
+          "slot_index": 0
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "EmptyLatentImage"
+      },
+      "widgets_values": [
+        832,
+        1216,
+        1
+      ],
+      "title": "5. Resolucao"
+    },
+    {
+      "id": 6,
+      "type": "CLIPTextEncode",
+      "pos": [
+        530,
+        40
+      ],
+      "size": [
+        400,
+        120
+      ],
+      "flags": {},
+      "order": 0,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "clip",
+          "type": "CLIP",
+          "link": 5
+        }
+      ],
+      "outputs": [
+        {
+          "name": "CONDITIONING",
+          "type": "CONDITIONING",
+          "links": [
+            7
+          ],
+          "slot_index": 0
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "CLIPTextEncode"
+      },
+      "widgets_values": [
+        "front view, facing viewer, symmetrical"
+      ],
+      "title": "Angulo 1: front"
+    },
+    {
+      "id": 7,
+      "type": "ConditioningConcat",
+      "pos": [
+        530,
+        200
+      ],
+      "size": [
+        340,
+        46
+      ],
+      "flags": {},
+      "order": 0,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "conditioning_to",
+          "type": "CONDITIONING",
+          "link": 6
+        },
+        {
+          "name": "conditioning_from",
+          "type": "CONDITIONING",
+          "link": 7
+        }
+      ],
+      "outputs": [
+        {
+          "name": "CONDITIONING",
+          "type": "CONDITIONING",
+          "links": [
+            9
+          ],
+          "slot_index": 0
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "ConditioningConcat"
+      },
+      "widgets_values": []
+    },
+    {
+      "id": 8,
+      "type": "KSampler",
+      "pos": [
+        530,
+        290
+      ],
+      "size": [
+        340,
+        262
+      ],
+      "flags": {},
+      "order": 0,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "model",
+          "type": "MODEL",
+          "link": 8
+        },
+        {
+          "name": "positive",
+          "type": "CONDITIONING",
+          "link": 9
+        },
+        {
+          "name": "negative",
+          "type": "CONDITIONING",
+          "link": 10
+        },
+        {
+          "name": "latent_image",
+          "type": "LATENT",
+          "link": 11
+        }
+      ],
+      "outputs": [
+        {
+          "name": "LATENT",
+          "type": "LATENT",
+          "links": [
+            12
+          ],
+          "slot_index": 0
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "KSampler"
+      },
+      "widgets_values": [
+        777,
+        "fixed",
+        28,
+        7.0,
+        "dpmpp_2m",
+        "karras",
+        1.0
+      ],
+      "title": "KSampler front (SEED IGUAL)"
+    },
+    {
+      "id": 9,
+      "type": "VAEDecode",
+      "pos": [
+        530,
+        590
+      ],
+      "size": [
+        210,
+        46
+      ],
+      "flags": {},
+      "order": 0,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "samples",
+          "type": "LATENT",
+          "link": 12
+        },
+        {
+          "name": "vae",
+          "type": "VAE",
+          "link": 13
+        }
+      ],
+      "outputs": [
+        {
+          "name": "IMAGE",
+          "type": "IMAGE",
+          "links": [
+            14
+          ],
+          "slot_index": 0
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "VAEDecode"
+      },
+      "widgets_values": []
+    },
+    {
+      "id": 10,
+      "type": "SaveImage",
+      "pos": [
+        530,
+        670
+      ],
+      "size": [
+        400,
+        450
+      ],
+      "flags": {},
+      "order": 0,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "images",
+          "type": "IMAGE",
+          "link": 14
+        }
+      ],
+      "outputs": [],
+      "properties": {
+        "Node name for S&R": "SaveImage"
+      },
+      "widgets_values": [
+        "waifu_vroid/front"
+      ],
+      "title": "Salva front"
+    },
+    {
+      "id": 11,
+      "type": "CLIPTextEncode",
+      "pos": [
+        960,
+        40
+      ],
+      "size": [
+        400,
+        120
+      ],
+      "flags": {},
+      "order": 0,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "clip",
+          "type": "CLIP",
+          "link": 15
+        }
+      ],
+      "outputs": [
+        {
+          "name": "CONDITIONING",
+          "type": "CONDITIONING",
+          "links": [
+            17
+          ],
+          "slot_index": 0
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "CLIPTextEncode"
+      },
+      "widgets_values": [
+        "three-quarter view, facing slightly to the side"
+      ],
+      "title": "Angulo 2: three_quarter"
+    },
+    {
+      "id": 12,
+      "type": "ConditioningConcat",
+      "pos": [
+        960,
+        200
+      ],
+      "size": [
+        340,
+        46
+      ],
+      "flags": {},
+      "order": 0,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "conditioning_to",
+          "type": "CONDITIONING",
+          "link": 16
+        },
+        {
+          "name": "conditioning_from",
+          "type": "CONDITIONING",
+          "link": 17
+        }
+      ],
+      "outputs": [
+        {
+          "name": "CONDITIONING",
+          "type": "CONDITIONING",
+          "links": [
+            19
+          ],
+          "slot_index": 0
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "ConditioningConcat"
+      },
+      "widgets_values": []
+    },
+    {
+      "id": 13,
+      "type": "KSampler",
+      "pos": [
+        960,
+        290
+      ],
+      "size": [
+        340,
+        262
+      ],
+      "flags": {},
+      "order": 0,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "model",
+          "type": "MODEL",
+          "link": 18
+        },
+        {
+          "name": "positive",
+          "type": "CONDITIONING",
+          "link": 19
+        },
+        {
+          "name": "negative",
+          "type": "CONDITIONING",
+          "link": 20
+        },
+        {
+          "name": "latent_image",
+          "type": "LATENT",
+          "link": 21
+        }
+      ],
+      "outputs": [
+        {
+          "name": "LATENT",
+          "type": "LATENT",
+          "links": [
+            22
+          ],
+          "slot_index": 0
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "KSampler"
+      },
+      "widgets_values": [
+        777,
+        "fixed",
+        28,
+        7.0,
+        "dpmpp_2m",
+        "karras",
+        1.0
+      ],
+      "title": "KSampler three_quarter (SEED IGUAL)"
+    },
+    {
+      "id": 14,
+      "type": "VAEDecode",
+      "pos": [
+        960,
+        590
+      ],
+      "size": [
+        210,
+        46
+      ],
+      "flags": {},
+      "order": 0,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "samples",
+          "type": "LATENT",
+          "link": 22
+        },
+        {
+          "name": "vae",
+          "type": "VAE",
+          "link": 23
+        }
+      ],
+      "outputs": [
+        {
+          "name": "IMAGE",
+          "type": "IMAGE",
+          "links": [
+            24
+          ],
+          "slot_index": 0
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "VAEDecode"
+      },
+      "widgets_values": []
+    },
+    {
+      "id": 15,
+      "type": "SaveImage",
+      "pos": [
+        960,
+        670
+      ],
+      "size": [
+        400,
+        450
+      ],
+      "flags": {},
+      "order": 0,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "images",
+          "type": "IMAGE",
+          "link": 24
+        }
+      ],
+      "outputs": [],
+      "properties": {
+        "Node name for S&R": "SaveImage"
+      },
+      "widgets_values": [
+        "waifu_vroid/three_quarter"
+      ],
+      "title": "Salva three_quarter"
+    },
+    {
+      "id": 16,
+      "type": "CLIPTextEncode",
+      "pos": [
+        1390,
+        40
+      ],
+      "size": [
+        400,
+        120
+      ],
+      "flags": {},
+      "order": 0,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "clip",
+          "type": "CLIP",
+          "link": 25
+        }
+      ],
+      "outputs": [
+        {
+          "name": "CONDITIONING",
+          "type": "CONDITIONING",
+          "links": [
+            27
+          ],
+          "slot_index": 0
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "CLIPTextEncode"
+      },
+      "widgets_values": [
+        "from side, profile view, facing left"
+      ],
+      "title": "Angulo 3: side"
+    },
+    {
+      "id": 17,
+      "type": "ConditioningConcat",
+      "pos": [
+        1390,
+        200
+      ],
+      "size": [
+        340,
+        46
+      ],
+      "flags": {},
+      "order": 0,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "conditioning_to",
+          "type": "CONDITIONING",
+          "link": 26
+        },
+        {
+          "name": "conditioning_from",
+          "type": "CONDITIONING",
+          "link": 27
+        }
+      ],
+      "outputs": [
+        {
+          "name": "CONDITIONING",
+          "type": "CONDITIONING",
+          "links": [
+            29
+          ],
+          "slot_index": 0
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "ConditioningConcat"
+      },
+      "widgets_values": []
+    },
+    {
+      "id": 18,
+      "type": "KSampler",
+      "pos": [
+        1390,
+        290
+      ],
+      "size": [
+        340,
+        262
+      ],
+      "flags": {},
+      "order": 0,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "model",
+          "type": "MODEL",
+          "link": 28
+        },
+        {
+          "name": "positive",
+          "type": "CONDITIONING",
+          "link": 29
+        },
+        {
+          "name": "negative",
+          "type": "CONDITIONING",
+          "link": 30
+        },
+        {
+          "name": "latent_image",
+          "type": "LATENT",
+          "link": 31
+        }
+      ],
+      "outputs": [
+        {
+          "name": "LATENT",
+          "type": "LATENT",
+          "links": [
+            32
+          ],
+          "slot_index": 0
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "KSampler"
+      },
+      "widgets_values": [
+        777,
+        "fixed",
+        28,
+        7.0,
+        "dpmpp_2m",
+        "karras",
+        1.0
+      ],
+      "title": "KSampler side (SEED IGUAL)"
+    },
+    {
+      "id": 19,
+      "type": "VAEDecode",
+      "pos": [
+        1390,
+        590
+      ],
+      "size": [
+        210,
+        46
+      ],
+      "flags": {},
+      "order": 0,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "samples",
+          "type": "LATENT",
+          "link": 32
+        },
+        {
+          "name": "vae",
+          "type": "VAE",
+          "link": 33
+        }
+      ],
+      "outputs": [
+        {
+          "name": "IMAGE",
+          "type": "IMAGE",
+          "links": [
+            34
+          ],
+          "slot_index": 0
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "VAEDecode"
+      },
+      "widgets_values": []
+    },
+    {
+      "id": 20,
+      "type": "SaveImage",
+      "pos": [
+        1390,
+        670
+      ],
+      "size": [
+        400,
+        450
+      ],
+      "flags": {},
+      "order": 0,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "images",
+          "type": "IMAGE",
+          "link": 34
+        }
+      ],
+      "outputs": [],
+      "properties": {
+        "Node name for S&R": "SaveImage"
+      },
+      "widgets_values": [
+        "waifu_vroid/side"
+      ],
+      "title": "Salva side"
+    },
+    {
+      "id": 21,
+      "type": "CLIPTextEncode",
+      "pos": [
+        1820,
+        40
+      ],
+      "size": [
+        400,
+        120
+      ],
+      "flags": {},
+      "order": 0,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "clip",
+          "type": "CLIP",
+          "link": 35
+        }
+      ],
+      "outputs": [
+        {
+          "name": "CONDITIONING",
+          "type": "CONDITIONING",
+          "links": [
+            37
+          ],
+          "slot_index": 0
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "CLIPTextEncode"
+      },
+      "widgets_values": [
+        "from behind, back view, facing away from viewer"
+      ],
+      "title": "Angulo 4: back"
+    },
+    {
+      "id": 22,
+      "type": "ConditioningConcat",
+      "pos": [
+        1820,
+        200
+      ],
+      "size": [
+        340,
+        46
+      ],
+      "flags": {},
+      "order": 0,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "conditioning_to",
+          "type": "CONDITIONING",
+          "link": 36
+        },
+        {
+          "name": "conditioning_from",
+          "type": "CONDITIONING",
+          "link": 37
+        }
+      ],
+      "outputs": [
+        {
+          "name": "CONDITIONING",
+          "type": "CONDITIONING",
+          "links": [
+            39
+          ],
+          "slot_index": 0
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "ConditioningConcat"
+      },
+      "widgets_values": []
+    },
+    {
+      "id": 23,
+      "type": "KSampler",
+      "pos": [
+        1820,
+        290
+      ],
+      "size": [
+        340,
+        262
+      ],
+      "flags": {},
+      "order": 0,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "model",
+          "type": "MODEL",
+          "link": 38
+        },
+        {
+          "name": "positive",
+          "type": "CONDITIONING",
+          "link": 39
+        },
+        {
+          "name": "negative",
+          "type": "CONDITIONING",
+          "link": 40
+        },
+        {
+          "name": "latent_image",
+          "type": "LATENT",
+          "link": 41
+        }
+      ],
+      "outputs": [
+        {
+          "name": "LATENT",
+          "type": "LATENT",
+          "links": [
+            42
+          ],
+          "slot_index": 0
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "KSampler"
+      },
+      "widgets_values": [
+        777,
+        "fixed",
+        28,
+        7.0,
+        "dpmpp_2m",
+        "karras",
+        1.0
+      ],
+      "title": "KSampler back (SEED IGUAL)"
+    },
+    {
+      "id": 24,
+      "type": "VAEDecode",
+      "pos": [
+        1820,
+        590
+      ],
+      "size": [
+        210,
+        46
+      ],
+      "flags": {},
+      "order": 0,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "samples",
+          "type": "LATENT",
+          "link": 42
+        },
+        {
+          "name": "vae",
+          "type": "VAE",
+          "link": 43
+        }
+      ],
+      "outputs": [
+        {
+          "name": "IMAGE",
+          "type": "IMAGE",
+          "links": [
+            44
+          ],
+          "slot_index": 0
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "VAEDecode"
+      },
+      "widgets_values": []
+    },
+    {
+      "id": 25,
+      "type": "SaveImage",
+      "pos": [
+        1820,
+        670
+      ],
+      "size": [
+        400,
+        450
+      ],
+      "flags": {},
+      "order": 0,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "images",
+          "type": "IMAGE",
+          "link": 44
+        }
+      ],
+      "outputs": [],
+      "properties": {
+        "Node name for S&R": "SaveImage"
+      },
+      "widgets_values": [
+        "waifu_vroid/back"
+      ],
+      "title": "Salva back"
+    },
+    {
+      "id": 26,
+      "type": "Note",
+      "pos": [
+        530,
+        1140
+      ],
+      "size": [
+        880,
+        420
+      ],
+      "flags": {},
+      "order": 0,
+      "mode": 0,
+      "inputs": [],
+      "outputs": [],
+      "properties": {
+        "Node name for S&R": "Note"
+      },
+      "widgets_values": [
+        "WaifuVroid - character sheet 4 angulos\n\nCOMO USAR\n1. No no 1 escolha o checkpoint (anime SDXL: waiIllustrious, Pony, etc).\n2. No no 3 escreva a identidade do personagem. NAO escreva angulo aqui.\n3. Rode. Se gostar de um resultado, copie a seed e ponha nos 4 KSamplers.\n4. Os 4 KSamplers precisam da MESMA seed - e isso que segura a consistencia.\n\nPOR QUE FUNCIONA\nA identidade e codificada UMA vez (no 3) e o angulo entra por\nConditioningConcat. Assim o texto da identidade e identico nos 4,\ne so o trecho do angulo muda.\n\nLORA\nCom lora_name = None o no 2 so repassa. Quando voce treinar a LoRA do\npersonagem, selecione ela ali e a consistencia melhora MUITO.\n\nFUNDO BRANCO E LUZ CHAPADA sao de proposito: isso e referencia para\nmodelagem, nao arte final. Sombra dura atrapalha na hora de modelar.\n\nSO NOS NATIVOS - nao precisa de nenhum custom node.\n\nT4: 832x1216 x4 ~ 2-3 min. Se faltar VRAM, use 768x1152."
+      ],
+      "title": "LEIA",
+      "color": "#432",
+      "bgcolor": "#432"
+    }
+  ],
+  "links": [
+    [
+      1,
+      1,
+      0,
+      2,
+      0,
+      "MODEL"
+    ],
+    [
+      2,
+      1,
+      1,
+      2,
+      1,
+      "CLIP"
+    ],
+    [
+      3,
+      2,
+      1,
+      3,
+      0,
+      "CLIP"
+    ],
+    [
+      4,
+      2,
+      1,
+      4,
+      0,
+      "CLIP"
+    ],
+    [
+      5,
+      2,
+      1,
+      6,
+      0,
+      "CLIP"
+    ],
+    [
+      6,
+      3,
+      0,
+      7,
+      0,
+      "CONDITIONING"
+    ],
+    [
+      7,
+      6,
+      0,
+      7,
+      1,
+      "CONDITIONING"
+    ],
+    [
+      8,
+      2,
+      0,
+      8,
+      0,
+      "MODEL"
+    ],
+    [
+      9,
+      7,
+      0,
+      8,
+      1,
+      "CONDITIONING"
+    ],
+    [
+      10,
+      4,
+      0,
+      8,
+      2,
+      "CONDITIONING"
+    ],
+    [
+      11,
+      5,
+      0,
+      8,
+      3,
+      "LATENT"
+    ],
+    [
+      12,
+      8,
+      0,
+      9,
+      0,
+      "LATENT"
+    ],
+    [
+      13,
+      1,
+      2,
+      9,
+      1,
+      "VAE"
+    ],
+    [
+      14,
+      9,
+      0,
+      10,
+      0,
+      "IMAGE"
+    ],
+    [
+      15,
+      2,
+      1,
+      11,
+      0,
+      "CLIP"
+    ],
+    [
+      16,
+      3,
+      0,
+      12,
+      0,
+      "CONDITIONING"
+    ],
+    [
+      17,
+      11,
+      0,
+      12,
+      1,
+      "CONDITIONING"
+    ],
+    [
+      18,
+      2,
+      0,
+      13,
+      0,
+      "MODEL"
+    ],
+    [
+      19,
+      12,
+      0,
+      13,
+      1,
+      "CONDITIONING"
+    ],
+    [
+      20,
+      4,
+      0,
+      13,
+      2,
+      "CONDITIONING"
+    ],
+    [
+      21,
+      5,
+      0,
+      13,
+      3,
+      "LATENT"
+    ],
+    [
+      22,
+      13,
+      0,
+      14,
+      0,
+      "LATENT"
+    ],
+    [
+      23,
+      1,
+      2,
+      14,
+      1,
+      "VAE"
+    ],
+    [
+      24,
+      14,
+      0,
+      15,
+      0,
+      "IMAGE"
+    ],
+    [
+      25,
+      2,
+      1,
+      16,
+      0,
+      "CLIP"
+    ],
+    [
+      26,
+      3,
+      0,
+      17,
+      0,
+      "CONDITIONING"
+    ],
+    [
+      27,
+      16,
+      0,
+      17,
+      1,
+      "CONDITIONING"
+    ],
+    [
+      28,
+      2,
+      0,
+      18,
+      0,
+      "MODEL"
+    ],
+    [
+      29,
+      17,
+      0,
+      18,
+      1,
+      "CONDITIONING"
+    ],
+    [
+      30,
+      4,
+      0,
+      18,
+      2,
+      "CONDITIONING"
+    ],
+    [
+      31,
+      5,
+      0,
+      18,
+      3,
+      "LATENT"
+    ],
+    [
+      32,
+      18,
+      0,
+      19,
+      0,
+      "LATENT"
+    ],
+    [
+      33,
+      1,
+      2,
+      19,
+      1,
+      "VAE"
+    ],
+    [
+      34,
+      19,
+      0,
+      20,
+      0,
+      "IMAGE"
+    ],
+    [
+      35,
+      2,
+      1,
+      21,
+      0,
+      "CLIP"
+    ],
+    [
+      36,
+      3,
+      0,
+      22,
+      0,
+      "CONDITIONING"
+    ],
+    [
+      37,
+      21,
+      0,
+      22,
+      1,
+      "CONDITIONING"
+    ],
+    [
+      38,
+      2,
+      0,
+      23,
+      0,
+      "MODEL"
+    ],
+    [
+      39,
+      22,
+      0,
+      23,
+      1,
+      "CONDITIONING"
+    ],
+    [
+      40,
+      4,
+      0,
+      23,
+      2,
+      "CONDITIONING"
+    ],
+    [
+      41,
+      5,
+      0,
+      23,
+      3,
+      "LATENT"
+    ],
+    [
+      42,
+      23,
+      0,
+      24,
+      0,
+      "LATENT"
+    ],
+    [
+      43,
+      1,
+      2,
+      24,
+      1,
+      "VAE"
+    ],
+    [
+      44,
+      24,
+      0,
+      25,
+      0,
+      "IMAGE"
+    ]
+  ],
+  "groups": [],
+  "config": {},
+  "extra": {},
+  "version": 0.4
+}
