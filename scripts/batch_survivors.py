@@ -30,13 +30,17 @@ import urllib.request
 
 STYLES = {
     "splash": {
+        # 'sensitive' = teor ecchi do WAI (nivel entre general e nsfw).
+        # Ajuste ECCHI no roster.json por personagem, se quiser.
         "text": ("cowboy shot, dynamic pose, detailed background, cinematic lighting, "
-                 "highly detailed, intricate details, masterpiece, best quality, absurdres"),
+                 "sensitive, alluring pose, attractive, detailed costume, "
+                 "masterpiece, best quality, amazing quality"),
         "w": 832, "h": 1216, "steps": 30, "rembg": False,
     },
     "portrait": {
         "text": ("portrait, upper body, looking at viewer, simple background, "
-                 "soft lighting, detailed face, masterpiece, best quality, absurdres"),
+                 "soft lighting, detailed face, sensitive, alluring, "
+                 "masterpiece, best quality, amazing quality"),
         "w": 1024, "h": 1024, "steps": 28, "rembg": False,
     },
     "chibi": {
@@ -64,7 +68,7 @@ def build_graph(char, defaults, kind, pose_name=None, pose_text=None):
     st = STYLES[kind]
     ckpt = char.get("checkpoint", defaults["checkpoint"])
     neg = char.get("negative", defaults["negative"])
-    cfg = char.get("cfg", defaults.get("cfg", 4.5))
+    cfg = char.get("cfg", defaults.get("cfg", 5.5))
     steps = char.get("steps", st["steps"])
     sampler = char.get("sampler", defaults.get("sampler", "dpmpp_2m"))
     sched = char.get("scheduler", defaults.get("scheduler", "karras"))

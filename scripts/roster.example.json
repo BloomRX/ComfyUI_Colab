@@ -1,15 +1,13 @@
 {
-  "_comment": "Elenco do Waifu Survivors. Copie para roster.json e edite. Cada personagem so precisa do campo 'id' e 'identity' - o resto e opcional.",
-
+  "_comment": "Elenco do Waifu Survivors. Copie para roster.json e edite. Cada personagem so precisa do campo 'id' e 'identity' - o resto e opcional. Teor ecchi: splash/portrait usam a tag 'sensitive' do WAI e bloqueiam 'explicit'. Para uma personagem mais recatada, ponha \"negative\" proprio nela incluindo 'sensitive'.",
   "defaults": {
     "checkpoint": "waiIllustriousSDXL_v160.safetensors",
-    "negative": "cropped, out of frame, close-up, multiple views, grid, realistic, detailed background, oversaturated, neon colors, extra fingers, bad anatomy, watermark, signature, text, lowres, blurry",
-    "cfg": 4.5,
+    "negative": "bad quality, worst quality, worst detail, sketch, censor, watermark, signature, logo, text, multiple views, grid, explicit",
+    "cfg": 5.5,
     "steps": 26,
-    "sampler": "dpmpp_2m",
-    "scheduler": "karras"
+    "sampler": "euler_ancestral",
+    "scheduler": "normal"
   },
-
   "characters": [
     {
       "id": "lia",

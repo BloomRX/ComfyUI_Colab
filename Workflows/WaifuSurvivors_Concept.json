@@ -130,7 +130,7 @@
         "Node name for S&R": "CLIPTextEncode"
       },
       "widgets_values": [
-        "bad quality, worst quality, worst detail, sketch, censor, nsfw, watermark, signature, logo, text, multiple views, grid"
+        "bad quality, worst quality, worst detail, sketch, censor, watermark, signature, logo, text, multiple views, grid, explicit"
       ],
       "title": "3. Negative",
       "color": "#322",

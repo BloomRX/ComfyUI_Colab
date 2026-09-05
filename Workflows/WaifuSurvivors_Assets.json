@@ -195,7 +195,7 @@
         "Node name for S&R": "CLIPTextEncode"
       },
       "widgets_values": [
-        "bad quality, worst quality, worst detail, sketch, censor, nsfw, watermark, signature, logo, text, multiple views, grid"
+        "bad quality, worst quality, worst detail, sketch, censor, watermark, signature, logo, text, multiple views, grid, explicit"
       ],
       "title": "4. Negative comum",
       "color": "#322",
@@ -236,7 +236,7 @@
         "Node name for S&R": "CLIPTextEncode"
       },
       "widgets_values": [
-        "cowboy shot, dynamic pose, detailed background, cinematic lighting, masterpiece, best quality, amazing quality"
+        "cowboy shot, dynamic pose, detailed background, cinematic lighting, sensitive, alluring pose, attractive, detailed costume, masterpiece, best quality, amazing quality"
       ],
       "title": "Estilo: SPLASH",
       "color": "#334",
@@ -484,7 +484,7 @@
         "Node name for S&R": "CLIPTextEncode"
       },
       "widgets_values": [
-        "portrait, upper body, looking at viewer, simple background, soft lighting, detailed face, masterpiece, best quality, amazing quality"
+        "portrait, upper body, looking at viewer, simple background, soft lighting, detailed face, sensitive, alluring, masterpiece, best quality, amazing quality"
       ],
       "title": "Estilo: PORTRAIT",
       "color": "#343",
@@ -1013,7 +1013,7 @@
         "Node name for S&R": "Note"
       },
       "widgets_values": [
-        "WAIFU SURVIVORS - 3 saidas do MESMO personagem\n\nSPLASH (832x1216)  -> menu, tela de selecao, gacha\nPORTRAIT (1024^2)  -> HUD, card de personagem, dialogo\nCHIBI (1024^2)     -> sprite de gameplay, com fundo removido\n\n### A REGRA DE OURO ###\nA IDENTIDADE fica SO no no 3. Os nos de estilo dizem apenas COMO desenhar,\nnunca QUEM. Assim o personagem e o mesmo nos tres, e voce troca o elenco\neditando um unico campo.\n\n### CONSISTENCIA ENTRE OS 3 ###\nPrompt sozinho NAO garante a mesma personagem. Para um jogo com varios\npersonagens voce vai QUERER uma LoRA por personagem (no 2).\nSem LoRA, o chibi tende a divergir mais - e o estilo mais distante do treino.\n\n### O CHIBI ###\nO ramo chibi ja passa por InspyrenetRembg: sai PNG com ALPHA, pronto para\na engine. NAO gere em 128x128 - gere em 1024 e reduza na engine ou num\npasso separado. Difusao em resolucao baixa produz papa.\nPara pixel art de verdade, reduza com filtro NEAREST (nao bilinear).\n\n### SEEDS ###\nOs 3 ramos comecam com a mesma seed (101) so por conveniencia. Eles NAO\nprecisam casar - sao enquadramentos diferentes. Varie a vontade.\n\n### CUSTOM NODE ###\nApenas ComfyUI-Inspyrenet-Rembg (ramo chibi). O resto e nativo.\nNao quer o rembg? Delete o no e ligue o VAEDecode direto no SaveImage."
+        "WAIFU SURVIVORS - 3 saidas do MESMO personagem\n\nSPLASH (832x1216)  -> menu, tela de selecao, gacha\nPORTRAIT (1024^2)  -> HUD, card de personagem, dialogo\nCHIBI (1024^2)     -> sprite de gameplay, com fundo removido\n\n### A REGRA DE OURO ###\nA IDENTIDADE fica SO no no 3. Os nos de estilo dizem apenas COMO desenhar,\nnunca QUEM. Assim o personagem e o mesmo nos tres, e voce troca o elenco\neditando um unico campo.\n\n### CONSISTENCIA ENTRE OS 3 ###\nPrompt sozinho NAO garante a mesma personagem. Para um jogo com varios\npersonagens voce vai QUERER uma LoRA por personagem (no 2).\nSem LoRA, o chibi tende a divergir mais - e o estilo mais distante do treino.\n\n### O CHIBI ###\nO ramo chibi ja passa por InspyrenetRembg: sai PNG com ALPHA, pronto para\na engine. NAO gere em 128x128 - gere em 1024 e reduza na engine ou num\npasso separado. Difusao em resolucao baixa produz papa.\nPara pixel art de verdade, reduza com filtro NEAREST (nao bilinear).\n\n### SEEDS ###\nOs 3 ramos comecam com a mesma seed (101) so por conveniencia. Eles NAO\nprecisam casar - sao enquadramentos diferentes. Varie a vontade.\n\n### CUSTOM NODE ###\nApenas ComfyUI-Inspyrenet-Rembg (ramo chibi). O resto e nativo.\nNao quer o rembg? Delete o no e ligue o VAEDecode direto no SaveImage.\n\n### TEOR ECCHI (menu sim, gameplay nao) ###\nO WAI tem 4 niveis: general < sensitive < nsfw < explicit.\n  SPLASH e PORTRAIT -> 'sensitive' no positive, 'explicit' no negative.\n     = sugestivo/atraente, sem virar hentai. E o padrao do genero\n       (Azur Lane, Nikke): fanservice no menu, limpo na partida.\n  CHIBI -> deixado LIMPO de proposito. Sprite de 64px nao tem\n     resolucao para fanservice; so atrapalha a leitura.\n\nCOMO SUBIR O TEOR (no no de estilo SPLASH):\n  leve   : sensitive, alluring pose\n  medio  : + cleavage, thighs, bare shoulders, skindentation\n  pesado : troque 'explicit' do negative por nada e use 'nsfw'\n           no positive. CUIDADO: fecha portas de distribuicao.\n\n### ANTES DE ESCOLHER O TEOR, LEIA ###\nSteam aceita conteudo adulto COM aviso e build separada.\nNintendo/PlayStation/Xbox e app stores sao bem mais restritivos.\n'sensitive' passa quase em qualquer lugar; 'explicit' nao.\nSe quiser os dois, gere versao SFW e ecchi da mesma personagem\n(mesma seed, so muda o texto de estilo) e troque por build."
       ],
       "title": "LEIA",
       "color": "#432",

@@ -1674,3 +1674,63 @@ Upscale 1.5x, 20 steps, upscaler **R-ESRGAN 4x+ Anime6B**, denoise 0.35–0.5.
 No ComfyUI, o equivalente e `UpscaleModelLoader` + `ImageUpscaleWithModel`, ou
 um segundo KSampler com denoise 0.4. Nao adicionei — na fase de concept e
 desperdicio.
+
+---
+
+## Teor ecchi: menu sim, gameplay nao (v23)
+
+O WAI tem **quatro niveis de rating**, e a escolha do nivel e o controle
+principal:
+
+| Tag | Teor | Onde usar |
+|---|---|---|
+| `general` | limpo | — |
+| **`sensitive`** | **sugestivo, ecchi** | **splash, portrait** |
+| `nsfw` | nudez parcial / forte | (nao usado) |
+| `explicit` | explicito | **no negative** |
+
+Configuracao aplicada:
+
+- **SPLASH / PORTRAIT** → `sensitive, alluring pose, attractive` no positive,
+  `explicit` no negative. Sugestivo sem virar hentai.
+- **CHIBI** → deixado **limpo de proposito**. Um sprite de 64 px nao tem
+  resolucao para fanservice; tentar isso so suja a silhueta e piora a leitura
+  durante a partida.
+
+E exatamente o padrao do genero: Azur Lane, Nikke e Genshin colocam fanservice
+na arte de menu e mantem o gameplay legivel.
+
+Antes eu tinha posto `nsfw` no negative de tudo, seguindo a recomendacao
+generica do autor do modelo — o que bloqueava justamente o teor desejado.
+Removido de splash/portrait.
+
+### Subir ou baixar o teor
+
+No no de estilo **SPLASH** (ou em `STYLES` do `batch_survivors.py`):
+
+| Nivel | Positive | Negative |
+|---|---|---|
+| Recatado | (nada) | `sensitive, explicit` |
+| **Leve (atual)** | `sensitive, alluring pose` | `explicit` |
+| Medio | `+ cleavage, thighs, bare shoulders, skindentation` | `explicit` |
+| Pesado | `nsfw` | (remover `explicit`) |
+
+Para uma personagem especifica mais recatada, basta dar a ela um `negative`
+proprio no `roster.json` incluindo `sensitive`.
+
+### Distribuicao — vale saber antes de fechar o teor
+
+- **Steam**: aceita conteudo adulto, com aviso e build separada.
+- **Consoles** (Nintendo/PlayStation/Xbox) e **app stores**: bem mais
+  restritivos.
+- **`sensitive`** passa praticamente em qualquer lugar; **`explicit`** nao.
+
+Se quiser os dois, gere versao SFW e ecchi da **mesma** personagem com a **mesma
+seed** — muda so o texto de estilo — e troque os assets por build. Fica barato
+porque a identidade nao muda.
+
+### Nota sobre LoRA de personagem
+
+Quando treinar as LoRAs, o **dataset define o teor**. Se todas as imagens forem
+ecchi, a LoRA vai puxar para isso mesmo quando voce pedir algo limpo — inclusive
+no chibi. Misture: cerca de 70% neutras, 30% ecchi.
