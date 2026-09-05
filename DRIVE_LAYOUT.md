@@ -2486,3 +2486,41 @@ Testado nos dois cenarios (servidor coerente e servidor divergente).
 distinguia dois bugs completamente diferentes e custou quatro tentativas.
 Quando o mesmo sintoma resiste a varias correcoes, a hipotese provavelmente
 esta errada — nao a implementacao dela.
+
+## v36 — o diagnostico da v35 rodou cedo demais
+
+O log do usuario mostrou:
+
+```
+GET do WaifuSurvivors_Animate.json FALHOU: <urlopen error [Errno 111] Connection refused>
+```
+
+**Nao e o bug** — e falha do meu proprio diagnostico. Usei `time.sleep(25)`
+fixo, mas o boot desta sessao levou mais que isso importando custom nodes
+(Inspyrenet 2,5 s, VHS 0,7 s, AnimateDiff 0,6 s, alem do Manager e do scan de
+seguranca). Quando o diag disparou, o `Starting server` ainda nao tinha
+acontecido: nada escutava na 8188.
+
+Prova no proprio log: o autodiag, que roda mais tarde, mediu
+`/api/userdata?dir=workflows` em **0,00 s com HTTP 200**. O servidor responde.
+
+### Correcoes
+
+1. **Espera a porta, nao o relogio.** `socket.create_connection` em loop, ate
+   5 min, antes de qualquer requisicao.
+2. **Rota igual a da sidebar.** Lendo o frontend (`api-D_pCbeK9.js`), a sidebar
+   chama `listUserDataFullInfo`, ou seja:
+   `/userdata?dir=workflows&recurse=true&split=false&full_info=true`.
+   Com `full_info=true` a resposta e uma lista de **dicionarios**
+   (`{path,size,modified}`), nao de strings — o diag agora entende os dois.
+3. Imprime o **corpo bruto** da resposta, para nao restar duvida.
+
+### Observacao sobre o "0 KB" do autodiag
+
+No log, `/api/userdata?dir=workflows  0.00s  0 KB`. O `0 KB` e arredondamento
+de uma resposta pequena, e aquela rota (sem `full_info`) devolve so nomes.
+Nao indica lista vazia — a C4 confirmou **5 workflows** no disco e o servidor
+esta com `--user-directory /content/comfy_user`, o mesmo caminho.
+
+Testado contra um servidor que imita a API real: 5 itens, GET de 18.650 bytes,
+17 nos, ABRIVEL.
