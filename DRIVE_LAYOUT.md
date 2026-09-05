@@ -2300,3 +2300,43 @@ Modulo de movimento tem **spec fechada** (resolucao, context_length,
 beta_schedule). Nao sao sugestoes: sair delas quebra a imagem de formas que
 parecem bug de outra coisa. Antes de culpar seed ou prompt, conferir se os
 parametros batem com o que o modulo exige.
+
+## v33 — 404 do Hotshot-XL na Celula 5
+
+`[FALHOU] hsxl_temporal_layers.safetensors — HTTP Error 404`.
+
+**Erro meu na v32: inventei a URL sem verificar.** Escrevi
+`Kosinkadink/HotShot-XL-MotionModels`, que e um repo real (por isso o nome
+parecia plausivel), mas listando a arvore pela API do HF:
+
+- `Kosinkadink/HotShot-XL-MotionModels` -> contem **so** `hotshotxl_mm_v1.pth`
+- `hotshotco/Hotshot-XL` -> contem `hsxl_temporal_layers.safetensors` (949 MB)
+  e `hsxl_temporal_layers.f16.safetensors` (475 MB)
+
+O arquivo existe; estava no repo errado.
+
+### Correcao
+
+Registrado o **f16** (475 MB, metade do tamanho, mesma qualidade pratica):
+
+```
+https://huggingface.co/hotshotco/Hotshot-XL/resolve/main/hsxl_temporal_layers.f16.safetensors
+```
+
+O no 5 do `Animate` passou a apontar para `hsxl_temporal_layers.f16.safetensors`
+— nome do arquivo e o do dropdown, os dois tem de bater.
+
+Auditadas as outras 13 URLs do `workflow_models`. As do IPAdapter (as unicas
+que importam para os workflows ativos) conferem contra a arvore do HF:
+`models/image_encoder/model.safetensors` (2,53 GB) e
+`sdxl_models/ip-adapter-plus_sdxl_vit-h.safetensors` (848 MB).
+
+### Regra
+
+**Nunca escrever URL de modelo de memoria.** Conferir sempre em
+`https://huggingface.co/api/models/<repo>/tree/main[/<subpasta>]`, que lista os
+arquivos reais com tamanho. Nome de repo plausivel nao e garantia — o Kosinkadink
+hospeda modelos do Hotshot, mas nao *este* arquivo.
+
+Obs.: no sandbox, `urllib`/`curl` para `huggingface.co` sao bloqueados; a
+verificacao tem de ser feita pela ferramenta de fetch.

@@ -255,7 +255,7 @@
         "Node name for S&R": "ADE_LoadAnimateDiffModel"
       },
       "widgets_values": [
-        "hsxl_temporal_layers.safetensors"
+        "hsxl_temporal_layers.f16.safetensors"
       ],
       "title": "5. Movimento: Hotshot-XL (context 8, treinado em 512)"
     },

@@ -426,10 +426,11 @@
         "url": "https://huggingface.co/h94/IP-Adapter/resolve/main/sdxl_models/ip-adapter-plus_sdxl_vit-h.safetensors"
       },
       {
-        "file": "hsxl_temporal_layers.safetensors",
+        "file": "hsxl_temporal_layers.f16.safetensors",
         "dir": "animatediff_models",
-        "size": "1.2 GB",
-        "url": "https://huggingface.co/Kosinkadink/HotShot-XL-MotionModels/resolve/main/hsxl_temporal_layers.safetensors"
+        "size": "475 MB",
+        "url": "https://huggingface.co/hotshotco/Hotshot-XL/resolve/main/hsxl_temporal_layers.f16.safetensors",
+        "note": "f16 = metade do tamanho do fp32 e mesma qualidade pratica. O repo Kosinkadink/HotShot-XL-MotionModels NAO tem este arquivo (so hotshotxl_mm_v1.pth) - a fonte correta e hotshotco/Hotshot-XL."
       }
     ]
   },
