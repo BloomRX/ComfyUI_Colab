@@ -2060,3 +2060,75 @@ Dois bugs pegos no teste, ambos corrigidos:
 5. no Godot: `AnimatedSprite2D -> SpriteFrames -> Add frames from sheet`.
 
 Gere so o lado direito e use `flip_h`, como ja combinado.
+
+## v29 — consolidacao dos workflows + animacao local
+
+### Removidos
+
+`WaifuSurvivors_Assets.json`, `WaifuSurvivors_ChibiPoses.json` e
+`WaifuSurvivors_FromConcept.json` foram **apagados**. Faziam trabalho repetido
+e geravam do zero coisas que dava para derivar.
+
+### Nova estrutura (2 workflows + 1 script)
+
+```
+Concept  ->  Base  ->  Animate  ->  make_spritesheet.py
+                 \-> PORTRAIT por recorte da splash
+```
+
+**`WaifuSurvivors_Base.json`** (19 nos) — entrada unica: o concept aprovado.
+Um Run entrega **splash + chibi idle**, ambos ancorados na mesma imagem.
+Dois IPAdapters: no 4 em **0.7** (splash, fiel) e no 5 em **0.45** (o chibi
+precisa de liberdade para deformar).
+
+**PORTRAIT nao se gera: recorta-se da splash.** A identidade fica identica por
+construcao — mesmo cabelo, mesmos olhos, mesmo traco. Gerar de novo so cria
+chance de divergir. Excecao: se o portrait precisar de **expressao diferente**
+(brava, sorrindo, para dialogo), ai sim vale gerar mudando o no 6.
+
+**`WaifuSurvivors_Animate.json`** (17 nos) — AnimateDiff sobre o chibi idle.
+
+### Por que AnimateDiff e nao WAN
+
+O gargalo desta maquina e **RAM de CPU (~13 GB)**, nao VRAM (14,9 GB). Por isso
+"trocar por modelo menor" resolve pouco: mesmo o WAN 5B quer 24 GB de RAM,
+porque o text encoder T5 (~9 GB) e o decode de video moram la.
+
+O AnimateDiff **anima o checkpoint SDXL que ja temos**. Nao baixa modelo de
+video, nao tem T5. Custa ~6 GB de VRAM. E o unico caminho local viavel no T4.
+
+**Ressalva honesta:** o `mm_sdxl_v10_beta` e beta e subtreinado — a propria
+comunidade diz que "para ser usavel voce provavelmente precisa treinar voce
+mesmo". Para chibi em loop curto costuma bastar; se o movimento sair ruim, o
+plano B continua sendo clipe de 1s na nuvem + `VideoToSprites`.
+
+### Flags de memoria (C6, `v29-anim`)
+
+`ECONOMIZAR_RAM = True` adiciona:
+- `--cache-none` — descarrega cada modelo apos o uso (o mais citado para RAM)
+- `--disable-smart-memory` — nao segura modelo na memoria por precaucao
+- `--mmap-torch-files` — le o peso do disco em vez de copiar para a RAM
+
+**Diagnostico:** processo que **morre/trava sem mensagem** = falta de RAM.
+Erro **CUDA/torch out of memory** = falta de VRAM. No T4 sera quase sempre o
+primeiro.
+
+### Downloads necessarios
+
+| arquivo | pasta | tamanho | para |
+|---|---|---|---|
+| `CLIP-ViT-H-14-laion2B-s32B-b79K.safetensors` | `clip_vision` | 2,53 GB | Base + Animate |
+| `ip-adapter-plus_sdxl_vit-h.safetensors` | `ipadapter` | 848 MB | Base + Animate |
+| `mm_sdxl_v10_beta.ckpt` | `animatediff_models` | 950 MB | Animate |
+
+Os tres estao em `workflow_models` — a **Celula 5 baixa sozinha**. O CLIP Vision
+**tem de manter esse nome de arquivo**, o IPAdapter o identifica assim.
+
+### Poses: trocar so o no 9 do Animate
+
+walk `walking cycle, legs moving` · attack `attacking, swinging arm forward`
+· death `falling down, collapsing, defeated` · idle `standing, breathing, slight sway`
+
+Seed **555 fixa** mantem a aparencia entre animacoes. Para **attack**, mudar o
+no 11 para **1024x768 landscape** — quadrado corta o braco/arma (erro que o
+autor do video original cometeu ao vivo).

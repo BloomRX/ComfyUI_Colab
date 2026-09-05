@@ -397,23 +397,41 @@
         "note": "Corresponde ao preset PLUS (high strength) para SDXL."
       }
     ],
-    "WaifuSurvivors_FromConcept.json": [
+    "WaifuSurvivors_VideoToSprites.json": [],
+    "WaifuSurvivors_Base.json": [
       {
         "file": "CLIP-ViT-H-14-laion2B-s32B-b79K.safetensors",
         "dir": "clip_vision",
         "size": "2.53 GB",
-        "url": "https://huggingface.co/h94/IP-Adapter/resolve/main/models/image_encoder/model.safetensors",
-        "note": "CLIP Vision ViT-H. O nome do arquivo IMPORTA."
+        "url": "https://huggingface.co/h94/IP-Adapter/resolve/main/models/image_encoder/model.safetensors"
       },
       {
         "file": "ip-adapter-plus_sdxl_vit-h.safetensors",
         "dir": "ipadapter",
         "size": "848 MB",
-        "url": "https://huggingface.co/h94/IP-Adapter/resolve/main/sdxl_models/ip-adapter-plus_sdxl_vit-h.safetensors",
-        "note": "Preset PLUS (high strength) para SDXL."
+        "url": "https://huggingface.co/h94/IP-Adapter/resolve/main/sdxl_models/ip-adapter-plus_sdxl_vit-h.safetensors"
       }
     ],
-    "WaifuSurvivors_VideoToSprites.json": []
+    "WaifuSurvivors_Animate.json": [
+      {
+        "file": "CLIP-ViT-H-14-laion2B-s32B-b79K.safetensors",
+        "dir": "clip_vision",
+        "size": "2.53 GB",
+        "url": "https://huggingface.co/h94/IP-Adapter/resolve/main/models/image_encoder/model.safetensors"
+      },
+      {
+        "file": "ip-adapter-plus_sdxl_vit-h.safetensors",
+        "dir": "ipadapter",
+        "size": "848 MB",
+        "url": "https://huggingface.co/h94/IP-Adapter/resolve/main/sdxl_models/ip-adapter-plus_sdxl_vit-h.safetensors"
+      },
+      {
+        "file": "mm_sdxl_v10_beta.ckpt",
+        "dir": "animatediff_models",
+        "size": "950 MB",
+        "url": "https://huggingface.co/guoyww/animatediff/resolve/main/mm_sdxl_v10_beta.ckpt"
+      }
+    ]
   },
   "model_notes": {
     "wan_2.1_vae.safetensors": "VAE do Wan 2.1, usado so num ramo alternativo. O caminho principal usa qwen_image_vae. Se o node reclamar, aponte para qwen_image_vae ou bypasse o ramo.",
