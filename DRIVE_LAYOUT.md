@@ -1450,3 +1450,50 @@ Apareceu `one-node-flux-2-klein` entre os custom nodes e o banco rodou 6
 migracoes (`0001_assets` -> `0006_add_loader_path`). As migracoes acontecem uma
 vez so, apos atualizacao do ComfyUI — explicam aquele boot especifico, nao a
 lentidao recorrente.
+
+---
+
+## Bugs da Celula 4 corrigidos na v19
+
+Dois problemas apareceram juntos neste log:
+
+```
+desativado one-node-flux-2-klein.disabled
+Workflows na UI: ['CharDesignandPartSplitting.json', 'WaifuSurvivors_Concept.json']
+Ativos: ['ComfyUI-Manager', '__pycache__']
+```
+
+### 1. `.disabled.disabled`
+
+O laco que desativa packs nao verificava se a pasta **ja** terminava em
+`.disabled`. Resultado: `one-node-flux-2-klein.disabled` virava
+`one-node-flux-2-klein.disabled.disabled` a cada execucao da celula.
+
+O pack nunca mais seria reativado: a Celula 4 procura por `<pack>.disabled`
+exatamente, e o Manager tambem nao o encontra. Ficaria como "no ausente" para
+sempre.
+
+Corrigido: pastas ja desativadas sao ignoradas, e ha uma limpeza que renomeia
+nomes acumulados de volta ao formato certo.
+
+### 2. Workflow nao chegava no diretorio local
+
+Com a v17 (user/ local), a Celula 4 escrevia nos dois diretorios — **mas** o
+teste "ja existe e e igual" olhava so o do Drive. Se o arquivo ja estivesse la,
+ela imprimia `= (ja estava la)` e **pulava a copia para o local**, que e de onde
+a Celula 6 serve. O workflow nao aparecia na aba.
+
+Corrigido: cada diretorio e verificado e copiado independentemente.
+
+### 3. `__pycache__` listado como "Ativo"
+
+Cosmetico: `__pycache__` nao e custom node. Removido da listagem.
+
+### Sobre "workflows a mais na aba"
+
+O log mostrava `CharDesignandPartSplitting.json` mesmo com a selecao `10`. Isso
+**nao e bug**: a celula copia os selecionados, mas **nunca apaga** o que ja
+estava la. Workflows de sessoes anteriores permanecem — inclusive os que voce
+salvou pela UI. Agora a mensagem diz isso explicitamente.
+
+Se quiser limpar, apague pela aba Workflows da propria UI.
