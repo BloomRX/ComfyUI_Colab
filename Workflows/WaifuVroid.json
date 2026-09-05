@@ -156,7 +156,7 @@
         "Node name for S&R": "CLIPTextEncode"
       },
       "widgets_values": [
-        "1girl, solo, long wavy magenta hair, parted bangs, hair clip, crimson pink eyes, detailed eyes, black blazer, open blazer, white collared shirt, wine red ribbon bow, wine red pleated skirt, high waist skirt, gold buttons, black knee-high socks, black loafers, full body, standing, arms at sides, simple background, white background, flat lighting, no shadows, character reference sheet, masterpiece, best quality, very aesthetic, absurdres"
+        "1girl, solo, long wavy magenta hair, parted bangs, hair clip, crimson pink eyes, detailed eyes, black blazer, open blazer, white collared shirt, wine red ribbon bow, wine red pleated skirt, high waist skirt, gold buttons, black knee-high socks, black loafers, full body, standing, arms at sides, simple background, white background, flat lighting, no shadows, character reference sheet, masterpiece, best quality, amazing quality"
       ],
       "title": "3. IDENTIDADE (edite so aqui)",
       "color": "#232",
@@ -200,7 +200,7 @@
         "Node name for S&R": "CLIPTextEncode"
       },
       "widgets_values": [
-        "pantyhose, thighhighs, bare legs, short hair, twintails, ponytail, blonde hair, red hair, heterochromia, plain skirt, long skirt, necktie, dynamic pose, perspective, foreshortening, cropped, out of frame, dramatic lighting, hard shadows, busy background, extra fingers, bad hands, bad anatomy, watermark, signature, text, lowres, jpeg artifacts, blurry, logo, artist name, username, web address, english text, japanese text, letters, title, caption, character sheet, reference sheet, border, frame, inset, speech bubble, patreon logo, twitter username"
+        "bad quality, worst quality, worst detail, sketch, censor, nsfw, watermark, signature, logo, text, multiple views, grid, dramatic lighting"
       ],
       "title": "4. Negative",
       "color": "#322",
@@ -377,9 +377,9 @@
         777,
         "fixed",
         28,
-        4.5,
-        "dpmpp_2m",
-        "karras",
+        5.5,
+        "euler_ancestral",
+        "normal",
         1.0
       ],
       "title": "KSampler front (SEED IGUAL)"
@@ -588,9 +588,9 @@
         777,
         "fixed",
         28,
-        4.5,
-        "dpmpp_2m",
-        "karras",
+        5.5,
+        "euler_ancestral",
+        "normal",
         1.0
       ],
       "title": "KSampler three_quarter (SEED IGUAL)"
@@ -799,9 +799,9 @@
         777,
         "fixed",
         28,
-        4.5,
-        "dpmpp_2m",
-        "karras",
+        5.5,
+        "euler_ancestral",
+        "normal",
         1.0
       ],
       "title": "KSampler side (SEED IGUAL)"
@@ -1010,9 +1010,9 @@
         777,
         "fixed",
         28,
-        4.5,
-        "dpmpp_2m",
-        "karras",
+        5.5,
+        "euler_ancestral",
+        "normal",
         1.0
       ],
       "title": "KSampler back (SEED IGUAL)"

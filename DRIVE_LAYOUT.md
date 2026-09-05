@@ -1615,3 +1615,62 @@ lista: a aba e carregada uma vez no boot. Depois de rodar a Celula 4, sempre:
 2. se nao, reinicie a **Celula 6**.
 
 Ordem correta e sempre: Celula 4 -> Celula 5 -> Celula 6 -> abrir a UI.
+
+---
+
+## Recomendacoes oficiais do WAI-illustrious-SDXL (aplicadas na v22)
+
+A pagina do Civitai exige login, mas o mesmo card do autor esta espelhado em
+tensor.art, Shakker, Moescape e Tungsten. Consolidado:
+
+| Parametro | Recomendado pelo autor | O que eu tinha |
+|---|---|---|
+| Sampler | **Euler a** (`euler_ancestral`) | `dpmpp_2m` / karras |
+| CFG | **5 – 7** | 4.5 |
+| Steps | **15 – 30** | 20 – 30 (ok) |
+| Resolucao | **maior que 1024x1024** | ok |
+| VAE | **ja embutido** — nao carregar externo | ok |
+| Positive | `masterpiece, best quality, amazing quality` | tinha tags demais |
+| Negative | `bad quality, worst quality, worst detail, sketch, censor` | **longo demais** |
+
+### O aviso mais importante (e contraintuitivo)
+
+> *"Please do not add too many quality and aesthetic-related tags, nor overly
+> long negative prompts, as this will actually reduce image quality and make it
+> more blurry."*
+
+**Negative longo PIORA a imagem neste modelo.** Eu vinha empilhando termos —
+anti-queimado, anti-logo, anti-pose — e isso estava contra a recomendacao do
+autor. O negative foi enxugado para ~120 caracteres.
+
+Isso muda a estrategia contra a logo: em vez de empilhar
+`artist name, username, web address, patreon logo, twitter username...`,
+ficam so `watermark, signature, logo, text`. Vai escapar uma logo de vez em
+quando — descarte e siga.
+
+### Mudancas aplicadas em todos os `Waifu*`
+
+- Sampler → **`euler_ancestral`** + scheduler `normal`
+- CFG → **5.5** (era 4.5; a faixa do autor comeca em 5)
+- Negative → curto, base do autor + 4 termos anti-logo
+- Positive → removidos `very aesthetic`, `absurdres`, `highly detailed`,
+  `intricate details`, `newest`; ficou `masterpiece, best quality, amazing quality`
+
+### Duas dicas especificas que valem guardar
+
+- **Pontinhos brancos** na imagem → adicione ao negative:
+  `lens flare, particles, dust`
+- **Pupilas ficam vermelhas** sem motivo → adicione: `heart pupil`
+
+### Filtro de conteudo
+
+O modelo tem quatro tags de classificacao: `general`, `sensitive`, `nsfw`,
+`explicit`. O autor recomenda por **`nsfw` no negative** para evitar saidas
+inadequadas — ja incluido em todos os workflows. Para um jogo, mantenha.
+
+### Hires fix (quando for gerar a arte final)
+
+Upscale 1.5x, 20 steps, upscaler **R-ESRGAN 4x+ Anime6B**, denoise 0.35–0.5.
+No ComfyUI, o equivalente e `UpscaleModelLoader` + `ImageUpscaleWithModel`, ou
+um segundo KSampler com denoise 0.4. Nao adicionei — na fase de concept e
+desperdicio.

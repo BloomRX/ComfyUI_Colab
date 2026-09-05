@@ -89,7 +89,7 @@
         "Node name for S&R": "CLIPTextEncode"
       },
       "widgets_values": [
-        "1girl, solo, full body, standing, simple background, original character design, game character concept art, masterpiece, best quality, absurdres"
+        "1girl, solo, full body, standing, simple background, original character design, game character concept art, masterpiece, best quality, amazing quality"
       ],
       "title": "2. CONCEITO - escreva SOLTO aqui",
       "color": "#232",
@@ -130,7 +130,7 @@
         "Node name for S&R": "CLIPTextEncode"
       },
       "widgets_values": [
-        "oversaturated, neon colors, burnt colors, glowing skin, red skin, multiple views, grid, collage, text, watermark, signature, extra fingers, bad hands, bad anatomy, lowres, blurry, cropped, logo, artist name, username, web address, english text, japanese text, letters, title, caption, character sheet, reference sheet, border, frame, inset, speech bubble, patreon logo, twitter username"
+        "bad quality, worst quality, worst detail, sketch, censor, nsfw, watermark, signature, logo, text, multiple views, grid"
       ],
       "title": "3. Negative",
       "color": "#322",
@@ -226,9 +226,9 @@
         0,
         "randomize",
         20,
-        4.5,
-        "dpmpp_2m",
-        "karras",
+        5.5,
+        "euler_ancestral",
+        "normal",
         1.0
       ],
       "title": "5. SEED = randomize / steps 20 (rapido)",

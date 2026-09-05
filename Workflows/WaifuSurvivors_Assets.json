@@ -195,7 +195,7 @@
         "Node name for S&R": "CLIPTextEncode"
       },
       "widgets_values": [
-        "oversaturated, neon colors, burnt colors, glowing skin, red skin, extra fingers, bad hands, bad anatomy, watermark, signature, text, lowres, jpeg artifacts, blurry, multiple views, grid, logo, artist name, username, web address, english text, japanese text, letters, title, caption, character sheet, reference sheet, border, frame, inset, speech bubble, patreon logo, twitter username"
+        "bad quality, worst quality, worst detail, sketch, censor, nsfw, watermark, signature, logo, text, multiple views, grid"
       ],
       "title": "4. Negative comum",
       "color": "#322",
@@ -236,7 +236,7 @@
         "Node name for S&R": "CLIPTextEncode"
       },
       "widgets_values": [
-        "cowboy shot, dynamic pose, detailed background, cinematic lighting, highly detailed, intricate details, masterpiece, best quality, absurdres"
+        "cowboy shot, dynamic pose, detailed background, cinematic lighting, masterpiece, best quality, amazing quality"
       ],
       "title": "Estilo: SPLASH",
       "color": "#334",
@@ -371,9 +371,9 @@
         101,
         "fixed",
         30,
-        4.5,
-        "dpmpp_2m",
-        "karras",
+        5.5,
+        "euler_ancestral",
+        "normal",
         1.0
       ],
       "title": "KSampler SPLASH"
@@ -484,7 +484,7 @@
         "Node name for S&R": "CLIPTextEncode"
       },
       "widgets_values": [
-        "portrait, upper body, looking at viewer, simple background, soft lighting, detailed face, masterpiece, best quality, absurdres"
+        "portrait, upper body, looking at viewer, simple background, soft lighting, detailed face, masterpiece, best quality, amazing quality"
       ],
       "title": "Estilo: PORTRAIT",
       "color": "#343",
@@ -619,9 +619,9 @@
         101,
         "fixed",
         28,
-        4.5,
-        "dpmpp_2m",
-        "karras",
+        5.5,
+        "euler_ancestral",
+        "normal",
         1.0
       ],
       "title": "KSampler PORTRAIT"
@@ -867,9 +867,9 @@
         101,
         "fixed",
         26,
-        4.5,
-        "dpmpp_2m",
-        "karras",
+        5.5,
+        "euler_ancestral",
+        "normal",
         1.0
       ],
       "title": "KSampler CHIBI"
