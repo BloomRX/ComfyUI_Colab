@@ -185,6 +185,11 @@ def r_notebook():
         except SyntaxError as e:
             erro('sintaxe', f'celula {i} nao compila: {e.msg} (linha {e.lineno})')
 
+    # v40: o patch do 404 atras do proxy tem de estar presente
+    if 'zz_proxy_userdata' not in todo:
+        erro('v40', 'falta o patch /userdata/{file:.+/.+} (404 dos workflows '
+                    'atras do proxy do Colab)')
+
     # NB_VERSION tem de existir e ser unico
     vs = re.findall(r"NB_VERSION\s*=\s*'([^']+)'", todo)
     if not vs:

@@ -2755,3 +2755,68 @@ e e o unico que valida os nos contra `/object_info`.
 **Documentar um erro nao impede a repeticao; verificar impede.** Todo bug que
 custar mais de uma tentativa vira: (a) linha no indice por sintoma e (b)
 checagem automatica, quando for verificavel por codigo.
+
+## v40 — RESOLVIDO: 404 em todo workflow atras do proxy do Colab
+
+O teste no navegador finalmente deu o dado que faltava:
+
+```
+1) listar workflows -> HTTP 200   (6 workflows)
+2) GET WaifuSurvivors_Base.json -> HTTP 404 FALHOU
+   ... todos os 6 em 404
+```
+
+**Listagem 200, GET 404 em todos.** Isso descarta arquivo corrompido, no
+ausente, permissao e estado do navegador de uma vez.
+
+### Causa
+
+O frontend pede:
+
+```
+GET /api/userdata/workflows%2FBase.json
+```
+
+O **proxy do Colab decodifica `%2F` em `/`** antes de repassar. O servidor
+recebe `/api/userdata/workflows/Base.json`. A rota do ComfyUI e
+
+```python
+@routes.get("/userdata/{file}")
+```
+
+e no aiohttp `{file}` **nao casa com barra**. Resultado: 404 em todo workflow.
+
+A **listagem** escapa porque usa querystring (`?dir=workflows`), que o proxy
+nao mexe. Dai o sintoma exato: a sidebar lista tudo e nada abre.
+
+Reproduzido em aiohttp:
+
+| pedido | rota `{file}` | rota `{file:.+/.+}` |
+|---|---|---|
+| `/userdata/workflows%2FBase.json` | 200 | 200 |
+| `/userdata/workflows/Base.json` | **404** | 200 |
+
+### Correcao
+
+A C6 instala `custom_nodes/zz_proxy_userdata/`, que registra a mesma rota com
+`{file:.+/.+}` — o `.+/.+` exige pelo menos uma barra, entao nao conflita com a
+rota original. Nao altera o codigo do ComfyUI.
+
+Guarda de path traversal testada: `../secreto`, `..%2F..%2F` e `/etc/passwd`
+retornam **403**; arquivo valido 200; inexistente 404.
+
+### Por que demorou tanto
+
+Todos os meus diagnosticos anteriores rodaram **no servidor, via 127.0.0.1** —
+onde nao ha proxy e o `%2F` chega intacto. Por isso davam sempre "tudo OK". O
+bug so existe no caminho **navegador -> proxy -> servidor**, e so apareceu
+quando a medicao foi feita de dentro do browser.
+
+### Regra
+
+**Medir do lado do cliente real.** Um teste em `127.0.0.1` nao exercita proxy,
+reescrita de URL nem CORS. Quando servidor e arquivos estao sadios e a UI
+falha, o suspeito e o caminho entre eles — e a checagem tem de partir do
+navegador.
+
+Adicionada a `checar_regras.py`: acusa se o patch sumir do notebook.
