@@ -2524,3 +2524,67 @@ esta com `--user-directory /content/comfy_user`, o mesmo caminho.
 
 Testado contra um servidor que imita a API real: 5 itens, GET de 18.650 bytes,
 17 nos, ABRIVEL.
+
+## v37 — defeitos REAIS nos nos do Animate (achados lendo a fonte dos packs)
+
+Com o navegador limpo, o servidor OK e os arquivos integros, sobrou olhar o que
+nunca tinha sido conferido: **se os nos que eu escrevi batem com a definicao
+real dos custom nodes**. Clonei os packs e comparei.
+
+### Defeito 1 — node deprecado
+
+O no 7 usava `ADE_AnimateDiffUniformContextOptions`. Na fonte
+(`animatediff/nodes_context.py`) essa classe e `LegacyLoopedUniformContextOptionsNode`
+com **`is_deprecated=True`**. Node deprecado fica escondido da UI por padrao
+(setting "Show deprecated nodes in search" vem **Disabled**), e o frontend pode
+nao conseguir renderizar.
+
+Trocado por **`ADE_LoopedUniformContextOptions`**, a versao atual.
+
+### Defeito 2 — widgets fora de ordem e faltando um
+
+O deprecado tem 9 widgets, incluindo `context_schedule`. O atual tem 8 e **nao
+tem** esse campo. Eu tinha gravado 8 valores no formato do de 9:
+
+```
+antes: [8, 3, 4, 'uniform', False, 'flat', 'pyramid', False]   <- 'uniform' sobrando
+agora: [8, 1, 4, True, 'pyramid', True, 0.0, 1]
+```
+
+Ordem correta da fonte: `context_length, context_stride, context_overlap,
+closed_loop, fuse_method, use_on_equal_length, start_percent, guarantee_steps`.
+`closed_loop=True` e `use_on_equal_length=True` sao o que realmente fecham o
+loop quando o numero de frames e igual ao context_length — exatamente o nosso
+caso (8 e 8).
+
+### Defeito 3 — entrada opcional faltando
+
+`ADE_ApplyAnimateDiffModelSimple` tem 6 entradas; o no 6 declarava 5, sem
+`per_block`. Adicionada.
+
+### O IPAdapter estava certo
+
+Conferido contra `IPAdapterPlus.py`: `model, ipadapter, image, weight,
+weight_type, combine_embeds, start_at, end_at, embeds_scaling` + opcionais
+`image_negative, attn_mask, clip_vision`. Bate com o que geramos.
+
+### `scripts/validar_workflows.py` (novo)
+
+Para nao depender de mim reparar isso a olho de novo:
+
+```
+python scripts/validar_workflows.py --server http://127.0.0.1:8188
+```
+
+Com `--server` ele le `/object_info` (a MESMA fonte que a UI usa) e acusa:
+tipo de no inexistente, **node deprecado**, entrada com nome invalido e
+contagem de widgets errada. Sem `--server`, valida so estrutura/links/ids.
+
+Testado contra um `/object_info` simulado com 3 defeitos plantados: pegou os 3.
+
+### Regra
+
+JSON valido e links coerentes **nao garantem** que o workflow abre. A
+definicao do no e a fonte de verdade, e ela mora no codigo do pack. Todo
+workflow gerado por script tem de passar pelo validador **com o servidor
+ligado** antes de ser considerado pronto.

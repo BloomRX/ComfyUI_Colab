@@ -175,7 +175,8 @@
     "CLIP Temperature": "Stable-Diffusion-temperature-settings",
     "PerturbedAttention": "sd-perturbed-attention",
     "SamplerSupreme": "ComfyUI-Extra-Samplers",
-    "SamplerCustomNoise": "ComfyUI-Extra-Samplers"
+    "SamplerCustomNoise": "ComfyUI-Extra-Samplers",
+    "ADE_LoopedUniformContextOptions": "ComfyUI-AnimateDiff-Evolved"
   },
   "native_ignore": [
     "SaveImage",

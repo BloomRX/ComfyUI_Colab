@@ -302,6 +302,12 @@
           "type": "AD_KEYFRAMES",
           "link": null,
           "shape": "7"
+        },
+        {
+          "name": "per_block",
+          "type": "PER_BLOCK",
+          "link": null,
+          "shape": 7
         }
       ],
       "outputs": [
@@ -322,7 +328,7 @@
     },
     {
       "id": 7,
-      "type": "ADE_AnimateDiffUniformContextOptions",
+      "type": "ADE_LoopedUniformContextOptions",
       "pos": [
         410,
         1000
@@ -359,19 +365,19 @@
         }
       ],
       "properties": {
-        "Node name for S&R": "ADE_AnimateDiffUniformContextOptions"
+        "Node name for S&R": "ADE_LoopedUniformContextOptions"
       },
       "widgets_values": [
         8,
-        3,
+        1,
         4,
-        "uniform",
-        false,
-        "flat",
+        true,
         "pyramid",
-        false
+        true,
+        0.0,
+        1
       ],
-      "title": "7. Contexto 8 (sweet spot do Hotshot-XL)"
+      "title": "7. Contexto 8 (loop fechado - sweet spot Hotshot)"
     },
     {
       "id": 8,
