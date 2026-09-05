@@ -210,14 +210,14 @@
         "Node name for S&R": "IPAdapterAdvanced"
       },
       "widgets_values": [
-        0.8,
+        0.6,
         "linear",
         "concat",
         0.0,
-        1.0,
+        0.8,
         "K+mean(V) w/ C penalty"
       ],
-      "title": "4. Trava a aparencia do chibi (0.8)"
+      "title": "4. Trava a aparencia (0.6, solta no fim)"
     },
     {
       "id": 5,
@@ -255,9 +255,9 @@
         "Node name for S&R": "ADE_LoadAnimateDiffModel"
       },
       "widgets_values": [
-        "mm_sdxl_v10_beta.ckpt"
+        "hsxl_temporal_layers.safetensors"
       ],
-      "title": "5. Modulo de movimento SDXL"
+      "title": "5. Movimento: Hotshot-XL (context 8, treinado em 512)"
     },
     {
       "id": 6,
@@ -362,8 +362,8 @@
         "Node name for S&R": "ADE_AnimateDiffUniformContextOptions"
       },
       "widgets_values": [
-        16,
-        1,
+        8,
+        3,
         4,
         "uniform",
         false,
@@ -371,7 +371,7 @@
         "pyramid",
         false
       ],
-      "title": "7. Janela de contexto (16 = 1 ciclo)"
+      "title": "7. Contexto 8 (sweet spot do Hotshot-XL)"
     },
     {
       "id": 8,
@@ -426,9 +426,9 @@
         "Node name for S&R": "ADE_UseEvolvedSampling"
       },
       "widgets_values": [
-        "autoselect"
+        "linear (HotshotXL/default)"
       ],
-      "title": "8. Sampling animado"
+      "title": "8. Sampling animado (beta_schedule LINEAR)"
     },
     {
       "id": 9,
@@ -504,7 +504,7 @@
         "Node name for S&R": "CLIPTextEncode"
       },
       "widgets_values": [
-        "bad quality, worst quality, sketch, censor, watermark, text, explicit, oversaturated, neon colors, glowing skin, high contrast, extra head, duplicate, blurry, realistic, detailed background, long body, adult proportions"
+        "bad quality, worst quality, sketch, censor, watermark, text, explicit, oversaturated, neon colors, glowing skin, high contrast, extra head, duplicate, blurry, realistic, detailed background, long body, adult proportions, inverted colors, color banding, psychedelic, rainbow, scanlines, artifacts, double image, ghosting, motion blur"
       ],
       "title": "10. Negative"
     },
@@ -537,11 +537,11 @@
         "Node name for S&R": "EmptyLatentImage"
       },
       "widgets_values": [
-        768,
-        768,
-        16
+        512,
+        512,
+        8
       ],
-      "title": "11. 16 frames (batch_size = frames)"
+      "title": "11. 512x512, 8 frames (spec do Hotshot-XL)"
     },
     {
       "id": 12,
@@ -596,7 +596,7 @@
         555,
         "fixed",
         24,
-        5.5,
+        4.5,
         "euler_ancestral",
         "normal",
         1.0
@@ -802,7 +802,7 @@
         "Node name for S&R": "Note"
       },
       "widgets_values": [
-        "ANIMACAO LOCAL - roda no T4 (AnimateDiff usa o SEU checkpoint SDXL)\n\nENTRADA: o chibi_idle gerado pelo WaifuSurvivors_Base.\nSAIDA: 16 frames com alpha -> scripts/make_spritesheet.py\n\nTROQUE SO O NO 9 para cada animacao:\n  walk   -> 'walking cycle, legs moving'\n  attack -> 'attacking, swinging arm forward'   (use 1024x768 no no 11!)\n  death  -> 'falling down, collapsing, defeated'\n  idle   -> 'standing, breathing, slight sway'\n\nSEED 555 FIXA de proposito: mantem a aparencia entre as animacoes.\n\nATAQUE: mude o no 11 para 1024x768 (landscape). Quadrado corta o braco/arma\n- e o erro que o autor do video original cometeu ao vivo.\n\nAVISO HONESTO: o mm_sdxl_v10_beta e BETA e subtreinado. O movimento sai\nsimples. Para chibi em loop curto costuma bastar; se ficar ruim, o caminho\ne clipe de 1s na nuvem + VideoToSprites.\n\nSE DER OOM (processo morre = RAM, nao VRAM):\n  1) baixe o no 11 para 512x512\n  2) 16 -> 12 frames\n  3) flags --cache-none --disable-smart-memory na Celula 6"
+        "ANIMACAO LOCAL (Hotshot-XL) - roda no T4\n\nENTRADA: chibi_idle do Base.  SAIDA: 8 frames com alpha.\n\n### POR QUE HOTSHOT-XL E NAO mm_sdxl_v10_beta ###\nO mm_sdxl_v10_beta e beta ha anos e continua instavel: em 768x768 com\ncontexto 16 ele estoura a cor (azul/laranja invertido, scanlines) e\nduplica a cabeca. O Hotshot-XL e o modulo SDXL que a doc do proprio\nAnimateDiff-Evolved recomenda, com specs FECHADAS:\n  - context_length = 8   (nao 16!)\n  - resolucao 512        (foi treinado assim)\n  - beta_schedule LINEAR (obrigatorio - com 'autoselect' quebra a cor)\nSair dessas specs e exatamente o que produziu a aberracao anterior.\n\nTROQUE SO O NO 9:\n  walk   -> 'walking cycle, legs moving'\n  attack -> 'attacking, swinging arm forward'   (no 11: 768x512)\n  death  -> 'falling down, collapsing, defeated'\n  idle   -> 'standing, breathing, slight sway'\n\n8 frames ja e um ciclo de walk completo. Nao aumente para 16.\n\nSE A COR AINDA QUEBRAR:\n  1) confira que o no 8 esta em 'linear (HotshotXL/default)'\n  2) baixe o CFG do no 12 para 4.0\n  3) baixe o IPAdapter (no 4) para 0.45\n\nSE O MOVIMENTO FOR FRACO DEMAIS: e limite do SDXL animado. O plano B\ncontinua sendo clipe de 1s na nuvem + VideoToSprites.\n\nOOM (processo morre = RAM): 512->384, ou 8->6 frames."
       ],
       "title": "LEIA"
     }

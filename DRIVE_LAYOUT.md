@@ -2244,3 +2244,59 @@ e o IPAdapter puxou a saturacao da agua da piscina.
 **IPAdapter e estilo; texto e identidade.** Nenhum dos dois sozinho da
 consistencia. E o concept ideal para o `Base` e **corpo inteiro com fundo
 neutro** — close so serve para portrait.
+
+## v32 — a aberracao do Animate (cor invertida + cabeca dupla)
+
+Saida: chibi azul/laranja com cores invertidas, scanlines horizontais e duas
+cabecas sobrepostas. Nao foi azar de seed — foi configuracao fora da spec.
+
+### Causa: o modulo errado, rodando fora das specs
+
+Eu montei o `Animate` com `mm_sdxl_v10_beta` em **768x768, contexto 16**. Tres
+erros somados:
+
+1. **`mm_sdxl_v10_beta` e beta ha anos e continua instavel.** A doc do
+   AnimateDiff-Evolved lista como "AnimateDiff-SDXL support... **Still in beta
+   after several months**". Eu ja tinha registrado essa ressalva na v29 e
+   escolhi seguir mesmo assim — o resultado provou que nao dava.
+2. **Contexto 16 em SDXL estoura memoria e coerencia.** Relato direto da
+   comunidade: *"AnimateDiff sdxl beta has a context window of 16... Look into
+   hotshot xl, it has a context window of 8"*. A cabeca dupla e o sintoma
+   classico de janela de contexto maior que a capacidade do modulo.
+3. **768x768** — os modulos SDXL de movimento foram treinados em **512**.
+
+### Correcao: Hotshot-XL, com as specs fechadas
+
+A doc do AnimateDiff-Evolved e explicita sobre o Hotshot-XL:
+*"You will need to use autoselect or **linear (HotshotXL/default)**
+beta_schedule, the sweetspot for context_length or total frames is **8
+frames**, and you will need to use an **SDXL checkpoint**."*
+
+| parametro | antes | agora |
+|---|---|---|
+| modulo | `mm_sdxl_v10_beta.ckpt` | **`hsxl_temporal_layers.safetensors`** |
+| beta_schedule | `autoselect` | **`linear (HotshotXL/default)`** |
+| context_length | 16 | **8** |
+| resolucao | 768x768 | **512x512** |
+| frames | 16 | **8** |
+| CFG | 5.5 | **4.5** |
+| IPAdapter | 0.8, end 1.0 | **0.6, end 0.8** |
+
+O `beta_schedule` errado e o principal suspeito da **cor invertida**: e o
+cronograma de ruido: fora do esperado, o denoise termina em outro ponto do
+espaco de cor. CFG 4.5 e IPAdapter solto no fim atacam a saturacao.
+
+**8 frames ja e um ciclo de walk completo** — nao ha perda em relacao aos 16.
+
+### Download novo
+
+`hsxl_temporal_layers.safetensors` (1,2 GB, `animatediff_models`), de
+`Kosinkadink/HotShot-XL-MotionModels`. Ja em `workflow_models` — a C5 baixa.
+O `mm_sdxl_v10_beta` saiu do registry; pode apagar do Drive.
+
+### Regra
+
+Modulo de movimento tem **spec fechada** (resolucao, context_length,
+beta_schedule). Nao sao sugestoes: sair delas quebra a imagem de formas que
+parecem bug de outra coisa. Antes de culpar seed ou prompt, conferir se os
+parametros batem com o que o modulo exige.
