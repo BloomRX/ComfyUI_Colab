@@ -1,5 +1,5 @@
 {
-  "id": "survivors-chibi-poses",
+  "id": "7d955b4a-a28e-5341-8237-3d0d0d180bf5",
   "revision": 0,
   "last_node_id": 38,
   "last_link_id": 62,
@@ -2156,6 +2156,14 @@
   ],
   "groups": [],
   "config": {},
-  "extra": {},
+  "extra": {
+    "ds": {
+      "scale": 0.75,
+      "offset": [
+        0,
+        0
+      ]
+    }
+  },
   "version": 0.4
 }

@@ -1,5 +1,5 @@
 {
-  "id": "survivors-concept",
+  "id": "28ad7206-e42b-5747-a055-b70e1afeb669",
   "revision": 0,
   "last_node_id": 8,
   "last_link_id": 9,
@@ -409,6 +409,14 @@
   ],
   "groups": [],
   "config": {},
-  "extra": {},
+  "extra": {
+    "ds": {
+      "scale": 0.75,
+      "offset": [
+        0,
+        0
+      ]
+    }
+  },
   "version": 0.4
 }

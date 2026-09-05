@@ -1,5 +1,5 @@
 {
-  "id": "waifu-survivors-01",
+  "id": "2cbfbb01-2132-59d3-afbd-6a6d3a4b8ad4",
   "revision": 0,
   "last_node_id": 24,
   "last_link_id": 35,
@@ -1304,6 +1304,14 @@
   ],
   "groups": [],
   "config": {},
-  "extra": {},
+  "extra": {
+    "ds": {
+      "scale": 0.75,
+      "offset": [
+        0,
+        0
+      ]
+    }
+  },
   "version": 0.4
 }

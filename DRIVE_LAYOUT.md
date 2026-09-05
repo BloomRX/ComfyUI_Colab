@@ -1578,3 +1578,40 @@ Se aparecer com muita insistencia, o checkpoint provavelmente tem isso
 
 **Nao gaste tempo salvando uma imagem com logo na fase de concept.** Consertar
 custa mais do que gerar outra.
+
+---
+
+## Workflow aparece na aba mas nao abre (v21)
+
+**Causa: o campo `id` do JSON.**
+
+Comparando um workflow exportado pelo ComfyUI com os que eu gerei por script:
+
+```
+WaifuInpaintXL.json           id='49b62f18-6a99-41b9-81cf-4eadb1b9e819'   <- UUID
+WaifuSurvivors_Concept.json   id='survivors-concept'                      <- string livre
+```
+
+Todo workflow salvo pela UI recebe um **UUID**. A aba Workflows indexa os
+arquivos por esse campo; com um id em formato diferente, o item ate aparece na
+lista, mas ao clicar nao carrega. Por isso funcionava ao arrastar o arquivo
+manualmente — esse caminho nao passa pelo indice.
+
+Corrigido nos 5 workflows criados aqui. O UUID e **derivado do nome do arquivo**
+(`uuid5`), entao e sempre o mesmo — o mesmo workflow nao vira duas entradas.
+
+Tambem preenchi `extra.ds` (zoom/offset iniciais), que os workflows reais tem e
+os meus estavam com `{}`.
+
+A Celula 4 agora **valida e conserta** o `id` de todo workflow nos diretorios da
+UI, inclusive os que ja estavam la. Ids que ja sao UUID sao preservados.
+
+### Segunda causa: cache do frontend
+
+Mesmo com o JSON correto, copiar arquivos **com o servidor no ar** nao atualiza a
+lista: a aba e carregada uma vez no boot. Depois de rodar a Celula 4, sempre:
+
+1. **F5 na aba do ComfyUI** — resolve na maioria das vezes;
+2. se nao, reinicie a **Celula 6**.
+
+Ordem correta e sempre: Celula 4 -> Celula 5 -> Celula 6 -> abrir a UI.

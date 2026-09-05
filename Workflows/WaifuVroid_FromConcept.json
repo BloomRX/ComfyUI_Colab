@@ -1,5 +1,5 @@
 {
-  "id": "waifu-vroid-concept-01",
+  "id": "cea2ee17-fb5a-5484-b333-7857e73829b6",
   "revision": 0,
   "last_node_id": 28,
   "last_link_id": 46,
@@ -1598,6 +1598,14 @@
   ],
   "groups": [],
   "config": {},
-  "extra": {},
+  "extra": {
+    "ds": {
+      "scale": 0.75,
+      "offset": [
+        0,
+        0
+      ]
+    }
+  },
   "version": 0.4
 }
