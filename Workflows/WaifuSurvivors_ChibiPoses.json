@@ -243,7 +243,7 @@
         "Node name for S&R": "CLIPTextEncode"
       },
       "widgets_values": [
-        "bad quality, worst quality, worst detail, sketch, censor, nsfw, watermark, signature, logo, text, cropped, out of frame, realistic"
+        "bad quality, worst quality, worst detail, sketch, censor, watermark, signature, logo, text, multiple views, grid, explicit, oversaturated, neon colors, glowing skin, rim lighting, chromatic aberration, harsh shadows, high contrast, extra head, duplicate, blurry, realistic, detailed background, long body, adult proportions"
       ],
       "title": "5. Negative",
       "color": "#322",

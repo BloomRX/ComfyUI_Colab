@@ -1942,3 +1942,47 @@ print('abas:', st['Comfy.Workflow.OpenWorkflows'])
 Estado de UI que referencia arquivos **sempre** tem de ser reconciliado com o
 disco no boot. Nunca confiar que o que o frontend salvou continua existindo —
 a C4 troca os workflows disponiveis a cada sessao.
+
+## v27 — por que o Concept sai melhor que o resto (imagens neon/queimadas)
+
+Sintoma: as saidas do `Concept` sao limpas e bonitas; splash e chibis saem
+**neon, queimados, com cores saturadas irreais** e ate cabeca duplicada.
+Nao era CFG (o usuario ja tinha baixado para 5).
+
+### Causa: o Concept nao usa IPAdapter, o resto usa
+
+Comparando os grafos, o `Concept` e um pipeline nu:
+`Checkpoint -> CLIPTextEncode -> KSampler`. Nada entre o modelo e o sampler.
+
+Nos outros, o `model` do KSampler vem do `IPAdapterAdvanced`, que estava com
+`embeds_scaling = "V only"`. O proprio autor do pack (cubiq, NODES.md) diz que
+`K+mean(V) w/ C penalty` e o modo que "grants good quality at high weights
+without burning the image" — ou seja, **`V only` queima**. Com peso 0.7 em
+Illustrious (modelo ja saturado) o resultado e exatamente o neon visto.
+
+Somando: `V only` + `end_at 1.0` (IPAdapter agindo ate o ultimo passo, sem
+deixar o modelo resolver cor/contraste no final) + prompts sem ancora de
+coloracao = imagem torrada.
+
+### Correcoes aplicadas
+
+1. **`embeds_scaling` -> `K+mean(V) w/ C penalty`** nos dois IPAdapters.
+2. **`end_at` < 1.0**: 0.9 em splash/portrait, 0.7 no chibi. Os passos finais
+   voltam a ser do checkpoint, que e quem sabe fechar a imagem.
+3. **IPAdapter separado para o chibi** (novo no 50, weight **0.45**). Com 0.7 a
+   referencia realista impedia a deformacao chibi — o sprite saia com corpo
+   longo e proporcao de adulto. Splash/portrait seguem em 0.7 no no 4.
+4. **Negative anti-neon** em todos: `oversaturated, neon colors, glowing skin,
+   rim lighting, chromatic aberration, harsh shadows, high contrast,
+   extra head, duplicate, blurry`.
+5. **Negative dedicado do chibi** (no 51): + `realistic, detailed background,
+   long body, adult proportions`.
+6. **Prompts alinhados ao Concept**: adotado `flat anime coloring, soft lighting`
+   e a mesma estrutura que ja estava funcionando. O `sensitive/attractive` do
+   splash foi mantido; do chibi continua fora.
+
+### Regra
+
+Quando um workflow sai melhor que outro, **comparar os grafos antes de mexer em
+CFG**. Aqui a variavel nao era parametro de sampler, era um no a mais no caminho
+do `model`. `V only` e o default do node e e a pior escolha para Illustrious.

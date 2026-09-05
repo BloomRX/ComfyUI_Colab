@@ -1,8 +1,8 @@
 {
   "id": "619847a9-673c-5a55-9bc2-8b1403b8266f",
   "revision": 0,
-  "last_node_id": 46,
-  "last_link_id": 66,
+  "last_node_id": 51,
+  "last_link_id": 80,
   "nodes": [
     {
       "id": 1,
@@ -39,7 +39,8 @@
             31,
             40,
             49,
-            58
+            58,
+            75
           ],
           "slot_index": 0
         },
@@ -86,7 +87,8 @@
           "name": "IMAGE",
           "type": "IMAGE",
           "links": [
-            4
+            4,
+            69
           ],
           "slot_index": 0
         },
@@ -139,7 +141,8 @@
           "name": "model",
           "type": "MODEL",
           "links": [
-            2
+            2,
+            67
           ],
           "slot_index": 0
         },
@@ -147,7 +150,8 @@
           "name": "ipadapter",
           "type": "IPADAPTER",
           "links": [
-            3
+            3,
+            68
           ],
           "slot_index": 0
         }
@@ -212,12 +216,7 @@
           "type": "MODEL",
           "links": [
             7,
-            15,
-            23,
-            32,
-            41,
-            50,
-            59
+            15
           ],
           "slot_index": 0
         }
@@ -230,10 +229,10 @@
         "linear",
         "concat",
         0.0,
-        1.0,
-        "V only"
+        0.9,
+        "K+mean(V) w/ C penalty"
       ],
-      "title": "4. Forca da referencia (0.7)",
+      "title": "4. Referencia SPLASH/PORTRAIT (0.7)",
       "color": "#253",
       "bgcolor": "#253"
     },
@@ -264,12 +263,7 @@
           "type": "CONDITIONING",
           "links": [
             9,
-            17,
-            25,
-            34,
-            43,
-            52,
-            61
+            17
           ],
           "slot_index": 0
         }
@@ -278,7 +272,7 @@
         "Node name for S&R": "CLIPTextEncode"
       },
       "widgets_values": [
-        "bad quality, worst quality, worst detail, sketch, censor, watermark, signature, logo, text, multiple views, grid, explicit"
+        "bad quality, worst quality, worst detail, sketch, censor, watermark, signature, logo, text, multiple views, grid, explicit, oversaturated, neon colors, glowing skin, rim lighting, chromatic aberration, harsh shadows, high contrast, extra head, duplicate, blurry"
       ],
       "title": "5. Negative",
       "color": "#322",
@@ -319,7 +313,7 @@
         "Node name for S&R": "CLIPTextEncode"
       },
       "widgets_values": [
-        "cowboy shot, dynamic pose, detailed background, cinematic lighting, sensitive, alluring pose, attractive, masterpiece, best quality, amazing quality"
+        "1girl, solo, full body, standing, simple background, game character concept art, soft lighting, flat anime coloring, sensitive, attractive, masterpiece, best quality, amazing quality"
       ],
       "title": "SPLASH",
       "color": "#334",
@@ -525,7 +519,7 @@
         "Node name for S&R": "CLIPTextEncode"
       },
       "widgets_values": [
-        "portrait, upper body, looking at viewer, simple background, soft lighting, detailed face, sensitive, alluring pose, attractive, masterpiece, best quality, amazing quality"
+        "1girl, solo, portrait, upper body, looking at viewer, simple background, soft lighting, flat anime coloring, detailed face, sensitive, masterpiece, best quality, amazing quality"
       ],
       "title": "PORTRAIT",
       "color": "#343",
@@ -731,7 +725,7 @@
         "Node name for S&R": "CLIPTextEncode"
       },
       "widgets_values": [
-        "chibi, super deformed, 2 heads tall, big head, small body, thick outlines, flat colors, simple shading, minimal detail, full body, side view, facing right, white background, simple background, centered, feet visible, standing still, idle pose, arms relaxed at sides, masterpiece, best quality, amazing quality"
+        "chibi, super deformed, 2 heads tall, big head, small body, thick outlines, flat colors, simple shading, minimal detail, full body, side view, facing right, white background, simple background, standing, arms at sides, masterpiece, best quality, amazing quality"
       ],
       "title": "CHIBI idle",
       "color": "#433",
@@ -789,7 +783,7 @@
         {
           "name": "model",
           "type": "MODEL",
-          "link": 23
+          "link": 70
         },
         {
           "name": "positive",
@@ -799,7 +793,7 @@
         {
           "name": "negative",
           "type": "CONDITIONING",
-          "link": 25
+          "link": 76
         },
         {
           "name": "latent_image",
@@ -983,7 +977,7 @@
         "Node name for S&R": "CLIPTextEncode"
       },
       "widgets_values": [
-        "chibi, super deformed, 2 heads tall, big head, small body, thick outlines, flat colors, simple shading, minimal detail, full body, side view, facing right, white background, simple background, centered, feet visible, walking, left leg forward, right arm forward, mid stride, masterpiece, best quality, amazing quality"
+        "chibi, super deformed, 2 heads tall, big head, small body, thick outlines, flat colors, simple shading, minimal detail, full body, side view, facing right, white background, simple background, walking, left leg forward, masterpiece, best quality, amazing quality"
       ],
       "title": "CHIBI walk_a",
       "color": "#433",
@@ -1041,7 +1035,7 @@
         {
           "name": "model",
           "type": "MODEL",
-          "link": 32
+          "link": 71
         },
         {
           "name": "positive",
@@ -1051,7 +1045,7 @@
         {
           "name": "negative",
           "type": "CONDITIONING",
-          "link": 34
+          "link": 77
         },
         {
           "name": "latent_image",
@@ -1235,7 +1229,7 @@
         "Node name for S&R": "CLIPTextEncode"
       },
       "widgets_values": [
-        "chibi, super deformed, 2 heads tall, big head, small body, thick outlines, flat colors, simple shading, minimal detail, full body, side view, facing right, white background, simple background, centered, feet visible, walking, right leg forward, left arm forward, mid stride, masterpiece, best quality, amazing quality"
+        "chibi, super deformed, 2 heads tall, big head, small body, thick outlines, flat colors, simple shading, minimal detail, full body, side view, facing right, white background, simple background, walking, right leg forward, masterpiece, best quality, amazing quality"
       ],
       "title": "CHIBI walk_b",
       "color": "#433",
@@ -1293,7 +1287,7 @@
         {
           "name": "model",
           "type": "MODEL",
-          "link": 41
+          "link": 72
         },
         {
           "name": "positive",
@@ -1303,7 +1297,7 @@
         {
           "name": "negative",
           "type": "CONDITIONING",
-          "link": 43
+          "link": 78
         },
         {
           "name": "latent_image",
@@ -1487,7 +1481,7 @@
         "Node name for S&R": "CLIPTextEncode"
       },
       "widgets_values": [
-        "chibi, super deformed, 2 heads tall, big head, small body, thick outlines, flat colors, simple shading, minimal detail, full body, side view, facing right, white background, simple background, centered, feet visible, attacking, swinging arm forward, dynamic action pose, masterpiece, best quality, amazing quality"
+        "chibi, super deformed, 2 heads tall, big head, small body, thick outlines, flat colors, simple shading, minimal detail, full body, side view, facing right, white background, simple background, attacking, arm raised forward, masterpiece, best quality, amazing quality"
       ],
       "title": "CHIBI attack",
       "color": "#433",
@@ -1545,7 +1539,7 @@
         {
           "name": "model",
           "type": "MODEL",
-          "link": 50
+          "link": 73
         },
         {
           "name": "positive",
@@ -1555,7 +1549,7 @@
         {
           "name": "negative",
           "type": "CONDITIONING",
-          "link": 52
+          "link": 79
         },
         {
           "name": "latent_image",
@@ -1739,7 +1733,7 @@
         "Node name for S&R": "CLIPTextEncode"
       },
       "widgets_values": [
-        "chibi, super deformed, 2 heads tall, big head, small body, thick outlines, flat colors, simple shading, minimal detail, full body, side view, facing right, white background, simple background, centered, feet visible, falling down, defeated, lying on ground, eyes closed, masterpiece, best quality, amazing quality"
+        "chibi, super deformed, 2 heads tall, big head, small body, thick outlines, flat colors, simple shading, minimal detail, full body, side view, facing right, white background, simple background, lying down, defeated, eyes closed, masterpiece, best quality, amazing quality"
       ],
       "title": "CHIBI death",
       "color": "#433",
@@ -1797,7 +1791,7 @@
         {
           "name": "model",
           "type": "MODEL",
-          "link": 59
+          "link": 74
         },
         {
           "name": "positive",
@@ -1807,7 +1801,7 @@
         {
           "name": "negative",
           "type": "CONDITIONING",
-          "link": 61
+          "link": 80
         },
         {
           "name": "latent_image",
@@ -1981,6 +1975,126 @@
       "title": "LEIA",
       "color": "#432",
       "bgcolor": "#432"
+    },
+    {
+      "id": 50,
+      "type": "IPAdapterAdvanced",
+      "pos": [
+        40,
+        850
+      ],
+      "size": [
+        340,
+        278
+      ],
+      "flags": {},
+      "order": 0,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "model",
+          "type": "MODEL",
+          "link": 67
+        },
+        {
+          "name": "ipadapter",
+          "type": "IPADAPTER",
+          "link": 68
+        },
+        {
+          "name": "image",
+          "type": "IMAGE",
+          "link": 69
+        },
+        {
+          "name": "image_negative",
+          "type": "IMAGE",
+          "link": null
+        },
+        {
+          "name": "attn_mask",
+          "type": "MASK",
+          "link": null
+        },
+        {
+          "name": "clip_vision",
+          "type": "CLIP_VISION",
+          "link": null
+        }
+      ],
+      "outputs": [
+        {
+          "name": "MODEL",
+          "type": "MODEL",
+          "links": [
+            70,
+            71,
+            72,
+            73,
+            74
+          ],
+          "slot_index": 0
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "IPAdapterAdvanced"
+      },
+      "widgets_values": [
+        0.45,
+        "linear",
+        "concat",
+        0.0,
+        0.7,
+        "K+mean(V) w/ C penalty"
+      ],
+      "title": "50. Referencia CHIBI (0.45 - deixa virar chibi)",
+      "color": "#253",
+      "bgcolor": "#253"
+    },
+    {
+      "id": 51,
+      "type": "CLIPTextEncode",
+      "pos": [
+        40,
+        1220
+      ],
+      "size": [
+        430,
+        180
+      ],
+      "flags": {},
+      "order": 0,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "clip",
+          "type": "CLIP",
+          "link": 75
+        }
+      ],
+      "outputs": [
+        {
+          "name": "CONDITIONING",
+          "type": "CONDITIONING",
+          "links": [
+            76,
+            77,
+            78,
+            79,
+            80
+          ],
+          "slot_index": 0
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "CLIPTextEncode"
+      },
+      "widgets_values": [
+        "bad quality, worst quality, worst detail, sketch, censor, watermark, signature, logo, text, multiple views, grid, explicit, oversaturated, neon colors, glowing skin, rim lighting, chromatic aberration, harsh shadows, high contrast, extra head, duplicate, blurry, realistic, detailed background, long body, adult proportions"
+      ],
+      "title": "51. Negative CHIBI",
+      "color": "#322",
+      "bgcolor": "#322"
     }
   ],
   "links": [
@@ -2161,27 +2275,11 @@
       "CLIP"
     ],
     [
-      23,
-      4,
-      0,
-      18,
-      0,
-      "MODEL"
-    ],
-    [
       24,
       16,
       0,
       18,
       1,
-      "CONDITIONING"
-    ],
-    [
-      25,
-      5,
-      0,
-      18,
-      2,
       "CONDITIONING"
     ],
     [
@@ -2233,27 +2331,11 @@
       "CLIP"
     ],
     [
-      32,
-      4,
-      0,
-      24,
-      0,
-      "MODEL"
-    ],
-    [
       33,
       22,
       0,
       24,
       1,
-      "CONDITIONING"
-    ],
-    [
-      34,
-      5,
-      0,
-      24,
-      2,
       "CONDITIONING"
     ],
     [
@@ -2305,27 +2387,11 @@
       "CLIP"
     ],
     [
-      41,
-      4,
-      0,
-      30,
-      0,
-      "MODEL"
-    ],
-    [
       42,
       28,
       0,
       30,
       1,
-      "CONDITIONING"
-    ],
-    [
-      43,
-      5,
-      0,
-      30,
-      2,
       "CONDITIONING"
     ],
     [
@@ -2377,27 +2443,11 @@
       "CLIP"
     ],
     [
-      50,
-      4,
-      0,
-      36,
-      0,
-      "MODEL"
-    ],
-    [
       51,
       34,
       0,
       36,
       1,
-      "CONDITIONING"
-    ],
-    [
-      52,
-      5,
-      0,
-      36,
-      2,
       "CONDITIONING"
     ],
     [
@@ -2449,27 +2499,11 @@
       "CLIP"
     ],
     [
-      59,
-      4,
-      0,
-      42,
-      0,
-      "MODEL"
-    ],
-    [
       60,
       40,
       0,
       42,
       1,
-      "CONDITIONING"
-    ],
-    [
-      61,
-      5,
-      0,
-      42,
-      2,
       "CONDITIONING"
     ],
     [
@@ -2511,6 +2545,118 @@
       45,
       0,
       "IMAGE"
+    ],
+    [
+      67,
+      3,
+      0,
+      50,
+      0,
+      "MODEL"
+    ],
+    [
+      68,
+      3,
+      1,
+      50,
+      1,
+      "IPADAPTER"
+    ],
+    [
+      69,
+      2,
+      0,
+      50,
+      2,
+      "IMAGE"
+    ],
+    [
+      70,
+      50,
+      0,
+      18,
+      0,
+      "MODEL"
+    ],
+    [
+      71,
+      50,
+      0,
+      24,
+      0,
+      "MODEL"
+    ],
+    [
+      72,
+      50,
+      0,
+      30,
+      0,
+      "MODEL"
+    ],
+    [
+      73,
+      50,
+      0,
+      36,
+      0,
+      "MODEL"
+    ],
+    [
+      74,
+      50,
+      0,
+      42,
+      0,
+      "MODEL"
+    ],
+    [
+      75,
+      1,
+      1,
+      51,
+      0,
+      "CLIP"
+    ],
+    [
+      76,
+      51,
+      0,
+      18,
+      2,
+      "CONDITIONING"
+    ],
+    [
+      77,
+      51,
+      0,
+      24,
+      2,
+      "CONDITIONING"
+    ],
+    [
+      78,
+      51,
+      0,
+      30,
+      2,
+      "CONDITIONING"
+    ],
+    [
+      79,
+      51,
+      0,
+      36,
+      2,
+      "CONDITIONING"
+    ],
+    [
+      80,
+      51,
+      0,
+      42,
+      2,
+      "CONDITIONING"
     ]
   ],
   "groups": [],
