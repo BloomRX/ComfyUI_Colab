@@ -1497,3 +1497,52 @@ estava la. Workflows de sessoes anteriores permanecem — inclusive os que voce
 salvou pela UI. Agora a mensagem diz isso explicitamente.
 
 Se quiser limpar, apague pela aba Workflows da propria UI.
+
+---
+
+## Veredito: a lentidao era o TUNEL (v20)
+
+O autodiagnostico da v18 fechou a questao:
+
+```
+  /system_stats                     0.00s         1 KB
+  /queue                            0.00s         0 KB
+  /api/userdata?dir=workflows       0.00s         0 KB
+  /embeddings                       0.00s         0 KB
+  /object_info                      0.20s      1702 KB
+  TOTAL                             0.20s
+```
+
+**0,20 s no total** — o servidor responde instantaneamente, inclusive o
+`/object_info` (1,7 MB em 200 ms). Os minutos de tela preta eram inteiramente do
+**cloudflared**.
+
+Por que isso acontece: o `trycloudflare.com` e um tunel gratuito e anonimo. O
+trafego sai do Colab, atravessa a rede da Cloudflare, chega ao seu browser no
+Brasil e volta. O edge sorteado varia a cada execucao — as vezes bom, as vezes
+pessimo. A UI do ComfyUI baixa varios MB de JS no primeiro acesso; num edge ruim
+isso leva minutos ou estoura o timeout (dai o "recarregar resolve").
+
+### Solucao: `TUNEL = 'colab'` (novo padrao)
+
+O Colab tem um **proxy interno** (`google.colab.kernel.proxyPort`). O trafego vai
+pela mesma conexao autenticada do notebook, sem passar por terceiros. E o
+caminho mais curto e mais rapido.
+
+A Celula 6 agora imprime esse link automaticamente. Alternativa manual, a
+qualquer momento: **chave inglesa no painel esquerdo > Portas > 8188 > abrir**.
+
+Limitacao: o link so funciona **para voce, nesse navegador**, enquanto a sessao
+estiver viva. Nao da para compartilhar nem abrir no celular.
+
+Quando ainda usar os outros:
+- `cloudflared` — precisa de link publico (mostrar para alguem, abrir no
+  celular). Se estiver lento, reinicie a Celula 6 para sortear outro edge.
+- `ngrok` — mesma finalidade, com conta; costuma ser mais estavel que o
+  cloudflared gratuito.
+
+### Nota sobre as migracoes do banco
+
+O log mostrou de novo `Running upgrade 0001_assets -> ... -> 0006_add_loader_path`.
+Elas rodam a cada sessao porque o banco (`comfyui.db`) fica no `user/`, que e
+recriado. Sao rapidas (menos de 1 s) e nao tem relacao com a lentidao da UI.
