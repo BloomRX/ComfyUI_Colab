@@ -1734,3 +1734,59 @@ porque a identidade nao muda.
 Quando treinar as LoRAs, o **dataset define o teor**. Se todas as imagens forem
 ecchi, a LoRA vai puxar para isso mesmo quando voce pedir algo limpo — inclusive
 no chibi. Misture: cerca de 70% neutras, 30% ecchi.
+
+---
+
+## "Nao foi possivel encontrar o fluxo de trabalho em X.json" (v24)
+
+Erro diferente dos anteriores: aqui o frontend **sabe** que o workflow existe
+(esta na lista de abas abertas) mas nao acha o arquivo.
+
+**Causa: um efeito colateral da v17.** A Celula 6 copiava o `user/` do Drive
+para o local assim:
+
+```python
+if not os.path.exists(USER_LOCAL):
+    shutil.copytree(DRIVE_USER, USER_LOCAL)
+```
+
+Mas a **Celula 4 roda antes** e ja cria `/content/comfy_user/default/workflows`
+para gravar os workflows selecionados. Quando a Celula 6 chegava, o diretorio
+**ja existia** — e o `copytree` era pulado inteiro.
+
+Consequencia: `comfy.settings.json`, `__manager/` e todos os workflows antigos
+**nunca chegavam ao diretorio local**. O frontend lia um `user/` quase vazio,
+tentava restaurar as abas abertas da sessao anterior e nao encontrava os
+arquivos. Dai a mensagem.
+
+**Correcao:** a copia virou um **merge incondicional**
+(`copytree(..., dirs_exist_ok=True)`), mais uma reconciliacao nos dois sentidos
+da pasta `workflows/`. A celula agora imprime quantos workflows estao
+disponiveis para a UI:
+
+```
+Sincronizando user/ do Drive para o disco local... ok
+Workflows disponiveis para a UI: 12
+```
+
+Se esse numero vier menor do que voce espera, o problema e anterior a UI.
+
+### Destravar sem reiniciar tudo
+
+Se a sessao ja esta no ar e voce nao quer esperar, rode numa celula nova:
+
+```python
+import shutil, os
+D='/content/drive/MyDrive/ComfyUI_Data/user'; L='/content/comfy_user'
+shutil.copytree(D, L, dirs_exist_ok=True)
+wl=f'{L}/default/workflows'
+print(len([f for f in os.listdir(wl) if f.endswith('.json')]), 'workflows')
+```
+
+Depois **F5** na aba do ComfyUI. Nao precisa reiniciar a Celula 6.
+
+### Se a mensagem insistir
+
+O frontend guarda as abas abertas em `comfy.settings.json`. Se ele continuar
+tentando reabrir um workflow que nao existe mais, feche a aba pelo X na propria
+UI — isso limpa o registro.
