@@ -2195,3 +2195,52 @@ Estado de UI existe em **dois lugares**: `user/` no servidor e o armazenamento
 do navegador. Diagnostico de aba travada tem de considerar os dois. E toda
 sincronizacao repo->Drive precisa de **manifesto** para saber o que remover;
 copiar sem nunca apagar acumula lixo que quebra o frontend.
+
+## v31 — inconsistencia entre concept, splash e chibi
+
+Comparando o concept (piscina, chapeu de palha, close de busto) com as saidas:
+
+| | concept | splash gerada | chibi gerado |
+|---|---|---|---|
+| olhos | ambar | ambar | **azuis** |
+| cabelo | castanho claro, trancado | castanho longo solto | castanho curto |
+| roupa | biquini branco + shorts | **top azul + shorts jeans** | top azul |
+| fundo | piscina | **rosa psicodelico em espiral** | preto |
+
+### Causa 1 — IPAdapter nao carrega identidade discreta
+
+O IPAdapter transfere "clima" da imagem: paleta, iluminacao, estilo de traco.
+Ele **nao trava** cor de olho, cor de cabelo nem peca de roupa. Onde o texto
+nao diz, o modelo inventa — e inventa **diferente em cada KSampler**, porque as
+seeds sao independentes. Por isso o olho virou azul so no chibi.
+
+Era um furo do meu desenho: ao criar o `Base` eu tirei o no de IDENTIDADE que
+existia no antigo `Assets` e deixei so os textos de ESTILO, confiando demais na
+imagem. Contradiz a regra de ouro que ja estava nesta doc: **identidade num
+unico `CLIPTextEncode`**.
+
+### Causa 2 — o concept e um close, a splash e corpo inteiro
+
+O concept mostra busto e rosto. Pedir `full body` a partir dele obriga o modelo
+a **inventar pernas, calcado e a metade de baixo da roupa** — nao ha essa
+informacao na referencia. Foi assim que o biquini virou top azul.
+
+O fundo rosa em espiral tem a mesma origem: `simple background` nao diz QUAL,
+e o IPAdapter puxou a saturacao da agua da piscina.
+
+### Correcoes
+
+1. **No 20 `IDENTIDADE`** (novo) — um unico texto com cabelo, olhos, roupa e
+   calcado, concatenado (nos 21/22) ao estilo de cada saida. Splash e chibi
+   passam a receber **a mesma descricao**.
+2. Splash: `plain white background` no lugar de `simple background`; removido
+   `game character concept art` (empurrava para folha de concept).
+3. Negative + `colorful background, patterned background, swirls, spiral,
+   gradient background, bikini, swimsuit`; no chibi tambem `blue eyes`.
+4. Pesos de IPAdapter subiram: splash **0.7 -> 0.85**, chibi **0.45 -> 0.6**.
+
+### Regra
+
+**IPAdapter e estilo; texto e identidade.** Nenhum dos dois sozinho da
+consistencia. E o concept ideal para o `Base` e **corpo inteiro com fundo
+neutro** — close so serve para portrait.
