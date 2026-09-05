@@ -1396,3 +1396,41 @@ minutos nao se percam se voce fechar o Colab logo apos salvar um workflow.
   *Settings > Lite Graph > Nodes 2.0* > desligar.
 - **Muitos workflows na aba**: a UI lista todos no boot. A Celula 4 so copia os
   selecionados, mas o que voce salvou pela UI fica la para sempre.
+
+---
+
+## A UI continua demorando (mesmo com user/ local) — como DIAGNOSTICAR
+
+Se apos a v17 a tela da logo ainda demora minutos, pare de chutar: **meca**.
+A **Celula 7** foi criada para isso. Rode-a com o servidor da Celula 6 no ar.
+
+Ela mede, direto pelo `127.0.0.1` (sem passar pelo tunel), cada chamada que a UI
+faz no boot, e conta quantos arquivos existem nas pastas de modelo.
+
+A leitura do resultado:
+
+**Caso A — total abaixo de ~5 s.** O servidor esta rapido; o gargalo e o
+**tunel** ou o navegador. O `cloudflared` gratuito as vezes pega um edge ruim e
+fica lento ou perde pacotes.
+Solucoes, em ordem:
+1. **Use o proxy de portas do proprio Colab** — icone de chave inglesa no painel
+   esquerdo > *Portas* > porta `8188` > abrir. Nao passa pela internet publica,
+   e quase sempre e o mais rapido.
+2. Reinicie a Celula 6 para pegar outro tunel (a URL muda).
+3. Troque `TUNEL` para `ngrok`.
+
+**Caso B — `/object_info` marcou LENTO.** Esse endpoint monta a lista de todos os
+nos e, para cada loader, **varre as pastas de modelos**. Com os modelos no Drive,
+cada varredura passa por FUSE. E a chamada mais pesada do boot da UI, e a UI
+**nao desenha nada** ate ela responder — exatamente a tela da logo parada.
+
+Mitigacoes:
+- Menos arquivos nas pastas de modelo. Apague `.part` e duplicatas.
+- Menos custom nodes ativos: cada pack adiciona nos ao `/object_info`.
+  A selecao da Celula 4 ja ajuda — use a menor selecao possivel.
+- Se um workflow nao precisa de um modelo gigante, tire-o da pasta.
+
+**Detalhe do seu log (2ª sessao):** apareceu `one-node-flux-2-klein` nos custom
+nodes e o banco rodou **6 migracoes** (`0001_assets` -> `0006_add_loader_path`).
+As migracoes so acontecem na primeira vez apos atualizar o ComfyUI — nao
+explicam lentidao recorrente, mas explicam aquele boot especifico.
