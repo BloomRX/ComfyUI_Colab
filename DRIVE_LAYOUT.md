@@ -1353,3 +1353,46 @@ WaifuSurvivors_ChibiPoses  -> as 5 poses de animacao
         |  varios personagens?
 scripts/batch_survivors.py -> tudo, para todos, de uma vez
 ```
+
+---
+
+## UI trava na tela "Comfy" por muito tempo / precisa recarregar a pagina
+
+O log de boot engana: `Starting server` aparece em segundos, mas a tela preta com
+a logo continua. **O servidor esta pronto — quem esta lenta e a UI.**
+
+**Causa: `--user-directory` apontando para o Drive.**
+
+Ao abrir, o frontend faz dezenas de requisicoes pequenas em `user/`: settings,
+lista de workflows, layout, templates e o cache do Manager. Cada leitura no Drive
+passa por FUSE e custa ~100 ms. Trinta arquivos = alguns segundos so de espera,
+as vezes com timeout — e dai a necessidade de recarregar.
+
+E o mesmo motivo pelo qual o ComfyUI nao roda dentro do Drive. Faltava aplicar a
+regra ao `user/`.
+
+**Correcao (v17):** o `user/` passa a viver em `/content/comfy_user` (disco
+local, rapido) e e **espelhado no Drive a cada 2 minutos** por uma thread.
+
+- No boot, a Celula 6 copia `user/` do Drive para o local.
+- Durante a sessao, tudo e lido/escrito local — UI abre rapido.
+- A cada 2 min, o conteudo volta para o Drive.
+- A Celula 4 grava os workflows nos **dois** lugares.
+
+Para forcar o backup antes de encerrar a sessao, rode numa celula:
+
+```python
+salvar_agora()
+```
+
+Nao e obrigatorio (a thread ja salva sozinha), mas garante que os ultimos
+minutos nao se percam se voce fechar o Colab logo apos salvar um workflow.
+
+### Outras causas possiveis
+
+- **Cloudflare frio**: o primeiro acesso ao tunel demora alguns segundos. Se a
+  pagina ficar em branco *antes* de aparecer a logo, e o tunel, nao a UI.
+- **rgthree "Nodes 2.0"**: deixa a UI lenta em workflows grandes.
+  *Settings > Lite Graph > Nodes 2.0* > desligar.
+- **Muitos workflows na aba**: a UI lista todos no boot. A Celula 4 so copia os
+  selecionados, mas o que voce salvou pela UI fica la para sempre.
