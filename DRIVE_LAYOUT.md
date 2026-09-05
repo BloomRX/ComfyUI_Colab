@@ -1300,3 +1300,56 @@ Cuidado separado: cada personagem pode sair com uma proporcao chibi diferente,
 o que quebra a leitura no jogo. Duas saidas: treinar uma **LoRA de estilo
 chibi** (treinada em chibis, nao em personagem) e aplica-la junto da LoRA do
 personagem; ou padronizar via img2img a partir de um chibi aprovado.
+
+---
+
+## WaifuSurvivors_Concept.json — a fase ANTES da splash oficial
+
+Explorar barato. Nao e arte final, e rascunho: **4 variacoes por Run**, 20 steps,
+768x1152 (~1 min no T4). A splash oficial usa 30 steps em 832x1216 — 3x mais
+caro. Nao gaste isso enquanto ainda esta decidindo como a personagem e.
+
+Zero custom nodes.
+
+**A diferenca de mentalidade:** nos outros workflows a identidade e fixa e voce
+varia o angulo. Aqui e o oposto — a **seed e `randomize`** e o prompt e solto,
+de proposito. Voce nao esta reproduzindo um personagem, esta **descobrindo** um.
+
+### Ciclo
+
+1. No no 2, escreva solto, com lacunas:
+   `1girl, solo, full body, knight girl, silver armor, red cape`
+   O modelo preenche os buracos e te da ideias que voce nao teve.
+2. **Run** → saem 4. Nao gostou? Run de novo.
+3. Repita ate algo te fazer parar.
+4. Anote a **seed** e o **prompt** da imagem boa.
+5. Leve para o `WaifuSurvivors_Assets` (no 3 + seed nos KSamplers) e gere em
+   qualidade cheia.
+
+Varie **uma** coisa por vez: cabelo, roupa, paleta, vibe. As combinacoes que
+funcionarem viram o seu elenco.
+
+### O criterio que importa num bullet heaven
+
+O jogador ve o sprite **pequeno**. O que le em miniatura e a **silhueta** e a
+**cor dominante** — nao o detalhe.
+
+Teste pratico: aperte os olhos olhando as 4 imagens. Ainda da para distinguir as
+personagens? Se viram todas o mesmo borrao, o elenco esta fraco. Varie
+**silhueta e paleta**, nao acessorio.
+
+Isso vale mais para o seu projeto do que qualquer ajuste de sampler: cinco
+personagens que se parecem em miniatura sao cinco personagens que o jogador nao
+vai diferenciar durante a partida.
+
+### Ordem dos workflows no projeto
+
+```
+WaifuSurvivors_Concept     -> explorar, descobrir o elenco  (rapido, 4 por vez)
+        |  escolheu? anote seed + prompt
+WaifuSurvivors_Assets      -> splash + portrait + chibi     (qualidade cheia)
+        |  chibi ficou bom?
+WaifuSurvivors_ChibiPoses  -> as 5 poses de animacao
+        |  varios personagens?
+scripts/batch_survivors.py -> tudo, para todos, de uma vez
+```
