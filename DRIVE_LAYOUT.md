@@ -1,5 +1,55 @@
 # O que fica no Drive e o que NÃO fica
 
+> **LEIA ISTO ANTES DE DIAGNOSTICAR QUALQUER COISA.**
+> Este arquivo tem 70+ seções em ordem cronológica. O índice abaixo é por
+> SINTOMA, não por data. Procure o sintoma aqui antes de formular hipótese —
+> a maioria dos erros desta lista já custou várias tentativas erradas.
+
+## Índice por sintoma
+
+| Sintoma | Causa confirmada | Seção |
+|---|---|---|
+| "Não foi possível encontrar o fluxo de trabalho em X.json" | mensagem é `fileLoadError` = arquivo **ARRASTADO** ilegível, NÃO sidebar | v35 |
+| Workflow lista mas não abre / abas não trocam | estado no **localStorage do navegador**, não no servidor | v34, v35 |
+| Workflow abre vazio ou não renderiza | nó **deprecado** ou tipo ausente no `/object_info` | v37 |
+| Nó com entrada errada / widgets fora de ordem | JSON válido ≠ workflow válido; conferir contra a fonte do pack | v37 |
+| Não aparece botão do Manager | `--enable-manager` bloqueia o clone; usa o pacote pip | v38 |
+| Manager abre mas não instala nada | `network_mode` precisa ser `personal_cloud` | v38 |
+| Download de modelo dá 404 | URL inventada; conferir árvore via API do HF | v33 |
+| Imagens neon / cores queimadas | `embeds_scaling` do IPAdapter em `V only` | v27 |
+| Cor invertida + cabeça dupla no vídeo | módulo de movimento fora da spec (contexto/resolução/beta) | v32 |
+| Personagem muda entre splash e chibi | IPAdapter não trava identidade; falta nó de texto | v31 |
+| Chibi sai com corpo de adulto | peso do IPAdapter alto demais para deformar | v29, v31 |
+| UI lenta | era o cloudflared; usar proxy do Colab | v20 |
+| Processo morre sem mensagem | falta **RAM** (13 GB), não VRAM | v29 |
+| Erro CUDA / torch OOM | falta VRAM | v29 |
+| Pack instalado mas nó não aparece | pasta `.disabled`; rodar C4 e reiniciar C6 | v19 |
+
+## Regras invioláveis (violá-las já custou retrabalho)
+
+1. **Nunca escrever URL de modelo de memória.** Conferir em
+   `https://huggingface.co/api/models/<repo>/tree/main`. — v33
+2. **Nunca inventar nome de chave de config.** Se não foi lido no código-fonte,
+   não existe. Escrever chave inexistente falha em silêncio. — v34
+3. **Ler a string de erro no código-fonte antes de teorizar.** A preposição
+   "in" distinguia dois bugs diferentes. — v35
+4. **JSON válido não garante workflow válido.** Rodar
+   `python scripts/validar_workflows.py --server http://127.0.0.1:8188`
+   antes de considerar pronto. — v37
+5. **Estado de UI vive em dois lugares:** `user/` no servidor E o
+   localStorage/IndexedDB do navegador. — v34
+6. **Módulo de movimento tem spec fechada** (resolução, context_length,
+   beta_schedule). Não são sugestões. — v32
+7. **Nunca `if not exists(dir)` para decidir cópia** Drive↔local; sempre
+   `copytree(..., dirs_exist_ok=True)`. — v24
+8. **Toda sincronização repo→Drive precisa de manifesto** para saber o que
+   remover; copiar sem apagar acumula lixo. — v34
+9. **O mesmo sintoma resistindo a várias correções = hipótese errada**, não
+   implementação errada. Parar e reler a fonte. — v35
+10. **IPAdapter é estilo; texto é identidade.** Nenhum sozinho dá
+    consistência. — v31
+
+
 ## Regra geral
 
 | Critério | Onde vive |
@@ -2647,3 +2697,61 @@ O log mostra os 4 packs importando sem erro (IPAdapter 0.1 s, AnimateDiff
 0.2 s, VHS 0.8 s, Inspyrenet 2.5 s), entao os nos **deveriam** estar
 registrados. O teste no navegador vai confirmar ou refutar isso — e e a
 primeira medicao feita de dentro do browser, que e onde o problema vive.
+
+## v39 — memoria que se verifica sozinha
+
+Pergunta do usuario: "voce esta anotando esses erros para nao precisar
+repensar se ocorrer de novo?"
+
+Resposta honesta: **estava anotando, e nao bastou.** Este arquivo tem 76
+secoes. O bug das abas foi documentado 4x (v24, v26, v30, v34) e eu repeti a
+mesma hipotese errada nas 4. Documentacao cronologica so ajuda quem relê 2600
+linhas antes de agir — e nao foi o que aconteceu.
+
+Duas mudancas para que a memoria funcione sem depender de leitura:
+
+### 1. Indice por SINTOMA no topo do arquivo
+
+Tabela `sintoma -> causa confirmada -> secao`, mais 10 **regras invioláveis**,
+cada uma com a versao onde foi violada. Quem chega com um sintoma acha a causa
+em segundos, em vez de formular hipotese nova.
+
+### 2. `scripts/checar_regras.py` — executa a memoria
+
+Cada checagem existe porque o erro JA ACONTECEU:
+
+| Regra | Detecta | Origem |
+|---|---|---|
+| v21 | id de workflow que nao e UUID, ou duplicado | v21 |
+| v30 | versoes de checkpoint misturadas no repo | v30 |
+| v37 | link orfao / apontando para no inexistente | v37 |
+| v37 | node_id **deprecado** (com o substituto certo) | v37 |
+| v33 | URL do HF fora do padrao `/resolve/`; com `--online`, 404 real | v33 |
+| v34 | chave de setting **inventada** no notebook | v34 |
+| v24 | copia condicional entre Drive e local | v24 |
+| sintaxe | celula do notebook que nao compila | — |
+| versao | NB_VERSION ausente ou conflitante | — |
+
+Validado plantando as 5 regressoes de volta num clone: **as 5 foram pegas**,
+cada uma citando a secao correspondente.
+
+Achou tambem um defeito que estava passando despercebido:
+`Efaces_Pony_XL_V01.json` **nao tinha `id`** — exatamente a condicao que a v21
+documentou como impeditiva para a aba abrir. Corrigido.
+
+### Como usar
+
+```
+python scripts/checar_regras.py            # rapido, offline
+python scripts/checar_regras.py --online   # confere as URLs no HF
+python scripts/validar_workflows.py --server http://127.0.0.1:8188
+```
+
+Os dois primeiros nao precisam de nada ligado. O terceiro exige o ComfyUI no ar
+e e o unico que valida os nos contra `/object_info`.
+
+### Regra
+
+**Documentar um erro nao impede a repeticao; verificar impede.** Todo bug que
+custar mais de uma tentativa vira: (a) linha no indice por sintoma e (b)
+checagem automatica, quando for verificavel por codigo.
