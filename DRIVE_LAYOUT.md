@@ -2132,3 +2132,66 @@ walk `walking cycle, legs moving` · attack `attacking, swinging arm forward`
 Seed **555 fixa** mantem a aparencia entre animacoes. Para **attack**, mudar o
 no 11 para **1024x768 landscape** — quadrado corta o braco/arma (erro que o
 autor do video original cometeu ao vivo).
+
+## v30 — checkpoint v170 e a causa REAL das abas travadas
+
+### Checkpoint
+
+Trocado `waiIllustriousSDXL_v160` -> **`v170`** em tudo: 6 workflows
+(`Detailer`, `Base`, `Animate`, `Concept`, `WaifuVroid`,
+`WaifuVroid_FromConcept`), `node_registry.json` e `roster.example.json`.
+
+### As abas: meu diagnostico da v26 estava incompleto
+
+Na v26 eu limpei referencias mortas do `comfy.settings.json` (lado servidor).
+O print do usuario mostrou que o problema continuou, e revelou o que faltava:
+**a sidebar ainda listava `Assets`, `ChibiPoses` e `FromConcept`** — apagados
+do repo na v29, mas ainda presentes no Drive e no `user/` local.
+
+Duas causas somadas:
+
+**1. A C4 nunca removia workflows.** Ela so copia. Um workflow apagado do repo
+ficava para sempre no Drive e na sidebar. Clicar nele = arquivo inexistente =
+alerta "Nao foi possivel encontrar o fluxo de trabalho" e o tabbar trava.
+
+**2. Bug conhecido do frontend, nao nosso.**
+`Comfy-Org/ComfyUI_frontend#9317` descreve exatamente os sintomas: a
+restauracao de abas guarda rascunhos no armazenamento do **navegador**, e
+"tab restoration never activates the correct workflow". Relatos identicos:
+clicar numa aba abre `Unsaved Workflow (n)` em vez do workflow — que e
+precisamente o que se ve no print (aba "Unsaved Workflow" ativa ao lado de
+`WaifuSurvivors_Base`).
+
+Por isso limpar so o lado servidor nao bastava: **metade do estado vive no
+navegador**.
+
+### Correcoes
+
+**C4 — manifesto de injetados.** `user/.injetados.json` registra o que o
+notebook copiou. A cada execucao, o que esta no manifesto mas nao esta mais no
+repo e **removido dos dois lados**. Workflows criados pelo usuario na UI nunca
+entram no manifesto, entao **nunca sao apagados**.
+
+Testado com 8 workflows na UI (3 orfaos + 4 do repo + 1 pessoal): removeu os 3,
+preservou o pessoal.
+
+**C6 (`v30-tabs`) — desliga a persistencia de abas.** Agora tambem grava
+`Comfy.Workflow.Persist = false`. Sem a restauracao automatica, cada workflow
+abre limpo do disco. Perde-se reabrir as abas da sessao anterior — o que num
+Colab efemero nao vale nada — e ganha-se um tabbar que funciona.
+
+### Se ainda travar: limpar o estado do NAVEGADOR
+
+Isto o notebook nao alcanca. No navegador, com a UI aberta:
+F12 -> Application -> Storage -> **Clear site data** (ou Ctrl+Shift+Del para o
+endereco do Colab). Depois F5.
+
+Os rascunhos ficam la, nao no servidor; enquanto nao forem limpos o bug pode
+voltar mesmo com o disco correto.
+
+### Regra
+
+Estado de UI existe em **dois lugares**: `user/` no servidor e o armazenamento
+do navegador. Diagnostico de aba travada tem de considerar os dois. E toda
+sincronizacao repo->Drive precisa de **manifesto** para saber o que remover;
+copiar sem nunca apagar acumula lixo que quebra o frontend.

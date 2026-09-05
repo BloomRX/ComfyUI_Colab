@@ -57,7 +57,7 @@
         "Node name for S&R": "CheckpointLoaderSimple"
       },
       "widgets_values": [
-        "waiIllustriousSDXL_v160.safetensors"
+        "waiIllustriousSDXL_v170.safetensors"
       ],
       "title": "1. Checkpoint SDXL"
     },

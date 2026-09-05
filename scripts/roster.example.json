@@ -1,7 +1,7 @@
 {
   "_comment": "Elenco do Waifu Survivors. MODO RECOMENDADO: preencha 'concept' com o nome do arquivo da imagem aprovada (em ComfyUI_Data/input/) - a identidade vem da imagem via IPAdapter, sem copiar seed nem prompt. 'identity' (texto) so como alternativa. Teor ecchi: splash/portrait usam 'sensitive'; chibi fica limpo.",
   "defaults": {
-    "checkpoint": "waiIllustriousSDXL_v160.safetensors",
+    "checkpoint": "waiIllustriousSDXL_v170.safetensors",
     "negative": "bad quality, worst quality, worst detail, sketch, censor, watermark, signature, logo, text, multiple views, grid, explicit",
     "cfg": 5.5,
     "steps": 26,
