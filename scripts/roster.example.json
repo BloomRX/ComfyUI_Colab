@@ -1,0 +1,28 @@
+{
+  "_comment": "Elenco do Waifu Survivors. Copie para roster.json e edite. Cada personagem so precisa do campo 'id' e 'identity' - o resto e opcional.",
+
+  "defaults": {
+    "checkpoint": "waiIllustriousSDXL_v160.safetensors",
+    "negative": "cropped, out of frame, close-up, multiple views, grid, realistic, detailed background, oversaturated, neon colors, extra fingers, bad anatomy, watermark, signature, text, lowres, blurry",
+    "cfg": 4.5,
+    "steps": 26,
+    "sampler": "dpmpp_2m",
+    "scheduler": "karras"
+  },
+
+  "characters": [
+    {
+      "id": "lia",
+      "identity": "1girl, solo, long wavy magenta hair, crimson pink eyes, black blazer, white shirt, wine red pleated skirt, black knee-high socks",
+      "lora": null,
+      "lora_strength": 0.85,
+      "seed": 555
+    },
+    {
+      "id": "exemplo2",
+      "identity": "1girl, solo, short blue hair, twintails, golden eyes, white sailor uniform, blue skirt, thighhighs",
+      "lora": null,
+      "seed": 777
+    }
+  ]
+}

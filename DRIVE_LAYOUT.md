@@ -1202,3 +1202,101 @@ O prompt do chibi pede proporcao de 2 cabecas. Modelos anime entendem `chibi` e
 personagens — o que quebra a leitura no jogo — as saidas sao: LoRA de estilo
 chibi (treinada em chibis, nao em personagem), ou padronizar via img2img a
 partir de um chibi aprovado.
+
+---
+
+# Waifu Survivors — pipeline de assets (Godot)
+
+Decisoes do projeto: **Godot**, chibi **anime** (nao pixel art), animacao
+**walk/attack/death** com flip horizontal, **~5 personagens**.
+
+Tres pecas:
+
+| Arquivo | O que faz |
+|---|---|
+| `Workflows/WaifuSurvivors_Assets.json` | splash + portrait + chibi (1 pose) |
+| `Workflows/WaifuSurvivors_ChibiPoses.json` | as **5 poses** chibi, mesma seed |
+| `scripts/batch_survivors.py` | gera **tudo, para todos**, pela API |
+
+Custom node: so `ComfyUI-Inspyrenet-Rembg` (fundo transparente do chibi).
+
+## O limite que define o design da animacao
+
+**Difusao nao faz animacao frame-a-frame consistente.** Cada imagem e gerada do
+zero: cabelo, dobra da saia e dedos mudam entre frames. Em 2 frames alternados
+quase nao se percebe; em 8, o sprite "ferve".
+
+Por isso a recomendacao para um Vampire Survivors-like:
+
+- **walk** = 2 frames (`walk_a` / `walk_b`) alternando;
+- **death** = 1 frame + tween de rotacao/fade no Godot;
+- **attack** = muitas vezes dispensavel — em bullet heaven o efeito visual e do
+  **projetil**, nao do corpo;
+- o resto = **animacao procedural** no Godot: squash & stretch, bob vertical,
+  leve rotacao, flash branco ao tomar dano.
+
+Isso e o que a maioria dos jogos do genero faz. Sprite pequeno em movimento
+rapido: ninguem percebe, e economiza a maior parte do trabalho.
+
+Flip: gere so `facing right` e use `flip_h` no Godot.
+
+## Resolucao
+
+Gere em **1024** e reduza no Godot. Nunca gere em 128 — difusao em resolucao
+baixa vira papa. No import do Godot, `Filter: Nearest` se quiser borda dura.
+
+## Automacao: `scripts/batch_survivors.py`
+
+Nao depende de workflow salvo — monta o grafo em formato API na hora. Trocar o
+elenco e editar um JSON.
+
+```bash
+cp scripts/roster.example.json scripts/roster.json   # e edite
+
+python scripts/batch_survivors.py --roster scripts/roster.json --dry-run
+python scripts/batch_survivors.py --roster scripts/roster.json
+python scripts/batch_survivors.py --only lia --kinds chibi
+```
+
+No Colab, com o servidor da Celula 6 no ar, numa celula nova:
+
+```python
+!python /content/ComfyUI_Colab/scripts/batch_survivors.py \
+        --roster /content/ComfyUI_Colab/scripts/roster.json
+```
+
+Cada personagem rende **7 imagens** (splash, portrait, 5 poses). Cinco
+personagens = 35 imagens numa tacada. O script respeita a fila
+(`--max-pending`) para nao afogar o ComfyUI.
+
+Saida: `output/survivors/<personagem>/<tipo>_<pose>_00001_.png`.
+
+O `roster.json` tem `defaults` (checkpoint, negative, cfg) e uma lista de
+`characters`, cada um com `id`, `identity`, `lora` e `seed`. Testado com
+servidor simulado: 14 jobs, zero falhas, todas as referencias entre nos validas.
+
+## Consistencia entre splash, portrait e chibi
+
+Este e **o** problema do projeto, e prompt nao resolve. Com 5 personagens e o
+jogador vendo splash e chibi lado a lado, divergencia fica obvia.
+
+Caminho recomendado, por personagem:
+
+1. Gere e **aprove o splash** — e a arte que define a personagem.
+2. Produza ~25 imagens variadas a partir dele
+   (`WaifuVroid_FromConcept` com IPAdapter + `Detailer`).
+3. **Treine uma LoRA** (ver o guia de treino).
+4. Preencha `lora` no `roster.json` e rode o batch.
+
+Com LoRA, os tres estilos passam a ser a mesma pessoa. Sem ela, o **chibi** e o
+que mais diverge — e o estilo mais distante do treino do checkpoint.
+
+Para 5 personagens sao 5 LoRAs. Parece muito, mas e o unico jeito de ter
+identidade estavel — e depois voce gera quantas variacoes quiser de graca.
+
+## Estilo chibi consistente entre personagens
+
+Cuidado separado: cada personagem pode sair com uma proporcao chibi diferente,
+o que quebra a leitura no jogo. Duas saidas: treinar uma **LoRA de estilo
+chibi** (treinada em chibis, nao em personagem) e aplica-la junto da LoRA do
+personagem; ou padronizar via img2img a partir de um chibi aprovado.
