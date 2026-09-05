@@ -1140,3 +1140,65 @@ estiverem na selecao — isso e o comportamento desejado, nao um bug.
 > A selecao da Celula 4 e a **fonte da verdade** de quais nodes existem.
 > Instalou algo pela UI do Manager? Ou adicione o workflow correspondente a
 > selecao, ou nao rode a Celula 4 de novo naquela sessao.
+
+---
+
+# WaifuSurvivors_Assets.json — 3 saidas do mesmo personagem
+
+Para projetos de **jogo**, onde a mesma personagem precisa existir em contextos
+visuais diferentes. Um unico grafo produz:
+
+| Saida | Resolucao | Uso |
+|---|---|---|
+| **SPLASH** | 832x1216 | menu, tela de selecao, gacha |
+| **PORTRAIT** | 1024x1024 | HUD, card, dialogo |
+| **CHIBI** | 1024x1024 | sprite de gameplay, **com fundo removido** |
+
+Custom node: apenas `ComfyUI-Inspyrenet-Rembg` (ramo chibi). Todo o resto e
+nativo.
+
+## A regra de ouro: identidade separada de estilo
+
+A **identidade** fica so no no 3. Os nos de estilo dizem apenas **como**
+desenhar — nunca **quem**. Cada ramo faz `ConditioningConcat(identidade, estilo)`.
+
+Isso importa porque um jogo tem varios personagens. Com essa separacao, trocar
+de personagem e editar **um** campo; os tres estilos acompanham. Se voce
+escrevesse "chibi + identidade" num prompt so, cada personagem novo exigiria
+reescrever os tres.
+
+## Consistencia entre as tres saidas
+
+Aqui esta a parte dificil, e vale ser direto: **prompt sozinho nao garante que
+os tres sejam a mesma pessoa.** Para um jogo — onde o jogador ve o splash e o
+chibi lado a lado — isso e visivel e incomoda.
+
+Para producao real, uma **LoRA por personagem** (no 2) deixa de ser luxo e vira
+requisito. O ramo **chibi** e o que mais diverge, porque chibi e o estilo mais
+distante do que o checkpoint viu no treino.
+
+Estrategia recomendada: gere e aprove o **splash** primeiro (e a arte mais
+"cara" e a que define a personagem), depois derive portrait e chibi. Se o chibi
+teimar em nao parecer, use o splash como referencia via **IPAdapter** — o mesmo
+mecanismo do `WaifuVroid_FromConcept`.
+
+## O chibi: nao gere pequeno
+
+Erro comum: pedir 128x128 porque o sprite e pequeno. **Difusao em resolucao
+baixa produz papa** — o modelo nao foi treinado nessa escala.
+
+Gere em **1024** e reduza depois: na engine, ou num passo separado. Para pixel
+art, reduza com filtro **NEAREST** (nunca bilinear/lanczos) — e o que preserva
+a borda dura.
+
+O ramo chibi ja sai com **canal alpha** via `InspyrenetRembg`, pronto para
+importar na engine. Nao quer isso? Delete o no e ligue o `VAEDecode` direto no
+`SaveImage`.
+
+## Sobre "2 heads tall"
+
+O prompt do chibi pede proporcao de 2 cabecas. Modelos anime entendem `chibi` e
+`super deformed` bem, mas a proporcao exata varia. Se sair inconsistente entre
+personagens — o que quebra a leitura no jogo — as saidas sao: LoRA de estilo
+chibi (treinada em chibis, nao em personagem), ou padronizar via img2img a
+partir de um chibi aprovado.
