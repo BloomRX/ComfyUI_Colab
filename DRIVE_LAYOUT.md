@@ -2340,3 +2340,81 @@ hospeda modelos do Hotshot, mas nao *este* arquivo.
 
 Obs.: no sandbox, `urllib`/`curl` para `huggingface.co` sao bloqueados; a
 verificacao tem de ser feita pela ferramenta de fetch.
+
+## v34 — revisao geral: por que as abas NUNCA funcionaram
+
+Tres tentativas minhas falharam (v24, v26, v30). A revisao do codigo achou o
+motivo: **eu estava consertando o lugar errado, com chaves que nao existem.**
+
+### Erro 1 — chaves de settings inventadas
+
+A C6 gravava `Comfy.Workflow.Persist` e `Comfy.Workflow.PersistOpenWorkflows`.
+**Nenhuma das duas existe.** Eu as deduzi do texto da doc ("Persist workflow
+state and restore on page (re)load") sem verificar o id real. Escrever chave
+inexistente no `comfy.settings.json` nao faz nada — por isso a v30 nao mudou
+coisa alguma.
+
+Removidas. O saneamento agora mexe so em chaves observadas:
+`Comfy.Workflow.OpenWorkflows`, `Comfy.PreviousWorkflow`,
+`Comfy.Workflow.ActiveIndex`.
+
+### Erro 2 — o estado nao esta no servidor
+
+Pela documentacao do frontend (`useWorkflowPersistenceV2`, `draftCacheV2`,
+`storageKeys`, `workflowDraftStoreV2`), a restauracao de abas vive no
+**localStorage / IndexedDB do NAVEGADOR**. O `comfy.settings.json` do servidor
+nao controla isso. Limpar so o disco nunca ia resolver.
+
+### Solucao: pagina de destrave servida pela propria UI
+
+A C6 instala `destravar.html` no **web_root real** e imprime o endereco.
+Abrir `<URL_DA_UI>/destravar.html` e clicar num botao limpa as chaves de
+workflow/draft/tab do localStorage e apaga o IndexedDB dos rascunhos,
+preservando tema e idioma. Segundo botao limpa tudo.
+
+**Detalhe que quase me pegou de novo:** o `web_root` **nao e** `ComfyUI/web/`.
+Em `server.py` ele vem de `FrontendManager.init_frontend()`, ou seja, do pacote
+pip `comfyui_frontend_package`. Escrever em `ComfyUI/web/` nao seria servido.
+A C6 descobre o caminho real via `comfyui_frontend_package.__file__` e so cai
+em `ComfyUI/web` como fallback.
+
+Regex e logica do botao testados: remove as 5 chaves de estado e preserva
+`Comfy.Theme`, `Comfy.Settings.Locale`, `Comfy.NodeSearchBoxImpl`.
+
+### Erro 3 — manifesto marcava mais do que copiava
+
+A C4 gravava no manifesto **todo o repo**, mas copia so os **escolhidos**. Um
+workflow nunca selecionado entrava na lista de "injetados"; se depois sumisse
+do repo, a C4 tentaria remover algo que ela nunca pos la.
+
+Corrigido: manifesto = `(anteriores | copiados agora) & repo atual`.
+Testado em 3 sessoes seguidas — remove o apagado do repo, preserva o workflow
+criado pelo usuario.
+
+### Sobre a sua ideia de web UI propria
+
+Nao vale a pena: o problema nunca foi entregar o arquivo (a C4 ja copia
+certo, e a sidebar sempre listou os workflows). Era o estado do navegador
+corrompendo a abertura. Uma UI paralela teria o mesmo problema e ainda
+duplicaria o que o ComfyUI ja faz. A pagina de destrave ataca a causa com
+~40 linhas.
+
+## v34b — WaifuSurvivors_CharacterSheet.json (novo)
+
+Turnaround front / 3-4 / side / back numa folha so, via **ControlNet Union**.
+
+**Por que ControlNet e nao so prompt:** pedir "character sheet" no texto da
+views em posicoes aleatorias e com a personagem mudando entre elas. O
+ControlNet fixa ONDE cada figura fica e em que angulo. E o Illustrious ja tende
+a repetir o mesmo rosto dentro da mesma imagem — aqui isso joga a favor.
+
+Entrada: uma **folha de poses openpose** (3-4 esqueletos lado a lado) + o
+concept opcional via IPAdapter para o estilo. O `EmptyLatentImage` tem de ter
+o mesmo tamanho da folha de poses.
+
+Download novo: `controlnet-union-sdxl-1.0.safetensors` (2,51 GB). Na origem o
+arquivo chama `diffusion_pytorch_model_promax.safetensors` — a C5 salva com o
+nome do registry, entao o dropdown bate.
+
+Serve para: referencia das 5 personagens, **dataset de LoRA pronto num Run**
+(recortar as views) e base para o VRoid Studio da Lia, que precisa das costas.
