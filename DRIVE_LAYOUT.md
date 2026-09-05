@@ -1401,36 +1401,52 @@ minutos nao se percam se voce fechar o Colab logo apos salvar um workflow.
 
 ## A UI continua demorando (mesmo com user/ local) — como DIAGNOSTICAR
 
-Se apos a v17 a tela da logo ainda demora minutos, pare de chutar: **meca**.
-A **Celula 7** foi criada para isso. Rode-a com o servidor da Celula 6 no ar.
+A Celula 6 **bloqueia** (o `main.py` roda em primeiro plano), entao nao da para
+rodar uma celula de diagnostico depois dela. Por isso a medicao virou uma
+**thread dentro da propria Celula 6** (v18).
 
-Ela mede, direto pelo `127.0.0.1` (sem passar pelo tunel), cada chamada que a UI
-faz no boot, e conta quantos arquivos existem nas pastas de modelo.
+Ela espera o servidor subir e, alguns segundos depois, imprime no meio do mesmo
+log:
 
-A leitura do resultado:
+```
+==================================================================
+  DIAGNOSTICO DA UI (medido no localhost, sem o tunel)
+==================================================================
+  /system_stats                     0.05s        1 KB
+  /queue                            0.01s        0 KB
+  /api/userdata?dir=workflows       0.02s        2 KB
+  /embeddings                       0.01s        0 KB
+  /object_info                     12.40s     3200 KB   <<< LENTO
+  TOTAL                            12.49s
+==================================================================
+```
 
-**Caso A — total abaixo de ~5 s.** O servidor esta rapido; o gargalo e o
-**tunel** ou o navegador. O `cloudflared` gratuito as vezes pega um edge ruim e
-fica lento ou perde pacotes.
-Solucoes, em ordem:
-1. **Use o proxy de portas do proprio Colab** — icone de chave inglesa no painel
-   esquerdo > *Portas* > porta `8188` > abrir. Nao passa pela internet publica,
-   e quase sempre e o mais rapido.
-2. Reinicie a Celula 6 para pegar outro tunel (a URL muda).
+Como as medidas sao feitas em `127.0.0.1`, elas **excluem o tunel**. Isso separa
+as duas causas possiveis:
+
+**Caso A — nenhum endpoint lento, total < 5 s.**
+O servidor esta rapido; o gargalo e o **tunel** ou o navegador. O `cloudflared`
+gratuito as vezes pega um edge ruim.
+1. **Proxy de portas do Colab** — chave inglesa no painel esquerdo > *Portas* >
+   `8188` > abrir. Nao passa pela internet publica; costuma ser o mais rapido.
+2. Reinicie a Celula 6 para sortear outro tunel (a URL muda).
 3. Troque `TUNEL` para `ngrok`.
 
-**Caso B — `/object_info` marcou LENTO.** Esse endpoint monta a lista de todos os
-nos e, para cada loader, **varre as pastas de modelos**. Com os modelos no Drive,
-cada varredura passa por FUSE. E a chamada mais pesada do boot da UI, e a UI
-**nao desenha nada** ate ela responder — exatamente a tela da logo parada.
+**Caso B — algum endpoint marcado LENTO.**
+O gargalo e o servidor. O suspeito e quase sempre **`/object_info`**: ele monta a
+lista de todos os nos e, para cada loader, **varre as pastas de modelos**. Com os
+modelos no Drive, cada varredura passa por FUSE. A UI nao desenha nada ate essa
+resposta chegar — e a tela da logo parada.
 
 Mitigacoes:
-- Menos arquivos nas pastas de modelo. Apague `.part` e duplicatas.
-- Menos custom nodes ativos: cada pack adiciona nos ao `/object_info`.
-  A selecao da Celula 4 ja ajuda — use a menor selecao possivel.
-- Se um workflow nao precisa de um modelo gigante, tire-o da pasta.
+- Menos custom nodes ativos: cada pack acrescenta nos ao `/object_info`.
+  Use a **menor selecao possivel** na Celula 4.
+- Limpe arquivos soltos das pastas de modelo (`.part`, duplicatas).
+- Tire da pasta os modelos gigantes que o workflow atual nao usa.
 
-**Detalhe do seu log (2ª sessao):** apareceu `one-node-flux-2-klein` nos custom
-nodes e o banco rodou **6 migracoes** (`0001_assets` -> `0006_add_loader_path`).
-As migracoes so acontecem na primeira vez apos atualizar o ComfyUI — nao
-explicam lentidao recorrente, mas explicam aquele boot especifico.
+### Observacao do log da 2a sessao
+
+Apareceu `one-node-flux-2-klein` entre os custom nodes e o banco rodou 6
+migracoes (`0001_assets` -> `0006_add_loader_path`). As migracoes acontecem uma
+vez so, apos atualizacao do ComfyUI — explicam aquele boot especifico, nao a
+lentidao recorrente.
