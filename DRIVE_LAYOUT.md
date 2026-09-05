@@ -2418,3 +2418,71 @@ nome do registry, entao o dropdown bate.
 
 Serve para: referencia das 5 personagens, **dataset de LoRA pronto num Run**
 (recortar as views) e base para o VRoid Studio da Lia, que precisa das costas.
+
+## v35 — arqueologia: quando quebrou e o que a mensagem REALMENTE significa
+
+Pedido: voltar ao momento em que os workflows pararam de funcionar. Fiz isso
+lendo o historico (57 commits) e, principalmente, **o codigo-fonte do frontend
+1.51.9** (baixado do pip, o mesmo que roda no Colab).
+
+### A mensagem nunca significou o que eu achei
+
+No bundle, a string e a chave `toastMessages.fileLoadError`:
+
+```
+fileLoadError: `Unable to find workflow in {fileName}`
+```
+
+Repare no **"in"**. Nao e "nao achei o ARQUIVO", e **"nao achei workflow DENTRO
+do arquivo"**. Quem dispara e `showErrorOnFileLoad`, chamada por
+`handleFile()`, que so roda quando um **arquivo e ARRASTADO/CARREGADO na tela**.
+Ela aparece quando `getWorkflowDataFromFile()` volta vazio: JSON invalido,
+JSON sem `nodes` que tambem nao e API, ou imagem sem metadados.
+
+**Abrir pela sidebar nao passa por esse codigo.** A sidebar usa
+`GET /api/userdata/workflows%2F<nome>.json`. Sao dois caminhos totalmente
+diferentes.
+
+Consequencia: **v24, v26, v30 e v34 atacaram o alvo errado.** Passei quatro
+versoes tratando "arquivo ausente no disco" quando a mensagem falava de
+conteudo ilegivel num arquivo arrastado.
+
+### O v21 plantou uma crenca falsa
+
+O commit `808cfe8` ("v21: id do workflow precisa ser UUID para a aba Workflows
+abrir") registrou como fato que **a aba indexa por `id` UUID**. Lendo o
+frontend, isso **nao existe**: a indexacao e por **caminho** (`workflows/x.json`)
+via `/userdata`. O `id` UUID e inofensivo, mas nunca foi a causa nem a cura —
+e virou premissa de tudo que veio depois.
+
+### Estado real dos arquivos
+
+Auditei os 14 JSONs: nenhum tem NaN/Infinity, BOM, ou e confundivel com API
+JSON; todos tem `nodes`. **Nenhum dispara o `fileLoadError`.** O `Base` foi
+lido por HTTP num servidor de teste que imita a API: 22.524 bytes, 22 nos,
+`id` valido, **abrivel**.
+
+### O que a v35 entrega: parar de adivinhar
+
+`_diag_workflows()` roda na C6, 25 s apos o boot, e compara os tres niveis:
+
+1. **DISCO** — lista `USER_LOCAL/default/workflows`
+2. **API** — `GET /api/userdata?dir=workflows` (o que a sidebar enxerga)
+3. **GET real** — baixa o primeiro workflow igual a UI faz ao abrir
+
+E imprime o veredito:
+
+- arquivo no disco mas ausente da API -> problema de **servidor**
+  (`--user-directory`, permissao, usuario)
+- API completa e GET OK -> os arquivos estao sadios e o estado quebrado esta
+  no **NAVEGADOR** -> `/destravar.html`
+- GET falha -> mostra o erro exato, que e onde a UI quebra
+
+Testado nos dois cenarios (servidor coerente e servidor divergente).
+
+### Regra
+
+**Ler a string de erro no codigo-fonte antes de teorizar.** A preposicao "in"
+distinguia dois bugs completamente diferentes e custou quatro tentativas.
+Quando o mesmo sintoma resiste a varias correcoes, a hipotese provavelmente
+esta errada — nao a implementacao dela.
