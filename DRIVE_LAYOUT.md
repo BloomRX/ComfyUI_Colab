@@ -1546,3 +1546,35 @@ Quando ainda usar os outros:
 O log mostrou de novo `Running upgrade 0001_assets -> ... -> 0006_add_loader_path`.
 Elas rodam a cada sessao porque o banco (`comfyui.db`) fica no `user/`, que e
 recriado. Sao rapidas (menos de 1 s) e nao tem relacao com a lentidao da UI.
+
+---
+
+## Logo / marca d'agua nas imagens
+
+Aparece porque o modelo aprendeu isso do dataset: muita arte de anime na
+internet tem assinatura do artista, logo de site ou moldura de "character card".
+O modelo nao sabe que aquilo nao faz parte do desenho — para ele e so mais um
+padrao visual que costuma acompanhar personagens.
+
+Frequencia tipica: **1 em cada 10 a 20 imagens**. Nao e defeito da sua
+configuracao.
+
+Todos os workflows `Waifu*` ganharam estes termos no negative:
+
+```
+logo, watermark, signature, artist name, username, web address,
+text, english text, japanese text, letters, title, caption,
+character sheet, reference sheet, border, frame, inset,
+speech bubble, patreon logo, twitter username
+```
+
+Isso reduz bastante, mas **nao zera**. Quando escapar, simplesmente descarte a
+imagem — na fase de concept voce gera muitas e fica com poucas, entao perder
+uma nao custa nada.
+
+Se aparecer com muita insistencia, o checkpoint provavelmente tem isso
+"assado". Alternativas: trocar de checkpoint, ou cortar a regiao da logo
+(elas quase sempre ficam num canto) e usar o `WaifuInpaintXL` para preencher.
+
+**Nao gaste tempo salvando uma imagem com logo na fase de concept.** Consertar
+custa mais do que gerar outra.
