@@ -2588,3 +2588,62 @@ JSON valido e links coerentes **nao garantem** que o workflow abre. A
 definicao do no e a fonte de verdade, e ela mora no codigo do pack. Todo
 workflow gerado por script tem de passar pelo validador **com o servidor
 ligado** antes de ser considerado pronto.
+
+## v38 — o Manager sumiu (explicado) e a pagina agora TESTA a abertura
+
+### Por que nao ha botao Manager
+
+Duas linhas do log explicam:
+
+```
+[INFO] Blocked by policy: /content/ComfyUI/custom_nodes/ComfyUI-Manager
+[ERROR] To use this action, security_level must be `normal or below`,
+        and network_mode must be set to `personal_cloud`.
+```
+
+**1. O clone em `custom_nodes/` foi bloqueado de proposito.** Lendo `nodes.py`
+do ComfyUI e `comfyui_manager/__init__.py`: com `--enable-manager`, o
+`should_be_disabled()` retorna True para qualquer pasta cujo nome contenha
+`comfyui-manager`. O Manager agora vem do **pacote pip** (`comfyui_manager`
+4.2.2) e o clone antigo e desativado para nao duplicar. Isso e correto — nossa
+C1 clona por habito, e o clone e ignorado.
+
+**2. As acoes estavam barradas por politica.** O default e
+`network_mode = public`, e com `--listen 0.0.0.0` o Manager entende acesso
+remoto publico e bane instalar/atualizar. O proprio Manager preve o nosso caso
+com o modo **`personal_cloud`**: maquina de nuvem de uso pessoal.
+
+A C6 agora escreve em `{USER_LOCAL}/__manager/config.ini`:
+
+```
+[default]
+network_mode = personal_cloud
+security_level = normal
+```
+
+Preserva as demais chaves e e idempotente (testado).
+
+### A pagina de destrave virou diagnostico do NAVEGADOR
+
+O diagnostico da C6 roda no servidor, e ali esta tudo OK. O que faltava era
+enxergar pelo lado do navegador. `destravar.html` ganhou **"Testar abertura"**,
+que reproduz a sequencia exata da UI:
+
+1. `GET /api/userdata?dir=workflows&...&full_info=true` — a listagem
+2. `GET /api/userdata/workflows%2F<nome>.json` — de **cada** workflow
+3. `JSON.parse` do corpo
+4. cruza os `type` dos nos com `/api/object_info`
+
+O passo 4 e o que nunca foi verificado do lado certo: **workflow integro cujo
+no nao existe no servidor nao renderiza**. Testado contra um servidor sem o
+pack do AnimateDiff — a pagina acusou os 5 nos ausentes por nome.
+
+Todas as chamadas usam caminho **relativo** (`./api/...`), entao funciona pelo
+proxy do Colab sem hardcode de host.
+
+### Observacao
+
+O log mostra os 4 packs importando sem erro (IPAdapter 0.1 s, AnimateDiff
+0.2 s, VHS 0.8 s, Inspyrenet 2.5 s), entao os nos **deveriam** estar
+registrados. O teste no navegador vai confirmar ou refutar isso — e e a
+primeira medicao feita de dentro do browser, que e onde o problema vive.
