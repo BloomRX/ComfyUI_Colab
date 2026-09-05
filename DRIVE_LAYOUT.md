@@ -1874,3 +1874,71 @@ validas, IPAdapter presente so em quem tem `concept`.
 
 Os workflows `Assets` e `ChibiPoses` continuam no repo para quem quiser
 controle manual, mas **o caminho recomendado agora e o `FromConcept`**.
+
+## v26 — abas travadas e "Nao foi possivel encontrar o fluxo de trabalho"
+
+Sintomas relatados: alerta apontando `WaifuSurvivors_FromConcept.json`, **so um
+workflow abre por vez** e **clicar nas abas de cima nao faz nada**.
+
+### Nao era o arquivo
+
+Comparei a estrutura dos workflows gerados por script com os do tutorial (que
+abrem normal): mesmas chaves de nó (`id/type/pos/size/order/flags/mode/inputs/
+outputs/properties/widgets_values`), `links` no formato de 6 posições, todo
+`output` com `links`, `id` UUID válido, sem duplicados. Estruturalmente idênticos.
+
+### Era o estado de abas do frontend
+
+O ComfyUI guarda em `user/default/comfy.settings.json`:
+
+- `Comfy.Workflow.OpenWorkflows` — as abas abertas na sessao anterior
+- `Comfy.Workflow.ActiveIndex` — qual estava ativa
+- `Comfy.PreviousWorkflow`
+
+Se **uma** entrada aponta para arquivo que nao existe mais (renomeado, workflow
+de outra sessao, `.disabled`, Drive fora de sincronia), a restauracao do tabbar
+**aborta no meio**: a primeira aba abre, as demais viram entradas mortas e os
+cliques nao respondem. O alerta cita o primeiro nome que falhou — por isso
+apareceu o `FromConcept`, que era so a vitima visivel.
+
+`ActiveIndex` apontando para um indice que nao existe mais na lista produz o
+mesmo travamento.
+
+### Correcao (C6, `v26-tabfix`)
+
+No boot, depois do merge do `user/`, roda `_sanear_settings()` nos dois lados
+(local e Drive):
+
+1. remove de `OpenWorkflows` toda referencia sem arquivo correspondente;
+2. reajusta `ActiveIndex` para um indice valido (`-1` se nao sobrou nada);
+3. descarta `PreviousWorkflow` morto;
+4. forca `WorkflowTabsPosition = Topbar` (sem isso as abas ficam so na sidebar);
+5. se o JSON estiver corrompido, salva `.bak` e zera — settings quebrado trava
+   a UI inteira.
+
+Idempotente: rodar de novo num settings limpo nao altera nada.
+
+### Destrave imediato (sem reiniciar a C6)
+
+Cole numa celula nova, rode, e **F5** na aba do ComfyUI:
+
+```python
+import json, os
+L = '/content/comfy_user/default'
+p = f'{L}/comfy.settings.json'
+st = json.load(open(p)) if os.path.exists(p) else {}
+existe = set(os.listdir(f'{L}/workflows'))
+ok = lambda w: isinstance(w, str) and os.path.basename(w) in existe
+st['Comfy.Workflow.OpenWorkflows'] = [w for w in st.get('Comfy.Workflow.OpenWorkflows', []) if ok(w)]
+st['Comfy.Workflow.ActiveIndex'] = 0 if st['Comfy.Workflow.OpenWorkflows'] else -1
+st.pop('Comfy.PreviousWorkflow', None)
+st['Comfy.Workflow.WorkflowTabsPosition'] = 'Topbar'
+json.dump(st, open(p, 'w'), indent=2)
+print('abas:', st['Comfy.Workflow.OpenWorkflows'])
+```
+
+### Regra
+
+Estado de UI que referencia arquivos **sempre** tem de ser reconciliado com o
+disco no boot. Nunca confiar que o que o frontend salvou continua existindo —
+a C4 troca os workflows disponiveis a cada sessao.
