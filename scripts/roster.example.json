@@ -1,5 +1,5 @@
 {
-  "_comment": "Elenco do Waifu Survivors. Copie para roster.json e edite. Cada personagem so precisa do campo 'id' e 'identity' - o resto e opcional. Teor ecchi: splash/portrait usam a tag 'sensitive' do WAI e bloqueiam 'explicit'. Para uma personagem mais recatada, ponha \"negative\" proprio nela incluindo 'sensitive'.",
+  "_comment": "Elenco do Waifu Survivors. MODO RECOMENDADO: preencha 'concept' com o nome do arquivo da imagem aprovada (em ComfyUI_Data/input/) - a identidade vem da imagem via IPAdapter, sem copiar seed nem prompt. 'identity' (texto) so como alternativa. Teor ecchi: splash/portrait usam 'sensitive'; chibi fica limpo.",
   "defaults": {
     "checkpoint": "waiIllustriousSDXL_v160.safetensors",
     "negative": "bad quality, worst quality, worst detail, sketch, censor, watermark, signature, logo, text, multiple views, grid, explicit",
@@ -11,15 +11,15 @@
   "characters": [
     {
       "id": "lia",
-      "identity": "1girl, solo, long wavy magenta hair, crimson pink eyes, black blazer, white shirt, wine red pleated skirt, black knee-high socks",
-      "lora": null,
-      "lora_strength": 0.85,
-      "seed": 555
+      "concept": "lia_concept.png",
+      "_nota": "concept = arquivo em ComfyUI_Data/input/. Com ele, 'identity' e opcional.",
+      "ipadapter_weight": 0.7,
+      "lora": null
     },
     {
-      "id": "exemplo2",
-      "identity": "1girl, solo, short blue hair, twintails, golden eyes, white sailor uniform, blue skirt, thighhighs",
-      "lora": null,
+      "id": "exemplo_sem_imagem",
+      "identity": "1girl, solo, short blue hair, twintails, golden eyes, white sailor uniform",
+      "_nota": "modo texto: use so se ainda nao tiver imagem aprovada.",
       "seed": 777
     }
   ]

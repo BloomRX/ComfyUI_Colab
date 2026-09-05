@@ -1790,3 +1790,87 @@ Depois **F5** na aba do ComfyUI. Nao precisa reiniciar a Celula 6.
 O frontend guarda as abas abertas em `comfy.settings.json`. Se ele continuar
 tentando reabrir um workflow que nao existe mais, feche a aba pelo X na propria
 UI — isso limpa o registro.
+
+---
+
+# WaifuSurvivors_FromConcept.json — a imagem aprovada gera TUDO (v25)
+
+Critica justa ao fluxo anterior: exigir que voce **anote a seed e recopie o
+prompt** entre workflows e fragil. Um caractere errado e a personagem muda — e
+em producao, com 5 personagens x 7 assets, isso e questao de tempo.
+
+**Este workflow elimina esse passo.** A imagem aprovada e a fonte da verdade.
+
+```
+imagem aprovada  ->  [1 Run]  ->  splash + portrait + 5 poses chibi
+```
+
+Sao **7 saidas** num unico grafo, todas condicionadas pela mesma imagem via
+IPAdapter. Nao ha seed para copiar nem texto de identidade para redigitar,
+porque a identidade **nao esta em texto**.
+
+### Como usar
+
+1. Gostou de uma imagem no `WaifuSurvivors_Concept`? Botao direito >
+   **Save Image**.
+2. Suba o arquivo para `ComfyUI_Data/input/` (ou arraste no proprio no 2).
+3. Selecione no **no 2** e clique em **Run**.
+
+So isso. As poses chibi ja saem com **alpha**, prontas para o Godot.
+
+### O unico ajuste: weight do no 4
+
+| Weight | Efeito |
+|---|---|
+| 0.5 | mais liberdade criativa |
+| **0.7** | padrao |
+| 0.9 | copia agressiva |
+
+- Chibi saiu igual ao concept, sem virar chibi? **Abaixe** para 0.5.
+- Chibi nao parece o personagem? **Suba** para 0.85.
+
+Splash e chibi podem querer weights diferentes — se precisar, rode duas vezes.
+
+### Seeds em `randomize`, de proposito
+
+Nao gostou de **um** asset? Rode de novo: so ele muda, a identidade continua
+vindo da imagem. Voce nao perde os outros seis.
+
+### Producao: o mesmo no batch
+
+O `batch_survivors.py` ganhou o campo **`concept`** no roster:
+
+```json
+{
+  "id": "lia",
+  "concept": "lia_concept.png",
+  "ipadapter_weight": 0.7
+}
+```
+
+Com `concept` preenchido, o script injeta `LoadImage` + IPAdapter em **todos** os
+7 jobs daquele personagem. Sem ele, cai no modo texto (`identity`) — que
+continua funcionando para quem ainda nao tem imagem aprovada.
+
+O script valida na entrada: personagem sem `concept` **e** sem `identity` para a
+execucao com mensagem clara. E o log diz o modo de cada um:
+
+```
+Personagens: {'lia': 'imagem', 'exemplo2': 'texto'}
+```
+
+Testado contra servidor simulado: 14 jobs, todas as referencias entre nos
+validas, IPAdapter presente so em quem tem `concept`.
+
+### Fluxo de producao recomendado
+
+```
+1. WaifuSurvivors_Concept          -> explorar, 4 por Run (rapido)
+2. salvar as imagens aprovadas em ComfyUI_Data/input/
+3. WaifuSurvivors_FromConcept      -> 7 assets por personagem
+   ou scripts/batch_survivors.py   -> 5 personagens de uma vez
+4. (opcional) treinar LoRA -> consistencia definitiva
+```
+
+Os workflows `Assets` e `ChibiPoses` continuam no repo para quem quiser
+controle manual, mas **o caminho recomendado agora e o `FromConcept`**.

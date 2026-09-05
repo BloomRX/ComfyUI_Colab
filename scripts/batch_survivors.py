@@ -64,7 +64,12 @@ CHIBI_POSES = [
 # ------------------------------------------------------------------ grafo ----
 
 def build_graph(char, defaults, kind, pose_name=None, pose_text=None):
-    """Monta o grafo no formato API (dict de nos por id-string)."""
+    """Monta o grafo no formato API (dict de nos por id-string).
+
+    Se o personagem tiver "concept" (nome de arquivo em ComfyUI/input/), a
+    identidade vem da IMAGEM via IPAdapter e o campo "identity" vira opcional.
+    E o modo recomendado para producao: nada de copiar seed ou prompt.
+    """
     st = STYLES[kind]
     ckpt = char.get("checkpoint", defaults["checkpoint"])
     neg = char.get("negative", defaults["negative"])
@@ -88,8 +93,25 @@ def build_graph(char, defaults, kind, pose_name=None, pose_text=None):
             "model": model_src, "clip": clip_src}}
         model_src, clip_src = ["2", 0], ["2", 1]
 
+    # --- referencia visual (opcional, mas recomendado) --------------------
+    concept = char.get("concept")
+    if concept:
+        g["20"] = {"class_type": "LoadImage",
+                   "inputs": {"image": concept, "upload": "image"}}
+        g["21"] = {"class_type": "IPAdapterUnifiedLoader",
+                   "inputs": {"preset": char.get("ipadapter_preset",
+                                                 "PLUS (high strength)"),
+                              "model": model_src}}
+        g["22"] = {"class_type": "IPAdapterAdvanced", "inputs": {
+            "weight": char.get("ipadapter_weight", 0.7),
+            "weight_type": "linear", "combine_embeds": "concat",
+            "start_at": 0.0, "end_at": 1.0, "embeds_scaling": "V only",
+            "model": ["21", 0], "ipadapter": ["21", 1], "image": ["20", 0]}}
+        model_src = ["22", 0]
+
     g["3"] = {"class_type": "CLIPTextEncode",
-              "inputs": {"text": char["identity"], "clip": clip_src}}
+              "inputs": {"text": char.get("identity", "1girl, solo"),
+                         "clip": clip_src}}
     g["4"] = {"class_type": "CLIPTextEncode",
               "inputs": {"text": st["text"], "clip": clip_src}}
     g["5"] = {"class_type": "CLIPTextEncode",
@@ -190,6 +212,10 @@ def main():
     cfg = json.load(open(a.roster, encoding="utf-8"))
     defaults = cfg.get("defaults", {})
     chars = cfg["characters"]
+    for _c in chars:
+        if not _c.get("concept") and not _c.get("identity"):
+            sys.exit(f'personagem "{_c.get("id","?")}" precisa de "concept" '
+                     f'(imagem em ComfyUI/input/) ou "identity" (texto).')
 
     if a.only:
         keep = {x.strip() for x in a.only.split(",")}
@@ -206,7 +232,8 @@ def main():
     for c in chars:
         all_jobs += jobs_for(c, defaults, kinds)
 
-    print(f"Personagens: {[c['id'] for c in chars]}")
+    _modo = {c['id']: ('imagem' if c.get('concept') else 'texto') for c in chars}
+    print(f"Personagens: {_modo}")
     print(f"Tipos      : {kinds}")
     print(f"Total      : {len(all_jobs)} imagens\n")
 
