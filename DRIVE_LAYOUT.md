@@ -1986,3 +1986,77 @@ coloracao = imagem torrada.
 Quando um workflow sai melhor que outro, **comparar os grafos antes de mexer em
 CFG**. Aqui a variavel nao era parametro de sampler, era um no a mais no caminho
 do `model`. `V only` e o default do node e e a pior escolha para Illustrious.
+
+## v28 — pipeline de animacao a partir de video (metodo do DevDude)
+
+Referencia: https://youtu.be/tU2Q99plP1Q (DevDude, "AI Spritesheet Creation
+Workflow", 8min44).
+
+### O que ele faz
+
+1. concept art da personagem de lado;
+2. coloca num **green screen solido** (usa Nano Banana 2 para isso);
+3. gera **clipes de 1 segundo** com a imagem como referencia (Grok Imagine);
+4. extrai **todo frame** do video -> spritesheet;
+5. remove o green screen (modelo Corridor Key);
+6. um analisador acha o loop e alinha os frames.
+
+**A ideia central resolve o nosso problema real.** Hoje as 5 poses chibi sao 5
+geracoes independentes: nada garante que walk_a e walk_b sejam a mesma
+personagem. Vindo do MESMO video, a consistencia e estrutural.
+
+Duas sacadas dele que valem por si:
+- **1 segundo.** Clipe longo "o modelo se confunde e inventa coisa que voce nao
+  quer". 1-2s para walk/attack, 3s para idle (tempo do cabelo ao vento).
+- **Canvas landscape para ataque.** Quadrado nao da espaco para braco/espada —
+  ele mesmo errou isso no video.
+
+### O que NAO da para copiar
+
+Ele nao usa ComfyUI. E o **Sorceress Game Suite**, produto pago dele proprio, e
+a geracao de video e **Grok Imagine na nuvem**. Nao existe workflow JSON.
+
+Portar para WAN 2.2 local **nao cabe no T4**, e o limite nao e VRAM: o 14B em
+GGUF depende de descarregar o text encoder (~9 GB) para a RAM de CPU, e as
+fontes convergem em **24-32 GB de RAM de sistema**. Temos **12.976 MB** — o
+mesmo teto que ja barrou o `Mesh_Processing`. Estimativa: 10-15 min por clipe
+de 1s com risco alto de OOM. Inviavel para iterar 5 personagens.
+
+### O que foi entregue
+
+Metade do fluxo — a que roda no T4 — mais um substituto melhor para o chroma key.
+
+**`Workflows/WaifuSurvivors_VideoToSprites.json`** (6 nos):
+`VHS_LoadVideo -> InspyrenetRembg -> ImageScale -> SaveImage`.
+O clipe entra, os frames saem ja com alpha em `output/survivors_frames/`.
+
+**Dispensa o green screen.** O Inspyrenet segmenta direto e nao deixa o
+"green edge spillage" que ele mesmo reclama do chroma classico. Um passo a
+menos que no fluxo original.
+
+**`scripts/make_spritesheet.py`** faz o que o Sprite Analyzer dele cobra:
+- descarta frames-lixo de inicio/fim (comparacao com a mediana do clipe);
+- **alinha pelo centro de massa** — mata o "jitter back" que ele conserta na mao;
+- acha o loop por ritmo: a emenda boa nao e a de frames iguais (isso premiaria
+  dois frames-lixo identicos), e a que mantem a MESMA distancia de um passo
+  normal entre o ultimo e o primeiro;
+- monta o PNG + JSON + instrucoes do Godot.
+
+Testado com 16 frames sinteticos com deriva de 3px/frame e 4 frames-lixo:
+descartou os 4, achou loop de 8 frames, caixa final 57x181.
+
+Dois bugs pegos no teste, ambos corrigidos:
+- o script lia o proprio `_sheet.png` da rodada anterior como frame;
+- **alinhar tem de vir ANTES de recortar** — com a ordem invertida a caixa de
+  uniao somava a deriva e dava 1968px de largura em vez de 57.
+
+### Como usar
+
+1. gere o clipe de 1s onde preferir (Grok Imagine, Kling, Sora), usando a
+   splash/concept aprovada como referencia;
+2. salve o `.mp4` em `ComfyUI_Data/input/`;
+3. rode o `VideoToSprites`;
+4. `python scripts/make_spritesheet.py output/survivors_frames --nome walk`;
+5. no Godot: `AnimatedSprite2D -> SpriteFrames -> Add frames from sheet`.
+
+Gere so o lado direito e use `flip_h`, como ja combinado.
