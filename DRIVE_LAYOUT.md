@@ -3608,3 +3608,96 @@ Rodar de novo o `AB_A_sd15_idle` corrigido e comparar com o WAN que ja temos.
 Se continuar escuro, a causa e o **ToonYou** nao servir para este estilo — ai o
 teste seguinte e trocar por outro checkpoint SD1.5 anime, ou aceitar o WAN
 para idle e usar o SD1.5 so onde o SparseCtrl for indispensavel.
+
+## v52 — as 4 arquiteturas avaliadas, e a que faltava
+
+Pedido: repensar o pipeline com **preservacao da arte Illustrious** como
+prioridade absoluta, avaliando 4 opcoes antes de baixar qualquer coisa.
+
+### A) Illustrious/SDXL + solucao temporal SDXL — DESCARTADA
+
+Quem gera os pixels: o Illustrious. Temporal: `mm_sdxl_v10_beta` ou Hotshot-XL.
+
+**Problema fatal, confirmado em varias fontes:** o ecossistema temporal do SDXL
+esta morto. A doc do AnimateDiff-Evolved diz "**still in beta after several
+months**"; relatos da comunidade: "SDXL animatediff is nearly useless",
+"the motion model for SDXL is terrible", "quality looks like a 144p youtube
+video". Hotshot-XL tem contexto de so 8 frames e foi treinado em 512.
+
+Nos ja testamos: a v32 documentou cor invertida e cabeca dupla. Nao e questao
+de ajuste.
+
+### B) Illustrious + IPAdapter + ControlNet, frame a frame — DESCARTADA
+
+Quem gera: Illustrious. Pose: ControlNet por frame. Temporal: **nenhum**.
+
+Cada frame seria uma geracao independente. Sem camada temporal, o flicker entre
+frames e estrutural — cada imagem resolve ruido diferente. E exatamente o que a
+v31 mostrou: olho azul num frame, ambar no outro. Serve para character sheet
+(imagens separadas), nao para animacao.
+
+### C) Illustrious GERA + WAN 2.2 ANIMA — **RECOMENDADA**
+
+Quem gera os pixels da personagem: **o Illustrious, uma vez so, offline**.
+Quem produz o movimento: o WAN, partindo dessa arte.
+
+- **identidade**: a arte aprovada ENTRA como `start_image` e vira o frame 0.
+  Nao ha reinterpretacao — e a sua imagem, literalmente.
+- **pose/movimento**: prompt de movimento + `denoise` controlando quanto pode
+  mudar.
+- **temporal**: o WAN e um modelo de video real, com atencao temporal treinada.
+- **VRAM**: pico ~9,3 GB (ja medido).
+- **spritesheet**: frames saem individuais direto do `SaveImage`.
+
+### D) AnimateDiff SD1.5 com a arte so como referencia — TESTADA E REPROVADA
+
+Quem gera: **ToonYou**, nao o Illustrious. E ai esta o furo: o IPAdapter passa
+"clima", nao identidade. O SD1.5 **redesenha** a personagem do zero.
+
+Resultado real (v51): escuro, halo vermelho, fundo sujo. Brilho 71 contra 124
+do WAN. As metricas diziam "estavel" porque estava **consistentemente errado**.
+
+### A correcao que muda tudo: `denoise`
+
+O `AnimateWan` da v46 ja era arquitetura C — **mas com `denoise 1.0`**, o que
+manda o modelo redesenhar tudo e joga fora a vantagem de partir da arte.
+
+`AB_D_illustrious_wan_idle.json` usa **`denoise 0.55`**:
+
+| denoise | efeito |
+|---|---|
+| 1.00 | ignora a imagem, inventa (o erro anterior) |
+| **0.55** | **mantem a arte, adiciona movimento** |
+| 0.40 | quase congelado |
+| 0.70 | mais movimento, comeca a derivar |
+
+E o prompt descreve **so movimento** — nada de cabelo, roupa ou cor. Descrever
+aparencia ali COMPETE com a imagem e causa deriva.
+
+### Lista minima de modelos: ZERO downloads novos
+
+O prototipo usa so o que ja esta no Drive:
+
+| arquivo | tamanho | ja baixado? |
+|---|---|---|
+| `wan2.2_ti2v_5B_fp16` | 9,31 GB | sim (v43) |
+| `umt5_xxl_fp8_e4m3fn_scaled` | 6,27 GB | sim |
+| `wan2.2_vae` | 1,31 GB | sim |
+| Inspyrenet (rembg) | pack | sim |
+
+O Illustrious **nem e carregado** neste workflow — a arte dele ja veio pronta
+em PNG. Isso e uma virtude da arquitetura: os dois modelos nunca disputam VRAM.
+
+### Prototipo
+
+9 frames (o WAN exige `4n+1`; 9 e o mais proximo de 8), 512x512, seed 12345,
+camera fixa, respiracao sutil. ~1,1 s a 8 fps.
+
+**Criterio unico:** os 9 frames parecem a MESMA personagem da entrada? O
+relatorio da C6 mede FIDELIDADE automaticamente (v51).
+
+### Regra
+
+**Preservar arte existente e problema de `denoise`, nao de escolha de modelo.**
+Qualquer i2v com denoise 1.0 esta redesenhando do zero — o start_image vira
+mera sugestao de composicao.
