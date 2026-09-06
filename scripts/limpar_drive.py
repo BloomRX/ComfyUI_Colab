@@ -57,6 +57,11 @@ APOSENTADOS = {
 }
 
 
+# NUNCA sugerir apagar: caros ou impossiveis de rebaixar sozinho.
+INTOCAVEIS = {
+    'waiIllustriousSDXL_v170.safetensors',   # Civitai exige login: manual
+}
+
 # Modelos que NENHUMA varredura de texto acha, porque o no os carrega por
 # preset e nao por nome de arquivo. Sem isto o script os marcaria como orfaos
 # e mandaria apagar algo em uso.
@@ -144,7 +149,9 @@ def main():
     for fp, sz in arquivos:
         n = os.path.basename(fp)
         wfs = usado_por.get(n, set())
-        if wfs & ATIVOS:
+        if n in INTOCAVEIS:
+            manter.append((fp, sz, ['INTOCAVEL: rebaixar so a mao']))
+        elif wfs & ATIVOS:
             manter.append((fp, sz, sorted(wfs & ATIVOS)))
         elif wfs:
             descartar.append((fp, sz, sorted(wfs)))
