@@ -3701,3 +3701,98 @@ relatorio da C6 mede FIDELIDADE automaticamente (v51).
 **Preservar arte existente e problema de `denoise`, nao de escolha de modelo.**
 Qualquer i2v com denoise 1.0 esta redesenhando do zero — o start_image vira
 mera sugestao de composicao.
+
+## v53 — teste controlado de denoise (e duas correcoes que o codigo revelou)
+
+O usuario recusou aceitar "0.55 e o melhor" sem teste — corretamente, eu tinha
+afirmado sem medir. Antes de montar o teste, fui ler o no no codigo-fonte, e
+achei **duas coisas que contradizem o que eu disse**.
+
+### CORRECAO 1: "4n+1" NAO e regra rigida
+
+Eu disse que o WAN "exige length = 4n+1". Lendo `Wan22ImageToVideoLatent`:
+
+```python
+io.Int.Input("length", default=49, min=1, max=MAX_RESOLUTION, step=4)
+latent = torch.zeros([1, 48, ((length - 1) // 4) + 1, h // 16, w // 16])
+```
+
+`min=1`, e a conta e `((length-1)//4)+1`. Nao ha validacao que rejeite outros
+valores. Consequencia real:
+
+| length | frames latentes |
+|---|---|
+| 9 | 3 |
+| 10, 11, 12 | 3 (mesmos!) |
+| 13 | 4 |
+
+Valores fora de 4n+1 **nao dao erro** — apenas desperdicam, porque caem no
+mesmo numero de frames latentes do 4n+1 anterior. **4n+1 e o valor eficiente,
+nao uma regra do modelo.** Corrigido nas notas dos workflows.
+
+### CORRECAO 2: denoise aqui NAO e igual a img2img
+
+O no cria um **`noise_mask`** que zera o ruido onde o `start_image` foi
+codificado:
+
+```python
+mask[:, :, :latent_temp.shape[-3]] *= 0.0
+```
+
+E em `samplers.py` o mask protege aquela regiao a cada passo:
+
+```python
+out = out * denoise_mask + self.latent_image * latent_mask
+```
+
+Ou seja: **o frame inicial ja e protegido pelo mask**, independente do denoise.
+O denoise governa o resto da sequencia. Por isso minha regra "1.0 destroi a
+imagem" era simplista — e por isso o teste tinha de incluir 1.0.
+
+### O teste: `DEN_040` a `DEN_100`
+
+5 workflows. Verificado por script que sao **byte a byte identicos** exceto
+denoise e pasta de saida:
+
+```
+  arquivo              denoise  seed  steps  cfg   res      len  sampler
+  DEN_040_denoise.json     0.4  12345    20   4.5  512x512    9  uni_pc/simple
+  DEN_050_denoise.json     0.5  12345    20   4.5  512x512    9  uni_pc/simple
+  DEN_060_denoise.json     0.6  12345    20   4.5  512x512    9  uni_pc/simple
+  DEN_070_denoise.json     0.7  12345    20   4.5  512x512    9  uni_pc/simple
+  DEN_100_denoise.json     1.0  12345    20   4.5  512x512    9  uni_pc/simple
+```
+
+Prompt so de movimento, como pedido: `subtle breathing motion, very slight
+natural body movement, gentle hair movement, static camera, character stays
+in place`.
+
+### Comparador por REGIAO (na C6, automatico)
+
+A media global esconde onde a identidade quebra. O `_comparar_denoise()` mede
+contra o PNG de entrada em tres faixas:
+
+- **cabelo** (topo, 0-42%)
+- **rosto/olhos** (28-60%)
+- **roupa** (58-100%)
+
+mais movimento e flicker. Roda sozinho ao fim de cada job.
+
+Validado com 5 rodadas sinteticas (parado / bom / derivando / outro
+personagem): identificou o parado, escolheu o mais fiel COM movimento, e
+mostrou cabelo e rosto degradando antes da roupa — que e o padrao esperado.
+
+### Como rodar
+
+```
+1. chibi em ComfyUI_Data/input/chibi_idle.png
+2. Run em DEN_040, DEN_050, DEN_060, DEN_070, DEN_100
+3. a tabela sai sozinha no log da C6
+```
+
+Sao 5 x ~5 min. **Nenhum download novo** — so o WAN que ja esta no Drive.
+
+### Nao vou pre-julgar o resultado
+
+Se 0.40 der movimento suficiente, ganha. Se 1.00 preservar a identidade por
+causa do noise_mask, ganha. A tabela + os GIFs decidem.
