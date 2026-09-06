@@ -156,7 +156,8 @@ def main():
     ap = argparse.ArgumentParser()
     ap.add_argument('--anim', default='walk', choices=sorted(CICLOS))
     ap.add_argument('--tam', type=int, default=512)
-    ap.add_argument('--saida', default='poses')
+    ap.add_argument('--saida', default=None,
+                    help='pasta de saida (default: input do ComfyUI, se existir)')
     ap.add_argument('--listar', action='store_true')
     a = ap.parse_args()
 
@@ -168,6 +169,16 @@ def main():
         return
 
     c = CICLOS[a.anim]
+    # por padrao escreve direto no input/ do ComfyUI, para o no 9 enxergar
+    if a.saida is None:
+        for base in ('/content/drive/MyDrive/ComfyUI_Data/input',
+                     os.path.expanduser('~/ComfyUI_Data/input'),
+                     'input'):
+            if os.path.isdir(base):
+                a.saida = os.path.join(base, f'poses_{a.anim}')
+                break
+        else:
+            a.saida = f'poses_{a.anim}'
     os.makedirs(a.saida, exist_ok=True)
     for i, (nome, be, bd, pe, pd, incl, dy) in enumerate(c['poses']):
         im = desenhar(a.tam, (be, bd), (pe, pd), incl, dy)
@@ -177,7 +188,7 @@ def main():
 
     print(f'\n{len(c["poses"])} pose(s) em {a.saida}/')
     print(f'\nNo workflow WaifuSurvivors_AnimateSD15:')
-    print(f'  no  9 : carregue estas {len(c["poses"])} imagens (na ordem)')
+    print(f'  no  9 : escolha a pasta "{os.path.basename(a.saida)}" no dropdown')
     print(f'  no 10 : indexes = {",".join(map(str, c["indices"]))}')
     print(f'  no 15 : batch_size = {c["frames"]}')
     print(f'\nO AnimateDiff interpola os frames entre as poses.')

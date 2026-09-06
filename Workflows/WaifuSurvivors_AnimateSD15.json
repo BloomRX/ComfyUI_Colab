@@ -439,19 +439,26 @@
     },
     {
       "id": 9,
-      "type": "LoadImage",
+      "type": "VHS_LoadImages",
       "pos": [
         800,
         60
       ],
       "size": [
         330,
-        320
+        180
       ],
       "flags": {},
       "order": 8,
       "mode": 0,
-      "inputs": [],
+      "inputs": [
+        {
+          "name": "meta_batch",
+          "type": "VHS_BatchManager",
+          "link": null,
+          "shape": 7
+        }
+      ],
       "outputs": [
         {
           "name": "IMAGE",
@@ -466,16 +473,24 @@
           "type": "MASK",
           "links": [],
           "slot_index": 1
+        },
+        {
+          "name": "frame_count",
+          "type": "INT",
+          "links": [],
+          "slot_index": 2
         }
       ],
       "properties": {
-        "Node name for S&R": "LoadImage"
+        "Node name for S&R": "VHS_LoadImages"
       },
-      "widgets_values": [
-        "poses.png",
-        "image"
-      ],
-      "title": "9. POSES-CHAVE (lote de imagens) - ver Note"
+      "widgets_values": {
+        "directory": "poses_walk",
+        "image_load_cap": 0,
+        "skip_first_images": 0,
+        "select_every_nth": 1
+      },
+      "title": "9. PASTA de poses (input/poses_walk/) - lote inteiro"
     },
     {
       "id": 10,
@@ -1005,7 +1020,7 @@
         "Node name for S&R": "Note"
       },
       "widgets_values": [
-        "ROTA SD1.5 — a unica com CONTROLE DE POSE POR FRAME\n\n### POR QUE SD1.5 AQUI SE O RESTO E SDXL ###\nSparseCtrl, MotionLoRAs e AnimateDiff-Lightning SO EXISTEM em SD1.5.\nO modulo SDXL (mm_sdxl_v10_beta) e beta e subtreinado.\nO no 4 (IPAdapter) resolve o conflito: o CHIBI IDLE gerado no SDXL entra\ncomo referencia e o SD1.5 HERDA a aparencia. A personagem continua a mesma.\n\n### O NO 9 E O NO 10 SAO O CORACAO ###\nno 9: carregue um LOTE de imagens de pose (Ctrl+clique para varias, ou\n      use uma pasta via 'Load Image Batch'). Cada imagem = uma pose-chave.\nno 10: em QUE frames elas entram. '0,4,8,12' com 16 frames =\n      frame 0  -> contact esquerdo\n      frame 4  -> passing\n      frame 8  -> contact direito\n      frame 12 -> passing\n      o AnimateDiff INTERPOLA o resto. E o ciclo de walk classico.\n\nAs poses podem ser: sketch do proprio chibi em cada pose, boneco palito,\nou frames de um walk cycle de referencia. RGB aceita imagem colorida.\n\n### SEM POSES ###\nPonha os nos 9, 10, 11 e 12 em BYPASS (Ctrl+B) e ligue o no 13 direto no\nno 16. Vira AnimateDiff puro, so por prompt.\n\n### AJUSTES ###\nno 4  (IPAdapter 0.8): identidade. Baixe para 0.6 se travar o movimento.\nno 11 (motion_strength 1.0): forca do movimento do SparseCtrl.\nno 12 (0.8): o quanto segue as poses. 1.0 = rigido, 0.5 = livre.\nno 8: beta_schedule TEM de ser 'sqrt_linear (AnimateDiff)' no SD1.5.\nno 16: CFG 7.0 e euler — SD1.5 aguenta CFG alto (SDXL Illustrious nao).\n\n### CONTEXTO 16 ###\nSD1.5 foi treinado com janela 16. Nao mude para 8 (isso e do Hotshot).\n\n### SE DER OOM ###\n512->384 no no 15, ou 16->12 frames. O stack SD1.5 e leve (~6 GB)."
+        "ROTA SD1.5 — a unica com CONTROLE DE POSE POR FRAME\n\n### DE ONDE VEM AS POSES (no 9) ###\n1) Gere no proprio repo:\n     python scripts/gerar_poses.py --anim walk\n   (ciclos prontos: walk run idle attack hit death jump)\n2) Copie a pasta para  ComfyUI_Data/input/poses_walk/\n3) No no 9 escolha a pasta 'poses_walk' no dropdown\n   (o no le a PASTA inteira, na ordem alfabetica dos arquivos)\n4) No no 10 ponha os indices que o script imprimiu: 0,4,8,12\n\nSe a pasta nao aparecer no dropdown: ela precisa estar DENTRO de\nComfyUI_Data/input/ e a pagina precisa ser recarregada (R ou F5).\n\nALTERNATIVAS as poses geradas:\n  - sketches seus do proprio chibi em cada pose (melhor resultado)\n  - frames de um walk cycle de referencia\n  - qualquer imagem: SparseCtrl RGB aceita imagem colorida\n\n### POR QUE SD1.5 SE O RESTO E SDXL ###\nSparseCtrl, MotionLoRAs e Lightning SO existem em SD1.5.\nO no 4 (IPAdapter) recebe o CHIBI IDLE feito no SDXL, entao o SD1.5\nHERDA a aparencia. A personagem continua a mesma.\n\n### COMO O CICLO FUNCIONA ###\n16 frames com indices 0,4,8,12:\n  frame 0  -> contact esquerdo\n  frame 4  -> passing\n  frame 8  -> contact direito\n  frame 12 -> passing\nO AnimateDiff INTERPOLA os frames intermediarios.\n\n### SEM CONTROLE DE POSE ###\nBypass (Ctrl+B) nos nos 9, 10, 11 e 12; ligue o no 13 direto no no 16.\n\n### AJUSTES ###\nno 4  (0.8): identidade. Baixe para 0.6 se travar o movimento.\nno 12 (0.8): adesao a pose. 1.0 rigido, 0.5 livre.\nno 8: beta_schedule TEM de ser 'sqrt_linear (AnimateDiff)'.\nno 16: CFG 7.0 (SD1.5 aguenta; Illustrious queimaria).\ncontexto 16 no no 7 (SD1.5 foi treinado assim; 8 e do Hotshot).\n\n### SE DER OOM ### 512->384 no no 15, ou 16->12 frames."
       ],
       "title": "LEIA"
     }

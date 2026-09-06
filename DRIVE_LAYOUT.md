@@ -3192,3 +3192,69 @@ Todas as URLs conferidas na API do HF. Pack novo: **ComfyUI-Advanced-ControlNet*
 Gere o mesmo walk nas tres e compare. Minha aposta: WAN ganha em fluidez,
 SD1.5 ganha em controle e em ser um ciclo de verdade (que e o que um jogo
 precisa).
+
+## v46 — AnimateWan gerava imagem parada: faltava o `ModelSamplingSD3`
+
+Relato: o `AnimateWan` "gerou so imagens", com distorcao, e no prompt "walk" a
+personagem ficava **parada trocando a cor da roupa**.
+
+### Causa: um no que eu omiti
+
+Comparei meu workflow com o **template oficial**
+(`Comfy-Org/workflow_templates/templates/video_wan2_2_5B_ti2v.json`). A cadeia
+correta e:
+
+```
+UNETLoader -> ModelSamplingSD3 (shift=8) -> KSampler
+```
+
+Eu liguei o `UNETLoader` **direto** no KSampler. O `ModelSamplingSD3` aplica o
+deslocamento de sampling que o WAN exige; sem ele o modelo nao trata a dimensao
+temporal e produz **quadros independentes** — personagem imovel e cores
+oscilando entre frames. E exatamente o sintoma descrito.
+
+Foi o mesmo tipo de erro da v37 (nos do AnimateDiff): montei por deducao em vez
+de conferir a referencia oficial primeiro.
+
+### Tambem corrigido
+
+**Grade de tamanho.** O WAN exige largura/altura **multiplos de 32** e
+`length = 4n+1`. Eu tinha posto 512x512x25 — o 25 esta certo (4*6+1), mas a
+combinacao ficou fora do que o modelo espera. Agora **640x640 x 49** (~2 s),
+seguindo a proporcao do oficial (que usa 1280x704x121).
+
+**Seed** `fixed` -> `randomize`, como o template.
+
+**Prompt reescrito.** Descrever MOVIMENTO, nao aparencia (a aparencia vem da
+imagem). E o negative agora tem `static image, still, motionless, frozen,
+no motion, color shift` — sao esses termos que empurram o modelo a animar.
+
+### Poses do SD1.5: como encontrar
+
+Segunda pergunta do usuario. Duas correcoes:
+
+**1. O no 9 estava errado.** Era `LoadImage`, que carrega **uma** imagem.
+Trocado por **`VHS_LoadImages`**, que le uma **pasta inteira** na ordem
+alfabetica — que e o que o SparseCtrl precisa.
+
+**2. `gerar_poses.py` agora escreve direto no `input/`.** Ele detecta
+`ComfyUI_Data/input/` e cria `poses_<anim>/` la dentro. Fluxo:
+
+```
+python scripts/gerar_poses.py --anim walk
+```
+
+e a pasta ja aparece no dropdown do no 9 (recarregue a pagina com R).
+
+O script imprime os indices para o no 10 e o batch_size para o no 15.
+Ciclos prontos: walk, run, idle, attack, hit, death, jump.
+
+Alternativas as poses geradas (melhores, se voce tiver): sketches do proprio
+chibi nas poses, ou frames de um walk cycle de referencia. O SparseCtrl **RGB**
+aceita imagem colorida qualquer.
+
+### Regra reforcada
+
+Ja estava no indice desde a v37 e violei de novo: **conferir o template
+oficial antes de montar workflow de modelo novo**. Um unico no ausente muda
+"video" para "sequencia de imagens".

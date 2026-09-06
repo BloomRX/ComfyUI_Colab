@@ -182,7 +182,8 @@
     "ACN_SparseCtrlSpreadMethodNode": "ComfyUI-Advanced-ControlNet",
     "ACN_SparseCtrlMergedLoaderAdvanced": "ComfyUI-Advanced-ControlNet",
     "ACN_SparseCtrlRGBPreprocessor": "ComfyUI-Advanced-ControlNet",
-    "ACN_SparseCtrlWeightExtras": "ComfyUI-Advanced-ControlNet"
+    "ACN_SparseCtrlWeightExtras": "ComfyUI-Advanced-ControlNet",
+    "VHS_LoadImages": "ComfyUI-VideoHelperSuite"
   },
   "native_ignore": [
     "SaveImage",
@@ -282,7 +283,8 @@
     "ImageSharpen",
     "ImageBlur",
     "ImageQuantize",
-    "PorterDuffImageComposite"
+    "PorterDuffImageComposite",
+    "ModelSamplingSD3"
   ],
   "pack_extras": {
     "ComfyUI-SkinTokens": {
