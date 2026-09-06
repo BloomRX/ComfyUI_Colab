@@ -1,0 +1,627 @@
+{
+  "id": "e180cda8-5c87-5d04-af98-6e1e701c6d34",
+  "revision": 0,
+  "last_node_id": 13,
+  "last_link_id": 13,
+  "nodes": [
+    {
+      "id": 1,
+      "type": "UNETLoader",
+      "pos": [
+        40,
+        60
+      ],
+      "size": [
+        340,
+        90
+      ],
+      "flags": {},
+      "order": 0,
+      "mode": 0,
+      "inputs": [],
+      "outputs": [
+        {
+          "name": "MODEL",
+          "type": "MODEL",
+          "links": [
+            5
+          ],
+          "slot_index": 0
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "UNETLoader"
+      },
+      "widgets_values": [
+        "wan2.2_ti2v_5B_fp16.safetensors",
+        "default"
+      ],
+      "title": "1. WAN 2.2 TI2V-5B (9,3 GB)"
+    },
+    {
+      "id": 2,
+      "type": "CLIPLoader",
+      "pos": [
+        40,
+        200
+      ],
+      "size": [
+        340,
+        110
+      ],
+      "flags": {},
+      "order": 1,
+      "mode": 0,
+      "inputs": [],
+      "outputs": [
+        {
+          "name": "CLIP",
+          "type": "CLIP",
+          "links": [
+            1,
+            2
+          ],
+          "slot_index": 0
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "CLIPLoader"
+      },
+      "widgets_values": [
+        "umt5_xxl_fp8_e4m3fn_scaled.safetensors",
+        "wan",
+        "default"
+      ],
+      "title": "2. Text encoder umT5 fp8 (6,3 GB)"
+    },
+    {
+      "id": 3,
+      "type": "VAELoader",
+      "pos": [
+        40,
+        350
+      ],
+      "size": [
+        340,
+        80
+      ],
+      "flags": {},
+      "order": 2,
+      "mode": 0,
+      "inputs": [],
+      "outputs": [
+        {
+          "name": "VAE",
+          "type": "VAE",
+          "links": [
+            3,
+            10
+          ],
+          "slot_index": 0
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "VAELoader"
+      },
+      "widgets_values": [
+        "wan2.2_vae.safetensors"
+      ],
+      "title": "3. VAE do WAN 2.2"
+    },
+    {
+      "id": 4,
+      "type": "LoadImage",
+      "pos": [
+        40,
+        470
+      ],
+      "size": [
+        340,
+        320
+      ],
+      "flags": {},
+      "order": 3,
+      "mode": 0,
+      "inputs": [],
+      "outputs": [
+        {
+          "name": "IMAGE",
+          "type": "IMAGE",
+          "links": [
+            4
+          ],
+          "slot_index": 0
+        },
+        {
+          "name": "MASK",
+          "type": "MASK",
+          "links": [],
+          "slot_index": 1
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "LoadImage"
+      },
+      "widgets_values": [
+        "chibi_idle.png",
+        "image"
+      ],
+      "title": "4. CHIBI IDLE (saida do Base)"
+    },
+    {
+      "id": 5,
+      "type": "CLIPTextEncode",
+      "pos": [
+        420,
+        60
+      ],
+      "size": [
+        340,
+        150
+      ],
+      "flags": {},
+      "order": 4,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "clip",
+          "type": "CLIP",
+          "link": 1
+        }
+      ],
+      "outputs": [
+        {
+          "name": "CONDITIONING",
+          "type": "CONDITIONING",
+          "links": [
+            6
+          ],
+          "slot_index": 0
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "CLIPTextEncode"
+      },
+      "widgets_values": [
+        "chibi anime character walking in place, side view, legs moving in a walk cycle, simple flat colors, thick outlines, plain white background, static camera, no camera movement, full body visible"
+      ],
+      "title": "5. ACAO - troque so isto"
+    },
+    {
+      "id": 6,
+      "type": "CLIPTextEncode",
+      "pos": [
+        420,
+        240
+      ],
+      "size": [
+        340,
+        130
+      ],
+      "flags": {},
+      "order": 5,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "clip",
+          "type": "CLIP",
+          "link": 2
+        }
+      ],
+      "outputs": [
+        {
+          "name": "CONDITIONING",
+          "type": "CONDITIONING",
+          "links": [
+            7
+          ],
+          "slot_index": 0
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "CLIPTextEncode"
+      },
+      "widgets_values": [
+        "blurry, low quality, distorted, deformed, extra limbs, camera zoom, camera pan, background movement, realistic, 3d, watermark, text"
+      ],
+      "title": "6. Negative"
+    },
+    {
+      "id": 7,
+      "type": "Wan22ImageToVideoLatent",
+      "pos": [
+        420,
+        410
+      ],
+      "size": [
+        340,
+        180
+      ],
+      "flags": {},
+      "order": 6,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "vae",
+          "type": "VAE",
+          "link": 3
+        },
+        {
+          "name": "start_image",
+          "type": "IMAGE",
+          "link": 4,
+          "shape": "7"
+        }
+      ],
+      "outputs": [
+        {
+          "name": "LATENT",
+          "type": "LATENT",
+          "links": [
+            8
+          ],
+          "slot_index": 0
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "Wan22ImageToVideoLatent"
+      },
+      "widgets_values": [
+        512,
+        512,
+        25,
+        1
+      ],
+      "title": "7. 512x512, 25 frames (~1s a 24fps)"
+    },
+    {
+      "id": 8,
+      "type": "KSampler",
+      "pos": [
+        800,
+        60
+      ],
+      "size": [
+        300,
+        280
+      ],
+      "flags": {},
+      "order": 7,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "model",
+          "type": "MODEL",
+          "link": 5
+        },
+        {
+          "name": "positive",
+          "type": "CONDITIONING",
+          "link": 6
+        },
+        {
+          "name": "negative",
+          "type": "CONDITIONING",
+          "link": 7
+        },
+        {
+          "name": "latent_image",
+          "type": "LATENT",
+          "link": 8
+        }
+      ],
+      "outputs": [
+        {
+          "name": "LATENT",
+          "type": "LATENT",
+          "links": [
+            9
+          ],
+          "slot_index": 0
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "KSampler"
+      },
+      "widgets_values": [
+        777,
+        "fixed",
+        20,
+        5.0,
+        "uni_pc",
+        "simple",
+        1.0
+      ],
+      "title": "8. KSampler"
+    },
+    {
+      "id": 9,
+      "type": "VAEDecode",
+      "pos": [
+        800,
+        380
+      ],
+      "size": [
+        300,
+        60
+      ],
+      "flags": {},
+      "order": 8,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "samples",
+          "type": "LATENT",
+          "link": 9
+        },
+        {
+          "name": "vae",
+          "type": "VAE",
+          "link": 10
+        }
+      ],
+      "outputs": [
+        {
+          "name": "IMAGE",
+          "type": "IMAGE",
+          "links": [
+            11
+          ],
+          "slot_index": 0
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "VAEDecode"
+      },
+      "widgets_values": [],
+      "title": ""
+    },
+    {
+      "id": 10,
+      "type": "InspyrenetRembg",
+      "pos": [
+        800,
+        480
+      ],
+      "size": [
+        300,
+        110
+      ],
+      "flags": {},
+      "order": 9,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "image",
+          "type": "IMAGE",
+          "link": 11
+        }
+      ],
+      "outputs": [
+        {
+          "name": "IMAGE",
+          "type": "IMAGE",
+          "links": [
+            12,
+            13
+          ],
+          "slot_index": 0
+        },
+        {
+          "name": "MASK",
+          "type": "MASK",
+          "links": [],
+          "slot_index": 1
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "InspyrenetRembg"
+      },
+      "widgets_values": [
+        "default",
+        false
+      ],
+      "title": "10. Alpha em todos os frames"
+    },
+    {
+      "id": 11,
+      "type": "SaveImage",
+      "pos": [
+        1140,
+        60
+      ],
+      "size": [
+        400,
+        360
+      ],
+      "flags": {},
+      "order": 10,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "images",
+          "type": "IMAGE",
+          "link": 12
+        }
+      ],
+      "outputs": [],
+      "properties": {
+        "Node name for S&R": "SaveImage"
+      },
+      "widgets_values": [
+        "survivors_frames/walk"
+      ],
+      "title": "11. FRAMES -> make_spritesheet.py"
+    },
+    {
+      "id": 12,
+      "type": "PreviewImage",
+      "pos": [
+        1140,
+        450
+      ],
+      "size": [
+        400,
+        300
+      ],
+      "flags": {},
+      "order": 11,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "images",
+          "type": "IMAGE",
+          "link": 13
+        }
+      ],
+      "outputs": [],
+      "properties": {
+        "Node name for S&R": "PreviewImage"
+      },
+      "widgets_values": [],
+      "title": "12. Conferir"
+    },
+    {
+      "id": 13,
+      "type": "Note",
+      "pos": [
+        40,
+        830
+      ],
+      "size": [
+        340,
+        330
+      ],
+      "flags": {},
+      "order": 12,
+      "mode": 0,
+      "inputs": [],
+      "outputs": [],
+      "properties": {
+        "Node name for S&R": "Note"
+      },
+      "widgets_values": [
+        "ANIMACAO LOCAL COM WAN 2.2 TI2V-5B  (roda no T4 gratuito)\n\n### POR QUE ESTE E NAO O HOTSHOT ###\nO Hotshot-XL e um modulo de movimento beta em cima do SDXL: movimento fraco.\nO WAN 5B e um modelo de VIDEO de verdade. Os pesos:\n  wan2.2_ti2v_5B_fp16 ......... 9,3 GB\n  umt5_xxl_fp8_e4m3fn_scaled .. 6,3 GB\n  wan2.2_vae .................. 1,3 GB\nCom --cache-none (ja ligado na C6) o ComfyUI carrega UM de cada vez,\nentao o pico e ~9,3 GB e cabe nos 14,6 GB do T4.\n\n### O QUE ESPERAR ###\n12 a 25 min por clipe de ~1s no T4. E LENTO. Gere um walk primeiro e so\ndepois as outras acoes.\n\n### TROQUE SO O NO 5 ###\n  walk   -> 'walking in place, legs moving in a walk cycle'\n  attack -> 'swinging arm forward in an attack'  (no 7: 768x512)\n  death  -> 'falling down, collapsing'\n  idle   -> 'standing still, slight breathing motion'\n\nSEMPRE inclua 'static camera, no camera movement': modelo de video adora\nmover a camera, e para sprite isso estraga o frame.\n\n### FRAMES ###\nno 7 length=25 -> ~1s. O campo anda de 4 em 4 (4n+1).\nDepois: python scripts/make_spritesheet.py output/survivors_frames --nome walk\n\n### SE DER OOM (processo morre = RAM) ###\n  1) length 25 -> 13\n  2) 512x512 -> 384x384\n  3) confira que ECONOMIZAR_RAM esta True na C6"
+      ],
+      "title": "LEIA"
+    }
+  ],
+  "links": [
+    [
+      1,
+      2,
+      0,
+      5,
+      0,
+      "CLIP"
+    ],
+    [
+      2,
+      2,
+      0,
+      6,
+      0,
+      "CLIP"
+    ],
+    [
+      3,
+      3,
+      0,
+      7,
+      0,
+      "VAE"
+    ],
+    [
+      4,
+      4,
+      0,
+      7,
+      1,
+      "IMAGE"
+    ],
+    [
+      5,
+      1,
+      0,
+      8,
+      0,
+      "MODEL"
+    ],
+    [
+      6,
+      5,
+      0,
+      8,
+      1,
+      "CONDITIONING"
+    ],
+    [
+      7,
+      6,
+      0,
+      8,
+      2,
+      "CONDITIONING"
+    ],
+    [
+      8,
+      7,
+      0,
+      8,
+      3,
+      "LATENT"
+    ],
+    [
+      9,
+      8,
+      0,
+      9,
+      0,
+      "LATENT"
+    ],
+    [
+      10,
+      3,
+      0,
+      9,
+      1,
+      "VAE"
+    ],
+    [
+      11,
+      9,
+      0,
+      10,
+      0,
+      "IMAGE"
+    ],
+    [
+      12,
+      10,
+      0,
+      11,
+      0,
+      "IMAGE"
+    ],
+    [
+      13,
+      10,
+      0,
+      12,
+      0,
+      "IMAGE"
+    ]
+  ],
+  "groups": [],
+  "config": {},
+  "extra": {
+    "ds": {
+      "scale": 0.75,
+      "offset": [
+        0,
+        0
+      ]
+    }
+  },
+  "version": 0.4
+}

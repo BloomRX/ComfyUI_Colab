@@ -2943,3 +2943,77 @@ de RAM.** O que muda o veredito e Colab Pro (A100/L4) ou geracao na nuvem.
 
 1. **Hotshot-XL local** (v32) — 475 MB, roda hoje
 2. **clipe de 1s na nuvem** + `VideoToSprites` (v28)
+
+## v43 — CORRECAO MINHA: o WAN 2.2 **5B** cabe no T4. Nao precisa de nuvem paga.
+
+Usuario: "os da nuvem sao pagos, fica dificil achar". Fui procurar alternativa
+gratuita e, no caminho, descobri que **eu errei na v29**.
+
+### O erro
+
+Na v29 escrevi que "mesmo o WAN 5B quer 24 GB de RAM" e parti para o
+AnimateDiff. **Nunca conferi os tamanhos do 5B.** Repeti um numero de artigo
+generico em vez de olhar o repo — exatamente a regra 1 do indice, que eu mesmo
+escrevi.
+
+### Os numeros reais (Comfy-Org/Wan_2.2_ComfyUI_Repackaged)
+
+| peca | tamanho |
+|---|---|
+| `wan2.2_ti2v_5B_fp16` | **9,31 GB** |
+| `umt5_xxl_fp8_e4m3fn_scaled` | **6,27 GB** |
+| `wan2.2_vae` | **1,31 GB** |
+| soma | 16,9 GB |
+
+Com **`--cache-none`** (que a C6 ja liga desde a v29) o ComfyUI carrega **um
+modelo por vez**: o text encoder roda primeiro e sai da memoria, depois entra o
+DiT. **O pico e ~9,3 GB**, nao 16,9 — e cabe nos 14,6 GB do T4.
+
+Confirmacao independente: notebook "Wan2GP on Colab" recomenda exatamente
+"Wan 2.2 TextImage2Video **5B** FastWan, 480p" para o T4 gratuito; e um guia de
+ComfyUI-no-Colab cita "Wan 2.2 **5B** — cabe em 8 GB de VRAM, ideal para o
+tier gratuito".
+
+### `WaifuSurvivors_AnimateWan.json` (novo)
+
+13 nos, **todos nativos** — nenhum custom node novo alem do Inspyrenet que ja
+temos. `UNETLoader` + `CLIPLoader` + `Wan22ImageToVideoLatent` + `KSampler` +
+`InspyrenetRembg` + `SaveImage`.
+
+Entrada: o **chibi idle** do `Base`. Saida: frames com alpha para o
+`make_spritesheet.py`. Mesma esteira da v28.
+
+Detalhes que importam:
+- `length=25` (~1 s a 24 fps). O campo anda de 4 em 4 (4n+1).
+- **sempre** por `static camera, no camera movement` no prompt: modelo de video
+  adora mover a camera, e isso destroi o alinhamento do sprite.
+- 512x512 para walk/idle/death; **768x512 landscape para attack**.
+- 12-25 min por clipe no T4. E lento, mas e local e gratuito.
+
+### Hotshot-XL vs WAN 5B
+
+O `Animate` (Hotshot) continua no repo. Diferenca honesta: Hotshot e um modulo
+de movimento **beta** colado no SDXL — rapido e fraco. WAN 5B e um modelo de
+video de verdade — lento e bom. Teste o WAN primeiro; o Hotshot vira plano B se
+a lentidao incomodar.
+
+### Alternativas gratuitas na nuvem (se quiser comparar)
+
+Levantadas na mesma busca, todas sem cartao:
+- **Kling** — 66 creditos/dia, i2v incluso no free (o mais generoso recorrente)
+- **Hailuo (MiniMax)** — 2-3 clipes/dia, 768p, 6 s
+- **PixVerse** — 60 creditos/dia
+- **Luma** — ~80 creditos/dia
+- **Runway** — 125 creditos, uma vez so
+
+Quase todos poem marca d'agua no free. Para chibi com fundo removido a marca
+atrapalha menos, mas o WAN local nao tem esse problema.
+
+**Grok Imagine (o do video do DevDude) nao tem mais tier gratuito** desde
+marco/2026 — o tutorial esta desatualizado nesse ponto.
+
+### Regra reforcada
+
+A regra 1 existia e eu violei: **conferir o tamanho no repo antes de declarar
+que nao cabe**. Numero de artigo generico ("14B precisa de 32 GB") nao vale
+para a variante especifica.
