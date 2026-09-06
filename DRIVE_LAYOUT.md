@@ -3334,3 +3334,46 @@ WAN deve ganhar em suavidade (modelo de video real, 24 fps) e perder em custo
 (17 GB de peso, 12-25 min/clipe). SD1.5 deve ganhar em velocidade, em frames
 enxutos para spritesheet e — na rodada 2 — em controle de pose. Se o WAN sair
 parado de novo, o `ModelSamplingSD3` (no 14) nao esta na cadeia.
+
+## v48 — medicao de tempo/VRAM DENTRO da C6 (o Colab so roda uma celula)
+
+Correcao do usuario: **"ja falei que nao da para rodar mais de uma celula no
+Colab"**. Ele esta certo e ja tinha dito — foi por isso que a v18 moveu o
+diagnostico para dentro da C6 como thread. Eu propus na v47 rodar
+`ab_test.py --rodar` numa celula paralela, o que **nao funciona**: a C6 e
+bloqueante e segura o kernel.
+
+### Correcao
+
+O monitor virou uma **thread dentro da propria C6** (`_monitor_vram`), no mesmo
+molde do `_autodiag`. Ele:
+
+1. espera o servidor subir;
+2. observa `/queue` a cada 2 s;
+3. quando um job comeca, cronometra e amostra `/system_stats`;
+4. quando termina, imprime no log e grava em
+   `output/ab_test/medicoes.json`.
+
+Nao exige celula extra, nao exige acao do usuario. Cada Run que voce der na UI
+vira uma linha com tempo, pico de VRAM e delta sobre o idle.
+
+Testado contra um servidor simulado com dois jobs em sequencia (10 s e 8 s,
+picos diferentes): detectou os dois, cronometrou certo e separou os picos.
+
+### `ab_test.py` simplificado
+
+O modo `--rodar` foi **removido** — era exatamente a ideia furada. Sobrou
+`--medir`, que agora junta tudo num relatorio so:
+
+```
+python scripts/ab_test.py --medir
+```
+
+Imprime tempo e VRAM (lidos do `medicoes.json` que a C6 gravou) + as metricas
+de estabilidade, deriva, flicker e loop dos frames.
+
+### Regra
+
+**Respeitar as restricoes de ambiente que o usuario ja explicou.** "Uma celula
+por vez" nao e detalhe: invalida qualquer solucao com processo paralelo. Toda
+medicao continua tem de viver dentro da celula bloqueante, como thread.

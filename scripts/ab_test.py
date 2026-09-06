@@ -3,9 +3,11 @@
 
 Duas funcoes:
 
-  --rodar   enfileira os dois workflows via API do ComfyUI, cronometra cada um
-            e amostra a VRAM durante a execucao
-  --medir   analisa os frames ja gerados e pontua os criterios objetivos
+  --medir   analisa os frames gerados e junta com tempo/VRAM medidos pela C6
+
+TEMPO E VRAM: nao precisam de celula separada (o Colab so roda uma por vez e a
+C6 e bloqueante). O monitor vive DENTRO da C6 como thread e grava em
+output/ab_test/medicoes.json a cada job que termina.
 
 O que da para medir por codigo (e o que este script faz):
   - tempo de processamento
@@ -36,110 +38,6 @@ import urllib.request
 
 RAIZ = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 SERVER = 'http://127.0.0.1:8188'
-
-
-# --------------------------------------------------------------- execucao
-def api(rota, dados=None, servidor=SERVER, timeout=30):
-    url = servidor.rstrip('/') + rota
-    if dados is None:
-        with urllib.request.urlopen(url, timeout=timeout) as r:
-            return json.loads(r.read())
-    corpo = json.dumps(dados).encode()
-    req = urllib.request.Request(url, data=corpo,
-                                 headers={'Content-Type': 'application/json'})
-    with urllib.request.urlopen(req, timeout=timeout) as r:
-        return json.loads(r.read())
-
-
-def vram_mb(servidor=SERVER):
-    try:
-        d = api('/system_stats', servidor=servidor, timeout=10)
-        dev = d.get('devices', [{}])[0]
-        total = dev.get('vram_total', 0)
-        livre = dev.get('vram_free', 0)
-        return (total - livre) / (1024 ** 2)
-    except Exception:
-        return None
-
-
-class Monitor(threading.Thread):
-    """Amostra a VRAM em segundo plano enquanto o job roda."""
-
-    def __init__(self, servidor):
-        super().__init__(daemon=True)
-        self.servidor = servidor
-        self.picos = []
-        self.parar = False
-
-    def run(self):
-        while not self.parar:
-            v = vram_mb(self.servidor)
-            if v is not None:
-                self.picos.append(v)
-            time.sleep(2)
-
-    @property
-    def maximo(self):
-        return max(self.picos) if self.picos else None
-
-    @property
-    def media(self):
-        return statistics.mean(self.picos) if self.picos else None
-
-
-def to_api_format(wf):
-    """Converte workflow de UI para o formato /prompt (API)."""
-    N = {n['id']: n for n in wf['nodes'] if n.get('mode', 0) != 4}
-    L = {l[0]: l for l in wf.get('links', [])}
-    out = {}
-    for nid, n in N.items():
-        entradas = {}
-        for i in n.get('inputs') or []:
-            lk = i.get('link')
-            if lk is None:
-                continue
-            l = L.get(lk)
-            if l and l[1] in N:
-                entradas[i['name']] = [str(l[1]), l[2]]
-        wv = n.get('widgets_values')
-        if isinstance(wv, dict):
-            entradas.update(wv)
-        elif isinstance(wv, list):
-            # nomes dos widgets nao estao no JSON de UI; a API aceita posicional
-            # apenas via object_info, entao deixamos o servidor validar
-            pass
-        out[str(nid)] = {'class_type': n['type'], 'inputs': entradas}
-    return out
-
-
-def rodar(servidor):
-    print('AVISO: este modo exige que os workflows tenham sido salvos em\n'
-          'formato API. O caminho recomendado e rodar pela UI:\n'
-          '  1. abra AB_A_sd15_idle,  Run,  anote o tempo\n'
-          '  2. abra AB_B_wan_idle,   Run,  anote o tempo\n'
-          'e depois usar --medir.\n')
-    try:
-        st = api('/system_stats', servidor=servidor, timeout=10)
-        dev = st.get('devices', [{}])[0]
-        print(f"GPU: {dev.get('name')}  "
-              f"VRAM total: {dev.get('vram_total', 0)/(1024**3):.1f} GB")
-        print(f"VRAM em uso agora: {vram_mb(servidor):.0f} MB")
-    except Exception as e:
-        print(f'Servidor nao respondeu: {str(e)[:70]}')
-        return
-    print('\nMonitor de VRAM ativo. Rode os workflows pela UI agora.')
-    print('Ctrl+C para parar e ver o pico.\n')
-    m = Monitor(servidor)
-    m.start()
-    try:
-        while True:
-            time.sleep(5)
-            if m.picos:
-                print(f'  VRAM atual {m.picos[-1]:7.0f} MB   '
-                      f'pico {m.maximo:7.0f} MB', end='\r')
-    except KeyboardInterrupt:
-        m.parar = True
-        print(f'\n\nPico de VRAM observado: {m.maximo:.0f} MB')
 
 
 # --------------------------------------------------------------- medicao
@@ -274,15 +172,10 @@ def imprimir(rs):
 
 def main():
     ap = argparse.ArgumentParser()
-    ap.add_argument('--rodar', action='store_true', help='monitora VRAM ao vivo')
     ap.add_argument('--medir', action='store_true', help='analisa os frames')
     ap.add_argument('--server', default=SERVER)
     ap.add_argument('--dir', default=None, help='pasta output do ComfyUI')
     a = ap.parse_args()
-
-    if a.rodar:
-        rodar(a.server)
-        return
 
     if not a.medir:
         ap.print_help()
@@ -302,6 +195,22 @@ def main():
         sys.exit(f'Pasta de output nao encontrada. Use --dir')
 
     print(f'Lendo de: {base}')
+
+    med = []
+    pm = os.path.join(base, 'ab_test', 'medicoes.json')
+    if os.path.exists(pm):
+        try:
+            med = json.load(open(pm))
+        except Exception:
+            pass
+    if med:
+        print(f'\n  TEMPO E VRAM (medidos pela C6, ultimos {min(2,len(med))} jobs):')
+        for m in med[-2:]:
+            print(f"    {m['quando']}  {m['segundos']/60:5.1f} min   "
+                  f"pico {m['vram_pico_mb']:5} MB  (+{m['vram_delta_mb']} do idle)")
+    else:
+        print('\n  (sem medicoes.json — rode os workflows com a C6 v48+ ativa)')
+
     rs = []
     for sub, rot in (('ab_test/A_sd15_idle', 'A_SD1.5'),
                      ('ab_test/B_wan_idle', 'B_WAN')):
