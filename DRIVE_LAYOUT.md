@@ -3258,3 +3258,79 @@ aceita imagem colorida qualquer.
 Ja estava no indice desde a v37 e violei de novo: **conferir o template
 oficial antes de montar workflow de modelo novo**. Um unico no ausente muda
 "video" para "sequencia de imagens".
+
+## v47 — teste A/B: AnimateDiff (SD1.5) x WAN 2.2 5B
+
+Pedido: comparar os dois motores com a MESMA imagem, medindo tempo, VRAM e
+consistencia.
+
+**Limite honesto:** eu nao executo as geracoes — nao ha GPU no meu ambiente, o
+ComfyUI roda no Colab do usuario. O que entreguei foi o teste **pareado e
+instrumentado**; a execucao e dele.
+
+### Os dois workflows do teste
+
+`AB_A_sd15_idle.json` e `AB_B_wan_idle.json`. Pareados em tudo que da:
+
+| | A (SD1.5) | B (WAN) |
+|---|---|---|
+| imagem de entrada | a mesma | a mesma |
+| seed | 12345 fixa | 12345 fixa |
+| resolucao | 512x512 | 512x512 |
+| steps | 20 | 20 |
+| frames | 8 | **25** |
+| duracao | 1,0 s a 8 fps | ~1,04 s a 24 fps |
+
+**Por que 8 x 25 e nao 8 x 8:** o WAN exige `length = 4n+1` e roda a 24 fps.
+Igualar a **duracao** e mais justo que igualar a contagem. Isso conta a favor
+de A no spritesheet (menos frames para o mesmo ciclo) e a favor de B na
+suavidade.
+
+**SparseCtrl em bypass no lado A**, de proposito: idle nao precisa de controle
+de pose, e assim o teste isola o **motor de movimento**. O SparseCtrl e a
+vantagem estrutural do SD1.5 e deve ser medido na rodada 2 (walk), onde ele
+realmente conta.
+
+### `scripts/ab_test.py`
+
+`--rodar` monitora a VRAM ao vivo (amostra `/system_stats` a cada 2 s) enquanto
+os workflows rodam pela UI. `--medir` analisa os frames e calcula:
+
+| metrica | o que revela |
+|---|---|
+| movimento medio | se animou de verdade |
+| pico de movimento | salto brusco entre frames |
+| **instabilidade** | variacao do movimento (tremor) |
+| **deriva** (frame N vs 0) | se a identidade escapou |
+| **flicker de cor** | oscilacao de cor — o defeito da v46 |
+| emenda do loop | se o ciclo fecha |
+
+**Bug pego no proprio teste do medidor:** a primeira versao media a imagem
+inteira, e o fundo branco **diluia** o flicker — o caso B, com oscilacao
+visivel, marcava 0,79 (parecia otimo). Corrigido para ignorar fundo: passou a
+5,27 contra 1,12 do A. Validado com frames sinteticos que imitam os dois casos
+(A com respiracao real, B parado com cor oscilando).
+
+### O que o script NAO mede
+
+Se ficou bonito. Deformacao de mao, silhueta legivel, se o movimento "parece"
+respiracao — isso e olho humano, nos GIFs.
+
+### Como rodar
+
+```
+1. copie o chibi para ComfyUI_Data/input/chibi_idle.png
+2. abra AB_A_sd15_idle  -> Run   (anote o tempo do log)
+3. abra AB_B_wan_idle   -> Run   (anote o tempo)
+4. python scripts/ab_test.py --medir
+```
+
+Para VRAM, deixe `python scripts/ab_test.py --rodar` em outra celula durante as
+geracoes.
+
+### Expectativa a confirmar
+
+WAN deve ganhar em suavidade (modelo de video real, 24 fps) e perder em custo
+(17 GB de peso, 12-25 min/clipe). SD1.5 deve ganhar em velocidade, em frames
+enxutos para spritesheet e — na rodada 2 — em controle de pose. Se o WAN sair
+parado de novo, o `ModelSamplingSD3` (no 14) nao esta na cadeia.
