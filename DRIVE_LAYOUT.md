@@ -2820,3 +2820,60 @@ falha, o suspeito e o caminho entre eles — e a checagem tem de partir do
 navegador.
 
 Adicionada a `checar_regras.py`: acusa se o patch sumir do notebook.
+
+## v41 — MiniMax H3: por que NAO roda nesta maquina
+
+Sugerido pelo usuario (https://huggingface.co/Comfy-Org/MiniMax-H3), com o
+relato de que "da para rodar no Colab". Verifiquei os tamanhos reais pela API
+do HF antes de opinar.
+
+### Os numeros
+
+Stack MINIMO recomendado pela doc oficial da Comfy (workflow T2V):
+
+| peca | arquivo | tamanho |
+|---|---|---|
+| DiT | `minimax_h3_fl2va_pruned_int8_convrot` | **19,5 GB** |
+| Text encoder | `qwen3vl_32b_minimax_h3_nvfp4_awq` | **14,6 GB** |
+| VAEs | video fp16 + audio fp32 | ~5,8 GB |
+| **total** | | **~40 GB** |
+
+Nossa maquina: **14,6 GB de VRAM + 12,7 GB de RAM = 27,3 GB de teto absoluto**.
+Faltam ~12,6 GB **so para os pesos**, sem contar latentes nem ativacoes.
+
+O H3 e um modelo de **33,1 B** com um text encoder Qwen3-VL de **32 B** junto.
+Nao e um WAN 5B.
+
+### E os GGUF da comunidade?
+
+Existem (Unsloth Q2_K a Q8_0; Abiray; realrebelai). O Q2_K do DiT cai para
+~6,3-8,5 GB, o que em tese caberia na VRAM. Mas **todas as fontes convergem no
+mesmo requisito de RAM de sistema**:
+
+- runaihome: "32GB+ system RAM and NVMe are **mandatory**" para cards de 12-16 GB
+- atlascloud: 16 GB VRAM e o "realistic entry point"; 8-12 GB = "experiment only"
+- comfyui-wiki: 16 GB VRAM -> GGUF Q3/Q4 **+ text encoder INT4**
+
+O gargalo e o mesmo de sempre nesta maquina: **RAM de CPU (12,7 GB)**. O
+offload precisa de lugar para onde derramar, e nao ha. Mesmo o Q2_K exigiria o
+text encoder tambem quantizado, e ainda assim ficaria acima do teto.
+
+**Nao vale a pena tentar.** Seria o `Mesh_Processing` de novo: horas de
+download para morrer em OOM.
+
+### O que muda esse veredito
+
+Colab **Pro com A100 (40 GB VRAM) ou L4**, onde a RAM de sistema tambem sobe.
+Ai o stack int8+nvfp4 cabe. No T4 gratuito, nao.
+
+### Sobre "audio nativo"
+
+O H3 gera video **com audio estereo** no mesmo passo. Irrelevante para sprites
+de jogo — jogariamos o audio fora. Mais um motivo para nao pagar o custo.
+
+### Plano de animacao inalterado
+
+1. **Hotshot-XL local** (v32) — ja configurado, 475 MB, roda no T4
+2. **clipe de 1s na nuvem** + `VideoToSprites` (v28) — se o local nao bastar
+
+Ambos continuam validos e nenhum depende de 40 GB.
