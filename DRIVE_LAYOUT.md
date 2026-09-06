@@ -2877,3 +2877,69 @@ de jogo — jogariamos o audio fora. Mais um motivo para nao pagar o custo.
 2. **clipe de 1s na nuvem** + `VideoToSprites` (v28) — se o local nao bastar
 
 Ambos continuam validos e nenhum depende de 40 GB.
+
+## v42 — LTX-2.5 e Wan2.2-Animate-2: veredito
+
+Sugeridos pelo usuario. Tamanhos conferidos pela API do HF antes de opinar.
+
+### LTX-2.5 — 22B, nao cabe
+
+| peca | tamanho |
+|---|---|
+| DiT distilled **nvfp4** (a menor que existe) | 17,4 GB |
+| DiT int8-convrot | 20,0 GB |
+| Text encoder gemma4-12b int8 | 14,3 GB |
+| **stack minimo (nvfp4 + TE int8 + VAE)** | **~34,5 GB** |
+
+Teto da maquina: 14,6 VRAM + 12,7 RAM = **27,3 GB**.
+
+O relato mais util veio de quem **conseguiu** rodar LTX-2 em 8 GB de VRAM:
+"4060 Mobile, **64 GB RAM**, aumente o **pagefile para 128 GB**, o modelo +
+clip ocupam **90 a 105 GB de RAM + memoria virtual** para carregar. Este e o
+maior ponto de falha."
+
+Ou seja: LTX-2 em pouca VRAM e possivel **as custas de RAM/swap gigantes**.
+Temos 12,7 GB de RAM e o Colab nao da swap de 128 GB. E exatamente o gargalo
+que ja nos barrou no WAN 14B e no MiniMax H3.
+
+### Wan2.2-Animate-2 — 14B, e o problema nao e so o tamanho
+
+O repo oficial so publica **bf16: 30,5 GB** (base e distillation, mesmo
+tamanho), mais umT5, VAE e CLIP-vision. Setup de referencia dos autores:
+**8x A800 a 720p**, ou 2x A800 a 480p. Existe GGUF Q4 da comunidade (~8-12 GB)
+mas com "**~32 GB de RAM de sistema**" recomendados.
+
+**O impedimento maior e conceitual:** Wan Animate e **video-to-video**. Ele
+exige um **video de referencia** (driving video) com a performance a ser
+copiada, alem da imagem do personagem. Ele nao inventa movimento — ele
+**transfere** movimento de um video que voce ja tem.
+
+Para o WAIFU SURVIVORS isso significa: para gerar um walk cycle de chibi, eu
+precisaria **ja ter um video de walk cycle de chibi**. O modelo resolve
+"anime ESTA personagem com AQUELE movimento", nao "invente um walk cycle".
+
+E uma ferramenta excelente para outra coisa (trocar personagem em filmagem,
+animar retrato com performance de ator). Nao e a nossa.
+
+### Resumo dos 3 modelos avaliados
+
+| modelo | params | stack minimo | cabe em 27,3 GB? | serve ao caso? |
+|---|---|---|---|---|
+| MiniMax H3 (v41) | 33 B | ~40 GB | nao | audio inutil p/ sprite |
+| LTX-2.5 | 22 B | ~34,5 GB | nao | sim, se coubesse |
+| Wan2.2-Animate-2 | 14 B | ~30,5 GB (so bf16) | nao | **nao** — exige driving video |
+
+### O padrao
+
+Os modelos de video de 2026 sao **14-33 B**. Mesmo quantizados, o text encoder
+(Qwen3-VL-32B, gemma4-12B, umT5) sozinho ja passa da nossa RAM. Nenhuma
+variacao deles muda isso — a variacao mexe no DiT, e o gargalo esta no
+conjunto.
+
+**Nao vale reavaliar modelo de video grande enquanto a maquina for T4 + 13 GB
+de RAM.** O que muda o veredito e Colab Pro (A100/L4) ou geracao na nuvem.
+
+### Continua valendo
+
+1. **Hotshot-XL local** (v32) — 475 MB, roda hoje
+2. **clipe de 1s na nuvem** + `VideoToSprites` (v28)
