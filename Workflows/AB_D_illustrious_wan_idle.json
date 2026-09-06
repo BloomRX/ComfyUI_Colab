@@ -369,9 +369,9 @@
         4.5,
         "uni_pc",
         "simple",
-        0.55
+        1.0
       ],
-      "title": "9. denoise 0.55 — o segredo: nao redesenha, so move"
+      "title": "9. KSampler — denoise 1.0 (MEDIDO: 0.4-0.7 quebram)"
     },
     {
       "id": 10,

@@ -3796,3 +3796,79 @@ Sao 5 x ~5 min. **Nenhum download novo** — so o WAN que ja esta no Drive.
 
 Se 0.40 der movimento suficiente, ganha. Se 1.00 preservar a identidade por
 causa do noise_mask, ganha. A tabela + os GIFs decidem.
+
+## v54 — RESULTADO DO TESTE DE DENOISE: eu estava errado, 1.0 vence
+
+Teste controlado do usuario, 5 rodadas identicas exceto o denoise.
+
+| rodada | FIDELID | cabelo | rosto | roupa | movim | flicker | tempo |
+|---|---|---|---|---|---|---|---|
+| d040 | 38,90 | 26,46 | 44,37 | 46,96 | 11,85 | 27,11 | 12,0 min |
+| d050 | 48,04 | 41,87 | 47,49 | 53,00 | 21,70 | 43,45 | 16,0 min |
+| d060 | 47,12 | 33,47 | 56,46 | 54,39 | 17,96 | 42,09 | 3,8 min |
+| d070 | 45,17 | 29,43 | 41,65 | 61,93 | 14,53 | 36,21 | 14,7 min |
+| **d100** | **15,08** | **11,44** | **12,29** | **20,11** | 9,33 | **16,31** | 9,3 min |
+
+**`denoise 1.0` ganhou em TODAS as metricas de fidelidade** — 2,6x mais fiel
+que o segundo colocado (d040), com o menor flicker e ainda com movimento
+suficiente (9,33).
+
+Minha recomendacao de 0.55 estava errada. O usuario exigiu o teste; sem ele eu
+teria fixado o pior ajuste possivel.
+
+### Por que 1.0 e o certo aqui (confirmado no codigo)
+
+Eu raciocinei por analogia com img2img, onde denoise baixo preserva a imagem.
+**Aqui a mecanica e outra.** Lendo `Wan22ImageToVideoLatent` com `length=9`:
+
+```python
+latent = torch.zeros([1, 48, 3, h//16, w//16])   # 3 frames latentes, TUDO ZERO
+latent_temp = vae.encode(start_image)            # ocupa 1 frame latente
+latent[:, :, :1] = latent_temp                   # so o PRIMEIRO recebe a arte
+mask[:, :, :1] *= 0.0                            # mask protege so o primeiro
+```
+
+Os frames latentes 2 e 3 permanecem **zeros** — nao sao ruido nem imagem.
+
+E o KSampler com denoise < 1 (`samplers.py:1439`):
+
+```python
+new_steps = int(steps/denoise)
+sigmas = calculate_sigmas(new_steps)[-(steps + 1):]   # comeca em sigma BAIXO
+```
+
+Denoise parcial **assume que o latente ja e uma imagem quase pronta**. Mas 2/3
+dele e zero. O sampler entao "retoca" zeros em vez de sintetizar frames — e o
+resultado e lixo estruturado. Dai fidelidade 38-48 nos parciais.
+
+**A preservacao da identidade nao vem do denoise: vem do `noise_mask`**, que ja
+protege o frame 0 independentemente. Por isso 1.0 e seguro — e necessario.
+
+### Regra (corrige a que eu escrevi na v52)
+
+A v52 dizia: *"preservar arte existente e problema de denoise"*. **Errado para
+i2v de video.** O correto:
+
+**Em i2v com `noise_mask` (WAN, e provavelmente qualquer i2v de video), o
+denoise deve ser 1.0.** O que preserva a arte e o mask, nao o denoise. Denoise
+parcial corrompe os frames que ainda sao zeros.
+
+Analogia de img2img **nao se transfere** para modelos de video com latente
+temporal.
+
+### Aplicado
+
+`denoise = 1.0` fixado em `AnimateWan` e `AB_D_illustrious_wan_idle`.
+
+### Observacao sobre os tempos
+
+Variaram de 3,8 a 16 min para o mesmo trabalho, sem correlacao com o denoise
+(d060 levou 3,8 min; d050, 16 min). Causa provavel: contencao de VRAM/RAM entre
+jobs enfileirados — o log mostra "got prompt" chegando durante execucoes
+anteriores. Para cronometrar direito, enfileirar um de cada vez.
+
+### O que falta
+
+Confirmar visualmente nos GIFs (o usuario vai commitar zipado): deformacao de
+mao e legibilidade da silhueta, que numero nao mede. Se d100 estiver visualmente
+bom, a arquitetura C esta provada e passamos para walk/attack.
