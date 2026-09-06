@@ -3377,3 +3377,53 @@ de estabilidade, deriva, flicker e loop dos frames.
 **Respeitar as restricoes de ambiente que o usuario ja explicou.** "Uma celula
 por vez" nao e detalhe: invalida qualquer solucao com processo paralelo. Toda
 medicao continua tem de viver dentro da celula bloqueante, como thread.
+
+## v49 — o relatorio A/B tambem vai para dentro da C6
+
+Dois erros meus, apontados pelo usuario:
+
+**1. Caminho errado.** Instrui `python scripts/ab_test.py`, e no Colab o
+diretorio corrente e `/content`. O repo e clonado em **`/content/ComfyUI_Colab`**
+(variavel `CKOUT` da C1). O comando certo seria:
+
+```
+!python /content/ComfyUI_Colab/scripts/ab_test.py --medir
+```
+
+**2. Continuei dependendo de uma segunda celula.** Na v48 tirei o monitor de
+VRAM da celula separada, mas deixei a ANALISE em script — que so roda depois de
+parar a C6. Meio-conserto.
+
+### Correcao
+
+O relatorio inteiro agora e `_relatorio_ab()`, embutido na C6, e e chamado
+**automaticamente ao fim de cada job**. Terminou uma geracao, sai no log:
+
+```
+[medicao] job levou 14.2 min | VRAM pico 9840 MB (+7100)
+
+==================================================================
+  TESTE A/B  (menor = melhor, exceto movimento)
+==================================================================
+  metrica                     A_SD1.5        B_WAN
+  frames                            8           25
+  movimento medio                5.59          2.9   animou de verdade?
+  INSTABILIDADE                  1.58         1.53   tremor entre frames
+  deriva maxima                 10.68        13.93   perdeu a identidade?
+  FLICKER de cor                 2.43         10.0   cor oscilando
+  emenda do loop                 0.43         3.14   0 = fecha certo
+==================================================================
+  !! B_WAN: flicker 10.0 — COR OSCILA entre frames
+```
+
+Zero comandos. Rode os dois workflows na UI e o comparativo aparece sozinho.
+
+O `scripts/ab_test.py` continua no repo para uso avulso, agora com o caminho
+absoluto documentado.
+
+### Regra
+
+**No Colab, o usuario nao tem terminal nem segunda celula.** Toda ferramenta
+util tem de: (a) rodar dentro da celula que ja esta em execucao, ou (b) ser
+chamada com **caminho absoluto** e prefixo `!`. Caminho relativo assume um
+diretorio corrente que nao existe la.
