@@ -3017,3 +3017,90 @@ marco/2026 — o tutorial esta desatualizado nesse ponto.
 A regra 1 existia e eu violei: **conferir o tamanho no repo antes de declarar
 que nao cabe**. Numero de artigo generico ("14B precisa de 32 GB") nao vale
 para a variante especifica.
+
+## v44 — Analise do prompt gerado por outra IA (animacao 2D para games)
+
+O usuario trouxe um prompt detalhado feito por outra IA. Confrontei cada
+afirmacao tecnica com as fontes. Resumo: **a maior parte coincide com o que
+chegamos, e um ponto corrige um erro meu.**
+
+### Onde ele CONFIRMA o que ja fizemos
+
+| Recomendacao dele | Nosso estado |
+|---|---|
+| Nao usar modelos gigantes de video | v41/v42 — descartamos H3, LTX-2.5, Wan-Animate |
+| 512x512 / 384x384, nao 1024 | v32 — Hotshot em 512; e a regra "nao gerar chibi em 128" |
+| 8-16 frames, nao 32/64 | v32 — contexto 8 no Hotshot |
+| batch 1, FP16, liberar VRAM | C6 ja com `--cache-none --disable-smart-memory` |
+| Seed fixa para consistencia | v32 — seed 555 fixa entre animacoes |
+| Exportar frames + spritesheet + JSON | `scripts/make_spritesheet.py` (v28) faz os tres |
+| JSON com `animation/frames/fps/loop` | ja gerado pelo script |
+| 12 FPS padrao para game | ja e o default do script |
+| Remover fundo em etapa posterior | `InspyrenetRembg` em todos os workflows |
+| Prompt negativo anti-deformacao | v27/v31 — nosso negative ja tem quase toda a lista |
+| Nao inventar URLs de modelo | **regra 1** do nosso indice (v33) |
+| Consistencia > qualidade cinematografica | e exatamente a v31 |
+
+### Onde ele esta CERTO e eu errei
+
+**"AnimateDiff SD1.5 e melhor que SDXL para animacao."** Verdade, e eu escolhi
+SDXL na v29 por conveniencia (era o nosso checkpoint), nao por merito.
+
+Conferindo o repo `guoyww/animatediff`:
+
+| modulo | tamanho | estado |
+|---|---|---|
+| `v3_sd15_mm.ckpt` | 1,67 GB | maduro (v3) |
+| `mm_sd_v15_v2.ckpt` | 1,82 GB | maduro |
+| `mm_sdxl_v10_beta.ckpt` | 0,95 GB | **beta, subtreinado** |
+| `v3_sd15_sparsectrl_rgb` | 1,99 GB | so existe para SD1.5 |
+| `v3_sd15_sparsectrl_scribble` | 1,99 GB | so existe para SD1.5 |
+| `v2_lora_*` (8 MotionLoRAs) | 77 MB cada | **so funcionam em SD1.5** |
+
+E `ByteDance/AnimateDiff-Lightning` (908 MB, 1/2/4/8 step) tambem e **so SD1.5**.
+
+Ou seja: SparseCtrl, MotionLoRAs e Lightning — as tres ferramentas que dao
+CONTROLE de movimento — **nao existem em SDXL**. O ecossistema de animacao
+mora no SD1.5.
+
+**SparseCtrl e a resposta certa para o que ele descreve** (frame 1 pose A,
+frame 3 pose B...): e o unico mecanismo que condiciona frames especificos de
+uma animacao. Eu nao tinha proposto isso.
+
+### Onde o prompt esta DESATUALIZADO para o nosso caso
+
+**1. Nao sabe do WAN 2.2 TI2V-5B (v43).** Ele proibe "modelos de video" por
+assumir que todos precisam de 24 GB+. Mas o 5B tem pico de ~9,3 GB com
+`--cache-none` e cabe no T4. E um modelo de video de verdade, melhor que
+qualquer modulo AnimateDiff.
+
+**2. Conflito real: SD1.5 x nosso personagem SDXL.** Ele diz "nao use SDXL como
+principal". Mas TODO o nosso pipeline de identidade e SDXL/Illustrious:
+`Base`, `CharacterSheet`, o proprio chibi idle. Trocar para SD1.5 significa:
+- abandonar o WAI-illustrious v170 (e a LoRA futura da personagem)
+- o chibi animado sairia com traco diferente do chibi do `Base`
+- ToonYou/Mistoon sao bons, mas nao sao o nosso estilo ja aprovado
+
+Isso nao e detalhe: **quebra a consistencia que ele mesmo poe como requisito 1**.
+
+**3. Sugere "notebook do zero com 14 celulas".** Ja temos um notebook maduro
+(v44, 8 celulas) com registry, selecao de nodes, patch do proxy, diagnostico e
+validadores. Recomecar jogaria fora 44 versoes de correcoes.
+
+### Conclusao: as tres rotas, honestamente
+
+| rota | consistencia | controle de pose | custo |
+|---|---|---|---|
+| **WAN 5B** (v43, pronto) | boa (i2v do chibi) | so por prompt | 17 GB, 12-25 min/clipe |
+| **Hotshot-XL** (v32, pronto) | media | nenhum | 475 MB, rapido, fraco |
+| **SD1.5 + AnimateDiff v3 + SparseCtrl** | alta COM pose | **sim, por frame** | ~6 GB, mas troca de checkpoint |
+
+A rota SD1.5 e tecnicamente a melhor **para controle de pose**, e o preco e
+trocar o modelo do personagem.
+
+### Recomendacao
+
+Testar o **WAN 5B primeiro** (ja esta pronto, mantem o personagem). Se o
+movimento nao servir, montar a rota SD1.5+SparseCtrl como pipeline PARALELO —
+usando o chibi idle do SDXL como referencia IPAdapter para o SD1.5 herdar a
+aparencia. Nao substituir o que existe.
