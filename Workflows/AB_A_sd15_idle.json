@@ -211,14 +211,14 @@
         "Node name for S&R": "IPAdapterAdvanced"
       },
       "widgets_values": [
-        0.8,
+        0.65,
         "linear",
         "concat",
         0.0,
         0.9,
         "K+mean(V) w/ C penalty"
       ],
-      "title": "4. Forca da referencia (0.8)"
+      "title": "4. Referencia (0.65 - alto demais escurece)"
     },
     {
       "id": 5,
@@ -680,7 +680,7 @@
         "Node name for S&R": "CLIPTextEncode"
       },
       "widgets_values": [
-        "1girl, chibi, super deformed, 2 heads tall, big head, small body, short brown hair, blue eyes, light blue camisole, denim shorts, blue sneakers, standing still, subtle breathing motion, hair swaying slightly, small idle body sway, full body visible, character centered, static camera, fixed camera, no zoom, no pan, plain white background, thick outlines, flat colors, simple shading, consistent character, 2d game sprite, clean silhouette"
+        "1girl, chibi, super deformed, 2 heads tall, big head, small body, short brown hair, blue eyes, light blue camisole, denim shorts, blue sneakers, standing still, subtle breathing motion, hair swaying slightly, small idle body sway, full body visible, character centered, static camera, fixed camera, no zoom, no pan, plain thick outlines, flat colors, simple shading, consistent character, 2d game sprite, clean silhouette, solid white background, plain white background, isolated on white, no scenery, no environment, no shadows on background"
       ],
       "title": "13. IDENTIDADE + ACAO"
     },
@@ -720,7 +720,7 @@
         "Node name for S&R": "CLIPTextEncode"
       },
       "widgets_values": [
-        "static image, frozen, no motion, color shift, changing colors, flickering, morphing, changing face, changing clothes, changing hairstyle, different character, deformed, extra limbs, distorted, cropped, camera zoom, camera pan, camera movement, detailed background, blurry, watermark, text, worst quality, low quality"
+        "static image, frozen, no motion, color shift, changing colors, flickering, morphing, changing face, changing clothes, changing hairstyle, different character, deformed, extra limbs, distorted, cropped, camera zoom, camera pan, camera movement, detailed background, blurry, watermark, text, worst quality, low quality, dark, dark lighting, low key, underexposed, dim, gloomy, colored background, gradient background, scenery, environment, indoor, outdoor, room, sky, floor, ground shadow, vignette, red tint, magenta tint, color cast"
       ],
       "title": "14. Negative"
     },
@@ -812,7 +812,7 @@
         12345,
         "fixed",
         20,
-        7.0,
+        5.0,
         "euler",
         "normal",
         1.0

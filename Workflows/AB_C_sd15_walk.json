@@ -211,14 +211,14 @@
         "Node name for S&R": "IPAdapterAdvanced"
       },
       "widgets_values": [
-        0.8,
+        0.65,
         "linear",
         "concat",
         0.0,
         0.9,
         "K+mean(V) w/ C penalty"
       ],
-      "title": "4. Forca da referencia (0.8)"
+      "title": "4. Referencia (0.65 - alto demais escurece)"
     },
     {
       "id": 5,
@@ -683,7 +683,7 @@
         "Node name for S&R": "CLIPTextEncode"
       },
       "widgets_values": [
-        "1girl, chibi, super deformed, 2 heads tall, big head, small body, short brown hair, blue eyes, light blue camisole, denim shorts, blue sneakers, walking cycle, legs alternating, arms swinging, side view, facing right, full body, thick outlines, flat colors, simple shading, white background, consistent character, same clothing, 2d game sprite, clean silhouette, masterpiece, best quality"
+        "1girl, chibi, super deformed, 2 heads tall, big head, small body, short brown hair, blue eyes, light blue camisole, denim shorts, blue sneakers, walking cycle, legs alternating, arms swinging, side view, facing right, full body, thick outlines, flat colors, simple shading, consistent character, same clothing, 2d game sprite, clean silhouette, masterpiece, best quality, solid white background, plain white background, isolated on white, no scenery, no environment, no shadows on background"
       ],
       "title": "13. IDENTIDADE + ACAO"
     },
@@ -722,7 +722,7 @@
         "Node name for S&R": "CLIPTextEncode"
       },
       "widgets_values": [
-        "deformed, extra limbs, missing limbs, mutated hands, changing face, changing clothes, different character, duplicate character, inconsistent anatomy, distorted body, flickering, morphing, blurry, photorealistic, 3d, multiple characters, detailed background, camera movement, watermark, text, worst quality, low quality, static image, standing still"
+        "deformed, extra limbs, missing limbs, mutated hands, changing face, changing clothes, different character, duplicate character, inconsistent anatomy, distorted body, flickering, morphing, blurry, photorealistic, 3d, multiple characters, detailed background, camera movement, watermark, text, worst quality, low quality, static image, standing still, dark, dark lighting, low key, underexposed, dim, gloomy, colored background, gradient background, scenery, environment, indoor, outdoor, room, sky, floor, ground shadow, vignette, red tint, magenta tint, color cast"
       ],
       "title": "14. Negative"
     },
@@ -814,7 +814,7 @@
         12345,
         "fixed",
         20,
-        7.0,
+        5.0,
         "euler",
         "normal",
         1.0

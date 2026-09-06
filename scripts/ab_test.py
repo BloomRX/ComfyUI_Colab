@@ -92,7 +92,16 @@ def cor_media(im, passo=3):
     return (r/n, g/n, b/n)
 
 
-def analisar(pasta, rotulo):
+def perfil_brilho(im):
+    px = im.load(); w, h = im.size; b = []
+    for y in range(0, h, 6):
+        for x in range(0, w, 6):
+            c = px[x, y]
+            b.append((max(c[:3]) + min(c[:3])) / 2)
+    return statistics.mean(b)
+
+
+def analisar(pasta, rotulo, ref=None):
     fs, ims = carregar(pasta)
     if len(ims) < 2:
         print(f'  [{rotulo}] frames insuficientes em {pasta} ({len(ims)})')
@@ -106,9 +115,12 @@ def analisar(pasta, rotulo):
     loop = dif(ims[-1], ims[0])
     passo = statistics.median(consec) if consec else 0
 
+    fid = round(dif(ref.resize(ims[0].size), ims[0]), 2) if ref else 0.0
     r = {
         'rotulo': rotulo,
         'frames': len(ims),
+        'fidelidade': fid,
+        'brilho': round(perfil_brilho(ims[0]), 1),
         'movimento': round(statistics.mean(consec), 2),
         'movimento_max': round(max(consec), 2),
         'estabilidade': round(statistics.pstdev(consec), 2) if len(consec) > 1 else 0.0,
@@ -131,6 +143,8 @@ def imprimir(rs):
     print('=' * 74)
     linhas = [
         ('frames gerados',      'frames',        ''),
+        ('FIDELIDADE a entrada','fidelidade',    '0 = igual a referencia'),
+        ('brilho da saida',     'brilho',        'baixo demais = escureceu'),
         ('movimento medio',     'movimento',     'quanto muda entre frames'),
         ('pico de movimento',   'movimento_max', 'salto brusco = ruim'),
         ('INSTABILIDADE',       'estabilidade',  'variacao do movimento'),

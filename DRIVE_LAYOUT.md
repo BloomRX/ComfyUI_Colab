@@ -3514,3 +3514,97 @@ Antes de rodar:
 depois R para recarregar, escolher `poses_walk` no no 9, e Run.
 
 O relatorio da C6 agora inclui a coluna `C_SD15_walk`.
+
+## v51 — CORRECAO DO VEREDITO: eu julguei sem olhar os frames
+
+O usuario tinha commitado os outputs em `testsAB/`. Eu vi o commit passar no
+rebase e **nao abri**. Julguei a v50 so pelos numeros. Ao montar as tiras de
+contato, o veredito mudou.
+
+### O que as imagens mostram (e as metricas nao mostravam)
+
+**A (SD1.5):** personagem **escuro**, com halo vermelho/rosa no rosto e nos
+bracos, e **fundo colorido sujo** (manchas azuis/verdes/vinho). Nao se parece
+com o chibi limpo de fundo transparente que entrou.
+
+**B (WAN):** traco **limpo e fiel** ao original — cabelo, olhos, roupa e
+proporcao preservados, iluminacao natural. Visualmente muito melhor.
+
+Numeros do perfil que confirmam:
+
+| | A (SD1.5) | B (WAN) |
+|---|---|---|
+| brilho medio | **71** (escuro) | 124 |
+| variacao do fundo | **51** (sujo) | 38 |
+| alpha transparente | 44% | 57% |
+
+### Por que minhas metricas erraram
+
+Elas mediram **estabilidade relativa**: quanto o frame N difere do N+1 e do
+frame 0. **Nenhuma comparava com a IMAGEM DE ENTRADA.**
+
+Consequencia logica: um resultado errado **de forma constante** pontua otimo.
+O A ficou escuro e sujo nos 8 frames igualmente — entao "estabilidade 0,37" e
+"deriva 3,26" sao excelentes... e irrelevantes. Ele e **consistentemente
+errado**.
+
+O B varia mais entre frames (deriva 28) porque de fato se move — mas parte do
+lugar certo.
+
+**Nao ha metrica de fidelidade a referencia no meu script.** Foi um furo de
+desenho, nao um detalhe.
+
+### Por que o SD1.5 saiu escuro e sujo
+
+Tres causas provaveis, em ordem:
+
+1. **ToonYou nao conhece a personagem.** O IPAdapter em 0,8 passa "clima", nao
+   identidade. O SD1.5 gerou a SUA interpretacao de um chibi.
+2. **CFG 7,0** — herdei do padrao SD1.5, mas com IPAdapter forte satura e
+   escurece.
+3. **`white background` no prompt sem forca suficiente** — o AnimateDiff v3
+   tende a inventar cenario, e o rembg entao recorta um fundo que ja veio sujo.
+
+### Veredito revisado
+
+**Para IDLE, o WAN 2.2 5B entrega o resultado utilizavel; o SD1.5 nao.**
+
+Isso nao anula a vantagem estrutural do SD1.5 (SparseCtrl, ciclo que fecha,
+1/3 da VRAM) — mas ela so vale se a imagem sair certa. Precisa de correcao
+antes da rodada de walk.
+
+### Regra
+
+**Sempre ABRIR as imagens antes de concluir.** Metrica de estabilidade nao
+detecta erro sistematico. E toda comparacao com imagem de referencia precisa de
+uma metrica **contra a referencia**, nao so entre frames.
+
+Ja tinha acontecido na v45 (bonecos com membros para cima passaram nos testes
+numericos). Duas vezes o mesmo erro: confiar em numero sem olhar.
+
+### v51b — correcoes aplicadas
+
+**No script/C6 — metrica que faltava:**
+- **FIDELIDADE a entrada**: compara o frame 0 com `input/chibi_idle.png`.
+  Alerta se > 30 ("estavel porem errado").
+- **brilho da saida**: alerta se < 85 (escureceu).
+
+Com isso o caso A teria sido reprovado automaticamente (brilho 71).
+
+**No SD1.5 — tres ajustes contra o escuro/sujo:**
+
+| | antes | agora | motivo |
+|---|---|---|---|
+| CFG | 7,0 | **5,0** | 7 com IPAdapter forte satura e escurece |
+| IPAdapter | 0,8 | **0,65** | peso alto transfere "clima" escuro da referencia |
+| positive | `white background` | `solid white background, isolated on white, no scenery` | v3 inventa cenario |
+| negative | — | + `dark, underexposed, colored background, red tint, color cast` | ataca o halo vermelho |
+
+Aplicado nos tres workflows SD1.5.
+
+### Proximo passo
+
+Rodar de novo o `AB_A_sd15_idle` corrigido e comparar com o WAN que ja temos.
+Se continuar escuro, a causa e o **ToonYou** nao servir para este estilo — ai o
+teste seguinte e trocar por outro checkpoint SD1.5 anime, ou aceitar o WAN
+para idle e usar o SD1.5 so onde o SparseCtrl for indispensavel.
