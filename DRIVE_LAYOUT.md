@@ -3903,3 +3903,69 @@ parciais estao quebrados.
 2. **fundo instavel** — varia entre frames. Como o rembg ja remove, nao e
    critico para sprite, mas atrapalha o recorte. Reforcar
    `plain solid background, static background`.
+
+## v55 — limpeza do Drive: `scripts/limpar_drive.py`
+
+Usuario com 80 GB no Drive, querendo saber o que da para apagar.
+
+### O que o script faz
+
+Varre `ComfyUI_Data/models/`, cruza com os workflows do repo e classifica:
+
+- **MANTER** — usado por workflow do pipeline ativo
+- **DESCARTAR** — usado so por workflow aposentado/reprovado (com o motivo)
+- **ORFAO** — nenhum workflow referencia
+
+**Nao apaga nada.** Com `--gerar-script` escreve um `apagar.sh` para revisao.
+
+```
+!python /content/ComfyUI_Colab/scripts/limpar_drive.py
+!python /content/ComfyUI_Colab/scripts/limpar_drive.py --gerar-script
+```
+
+### Bug perigoso pego no teste
+
+A primeira versao marcou **IPAdapter e CLIP Vision como ORFAOS** — e eles estao
+em uso pelo `Base` e pelo `CharacterSheet`. Seguir a recomendacao teria
+quebrado o pipeline principal.
+
+Causa: o `IPAdapterUnifiedLoader` carrega os pesos **por preset**
+(`PLUS (high strength)`), nao por nome de arquivo. Varredura de texto no JSON
+nunca os acha.
+
+Corrigido com um mapa `IMPLICITOS` de nos que carregam por preset. Validado:
+apos a correcao os dois passaram para MANTER.
+
+Testado ponta a ponta num Drive simulado com 25 arquivos: o `apagar.sh` removeu
+17 e deixou exatamente os 8 do pipeline ativo.
+
+### Pipeline ATIVO (o que fica)
+
+| workflow | papel |
+|---|---|
+| `WaifuSurvivors_Concept` | exploracao |
+| `WaifuSurvivors_Base` | concept -> splash + chibi |
+| `WaifuSurvivors_CharacterSheet` | turnaround / dataset de LoRA |
+| `WaifuSurvivors_AnimateWan` | **animacao (arquitetura vencedora)** |
+| `WaifuSurvivors_VideoToSprites` | frames -> spritesheet |
+| `AB_D_illustrious_wan_idle` | prototipo validado |
+
+Modelos correspondentes: `waiIllustriousSDXL_v170`, `wan2.2_ti2v_5B_fp16`,
+`umt5_xxl_fp8_e4m3fn_scaled`, `wan2.2_vae`, `controlnet-union-sdxl-1.0`,
+`ip-adapter-plus_sdxl_vit-h`, `CLIP-ViT-H-14`. **~23 GB.**
+
+### O que os testes aposentaram
+
+- **SD1.5** (`toonyou`, `v3_sd15_mm`, `sparsectrl_rgb`, `ip-adapter_sd15`)
+  — reprovado na v51: fidelidade 73,8, saida escura. **~5,7 GB**
+- **Hotshot-XL** (`hsxl_temporal_layers`) — reprovado v32/v50. **475 MB**
+- **Tutorial nunca usado**: krea2 (2 x 13,5 GB!), flux-2-klein, qwen encoders,
+  anima, Pony, Waifu-Inpaint-XL. **~60 GB**
+
+Os dois `krea2` sozinhos sao 27 GB — sao do `CharDesignandPartSplitting`, um
+workflow do tutorial que nunca rodamos.
+
+### Aviso
+
+`ORFAO` pode conter coisa baixada de proposito (LoRA sua, checkpoint de teste).
+Conferir antes de apagar — o script existe para informar, nao para decidir.
