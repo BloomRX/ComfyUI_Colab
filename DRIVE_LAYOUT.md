@@ -3872,3 +3872,34 @@ anteriores. Para cronometrar direito, enfileirar um de cada vez.
 Confirmar visualmente nos GIFs (o usuario vai commitar zipado): deformacao de
 mao e legibilidade da silhueta, que numero nao mede. Se d100 estiver visualmente
 bom, a arquitetura C esta provada e passamos para walk/attack.
+
+### v54b — confirmacao VISUAL (zip do usuario)
+
+Extraidos os 45 frames. A grade comparativa (linhas = denoise, colunas =
+frames 0,2,4,6,8) confirma os numeros de forma dramatica:
+
+- **d040**: frame 0 bom, frame 2 ja derretendo, frames 4-8 = **tela vazia**
+  (rosa/bege liso). A personagem simplesmente **desaparece**.
+- **d050**: frames 4+ viram borrao escuro e depois formas irreconheciveis.
+- **d060 / d070**: a personagem sobrevive mas com **rosto destruido** — boca
+  enorme e preta, olhos deslocados. Efeito "horror".
+- **d100**: **a personagem se mantem integra nos 9 frames.** Cabelo, olhos
+  azuis, regata azul, shorts, proporcao chibi — tudo preservado. O movimento e
+  sutil (cabeca/cabelo). Unico defeito: um borrao magenta que surge perto da
+  mao a partir do frame 5, e o fundo varia um pouco.
+
+Isto valida a explicacao do codigo: **denoise parcial estava "retocando" frames
+latentes que sao ZEROS**, e o resultado degrada quanto mais longe do frame 0 —
+exatamente o padrao visto (frame 0 sempre ok, degradacao progressiva).
+
+**Decisao final: `denoise = 1.0`.** Nao e uma escolha entre trade-offs; os
+parciais estao quebrados.
+
+### Pendencias visiveis no d100 (proxima iteracao)
+
+1. **borrao magenta perto da mao** (frames 5-8) — provavelmente o modelo
+   tentando inventar um objeto. Tratar no negative: `glowing object, magic
+   effect, particles, glow`.
+2. **fundo instavel** — varia entre frames. Como o rembg ja remove, nao e
+   critico para sprite, mas atrapalha o recorte. Reforcar
+   `plain solid background, static background`.
