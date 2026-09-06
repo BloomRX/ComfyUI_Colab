@@ -1,8 +1,8 @@
 {
   "id": "3f82c016-164c-5796-9a34-4ab55b365c59",
   "revision": 0,
-  "last_node_id": 21,
-  "last_link_id": 25,
+  "last_node_id": 22,
+  "last_link_id": 26,
   "nodes": [
     {
       "id": 1,
@@ -289,7 +289,7 @@
         {
           "name": "scale_multival",
           "type": "MULTIVAL",
-          "link": null,
+          "link": 26,
           "shape": "7"
         },
         {
@@ -1023,6 +1023,46 @@
         "ROTA SD1.5 — a unica com CONTROLE DE POSE POR FRAME\n\n### DE ONDE VEM AS POSES (no 9) ###\n1) Gere no proprio repo:\n     python scripts/gerar_poses.py --anim walk\n   (ciclos prontos: walk run idle attack hit death jump)\n2) Copie a pasta para  ComfyUI_Data/input/poses_walk/\n3) No no 9 escolha a pasta 'poses_walk' no dropdown\n   (o no le a PASTA inteira, na ordem alfabetica dos arquivos)\n4) No no 10 ponha os indices que o script imprimiu: 0,4,8,12\n\nSe a pasta nao aparecer no dropdown: ela precisa estar DENTRO de\nComfyUI_Data/input/ e a pagina precisa ser recarregada (R ou F5).\n\nALTERNATIVAS as poses geradas:\n  - sketches seus do proprio chibi em cada pose (melhor resultado)\n  - frames de um walk cycle de referencia\n  - qualquer imagem: SparseCtrl RGB aceita imagem colorida\n\n### POR QUE SD1.5 SE O RESTO E SDXL ###\nSparseCtrl, MotionLoRAs e Lightning SO existem em SD1.5.\nO no 4 (IPAdapter) recebe o CHIBI IDLE feito no SDXL, entao o SD1.5\nHERDA a aparencia. A personagem continua a mesma.\n\n### COMO O CICLO FUNCIONA ###\n16 frames com indices 0,4,8,12:\n  frame 0  -> contact esquerdo\n  frame 4  -> passing\n  frame 8  -> contact direito\n  frame 12 -> passing\nO AnimateDiff INTERPOLA os frames intermediarios.\n\n### SEM CONTROLE DE POSE ###\nBypass (Ctrl+B) nos nos 9, 10, 11 e 12; ligue o no 13 direto no no 16.\n\n### AJUSTES ###\nno 4  (0.8): identidade. Baixe para 0.6 se travar o movimento.\nno 12 (0.8): adesao a pose. 1.0 rigido, 0.5 livre.\nno 8: beta_schedule TEM de ser 'sqrt_linear (AnimateDiff)'.\nno 16: CFG 7.0 (SD1.5 aguenta; Illustrious queimaria).\ncontexto 16 no no 7 (SD1.5 foi treinado assim; 8 e do Hotshot).\n\n### SE DER OOM ### 512->384 no no 15, ou 16->12 frames."
       ],
       "title": "LEIA"
+    },
+    {
+      "id": 22,
+      "type": "ADE_MultivalDynamic",
+      "pos": [
+        70,
+        310
+      ],
+      "size": [
+        280,
+        60
+      ],
+      "flags": {},
+      "order": 21,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "mask_optional",
+          "type": "MASK",
+          "link": null,
+          "shape": 7
+        }
+      ],
+      "outputs": [
+        {
+          "name": "MULTIVAL",
+          "type": "MULTIVAL",
+          "links": [
+            26
+          ],
+          "slot_index": 0
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "ADE_MultivalDynamic"
+      },
+      "widgets_values": [
+        1.15
+      ],
+      "title": "22. Amplitude do movimento (1.15)"
     }
   ],
   "links": [
@@ -1225,6 +1265,14 @@
       20,
       0,
       "IMAGE"
+    ],
+    [
+      26,
+      22,
+      0,
+      6,
+      2,
+      "MULTIVAL"
     ]
   ],
   "groups": [],

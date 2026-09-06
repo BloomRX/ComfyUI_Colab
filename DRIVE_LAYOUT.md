@@ -3427,3 +3427,90 @@ absoluto documentado.
 util tem de: (a) rodar dentro da celula que ja esta em execucao, ou (b) ser
 chamada com **caminho absoluto** e prefixo `!`. Caminho relativo assume um
 diretorio corrente que nao existe la.
+
+## v50 — RESULTADO DO A/B: o SD1.5 vence para sprite de jogo
+
+Primeiro teste com numeros reais do usuario (idle, mesma imagem, seed 12345,
+512x512, 20 steps).
+
+| metrica | A (SD1.5) | B (WAN 5B) | B/A |
+|---|---|---|---|
+| frames | 8 | 25 | |
+| movimento medio | 1,92 | 7,97 | |
+| pico de movimento | 2,56 | 20,24 | |
+| **instabilidade** | **0,37** | 4,56 | **12,3x pior** |
+| **deriva maxima** | **3,26** | 28,15 | **8,6x pior** |
+| **flicker de cor** | **1,51** | 10,38 | **6,9x pior** |
+| **emenda do loop** | **0,10** | 1,35 | **13,5x pior** |
+| tempo | 5,1 min | 9,3 min | 1,8x |
+| VRAM | 3,1 GB | 9,8 GB | 3,2x |
+
+### O WAN "se move mais" — mas nao e animacao
+
+O WAN tem movimento medio 4x maior. Isso parece bom e **nao e**. Cruzando com
+a deriva:
+
+**movimento util = movimento / deriva** (quanto da mudanca e animacao, e nao o
+personagem virando outro):
+
+- A: 1,92 / 3,26 = **0,59**
+- B: 7,97 / 28,15 = **0,28**
+
+Metade do "movimento" do WAN e a personagem **mudando de aparencia**. Deriva
+28,15 com o alerta automatico disparando confirma: ela nao esta so se mexendo,
+esta se transformando.
+
+**Regularidade (pico/media):** A = 1,33x (uniforme), B = 2,54x (saltos
+bruscos). Para sprite, salto brusco = frame que "pula" na animacao.
+
+### Custo real
+
+Por frame o WAN e 1,7x mais rapido (22,3 s contra 38,2 s). Mas **um sprite nao
+precisa de 25 frames** — 8 bastam para um idle. Por **ciclo utilizavel**:
+5,1 min contra 9,3 min, com 1/3 da VRAM.
+
+### Decisao
+
+**`AnimateSD15` e a rota principal do WAIFU SURVIVORS.** Ganha em todos os
+criterios que o usuario listou como prioritarios: consistencia de identidade,
+estabilidade entre frames, ausencia de deformacao, facilidade de virar
+spritesheet (loop 0,10 = fecha quase perfeito) e custo.
+
+E ainda nem usou sua maior vantagem: o **SparseCtrl** estava em bypass. Na
+rodada de walk, com controle de pose por frame, a diferenca deve aumentar.
+
+O WAN 2.2 5B **nao foi descartado**: continua util para splash animada, cutscene
+ou qualquer coisa que nao precise fechar em loop nem virar sprite. Errado seria
+usa-lo para o que ele nao serve.
+
+### Ajuste aplicado ao SD1.5
+
+O unico numero fraco do A foi **movimento 1,92** — proximo do limiar de "parado"
+(1,5). Um idle deve ser sutil, entao nao e defeito, mas ha folga. Aumentei o
+`motion_scale` do AnimateDiff (no 6) para **1,15** via `ADE_MultivalDynamic`,
+o que da mais amplitude sem tocar na identidade.
+
+### Regra
+
+**Movimento alto isolado nao significa boa animacao.** Sempre cruzar com
+deriva: `movimento/deriva` separa "animou" de "virou outro personagem". Um
+modelo de video otimiza continuidade visual plausivel; um sprite precisa de
+**identidade travada + ciclo fechado**, que sao objetivos diferentes.
+
+### v50b — ajuste e rodada 2
+
+**Ajuste no SD1.5:** unico numero fraco do A foi movimento 1,92 (limiar de
+"parado" e 1,5). Adicionado `ADE_MultivalDynamic` em **1,15** ligado ao
+`scale_multival` do no 6, nos dois workflows SD1.5. Da amplitude sem mexer na
+identidade. Assinatura conferida em `nodes_multival.py`.
+
+**`AB_C_sd15_walk.json` (novo):** walk de 16 frames com o **SparseCtrl LIGADO**
+(no idle estava em bypass). Poses em `0,4,8,12`, seed 12345, mesma imagem.
+
+Antes de rodar:
+```
+!python /content/ComfyUI_Colab/scripts/gerar_poses.py --anim walk
+```
+depois R para recarregar, escolher `poses_walk` no no 9, e Run.
+
+O relatorio da C6 agora inclui a coluna `C_SD15_walk`.

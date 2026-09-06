@@ -1,8 +1,8 @@
 {
-  "id": "8536720c-711b-5f90-8837-0e1992fff2a9",
+  "id": "5f40a056-cfa3-5cf4-b8c6-013189c7dac8",
   "revision": 0,
   "last_node_id": 22,
-  "last_link_id": 28,
+  "last_link_id": 26,
   "nodes": [
     {
       "id": 1,
@@ -289,7 +289,7 @@
         {
           "name": "scale_multival",
           "type": "MULTIVAL",
-          "link": 28,
+          "link": 26,
           "shape": "7"
         },
         {
@@ -369,16 +369,16 @@
         "Node name for S&R": "ADE_LoopedUniformContextOptions"
       },
       "widgets_values": [
-        8,
+        16,
         1,
-        2,
+        4,
         true,
         "pyramid",
         true,
         0.0,
         1
       ],
-      "title": "7. Contexto 8 (= frames, passe unico)"
+      "title": "7. Contexto 16 (= frames)"
     },
     {
       "id": 8,
@@ -450,7 +450,7 @@
       ],
       "flags": {},
       "order": 8,
-      "mode": 4,
+      "mode": 0,
       "inputs": [
         {
           "name": "meta_batch",
@@ -505,7 +505,7 @@
       ],
       "flags": {},
       "order": 9,
-      "mode": 4,
+      "mode": 0,
       "inputs": [],
       "outputs": [
         {
@@ -538,7 +538,7 @@
       ],
       "flags": {},
       "order": 10,
-      "mode": 4,
+      "mode": 0,
       "inputs": [
         {
           "name": "sparse_method",
@@ -591,7 +591,7 @@
       ],
       "flags": {},
       "order": 11,
-      "mode": 4,
+      "mode": 0,
       "inputs": [
         {
           "name": "positive",
@@ -624,13 +624,17 @@
         {
           "name": "positive",
           "type": "CONDITIONING",
-          "links": [],
+          "links": [
+            18
+          ],
           "slot_index": 0
         },
         {
           "name": "negative",
           "type": "CONDITIONING",
-          "links": [],
+          "links": [
+            19
+          ],
           "slot_index": 1
         }
       ],
@@ -670,8 +674,7 @@
           "name": "CONDITIONING",
           "type": "CONDITIONING",
           "links": [
-            12,
-            26
+            12
           ],
           "slot_index": 0
         }
@@ -680,7 +683,7 @@
         "Node name for S&R": "CLIPTextEncode"
       },
       "widgets_values": [
-        "1girl, chibi, super deformed, 2 heads tall, big head, small body, short brown hair, blue eyes, light blue camisole, denim shorts, blue sneakers, standing still, subtle breathing motion, hair swaying slightly, small idle body sway, full body visible, character centered, static camera, fixed camera, no zoom, no pan, plain white background, thick outlines, flat colors, simple shading, consistent character, 2d game sprite, clean silhouette"
+        "1girl, chibi, super deformed, 2 heads tall, big head, small body, short brown hair, blue eyes, light blue camisole, denim shorts, blue sneakers, walking cycle, legs alternating, arms swinging, side view, facing right, full body, thick outlines, flat colors, simple shading, white background, consistent character, same clothing, 2d game sprite, clean silhouette, masterpiece, best quality"
       ],
       "title": "13. IDENTIDADE + ACAO"
     },
@@ -710,8 +713,7 @@
           "name": "CONDITIONING",
           "type": "CONDITIONING",
           "links": [
-            13,
-            27
+            13
           ],
           "slot_index": 0
         }
@@ -720,7 +722,7 @@
         "Node name for S&R": "CLIPTextEncode"
       },
       "widgets_values": [
-        "static image, frozen, no motion, color shift, changing colors, flickering, morphing, changing face, changing clothes, changing hairstyle, different character, deformed, extra limbs, distorted, cropped, camera zoom, camera pan, camera movement, detailed background, blurry, watermark, text, worst quality, low quality"
+        "deformed, extra limbs, missing limbs, mutated hands, changing face, changing clothes, different character, duplicate character, inconsistent anatomy, distorted body, flickering, morphing, blurry, photorealistic, 3d, multiple characters, detailed background, camera movement, watermark, text, worst quality, low quality, static image, standing still"
       ],
       "title": "14. Negative"
     },
@@ -755,9 +757,9 @@
       "widgets_values": [
         512,
         512,
-        8
+        16
       ],
-      "title": "15. TESTE A/B: 512x512 x 8 frames"
+      "title": "15. 512x512 x 16 frames (ciclo de walk)"
     },
     {
       "id": 16,
@@ -782,12 +784,12 @@
         {
           "name": "positive",
           "type": "CONDITIONING",
-          "link": 26
+          "link": 18
         },
         {
           "name": "negative",
           "type": "CONDITIONING",
-          "link": 27
+          "link": 19
         },
         {
           "name": "latent_image",
@@ -934,7 +936,7 @@
         "Node name for S&R": "SaveImage"
       },
       "widgets_values": [
-        "ab_test/A_sd15_idle/frame"
+        "ab_test/C_sd15_walk/frame"
       ],
       "title": "19. FRAMES -> make_spritesheet.py"
     },
@@ -989,9 +991,9 @@
         "Node name for S&R": "VHS_VideoCombine"
       },
       "widgets_values": {
-        "frame_rate": 8,
+        "frame_rate": 12,
         "loop_count": 0,
-        "filename_prefix": "ab_test/A_sd15_idle_preview",
+        "filename_prefix": "ab_test/C_sd15_walk_preview",
         "format": "image/gif",
         "pingpong": false,
         "save_output": true
@@ -1018,7 +1020,7 @@
         "Node name for S&R": "Note"
       },
       "widgets_values": [
-        "TESTE A/B — LADO A: SD1.5 + AnimateDiff v3\n\nPareado com o lado B (Wan):\n  imagem de entrada .. a MESMA (no 2)\n  seed ............... 12345 fixa\n  resolucao .......... 512x512\n  frames ............. 8  (1,0 s a 8 fps)\n  steps .............. 20\n  prompt ............. mesmo texto de identidade + movimento\n\nSparseCtrl (nos 9-12) esta em BYPASS de proposito: idle nao precisa de\ncontrole de pose, e assim o teste isola o MOTOR DE MOVIMENTO.\nO SparseCtrl e a vantagem do SD1.5 e deve ser testado na rodada 2 (walk).\n\nSaida:  output/ab_test/A_sd15_idle/frame_*.png  +  GIF de preview\n\nDepois:  python scripts/ab_test.py --medir"
+        "RODADA 2 — WALK COM CONTROLE DE POSE (a vantagem real do SD1.5)\n\nNo idle o SparseCtrl estava em bypass. Aqui ele esta LIGADO: e o unico\nmecanismo que diz QUAL pose em QUAL frame.\n\nANTES DE RODAR:\n  1. na C6 (ou onde puder), gere as poses:\n       !python /content/ComfyUI_Colab/scripts/gerar_poses.py --anim walk\n  2. recarregue a pagina (R) para a pasta aparecer no no 9\n  3. no 9: escolha 'poses_walk'\n  4. Run\n\nCOMO O CICLO FUNCIONA (16 frames, indices 0,4,8,12):\n  frame  0 -> contact esquerdo\n  frame  4 -> passing\n  frame  8 -> contact direito\n  frame 12 -> passing\nO AnimateDiff interpola o resto. O loop fecha porque o frame 15 volta\npara perto do 0.\n\nAJUSTES:\n  no 12 (0.8): adesao a pose. Se ignorar as poses, suba para 1.0.\n               Se ficar rigido/deformado, baixe para 0.6.\n  no  4 (0.8): identidade. Se travar o movimento, baixe para 0.6.\n  no 22 (1.15): amplitude do movimento.\n\nSaida: output/ab_test/C_sd15_walk/  + GIF a 12 fps\nO relatorio sai sozinho no log da C6 ao terminar."
       ],
       "title": "LEIA"
     },
@@ -1049,7 +1051,7 @@
           "name": "MULTIVAL",
           "type": "MULTIVAL",
           "links": [
-            28
+            26
           ],
           "slot_index": 0
         }
@@ -1201,6 +1203,22 @@
       "MODEL"
     ],
     [
+      18,
+      12,
+      0,
+      16,
+      1,
+      "CONDITIONING"
+    ],
+    [
+      19,
+      12,
+      1,
+      16,
+      2,
+      "CONDITIONING"
+    ],
+    [
       20,
       15,
       0,
@@ -1250,22 +1268,6 @@
     ],
     [
       26,
-      13,
-      0,
-      16,
-      1,
-      "CONDITIONING"
-    ],
-    [
-      27,
-      14,
-      0,
-      16,
-      2,
-      "CONDITIONING"
-    ],
-    [
-      28,
       22,
       0,
       6,
