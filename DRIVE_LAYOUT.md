@@ -3104,3 +3104,91 @@ Testar o **WAN 5B primeiro** (ja esta pronto, mantem o personagem). Se o
 movimento nao servir, montar a rota SD1.5+SparseCtrl como pipeline PARALELO —
 usando o chibi idle do SDXL como referencia IPAdapter para o SD1.5 herdar a
 aparencia. Nao substituir o que existe.
+
+## v45 — rota SD1.5 + SparseCtrl (paralela, para comparar com o WAN)
+
+Usuario quer as DUAS rotas para comparar. Esta e a segunda.
+
+### `WaifuSurvivors_AnimateSD15.json` (21 nos)
+
+```
+ToonYou(SD1.5) ─┐
+chibi idle SDXL ─> IPAdapter 0.8 ─┐
+                                  ├─> UseEvolvedSampling ─> KSampler ─> rembg
+AnimateDiff v3 + contexto 16 ─────┘         ^
+poses-chave ─> SparseCtrl Index ─> ControlNetApply
+```
+
+**Como o conflito SDXL x SD1.5 foi resolvido:** o **no 4 (IPAdapter)** recebe o
+`chibi_idle` gerado pelo `Base` (SDXL) e o SD1.5 **herda a aparencia**. Nao
+trocamos de personagem — trocamos so o motor da animacao.
+
+### O coracao: nos 9 e 10
+
+- **no 9**: lote de imagens de pose (uma por pose-chave)
+- **no 10** `indexes = 0,4,8,12`: em QUE frames elas entram
+- o AnimateDiff **interpola** o resto
+
+Com 16 frames e `0,4,8,12`: contact esq -> passing -> contact dir -> passing.
+E o ciclo de walk classico, exatamente o que a outra IA descreveu — e o unico
+mecanismo que faz isso, porque **SparseCtrl so existe em SD1.5**.
+
+Para desligar o controle de pose: bypass (Ctrl+B) nos nos 9, 10, 11 e 12 e
+ligar o no 13 direto no 16. Vira AnimateDiff puro.
+
+### `scripts/gerar_poses.py` (novo)
+
+Sem poses o SparseCtrl nao tem o que condicionar. O script desenha
+bonecos-palito com proporcao chibi para 7 ciclos:
+
+| anim | poses | frames | indices |
+|---|---|---|---|
+| walk | 4 | 16 | 0,4,8,12 |
+| run | 4 | 16 | 0,4,8,12 |
+| idle | 2 | 16 | 0,8 |
+| attack | 4 | 16 | 0,4,8,12 |
+| hit | 3 | 12 | 0,4,8 |
+| death | 3 | 16 | 0,6,12 |
+| jump | 4 | 16 | 0,5,10,14 |
+
+Bracos em verde, pernas em vermelho (ajuda o SparseCtrl **RGB** a separar).
+E andaime, nao arte: sketches seus do proprio chibi ficam melhores.
+
+**Bug pego na inspecao visual:** a primeira versao desenhava os membros
+apontando para CIMA, dentro da cabeca — erro de sinal no angulo. So apareceu
+ao **abrir a imagem**; os testes numericos passavam. Corrigido e verificado:
+contacts com abertura de 100 px, passings com 28 px, contacts espelhados.
+
+Licao: para codigo que gera imagem, **teste numerico nao substitui olhar**.
+
+### Downloads (8,2 GB)
+
+| arquivo | pasta | tamanho |
+|---|---|---|
+| `toonyou_beta6.safetensors` | checkpoints | 2,14 GB |
+| `v3_sd15_mm.ckpt` | animatediff_models | 1,56 GB |
+| `v3_sd15_sparsectrl_rgb.ckpt` | controlnet | 1,85 GB |
+| `ip-adapter-plus_sd15.safetensors` | ipadapter | 94 MB |
+| CLIP Vision H-14 | clip_vision | 2,53 GB (ja temos) |
+
+Todas as URLs conferidas na API do HF. Pack novo: **ComfyUI-Advanced-ControlNet**
+(6 nos ACN_ registrados no class_map).
+
+### Parametros que diferem do SDXL
+
+- `beta_schedule` = **`sqrt_linear (AnimateDiff)`** (no SDXL era linear/Hotshot)
+- contexto **16** (SD1.5 foi treinado assim; 8 e do Hotshot)
+- **CFG 7.0** — SD1.5 aguenta; Illustrious queima acima de 5,5
+- sampler `euler` simples
+
+### As tres rotas, agora todas prontas
+
+| workflow | motor | controle de pose | download |
+|---|---|---|---|
+| `AnimateWan` | WAN 2.2 5B | nao | 17 GB |
+| `AnimateSD15` | SD1.5 + SparseCtrl | **sim, por frame** | 8,2 GB |
+| `Animate` | Hotshot-XL/SDXL | nao | 475 MB |
+
+Gere o mesmo walk nas tres e compare. Minha aposta: WAN ganha em fluidez,
+SD1.5 ganha em controle e em ser um ciclo de verdade (que e o que um jogo
+precisa).

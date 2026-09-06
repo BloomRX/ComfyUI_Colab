@@ -176,7 +176,13 @@
     "PerturbedAttention": "sd-perturbed-attention",
     "SamplerSupreme": "ComfyUI-Extra-Samplers",
     "SamplerCustomNoise": "ComfyUI-Extra-Samplers",
-    "ADE_LoopedUniformContextOptions": "ComfyUI-AnimateDiff-Evolved"
+    "ADE_LoopedUniformContextOptions": "ComfyUI-AnimateDiff-Evolved",
+    "ACN_SparseCtrlLoaderAdvanced": "ComfyUI-Advanced-ControlNet",
+    "ACN_SparseCtrlIndexMethodNode": "ComfyUI-Advanced-ControlNet",
+    "ACN_SparseCtrlSpreadMethodNode": "ComfyUI-Advanced-ControlNet",
+    "ACN_SparseCtrlMergedLoaderAdvanced": "ComfyUI-Advanced-ControlNet",
+    "ACN_SparseCtrlRGBPreprocessor": "ComfyUI-Advanced-ControlNet",
+    "ACN_SparseCtrlWeightExtras": "ComfyUI-Advanced-ControlNet"
   },
   "native_ignore": [
     "SaveImage",
@@ -473,6 +479,43 @@
         "dir": "vae",
         "size": "1.31 GB",
         "url": "https://huggingface.co/Comfy-Org/Wan_2.2_ComfyUI_Repackaged/resolve/main/split_files/vae/wan2.2_vae.safetensors"
+      }
+    ],
+    "WaifuSurvivors_AnimateSD15.json": [
+      {
+        "file": "toonyou_beta6.safetensors",
+        "dir": "checkpoints",
+        "size": "2.14 GB",
+        "url": "https://huggingface.co/frankjoshua/toonyou_beta6/resolve/main/toonyou_beta6.safetensors",
+        "note": "SD1.5 cartoon/anime. Base da rota de animacao com controle de pose."
+      },
+      {
+        "file": "v3_sd15_mm.ckpt",
+        "dir": "animatediff_models",
+        "size": "1.56 GB",
+        "url": "https://huggingface.co/guoyww/animatediff/resolve/main/v3_sd15_mm.ckpt",
+        "note": "AnimateDiff v3 SD1.5 - maduro, ao contrario do mm_sdxl_v10_beta."
+      },
+      {
+        "file": "v3_sd15_sparsectrl_rgb.ckpt",
+        "dir": "controlnet",
+        "size": "1.85 GB",
+        "url": "https://huggingface.co/guoyww/animatediff/resolve/main/v3_sd15_sparsectrl_rgb.ckpt",
+        "note": "SparseCtrl: condiciona frames especificos. So existe para SD1.5."
+      },
+      {
+        "file": "ip-adapter-plus_sd15.safetensors",
+        "dir": "ipadapter",
+        "size": "94 MB",
+        "url": "https://huggingface.co/h94/IP-Adapter/resolve/main/models/ip-adapter-plus_sd15.safetensors",
+        "note": "IPAdapter SD1.5 (o _sdxl_ nao serve aqui)."
+      },
+      {
+        "file": "CLIP-ViT-H-14-laion2B-s32B-b79K.safetensors",
+        "dir": "clip_vision",
+        "size": "2.53 GB",
+        "url": "https://huggingface.co/h94/IP-Adapter/resolve/main/models/image_encoder/model.safetensors",
+        "note": "Mesmo CLIP Vision do SDXL - serve aos dois."
       }
     ]
   },
