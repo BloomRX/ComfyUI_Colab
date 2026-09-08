@@ -4417,3 +4417,56 @@ Com o filtro: **7 arquivos**, exatamente o que existe no Drive hoje.
 No SAA, apontar para `<repo>\model_mirror\checkpoints`.
 
 Rodar de novo quando entrar modelo novo no registry.
+
+## v62 — ngrok passou a exigir cartao para TCP; pinggy no lugar
+
+Erro no log do usuario:
+
+```
+err="failed to start tunnel: You must add a credit or debit card before you
+can use TCP endpoints on a free account ... ERR_NGROK_8013"
+```
+
+Mudanca de politica do ngrok: **TCP agora exige cartao**, mesmo no plano
+gratuito. Nao e erro de configuracao — o token estava certo, o tunel HTTP
+funcionaria; so o TCP e barrado.
+
+### Substituto: pinggy (sem cadastro, sem cartao)
+
+```
+ssh -p 443 -R0:localhost:8188 tcp@free.pinggy.io
+```
+
+Nao precisa de conta, token nem instalar binario — usa o `ssh` que ja existe.
+Limite: **sessao de 60 minutos**.
+
+A C6 agora tem `TUNEL_TIPO` com `'pinggy'` (padrao) ou `'ngrok'`. O pinggy roda
+numa **thread com reconexao automatica**: quando a sessao de 60 min cai, ele
+reconecta e imprime o novo endereco.
+
+**O endereco MUDA a cada reconexao** (porta nova). Isso e o preco de nao pagar:
+a cada ~1h e preciso reajustar o `API Address` no SAA. A porta reservada e
+recurso pago (~US$ 2,50/mes).
+
+Se escolher `ngrok`, a mensagem de erro agora explica o motivo e sugere o
+pinggy, em vez de so dizer "falhou".
+
+### Testado
+
+- **regex de parsing**: captura `tcp://host:porta` nos dois formatos do pinggy
+  e **ignora** a URL `https://` que ele imprime junto (senao pegaria a errada)
+- **reconexao**: com um `ssh` falso que morre a cada 3 s, a thread detectou a
+  queda, reconectou e anunciou o endereco novo
+
+### Alternativas avaliadas
+
+| opcao | cadastro | cartao | TCP |
+|---|---|---|---|
+| **pinggy** | nao | nao | sim (60 min) |
+| ngrok | sim | **sim** | sim |
+| cloudflared | nao | nao | **nao** (so HTTP) |
+| localhost.run | nao | nao | so SSH/HTTP |
+| playit.gg | sim | nao | sim (feito para jogos) |
+
+O cloudflared foi descartado: **nao faz TCP puro**, e e exatamente disso que o
+SAA precisa por causa do WebSocket.
