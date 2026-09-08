@@ -4279,3 +4279,31 @@ sobrescrito), chaves/parenteses balanceados, `Pop-Location` dentro de
 ```powershell
 git clone -b arena/01a05a82-comfyui-collab https://github.com/BloomRX/ComfyUI_Colab.git
 ```
+
+### v60c — instalador do SAA ia parar fora do repo
+
+Bug relatado: instalou em `J:\character_select_saa`, na raiz do SSD, em vez de
+junto do projeto.
+
+Causa: `Join-Path (Split-Path -Parent $Aqui)` — o `$Aqui` ja e a raiz do repo,
+entao o `Split-Path -Parent` subia **mais um nivel**. No `.sh` estava pior
+ainda: `$HOME/character_select_saa`.
+
+Corrigido nos dois para `<repo>/character_select_saa`, e a pasta entrou no
+`.gitignore` (o SAA e um repo git proprio, com `node_modules` de centenas de
+MB — nao pode ser versionado dentro do nosso).
+
+`.gitignore` tambem passou a cobrir `/testsAB/`, `/denoise_test/` e `*.zip`,
+que sao saidas de teste.
+
+**Para mover o que ja foi instalado**, no PowerShell:
+
+```powershell
+Move-Item J:\character_select_saa J:\ComfyUI_Colab\character_select_saa
+```
+
+Nao precisa reinstalar — as settings estao dentro da pasta e vao junto.
+
+Observacao: `denoise_test.zip` (14 MB) e `testsAB/` (8,7 MB) ja estao no
+historico do Git. O `.gitignore` so vale para arquivos novos; remover os
+antigos exigiria reescrever o historico, o que nao compensa por 23 MB.

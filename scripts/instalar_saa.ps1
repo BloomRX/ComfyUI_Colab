@@ -8,13 +8,14 @@
     Reexecutar e seguro: se ja existir, atualiza em vez de clonar.
 
 .PARAMETER Destino
-    Onde instalar. Padrao: uma pasta irma deste repo.
+    Onde instalar. Padrao: character_select_saa DENTRO deste repo
+    (a pasta esta no .gitignore, entao nao suja o versionamento).
 
 .EXAMPLE
     .\scripts\instalar_saa.ps1
 
 .EXAMPLE
-    .\scripts\instalar_saa.ps1 -Destino "J:\character_select_saa"
+    .\scripts\instalar_saa.ps1 -Destino "D:\outro\lugar"
 #>
 
 param(
@@ -26,7 +27,8 @@ $ErrorActionPreference = 'Stop'
 $Repo = 'https://github.com/mirabarukaso/character_select_stand_alone_app.git'
 $Aqui = Split-Path -Parent $PSScriptRoot
 if ([string]::IsNullOrWhiteSpace($Destino)) {
-    $Destino = Join-Path (Split-Path -Parent $Aqui) 'character_select_saa'
+    # DENTRO do repo, nao ao lado dele. O .gitignore ja exclui esta pasta.
+    $Destino = Join-Path $Aqui 'character_select_saa'
 }
 
 Write-Host ''

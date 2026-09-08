@@ -10,8 +10,9 @@
 set -euo pipefail
 
 REPO="https://github.com/mirabarukaso/character_select_stand_alone_app.git"
-DEST="${1:-$HOME/character_select_saa}"
 AQUI="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
+# DENTRO do repo, nao no HOME. O .gitignore ja exclui esta pasta.
+DEST="${1:-$AQUI/character_select_saa}"
 
 echo "=============================================================="
 echo "  Character Select SAA — instalacao com config do projeto"
