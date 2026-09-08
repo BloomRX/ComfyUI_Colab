@@ -4184,3 +4184,66 @@ dos outros 4 personagens.
 
 Se for testar agora, comecar pelo **ngrok TCP** (opcao 2) e adicionar
 `ComfyUI_Mira` ao registry.
+
+## v60 — Character Select SAA: tunel + registry + instalador
+
+Tres entregas para conectar o SAA (no PC) ao ComfyUI (no Colab).
+
+### 1. `ComfyUI_Mira` no registry
+
+Clonado e lido o `__init__.py`: **82 nos** no `NODE_CLASS_MAPPINGS`, todos
+mapeados para o pack. Inclui `illustrious_character_select`,
+`ImageColorTransferMira`, os taggers e o `CanvasCreator*`.
+
+Ressalva registrada em `pack_extras`: o `requirements.txt` pede
+`onnxruntime-gpu` (para os taggers). Se falhar no T4, o pack ainda carrega —
+so os nos de tagger ficam indisponiveis.
+
+### 2. Tunel TCP na Celula 6
+
+`TUNEL_TCP = False` (checkbox). Ligado, sobe um tunel **TCP** via pyngrok e
+imprime o endereco pronto para colar.
+
+**Por que TCP e nao o proxy do Colab:** o SAA monta as URLs com `http://` e
+`ws://` fixos (v59). O proxy so serve HTTPS -> nunca conectaria, e o WebSocket
+(por onde vem progresso e imagens) falharia de qualquer jeito. O tunel TCP
+entrega um `host:porta` cru, que e o formato nativo do SAA.
+
+Token: lido do Secret `NGROK` do Colab (nao vai para o Git).
+
+### 3. `scripts/instalar_saa.sh` + `saa/settings.json`
+
+Um comando no PC:
+
+```
+bash scripts/instalar_saa.sh
+```
+
+Clona (ou atualiza, se ja existir), aplica as configuracoes do projeto e roda
+`npm install`.
+
+Ja vem configurado: `api_interface=ComfyUI`, modelo
+`waiIllustriousSDXL_v170`, 832x1216, 30 steps, CFG 5.5, euler_ancestral, e o
+**negative do projeto** (o mesmo dos nossos workflows, com anti-neon).
+
+**O merge preserva o que e seu.** Testado com um settings pre-existente:
+favoritos e chaves pessoais foram mantidos, so as chaves do projeto foram
+sobrescritas. O arquivo anterior tambem vira `.bak` com timestamp.
+
+### O que muda a cada sessao
+
+**So o `API Address`** — o endereco do ngrok muda toda vez que o Colab
+reinicia. O resto das configuracoes fica salvo no seu PC.
+
+### Fluxo
+
+```
+Colab: C6 com TUNEL_TCP = True  ->  copia o endereco do log
+PC:    npm start  ->  Settings -> API Address = <endereco>
+```
+
+### Lembrete de escopo (v59)
+
+O SAA **nao usa nossos workflows** — ele monta o proprio grafo. Serve para
+substituir o `Concept` (explorar personagens com ~15 mil tags e miniaturas),
+nao o `Base`, o `AnimateWan` nem o `VideoToSprites`.
