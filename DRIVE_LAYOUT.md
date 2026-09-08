@@ -4035,3 +4035,75 @@ opostas — depende de haver mask ou nao.
 **IPAdapter nao e img2img.** Se o `latent_image` vem de `EmptyLatentImage`, e
 txt2img — por mais referencias que estejam ligadas ao modelo. Para derivar de
 uma imagem, o latente tem de vir de `VAEEncode`.
+
+## v58 — por que a splash so trocou cor e o chibi decapitou a foto
+
+Dois sintomas, duas causas — e a segunda mostra que a v57 aplicou img2img no
+lugar errado.
+
+### Sintoma 1: "chibi so pegou o concept e cortou a cabeca"
+
+**Causa: `crop=center` no `ImageScale`.** Lendo `common_upscale` em
+`comfy/utils.py`, com crop=center ele recorta o centro para casar a proporcao
+ANTES de redimensionar. Calculando com os tamanhos reais:
+
+| destino | recorte | perda |
+|---|---|---|
+| SPLASH 832x1216 | 768x1122 | 3% (irrelevante) |
+| **CHIBI 1024x1024** | **768x768** | **33% — corta 192px do TOPO** |
+
+O concept e 768x**1152** (retrato). Para virar 1024x1024 (quadrado) o crop
+tirou 192px em cima e 192px embaixo. **192px do topo e exatamente onde esta a
+cabeca.** Nao era o modelo "cortando" — era o recorte.
+
+Corrigido para `crop='disabled'` nos dois.
+
+### Sintoma 2: "splash so trocou as cores"
+
+**Causa: denoise 0.75 baixo demais.** Em img2img, 0.75 preserva a estrutura e
+mexe so na superficie — resultado: recoloriu a foto. Subido para **0.85**.
+
+Tambem baixei o IPAdapter da splash de 0.85 para **0.55**: com img2img ligado,
+os dois puxam para a mesma coisa e o excesso trava qualquer mudanca.
+
+### O erro maior: img2img NAO serve para o chibi
+
+O usuario notou: *"nada de mudar corpo"*. Ajustar denoise nao resolveria.
+
+```
+concept = personagem realista, ~7 cabecas de altura
+chibi   = 2 cabecas de altura
+```
+
+**img2img preserva a estrutura espacial do latente** — onde ha cabeca continua
+havendo cabeca, onde ha perna continua havendo perna. Mudar de 7 para 2 cabecas
+exige **reorganizar o espaco inteiro**, que e justamente o que img2img nao faz.
+
+Escala de denoise para o chibi:
+- 0.85 -> ainda ve a silhueta antiga, sai hibrido
+- 0.95 -> quase ignora o latente
+- 1.00 -> ignora de vez = **txt2img**
+
+Ou seja: o unico denoise que funcionaria para o chibi e 1.0, que e nao usar
+img2img. **O CHIBI VOLTOU A txt2img + IPAdapter**, com IPAdapter em 0.65 (agora
+e a unica ancora de aparencia).
+
+A SPLASH continua img2img — ali faz sentido, porque a proporcao humana e a
+mesma e so mudam enquadramento e acabamento.
+
+### Estado final
+
+| saida | latente | denoise | IPAdapter |
+|---|---|---|---|
+| SPLASH | `VAEEncode` (img2img) | 0.85 | 0.55 |
+| CHIBI | `EmptyLatentImage` (txt2img) | 1.0 | 0.65 |
+
+### Regra
+
+**img2img transfere GEOMETRIA; IPAdapter transfere APARENCIA.** Se o alvo tem
+proporcao diferente da referencia, img2img atrapalha em vez de ajudar — nenhum
+denoise conserta. A escolha nao e "qual e melhor", e "a forma muda ou nao".
+
+Corolario: o pedido do usuario na v57 ("chibi tambem img2img") estava certo na
+intencao (derivar da foto) mas o mecanismo correto para mudanca de proporcao e
+o IPAdapter, nao o img2img.

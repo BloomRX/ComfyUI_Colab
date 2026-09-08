@@ -2,7 +2,7 @@
   "id": "b3bae763-6b11-5c0c-a247-2d82431445c7",
   "revision": 0,
   "last_node_id": 33,
-  "last_link_id": 41,
+  "last_link_id": 42,
   "nodes": [
     {
       "id": 1,
@@ -221,14 +221,14 @@
         "Node name for S&R": "IPAdapterAdvanced"
       },
       "widgets_values": [
-        0.85,
+        0.55,
         "linear",
         "concat",
         0.0,
         0.9,
         "K+mean(V) w/ C penalty"
       ],
-      "title": "4. Referencia SPLASH (0.85)"
+      "title": "4. Referencia SPLASH (0.55 — img2img ja segura a identidade)"
     },
     {
       "id": 5,
@@ -293,14 +293,14 @@
         "Node name for S&R": "IPAdapterAdvanced"
       },
       "widgets_values": [
-        0.6,
+        0.65,
         "linear",
         "concat",
         0.0,
         0.7,
         "K+mean(V) w/ C penalty"
       ],
-      "title": "5. Referencia CHIBI (0.6)"
+      "title": "5. Referencia CHIBI (0.65 — unica ancora de aparencia)"
     },
     {
       "id": 6,
@@ -415,7 +415,7 @@
         "Node name for S&R": "CLIPTextEncode"
       },
       "widgets_values": [
-        "chibi, super deformed, 2 heads tall, big head, small body, thick outlines, flat colors, simple shading, minimal detail, full body, side view, facing right, standing, arms at sides, white background, simple background, masterpiece, best quality, amazing quality"
+        "chibi, super deformed, 2 heads tall, big head, small body, short limbs, stubby legs, oversized head, tiny torso, thick outlines, flat colors, simple shading, minimal detail, full body, standing, arms at sides, plain white background, masterpiece, best quality, amazing quality"
       ],
       "title": "8. CHIBI IDLE positive"
     },
@@ -547,9 +547,9 @@
         5.5,
         "euler_ancestral",
         "normal",
-        0.75
+        0.85
       ],
-      "title": "11. SPLASH — denoise 0.75 (img2img: 1.0 ignoraria a foto)"
+      "title": "11. SPLASH — denoise 0.85 (0.75 so trocava a cor)"
     },
     {
       "id": 12,
@@ -636,13 +636,15 @@
       ],
       "flags": {},
       "order": 13,
-      "mode": 4,
+      "mode": 0,
       "inputs": [],
       "outputs": [
         {
           "name": "LATENT",
           "type": "LATENT",
-          "links": [],
+          "links": [
+            42
+          ],
           "slot_index": 0
         }
       ],
@@ -654,7 +656,7 @@
         1024,
         1
       ],
-      "title": "CHIBI 1024x1024  [BYPASS: img2img usa o VAEEncode]"
+      "title": "14. CHIBI 1024x1024 (txt2img: proporcao nova)"
     },
     {
       "id": 15,
@@ -689,7 +691,7 @@
         {
           "name": "latent_image",
           "type": "LATENT",
-          "link": 41
+          "link": 42
         }
       ],
       "outputs": [
@@ -712,9 +714,9 @@
         5.5,
         "euler_ancestral",
         "normal",
-        0.85
+        1.0
       ],
-      "title": "15. CHIBI — denoise 0.85 (precisa deformar mais)"
+      "title": "15. CHIBI — denoise 1.0 (txt2img + IPAdapter)"
     },
     {
       "id": 16,
@@ -854,7 +856,7 @@
         "Node name for S&R": "Note"
       },
       "widgets_values": [
-        "WAIFU SURVIVORS — base (img2img a partir do concept)\n\n### COMO FUNCIONA AGORA ###\nO concept aprovado (no 2) entra por DOIS caminhos:\n  1. VAEEncode  -> vira o LATENTE inicial (a foto e o ponto de partida)\n  2. IPAdapter  -> reforca a aparencia durante a amostragem\nAntes so existia o caminho 2, e o latente era ruido puro: por isso a\npersonagem era REDESENHADA em vez de derivada da foto.\n\n### DENOISE — o parametro que decide ###\nno 11 SPLASH = 0.75   no 15 CHIBI = 0.85\n  1.00 = ignora a foto (volta a ser txt2img)\n  0.75 = mantem pose e cores, redesenha o estilo\n  0.50 = quase a foto original, pouca mudanca\nO CHIBI usa mais (0.85) porque precisa MUDAR A PROPORCAO — com 0.6 ele\nnao consegue deformar para 2 cabecas de altura.\nATENCAO: aqui denoise funciona como img2img normal. NAO confunda com o\nAnimateWan, onde o noise_mask exige 1.0 (ver v54).\n\n### OS 4 TEXTOS ###\nno 20 IDENTIDADE : cabelo, olhos, roupa, calcado. Vale para os DOIS.\nno  6 estilo SPLASH  : enquadramento e iluminacao\nno  8 estilo CHIBI   : proporcao e traco\nnos 7/9 negatives\nRegra: identidade NUNCA nos nos 6/8 — eles dizem COMO, nunca QUEM.\n\n### PORTRAIT ###\nNao se gera: recorte da splash. Identidade identica por construcao.\n\n### SE A FOTO FOR IGNORADA ###\nBaixe o denoise. Se a foto mandar demais e nao virar chibi, suba o no 15."
+        "WAIFU SURVIVORS — base\n\n### DUAS MECANICAS DIFERENTES, DE PROPOSITO ###\n\nSPLASH = img2img   (concept -> VAEEncode -> KSampler, denoise 0.85)\n  Mesma proporcao humana do concept: so muda enquadramento e acabamento.\n  img2img preserva a pose e as cores da foto. E o que voce quer aqui.\n\nCHIBI = txt2img + IPAdapter   (EmptyLatent, denoise 1.0)\n  Aqui img2img e a ferramenta ERRADA e o teste provou:\n  o concept tem ~7 cabecas de altura, o chibi precisa de 2.\n  img2img preserva a ESTRUTURA ESPACIAL do latente — por isso ele\n  'cortava a cabeca' e nao deformava o corpo. Mudar a proporcao exige\n  reorganizar o espaco inteiro, o que img2img nao faz.\n  O IPAdapter transfere APARENCIA (cor de cabelo, roupa, olhos) sem\n  impor geometria — e exatamente o que o chibi precisa.\n\n### AJUSTES ###\nno 11 SPLASH denoise 0.85\n  0.75 so trocava a cor (denoise baixo demais para mudar de estilo)\n  1.00 ignora a foto de vez\nno  4 IPAdapter SPLASH 0.55 — img2img ja segura a identidade\nno  5 IPAdapter CHIBI  0.65 — aqui e a UNICA ancora, entao pesa mais\n      nao virou chibi? baixe para 0.5.  perdeu a personagem? suba p/ 0.75\n\n### CROP ###\nnos 30/32 estao com crop='disabled'. Com 'center' o ComfyUI recortava\n192px do TOPO ao ir de 768x1152 para 1024x1024 — decapitava a personagem.\n\n### OS TEXTOS ###\nno 20 IDENTIDADE (vale para os dois) | no 6 estilo splash | no 8 estilo chibi\nIdentidade NUNCA nos nos 6/8.\n\n### PORTRAIT ### recorte da splash, nao gere de novo."
       ],
       "title": "LEIA"
     },
@@ -1020,9 +1022,9 @@
         "lanczos",
         832,
         1216,
-        "center"
+        "disabled"
       ],
-      "title": "30. concept -> 832x1216 (mesmo tamanho do latente)"
+      "title": "30. concept -> 832x1216 (crop OFF: center cortava a cabeca)"
     },
     {
       "id": 31,
@@ -1079,7 +1081,7 @@
       ],
       "flags": {},
       "order": 24,
-      "mode": 0,
+      "mode": 4,
       "inputs": [
         {
           "name": "image",
@@ -1104,9 +1106,9 @@
         "lanczos",
         1024,
         1024,
-        "center"
+        "disabled"
       ],
-      "title": "32. concept -> 1024x1024"
+      "title": "32. concept -> 1024x1024 (crop OFF: center cortava 192px do topo)  [BYPASS: chibi usa txt2img]"
     },
     {
       "id": 33,
@@ -1121,7 +1123,7 @@
       ],
       "flags": {},
       "order": 25,
-      "mode": 0,
+      "mode": 4,
       "inputs": [
         {
           "name": "pixels",
@@ -1138,9 +1140,7 @@
         {
           "name": "LATENT",
           "type": "LATENT",
-          "links": [
-            41
-          ],
+          "links": [],
           "slot_index": 0
         }
       ],
@@ -1148,7 +1148,7 @@
         "Node name for S&R": "VAEEncode"
       },
       "widgets_values": [],
-      "title": "33. img2img CHIBI"
+      "title": "33. img2img CHIBI  [BYPASS: chibi usa txt2img]"
     }
   ],
   "links": [
@@ -1441,8 +1441,8 @@
       "VAE"
     ],
     [
-      41,
-      33,
+      42,
+      14,
       0,
       15,
       3,
