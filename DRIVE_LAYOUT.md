@@ -4344,3 +4344,76 @@ o conteudo.
 **No Windows, JSON gravado por PowerShell precisa de `UTF8Encoding($false)`.**
 `Set-Content -Encoding UTF8` nao serve para arquivo que sera lido por Node,
 Python (`json.load` tambem falha) ou qualquer parser estrito.
+
+## v61 — o SAA pede o caminho dos checkpoints (e por que isso e um problema)
+
+Ao abrir, o SAA pede o diretorio dos `.safetensors`. Lendo
+`scripts/main/modelList.js`:
+
+```js
+files = fs.readdirSync(directory, { withFileTypes: true });
+```
+
+Ele **le o disco local** para montar as listas suspensas (checkpoints, LoRAs,
+upscalers, ControlNet, ipadapter, sams...). Nao consulta o `/object_info` do
+ComfyUI.
+
+**Isso pressupoe que o ComfyUI roda na mesma maquina** — que nao e o nosso
+caso. A pasta `models/checkpoints` esta no Google Drive, montada no Colab.
+
+### O que quebra e o que nao quebra
+
+| | funciona? |
+|---|---|
+| gerar imagem (envia o nome do modelo como string) | **sim** |
+| lista suspensa de modelos preenchida | nao |
+| LoRA/upscaler/ControlNet pelo dropdown | nao |
+
+O `api_model` no nosso `settings.json` ja e a string
+`waiIllustriousSDXL_v170.safetensors`. O SAA manda essa string no prompt da
+API, e o ComfyUI do Colab resolve o arquivo do lado dele. **O dropdown vazio e
+cosmetico** enquanto o valor gravado estiver certo.
+
+### Solucao pratica
+
+Criar uma **pasta espelho vazia** no PC, so com arquivos de mesmo nome:
+
+```
+J:\ComfyUI_Colab\model_mirror\checkpoints\waiIllustriousSDXL_v170.safetensors  (0 bytes)
+```
+
+O `readDirectory` so olha o **nome** e a extensao — nao abre o arquivo. Com
+isso o dropdown lista o modelo certo e o SAA envia a string correta.
+
+Alternativa: montar o Google Drive como unidade no Windows (Google Drive para
+Desktop) e apontar para
+`G:\Meu Drive\ComfyUI_Data\models\checkpoints`. Mais fiel, mas o SAA vai varrer
+o Drive inteiro na inicializacao — lento.
+
+### Recomendacao
+
+Comecar com a pasta espelho: e instantanea e resolve o caso de uso (temos
+**um** checkpoint). Se um dia houver muitos modelos ou LoRAs, ai vale montar o
+Drive.
+
+### v61b — `scripts/espelho_modelos.ps1`
+
+Automatiza a pasta espelho:
+
+```powershell
+.\scripts\espelho_modelos.ps1
+```
+
+Le os nomes de `config/node_registry.json` e cria arquivos de **0 byte** com a
+estrutura que o SAA espera.
+
+**Filtro importante:** so considera `workflow_models` de workflows que estao em
+`Workflows/` (ativos). Sem isso ele criaria 22 entradas, incluindo `krea2`,
+`toonyou` e outros que o usuario **apagou do Drive** na v55 — o dropdown
+listaria modelos que dariam erro ao gerar.
+
+Com o filtro: **7 arquivos**, exatamente o que existe no Drive hoje.
+
+No SAA, apontar para `<repo>\model_mirror\checkpoints`.
+
+Rodar de novo quando entrar modelo novo no registry.
