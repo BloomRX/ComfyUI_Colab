@@ -4247,3 +4247,35 @@ PC:    npm start  ->  Settings -> API Address = <endereco>
 O SAA **nao usa nossos workflows** — ele monta o proprio grafo. Serve para
 substituir o `Concept` (explorar personagens com ~15 mil tags e miniaturas),
 nao o `Base`, o `AnimateWan` nem o `VideoToSprites`.
+
+### v60b — instalador nativo em PowerShell
+
+O usuario rodou `bash scripts/instalar_saa.sh` no PowerShell e caiu no WSL,
+que ele nao tem instalado. Instalar WSL so para isso e desproporcional.
+
+Criado **`scripts/instalar_saa.ps1`** — mesma funcao, PowerShell nativo, sem
+dependencia de WSL ou Git Bash.
+
+```powershell
+.\scripts\instalar_saa.ps1
+```
+
+Faz o mesmo: clona/atualiza, aplica o `saa/settings.json`, roda `npm install`,
+preserva favoritos e chaves pessoais, faz backup do settings anterior.
+
+Detalhe corrigido na revisao: `$antigo` so era definido dentro do `if
+(Test-Path)`, e a checagem de favoritos mais abaixo o referenciava. Com
+`Set-StrictMode` isso quebraria numa instalacao limpa. Agora e declarado como
+`$null` antes.
+
+Validado o que da sem PowerShell no sandbox: logica de merge replicada em
+Python (favoritos preservados, `_comentario` removido, `api_interface`
+sobrescrito), chaves/parenteses balanceados, `Pop-Location` dentro de
+`finally`.
+
+**Nota sobre clone no Windows:** a URL do navegador
+(`github.com/USER/REPO/tree/BRANCH`) nao serve para `git clone`. O certo e:
+
+```powershell
+git clone -b arena/01a05a82-comfyui-collab https://github.com/BloomRX/ComfyUI_Colab.git
+```
