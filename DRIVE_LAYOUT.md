@@ -4107,3 +4107,80 @@ denoise conserta. A escolha nao e "qual e melhor", e "a forma muda ou nao".
 Corolario: o pedido do usuario na v57 ("chibi tambem img2img") estava certo na
 intencao (derivar da foto) mas o mecanismo correto para mudanca de proporcao e
 o IPAdapter, nao o img2img.
+
+## v59 — Character Select SAA + ComfyUI no Colab: da, mas com um tunel
+
+Ideia do usuario: rodar o **Character Select Stand Alone App**
+(mirabarukaso, 611 estrelas) no PC e apontar para o ComfyUI do Colab.
+
+**A ideia esta arquiteturalmente certa** — o SAA e um app Electron/Node que
+conversa com o ComfyUI **so por HTTP + WebSocket**. Ele nao precisa de GPU.
+E o `thumbList` padrao dele e literalmente `waiIllustriousSDXL_v160`: foi feito
+para o nosso checkpoint.
+
+### O impedimento (lido no codigo, nao suposto)
+
+O endereco e configuravel, mas a normalizacao quebra HTTPS:
+
+```js
+// scripts/renderer/generate.js
+const url = new URL(urlInput);
+return url.host;          // <- descarta o ESQUEMA, sobra host:porta
+```
+
+E varios endpoints reconstroem com `http://` fixo:
+
+```js
+const apiUrl = `http://${this.addr}/prompt`;       // linha 2337
+const apiUrl = `http://${this.addr}/interrupt`;    // linha 730
+const wsUrl  = `ws://${this.addr}/ws?clientId=...` // linha 760
+```
+
+O proxy do Colab so serve **HTTPS** (`https://8188-xxx.prod.colab.dev`). Colando
+essa URL, o SAA guarda `8188-xxx.prod.colab.dev` e chama
+`http://8188-xxx.prod.colab.dev/prompt` -> falha. O **WebSocket e pior**: `ws://`
+puro nunca vai funcionar contra um endpoint `wss://`.
+
+Curiosidade: dois pontos do codigo (linhas 684 e 1017) JA tratam
+`^https?://` corretamente. O suporte esta pela metade — o autor comecou a
+generalizar e nao terminou.
+
+### Solucao: tunel TCP local (nao mexe no codigo do SAA)
+
+Em vez de o SAA falar HTTPS, um tunel expoe o Colab como `127.0.0.1:8188` na
+maquina do usuario. Ai o `http://` e o `ws://` funcionam nativamente.
+
+Opcoes, da mais simples para a mais robusta:
+
+1. **cloudflared** (ja conheciamos) — `cloudflared tunnel --url http://localhost:8188`
+   no Colab gera uma URL `trycloudflare.com`; no PC,
+   `cloudflared access tcp --hostname <url> --url localhost:8188`.
+   Cuidado: a v20 documentou que o cloudflared **deixa a UI lenta**. Para o SAA,
+   que faz poucas chamadas grandes (nao dezenas de leituras pequenas), o impacto
+   deve ser menor — mas precisa ser medido.
+2. **ngrok TCP** — `ngrok tcp 8188`, da `tcp://0.tcp.ngrok.io:XXXXX`. O SAA
+   aceita `host:porta` direto, sem esquema. **Provavelmente o caminho mais
+   limpo.** Exige conta gratuita.
+3. **Patch de 3 linhas no SAA** — trocar os `http://${this.addr}` por
+   `${/^https?:\/\//.test(this.addr) ? this.addr : 'http://'+this.addr}` e o
+   `ws://` por `wss://` quando houver TLS. Funciona, mas quebra a cada update.
+
+### Ressalva importante: os workflows
+
+O SAA **nao usa os nossos JSONs**. Ele monta o proprio grafo internamente e
+exige o custom node **`ComfyUI_Mira`** instalado no ComfyUI. Ou seja:
+
+- serve muito bem para o **Concept** (explorar personagens com a base de
+  ~15 mil tags do Danbooru e miniaturas)
+- **nao substitui** `Base`, `AnimateWan` nem `VideoToSprites`
+
+E um **complemento para a fase de exploracao**, nao um substituto do pipeline.
+
+### Recomendacao
+
+Vale a pena, mas so depois de fechar o pipeline de animacao. A ordem que faz
+sentido: terminar walk/attack -> depois plugar o SAA para acelerar a criacao
+dos outros 4 personagens.
+
+Se for testar agora, comecar pelo **ngrok TCP** (opcao 2) e adicionar
+`ComfyUI_Mira` ao registry.
