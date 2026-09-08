@@ -1,8 +1,8 @@
 {
   "id": "b3bae763-6b11-5c0c-a247-2d82431445c7",
   "revision": 0,
-  "last_node_id": 22,
-  "last_link_id": 33,
+  "last_node_id": 33,
+  "last_link_id": 41,
   "nodes": [
     {
       "id": 1,
@@ -45,7 +45,9 @@
           "type": "VAE",
           "links": [
             17,
-            24
+            24,
+            36,
+            40
           ],
           "slot_index": 2
         }
@@ -79,7 +81,9 @@
           "type": "IMAGE",
           "links": [
             4,
-            7
+            7,
+            34,
+            38
           ],
           "slot_index": 0
         },
@@ -450,7 +454,7 @@
         "Node name for S&R": "CLIPTextEncode"
       },
       "widgets_values": [
-        "bad quality, worst quality, worst detail, sketch, censor, watermark, signature, logo, text, multiple views, grid, explicit, oversaturated, neon colors, glowing skin, rim lighting, chromatic aberration, high contrast, extra head, duplicate, blurry, realistic, detailed background, long body, adult proportions, colorful background, patterned background, swirls, spiral, gradient background, bikini, swimsuit, blue eyes, black background"
+        "bad quality, worst quality, worst detail, sketch, censor, watermark, signature, logo, text, multiple views, grid, explicit, oversaturated, neon colors, glowing skin, rim lighting, chromatic aberration, high contrast, extra head, duplicate, blurry, realistic, detailed background, long body, adult proportions, colorful background, patterned background, swirls, spiral, gradient background, bikini, swimsuit, black background"
       ],
       "title": "9. Negative CHIBI"
     },
@@ -467,15 +471,13 @@
       ],
       "flags": {},
       "order": 9,
-      "mode": 0,
+      "mode": 4,
       "inputs": [],
       "outputs": [
         {
           "name": "LATENT",
           "type": "LATENT",
-          "links": [
-            15
-          ],
+          "links": [],
           "slot_index": 0
         }
       ],
@@ -487,7 +489,7 @@
         1216,
         1
       ],
-      "title": "SPLASH 832x1216"
+      "title": "SPLASH 832x1216  [BYPASS: img2img usa o VAEEncode]"
     },
     {
       "id": 11,
@@ -522,7 +524,7 @@
         {
           "name": "latent_image",
           "type": "LATENT",
-          "link": 15
+          "link": 37
         }
       ],
       "outputs": [
@@ -545,9 +547,9 @@
         5.5,
         "euler_ancestral",
         "normal",
-        1.0
+        0.75
       ],
-      "title": "KSampler SPLASH"
+      "title": "11. SPLASH — denoise 0.75 (img2img: 1.0 ignoraria a foto)"
     },
     {
       "id": 12,
@@ -634,15 +636,13 @@
       ],
       "flags": {},
       "order": 13,
-      "mode": 0,
+      "mode": 4,
       "inputs": [],
       "outputs": [
         {
           "name": "LATENT",
           "type": "LATENT",
-          "links": [
-            22
-          ],
+          "links": [],
           "slot_index": 0
         }
       ],
@@ -654,7 +654,7 @@
         1024,
         1
       ],
-      "title": "CHIBI 1024x1024"
+      "title": "CHIBI 1024x1024  [BYPASS: img2img usa o VAEEncode]"
     },
     {
       "id": 15,
@@ -689,7 +689,7 @@
         {
           "name": "latent_image",
           "type": "LATENT",
-          "link": 22
+          "link": 41
         }
       ],
       "outputs": [
@@ -712,9 +712,9 @@
         5.5,
         "euler_ancestral",
         "normal",
-        1.0
+        0.85
       ],
-      "title": "KSampler CHIBI IDLE"
+      "title": "15. CHIBI — denoise 0.85 (precisa deformar mais)"
     },
     {
       "id": 16,
@@ -854,7 +854,7 @@
         "Node name for S&R": "Note"
       },
       "widgets_values": [
-        "WAIFU SURVIVORS - workflow base\n\nENTRADA: concept aprovado no no 2.  SAIDA: splash + chibi idle.\n\n### O NO 20 E O MAIS IMPORTANTE ###\nIPAdapter sozinho NAO trava cor de olho, cor de cabelo nem figurino.\nEle passa 'o clima' da imagem. Sem texto, o modelo inventa o resto e a\npersonagem muda entre splash e chibi.\nDescreva no no 20: cabelo (cor+comprimento), olhos (cor), roupa, calcado.\nE o MESMO texto alimenta os dois -> e isso que da consistencia.\n\nO CONCEPT IDEAL E DE CORPO INTEIRO, fundo simples. Se o concept for um\nclose (busto/rosto), o modelo nao tem informacao das pernas e do figurino\ne vai INVENTAR - foi a causa da splash sair com outra roupa.\n\nPORTRAIT: recorte da splash. Nao gere de novo.\n\nPESOS: no 4 = 0.85 (splash). no 5 = 0.6 (chibi precisa deformar).\n  Chibi nao virou chibi -> baixe o 5 para 0.45.\n  Ainda mudou a personagem -> suba o 4 para 0.95 e revise o no 20.\n\nANIMACOES: saem do chibi idle -> WaifuSurvivors_Animate.json"
+        "WAIFU SURVIVORS — base (img2img a partir do concept)\n\n### COMO FUNCIONA AGORA ###\nO concept aprovado (no 2) entra por DOIS caminhos:\n  1. VAEEncode  -> vira o LATENTE inicial (a foto e o ponto de partida)\n  2. IPAdapter  -> reforca a aparencia durante a amostragem\nAntes so existia o caminho 2, e o latente era ruido puro: por isso a\npersonagem era REDESENHADA em vez de derivada da foto.\n\n### DENOISE — o parametro que decide ###\nno 11 SPLASH = 0.75   no 15 CHIBI = 0.85\n  1.00 = ignora a foto (volta a ser txt2img)\n  0.75 = mantem pose e cores, redesenha o estilo\n  0.50 = quase a foto original, pouca mudanca\nO CHIBI usa mais (0.85) porque precisa MUDAR A PROPORCAO — com 0.6 ele\nnao consegue deformar para 2 cabecas de altura.\nATENCAO: aqui denoise funciona como img2img normal. NAO confunda com o\nAnimateWan, onde o noise_mask exige 1.0 (ver v54).\n\n### OS 4 TEXTOS ###\nno 20 IDENTIDADE : cabelo, olhos, roupa, calcado. Vale para os DOIS.\nno  6 estilo SPLASH  : enquadramento e iluminacao\nno  8 estilo CHIBI   : proporcao e traco\nnos 7/9 negatives\nRegra: identidade NUNCA nos nos 6/8 — eles dizem COMO, nunca QUEM.\n\n### PORTRAIT ###\nNao se gera: recorte da splash. Identidade identica por construcao.\n\n### SE A FOTO FOR IGNORADA ###\nBaixe o denoise. Se a foto mandar demais e nao virar chibi, suba o no 15."
       ],
       "title": "LEIA"
     },
@@ -894,9 +894,9 @@
         "Node name for S&R": "CLIPTextEncode"
       },
       "widgets_values": [
-        "1girl, solo, long brown hair, amber eyes, light blue camisole, denim shorts, bare shoulders, blue sneakers"
+        "1girl, solo, short brown hair, blue eyes, light blue camisole, denim shorts, blue sneakers"
       ],
-      "title": "20. IDENTIDADE - a MESMA para splash e chibi"
+      "title": "20. IDENTIDADE — edite AQUI (vale para splash e chibi)"
     },
     {
       "id": 21,
@@ -981,6 +981,174 @@
       },
       "widgets_values": [],
       "title": ""
+    },
+    {
+      "id": 30,
+      "type": "ImageScale",
+      "pos": [
+        760,
+        -260
+      ],
+      "size": [
+        300,
+        140
+      ],
+      "flags": {},
+      "order": 22,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "image",
+          "type": "IMAGE",
+          "link": 34
+        }
+      ],
+      "outputs": [
+        {
+          "name": "IMAGE",
+          "type": "IMAGE",
+          "links": [
+            35
+          ],
+          "slot_index": 0
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "ImageScale"
+      },
+      "widgets_values": [
+        "lanczos",
+        832,
+        1216,
+        "center"
+      ],
+      "title": "30. concept -> 832x1216 (mesmo tamanho do latente)"
+    },
+    {
+      "id": 31,
+      "type": "VAEEncode",
+      "pos": [
+        760,
+        -90
+      ],
+      "size": [
+        300,
+        60
+      ],
+      "flags": {},
+      "order": 23,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "pixels",
+          "type": "IMAGE",
+          "link": 35
+        },
+        {
+          "name": "vae",
+          "type": "VAE",
+          "link": 36
+        }
+      ],
+      "outputs": [
+        {
+          "name": "LATENT",
+          "type": "LATENT",
+          "links": [
+            37
+          ],
+          "slot_index": 0
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "VAEEncode"
+      },
+      "widgets_values": [],
+      "title": "31. img2img SPLASH"
+    },
+    {
+      "id": 32,
+      "type": "ImageScale",
+      "pos": [
+        760,
+        700
+      ],
+      "size": [
+        300,
+        140
+      ],
+      "flags": {},
+      "order": 24,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "image",
+          "type": "IMAGE",
+          "link": 38
+        }
+      ],
+      "outputs": [
+        {
+          "name": "IMAGE",
+          "type": "IMAGE",
+          "links": [
+            39
+          ],
+          "slot_index": 0
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "ImageScale"
+      },
+      "widgets_values": [
+        "lanczos",
+        1024,
+        1024,
+        "center"
+      ],
+      "title": "32. concept -> 1024x1024"
+    },
+    {
+      "id": 33,
+      "type": "VAEEncode",
+      "pos": [
+        760,
+        870
+      ],
+      "size": [
+        300,
+        60
+      ],
+      "flags": {},
+      "order": 25,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "pixels",
+          "type": "IMAGE",
+          "link": 39
+        },
+        {
+          "name": "vae",
+          "type": "VAE",
+          "link": 40
+        }
+      ],
+      "outputs": [
+        {
+          "name": "LATENT",
+          "type": "LATENT",
+          "links": [
+            41
+          ],
+          "slot_index": 0
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "VAEEncode"
+      },
+      "widgets_values": [],
+      "title": "33. img2img CHIBI"
     }
   ],
   "links": [
@@ -1089,14 +1257,6 @@
       "CONDITIONING"
     ],
     [
-      15,
-      10,
-      0,
-      11,
-      3,
-      "LATENT"
-    ],
-    [
       16,
       11,
       0,
@@ -1135,14 +1295,6 @@
       15,
       2,
       "CONDITIONING"
-    ],
-    [
-      22,
-      14,
-      0,
-      15,
-      3,
-      "LATENT"
     ],
     [
       23,
@@ -1231,6 +1383,70 @@
       15,
       1,
       "CONDITIONING"
+    ],
+    [
+      34,
+      2,
+      0,
+      30,
+      0,
+      "IMAGE"
+    ],
+    [
+      35,
+      30,
+      0,
+      31,
+      0,
+      "IMAGE"
+    ],
+    [
+      36,
+      1,
+      2,
+      31,
+      1,
+      "VAE"
+    ],
+    [
+      37,
+      31,
+      0,
+      11,
+      3,
+      "LATENT"
+    ],
+    [
+      38,
+      2,
+      0,
+      32,
+      0,
+      "IMAGE"
+    ],
+    [
+      39,
+      32,
+      0,
+      33,
+      0,
+      "IMAGE"
+    ],
+    [
+      40,
+      1,
+      2,
+      33,
+      1,
+      "VAE"
+    ],
+    [
+      41,
+      33,
+      0,
+      15,
+      3,
+      "LATENT"
     ]
   ],
   "groups": [],

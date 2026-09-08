@@ -3969,3 +3969,69 @@ workflow do tutorial que nunca rodamos.
 
 `ORFAO` pode conter coisa baixada de proposito (LoRA sua, checkpoint de teste).
 Conferir antes de apagar — o script existe para informar, nao para decidir.
+
+## v57 — o Base era txt2img disfarcado (o usuario tinha razao)
+
+Observacao do usuario: *"o unico que era pra ser txt2image e o Concept; o
+chibi deveria pegar as caracteristicas a partir da foto (img2img), splash
+tambem"*.
+
+**Ele estava certo e eu nao tinha percebido.** Auditando o grafo:
+
+```
+KSampler SPLASH  latent_image <- EmptyLatentImage   (ruido puro!)
+KSampler CHIBI   latent_image <- EmptyLatentImage   (ruido puro!)
+concept (no 2)   -> so IPAdapter
+```
+
+O concept entrava **apenas** pelo IPAdapter. E IPAdapter e *conditioning*, nao
+ponto de partida: ele empurra a geracao na direcao da referencia, mas o modelo
+**redesenha do zero** a partir de ruido. Por isso a personagem "mudava" entre
+concept e resultado, e por isso a v31 precisou de tanto ajuste de peso e prompt
+para compensar — eu estava tratando sintoma.
+
+### Correcao
+
+Adicionados 4 nos: `ImageScale` + `VAEEncode` para cada saida.
+
+```
+concept -> ImageScale(832x1216) -> VAEEncode -> KSampler SPLASH
+concept -> ImageScale(1024x1024) -> VAEEncode -> KSampler CHIBI
+```
+
+O `ImageScale` e obrigatorio: o `VAEEncode` herda o tamanho da imagem, e se ele
+nao bater com o alvo a saida sai na resolucao errada.
+
+Os dois `EmptyLatentImage` foram para **bypass** (nao removidos — servem de
+referencia se alguem quiser voltar ao modo txt2img).
+
+**Agora o concept entra por dois caminhos**: latente inicial (VAEEncode) +
+conditioning (IPAdapter). E o que faz o resultado ser *derivado* da foto em vez
+de inspirado nela.
+
+### denoise: 0.75 splash / 0.85 chibi
+
+Aqui o denoise e img2img **normal** (sem `noise_mask`), entao a regra e a
+classica: menor preserva mais.
+
+O chibi usa mais (0.85) porque precisa **mudar a proporcao** — com denoise
+baixo ele nao consegue deformar para 2 cabecas de altura.
+
+**Nao confundir com o `AnimateWan`**, onde o `Wan22ImageToVideoLatent` cria um
+`noise_mask` e o denoise tem de ser 1.0 (v54). Mesmo parametro, mecanicas
+opostas — depende de haver mask ou nao.
+
+### Dois prompts errados, corrigidos
+
+1. **no 20** dizia `long brown hair, amber eyes` — descrevia a personagem do
+   concept de piscina (v31). A personagem atual tem cabelo curto e olhos azuis.
+   Corrigido para `short brown hair, blue eyes`.
+2. **no 9** tinha `blue eyes` **no negative** — proibia a cor de olho da
+   personagem atual. Era uma correcao da v31 contra outro bug, e virou tiro no
+   pe. Removido.
+
+### Regra
+
+**IPAdapter nao e img2img.** Se o `latent_image` vem de `EmptyLatentImage`, e
+txt2img — por mais referencias que estejam ligadas ao modelo. Para derivar de
+uma imagem, o latente tem de vir de `VAEEncode`.
