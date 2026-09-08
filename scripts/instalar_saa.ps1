@@ -101,8 +101,22 @@ if ($antigo -and $antigo.fav_characters -and $antigo.fav_characters.Count -gt 0)
     Write-Host "   favoritos preservados: $($antigo.fav_characters.Count)"
 }
 
-$saida | ConvertTo-Json -Depth 10 | Set-Content $Alvo -Encoding UTF8
-Write-Host "   settings.json escrito ($($saida.Count) chaves)"
+# Grava SEM BOM. O `Set-Content -Encoding UTF8` do Windows PowerShell 5.x
+# insere um BOM (EF BB BF) no inicio, e o JSON.parse do Node rejeita:
+#   SyntaxError: Unexpected token '<U+FEFF>'
+# WriteAllText com UTF8Encoding($false) e a forma que funciona nas duas
+# versoes do PowerShell (5.x e 7.x).
+$json = $saida | ConvertTo-Json -Depth 10
+$semBom = New-Object System.Text.UTF8Encoding($false)
+[System.IO.File]::WriteAllText($Alvo, $json, $semBom)
+
+# confere que ficou legivel para o Node antes de seguir
+$bytes = [System.IO.File]::ReadAllBytes($Alvo)
+if ($bytes.Length -ge 3 -and $bytes[0] -eq 0xEF -and $bytes[1] -eq 0xBB -and $bytes[2] -eq 0xBF) {
+    Write-Host '   AVISO: BOM detectado no arquivo gravado' -ForegroundColor Red
+} else {
+    Write-Host "   settings.json escrito sem BOM ($($saida.Count) chaves)"
+}
 
 # ---------------------------------------------------------------- deps
 Write-Host '-> npm install (pode demorar alguns minutos)' -ForegroundColor Yellow

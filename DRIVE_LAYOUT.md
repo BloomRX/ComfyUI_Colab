@@ -4307,3 +4307,40 @@ Nao precisa reinstalar — as settings estao dentro da pasta e vao junto.
 Observacao: `denoise_test.zip` (14 MB) e `testsAB/` (8,7 MB) ja estao no
 historico do Git. O `.gitignore` so vale para arquivos novos; remover os
 antigos exigiria reescrever o historico, o que nao compensa por 23 MB.
+
+### v60d — BOM do PowerShell quebrava o settings.json
+
+```
+SyntaxError: Unexpected token '<U+FEFF>', "<U+FEFF>{ "a"... is not valid JSON
+```
+
+Causa: `Set-Content -Encoding UTF8` no **Windows PowerShell 5.x** grava um BOM
+(`EF BB BF`) no inicio do arquivo. O `JSON.parse` do Node **rejeita** BOM.
+
+Confirmado que nao vinha do nosso `saa/settings.json` (primeiros bytes `{\n`) —
+era o instalador ao regravar.
+
+**Correcao no `instalar_saa.ps1`:**
+
+```powershell
+$semBom = New-Object System.Text.UTF8Encoding($false)
+[System.IO.File]::WriteAllText($Alvo, $json, $semBom)
+```
+
+`WriteAllText` com `UTF8Encoding($false)` funciona igual no PowerShell 5.x e
+7.x. O script ainda confere os 3 primeiros bytes depois de gravar e avisa se
+algo inserir BOM de novo.
+
+**`scripts/corrigir_bom.ps1` (novo)** conserta uma instalacao existente sem
+reinstalar: le com `ReadAllText` (o .NET descarta o BOM ao decodificar),
+regrava sem, e valida o JSON no fim.
+
+Reproduzido e validado: com BOM o Node falha com a mensagem exata do usuario;
+sem BOM le as 24 chaves normalmente; o reparo converte um no outro preservando
+o conteudo.
+
+### Regra
+
+**No Windows, JSON gravado por PowerShell precisa de `UTF8Encoding($false)`.**
+`Set-Content -Encoding UTF8` nao serve para arquivo que sera lido por Node,
+Python (`json.load` tambem falha) ou qualquer parser estrito.
