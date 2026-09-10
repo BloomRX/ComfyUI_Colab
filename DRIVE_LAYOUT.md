@@ -4470,3 +4470,63 @@ pinggy, em vez de so dizer "falhou".
 
 O cloudflared foi descartado: **nao faz TCP puro**, e e exatamente disso que o
 SAA precisa por causa do WebSocket.
+
+## v63 — trocar a roupa sem refazer a personagem (inpaint)
+
+Problema do usuario: tem um chibi bom feito no **Flux 2**, mas o Flux recusou
+a roupa sensual da personagem.
+
+### `WaifuSurvivors_TrocarRoupa.json` (13 nos)
+
+```
+LoadImage ──IMAGE──────────────┬─> VAEEncodeForInpaint ─> KSampler ─> VAEDecode
+          └─MASK─> GrowMask ─> FeatherMask ─┘                              │
+                                    └──────────> ImageCompositeMasked <────┘
+                                                          ↑
+                                          imagem ORIGINAL (destination)
+```
+
+**So a area pintada e regerada.** Rosto, cabelo, pose e proporcao ficam
+identicos — nao ha reinterpretacao.
+
+E o **Illustrious** que gera, nao o Flux: e o nosso checkpoint e nao tem o
+filtro que barrou o usuario.
+
+### A mascara e feita na UI
+
+Clique direito no no 2 -> **Open in MaskEditor** -> pintar sobre a roupa ->
+Save to node. O `LoadImage` ja devolve `MASK` no slot 1.
+
+`GrowMask` (8px) pega a borda que ficou de fora; `FeatherMask` suaviza a
+emenda. Sem os dois fica uma linha visivel no contorno.
+
+### Duas decisoes que importam
+
+**denoise 1.0.** Em inpaint quem protege o resto e a **mascara** — o
+`VAEEncodeForInpaint` zera a area mascarada e o sampler so preenche ali.
+Denoise menor deixaria a roupa antiga aparecendo como fantasma.
+
+Terceiro contexto com regra diferente para o mesmo parametro:
+
+| workflow | mecanismo | denoise |
+|---|---|---|
+| `Base` splash | img2img puro | 0.85 |
+| `AnimateWan` | `noise_mask` do Wan | 1.0 |
+| `TrocarRoupa` | mascara de inpaint | 1.0 |
+
+**`ImageCompositeMasked` no fim.** O VAE decodifica a imagem inteira e
+introduz perda global — mesmo fora da mascara. O composite devolve os pixels
+**originais** fora da area pintada, entao so o que voce pintou muda de fato.
+
+### Verificado
+
+- a mascara sai do **slot 1** do `LoadImage` (o slot 0 e IMAGE — trocar daria
+  erro silencioso)
+- `destination` = imagem original, `source` = gerada (invertido, o composite
+  apagaria a ediçao)
+- assinaturas de `VAEEncodeForInpaint`, `GrowMask`, `FeatherMask` e
+  `ImageCompositeMasked` lidas do codigo-fonte
+
+### Downloads: nenhum
+
+So o Illustrious, que ja esta no Drive.

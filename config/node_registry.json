@@ -606,7 +606,8 @@
         "url": "https://huggingface.co/h94/IP-Adapter/resolve/main/models/image_encoder/model.safetensors",
         "note": "Mesmo CLIP Vision do SDXL - serve aos dois."
       }
-    ]
+    ],
+    "WaifuSurvivors_TrocarRoupa.json": []
   },
   "model_notes": {
     "wan_2.1_vae.safetensors": "VAE do Wan 2.1, usado so num ramo alternativo. O caminho principal usa qwen_image_vae. Se o node reclamar, aponte para qwen_image_vae ou bypasse o ramo.",
