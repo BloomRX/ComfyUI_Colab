@@ -1,0 +1,21 @@
+{
+  "_coletado_em": "2026-09-10",
+  "_fonte": "https://api.github.com/repos/Kosinkadink/ComfyUI-AnimateDiff-Evolved",
+  "licenca": "Apache-2.0",
+  "licenca_url": "https://api.github.com/licenses/apache-2.0",
+  "pushed_at": "2026-07-28T11:39:29Z",
+  "resposta_crua": {
+    "full_name": "Kosinkadink/ComfyUI-AnimateDiff-Evolved",
+    "license": {
+      "key": "apache-2.0",
+      "name": "Apache License 2.0",
+      "spdx_id": "Apache-2.0",
+      "url": "https://api.github.com/licenses/apache-2.0",
+      "node_id": "MDc6TGljZW5zZTI="
+    },
+    "html_url": "https://github.com/Kosinkadink/ComfyUI-AnimateDiff-Evolved",
+    "description": "Improved AnimateDiff for ComfyUI and Advanced Sampling Support",
+    "pushed_at": "2026-07-28T11:39:29Z",
+    "archived": false
+  }
+}

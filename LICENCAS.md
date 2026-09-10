@@ -19,6 +19,7 @@ das licenças declaradas, para você saber onde há risco real e onde não há.
 | CLIP-ViT-H-14 | Apache 2.0 | sim |
 | controlnet-union-sdxl | Apache 2.0 | sim |
 | ComfyUI-AnimateDiff-Evolved | Apache 2.0 | sim |
+| hsxl_temporal_layers (Hotshot-XL) | **CreativeML OpenRAIL++-M** | sim, com ressalva |
 | ComfyUI-Inspyrenet-Rembg | MIT | sim |
 | ComfyUI_Mira | MIT | sim |
 | Character Select SAA | MIT | sim |
@@ -27,6 +28,15 @@ das licenças declaradas, para você saber onde há risco real e onde não há.
 | ComfyUI-Advanced-ControlNet | **GPL-3.0** | sim (ver nota) |
 | ComfyUI-Manager | **GPL-3.0** | sim (ver nota) |
 | ComfyUI (core) | sem licença declarada na API do GitHub | ver nota |
+
+> **Correção (v65):** eu havia agrupado o Hotshot-XL como Apache 2.0. A API do
+> HuggingFace mostra `license:openrail++` — **CreativeML OpenRAIL++-M**, que
+> permite uso comercial mas traz cláusulas de uso proibido. Ele está arquivado
+> (reprovado na v32/v50), então não afeta o pipeline atual; se voltar, reler.
+
+Registro estruturado, com evidência datada de cada fonte:
+**[`licencas/MODELOS.md`](licencas/MODELOS.md)** e
+**[`licencas/INDICE.md`](licencas/INDICE.md)**.
 
 ---
 

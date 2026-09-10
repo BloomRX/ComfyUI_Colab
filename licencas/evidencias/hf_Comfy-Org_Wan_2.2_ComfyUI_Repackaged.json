@@ -1,0 +1,15 @@
+{
+  "_coletado_em": "2026-09-08",
+  "_fonte": "https://huggingface.co/api/models/Comfy-Org/Wan_2.2_ComfyUI_Repackaged",
+  "_metodo": "API oficial do HuggingFace",
+  "_arquivos_que_usamos": [
+    "wan2.2_ti2v_5B_fp16.safetensors",
+    "umt5_xxl_fp8_e4m3fn_scaled.safetensors",
+    "wan2.2_vae.safetensors"
+  ],
+  "licenca": "apache-2.0",
+  "gated": false,
+  "lastModified": "2026-08-17T06:09:43.000Z",
+  "sha": "c4f60d30c55a624e35427060fdd217579a6c1d77",
+  "tags_licenca": "license:apache-2.0"
+}

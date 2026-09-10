@@ -1,0 +1,21 @@
+{
+  "_coletado_em": "2026-09-10",
+  "_fonte": "https://api.github.com/repos/comfyanonymous/ComfyUI",
+  "licenca": "GPL-3.0",
+  "licenca_url": "https://api.github.com/licenses/gpl-3.0",
+  "pushed_at": "2026-09-10T00:59:59Z",
+  "resposta_crua": {
+    "full_name": "Comfy-Org/ComfyUI",
+    "license": {
+      "key": "gpl-3.0",
+      "name": "GNU General Public License v3.0",
+      "spdx_id": "GPL-3.0",
+      "url": "https://api.github.com/licenses/gpl-3.0",
+      "node_id": "MDc6TGljZW5zZTk="
+    },
+    "html_url": "https://github.com/Comfy-Org/ComfyUI",
+    "description": "The most powerful and modular diffusion model GUI, api and backend with a graph/nodes interface.",
+    "pushed_at": "2026-09-10T00:59:59Z",
+    "archived": false
+  }
+}

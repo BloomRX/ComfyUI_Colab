@@ -1,0 +1,21 @@
+{
+  "origem": "Civitai — WAI-NSFW-illustrious-SDXL v17.0",
+  "url": "https://civitai.com/models/827184",
+  "licenca": "Fair AI Public License 1.0-SD",
+  "licenca_url": "https://freedevproject.org/faipl-1.0-sd/",
+  "base": "Illustrious XL (Onoma AI) -> SDXL",
+  "saida_comercial": true,
+  "clausula_chave": "Output: The output of this software is not covered by this license, and no contributor claims any rights to it.",
+  "restricoes": [
+    "copyleft ao redistribuir o MODELO ou derivados (LoRA, merge)",
+    "proibido oferecer o modelo como servico em rede sem dar o fonte",
+    "Prohibited Uses: nada ilegal, nada envolvendo menores, etc."
+  ],
+  "alertas": [
+    "download MANUAL: nao existe no HuggingFace, Civitai exige login",
+    "treinado em tags do Danbooru: pode reproduzir personagens com copyright — nao usar nomes de personagens existentes"
+  ],
+  "nota": "A Onoma AI alterou o TOS do Illustrious v0.1 retroativamente em 2025. Guarde print da pagina do Civitai na data do download.",
+  "_coletado_em": "2026-09-10",
+  "_arquivo": "waiIllustriousSDXL_v170.safetensors"
+}

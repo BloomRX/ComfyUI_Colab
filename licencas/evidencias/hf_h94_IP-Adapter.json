@@ -1,0 +1,15 @@
+{
+  "_coletado_em": "2026-09-08",
+  "_fonte": "https://huggingface.co/api/models/h94/IP-Adapter",
+  "_metodo": "API oficial do HuggingFace",
+  "_arquivos_que_usamos": [
+    "ip-adapter-plus_sdxl_vit-h.safetensors",
+    "ip-adapter-plus_sd15.safetensors",
+    "CLIP-ViT-H-14-laion2B-s32B-b79K.safetensors"
+  ],
+  "licenca": "apache-2.0",
+  "gated": false,
+  "lastModified": "2024-03-27T08:33:41.000Z",
+  "sha": "018e402774aeeddd60609b4ecdb7e298259dc729",
+  "tags_licenca": "license:apache-2.0"
+}

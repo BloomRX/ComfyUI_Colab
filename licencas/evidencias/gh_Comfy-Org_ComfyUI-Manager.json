@@ -1,0 +1,21 @@
+{
+  "_coletado_em": "2026-09-10",
+  "_fonte": "https://api.github.com/repos/Comfy-Org/ComfyUI-Manager",
+  "licenca": "GPL-3.0",
+  "licenca_url": "https://api.github.com/licenses/gpl-3.0",
+  "pushed_at": "2026-09-04T10:41:37Z",
+  "resposta_crua": {
+    "full_name": "Comfy-Org/ComfyUI-Manager",
+    "license": {
+      "key": "gpl-3.0",
+      "name": "GNU General Public License v3.0",
+      "spdx_id": "GPL-3.0",
+      "url": "https://api.github.com/licenses/gpl-3.0",
+      "node_id": "MDc6TGljZW5zZTk="
+    },
+    "html_url": "https://github.com/Comfy-Org/ComfyUI-Manager",
+    "description": "ComfyUI-Manager is an extension designed to enhance the usability of ComfyUI. It offers management functions to install, remove, disable, and enable various custom nodes of ComfyUI. Furthermore, this extension provides a hub feature and convenience functions to access a wide range of information within ComfyUI.",
+    "pushed_at": "2026-09-04T10:41:37Z",
+    "archived": false
+  }
+}

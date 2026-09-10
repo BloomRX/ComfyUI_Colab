@@ -4586,3 +4586,61 @@ de virar problema.
 Guardar print/PDF da pagina de licenca do Civitai na data do download. A Onoma
 AI ja alterou o TOS do Illustrious v0.1 **retroativamente** em 2025 — licencas
 mudam, e o registro do estado na epoca do uso protege.
+
+## v65 — registro permanente de licenças com evidência datada
+
+Pedido: manter um arquivo com licença e informação de cada modelo usado.
+
+O `LICENCAS.md` da v64 era análise em prosa — bom para entender, ruim para
+consultar e sem prova de nada. Agora há três camadas:
+
+| arquivo | o que é |
+|---|---|
+| `LICENCAS.md` | a análise: o que pode e o que não pode no jogo |
+| `licencas/MODELOS.md` | ficha por modelo: papel, tamanho, origem, restrições |
+| `licencas/INDICE.md` | tabela gerada automaticamente, uma linha por item |
+| `licencas/evidencias/*.json` | **resposta crua das APIs**, com data |
+
+### Por que guardar a resposta crua
+
+A Onoma AI alterou o TOS do Illustrious v0.1 **retroativamente** em 2025. Se a
+licença mudar depois, o JSON datado registra o estado no momento em que o
+modelo entrou no projeto. Não é interpretação minha — é o que o servidor
+devolveu, com `sha` e `lastModified`.
+
+### `scripts/coletar_licencas.py`
+
+Consulta a API do HuggingFace e do GitHub, grava as evidências e regenera o
+índice:
+
+```
+python3 scripts/coletar_licencas.py
+python3 scripts/coletar_licencas.py --resumo   # só imprime
+```
+
+Modelos sem API pública (o Illustrious, do Civitai) têm registro manual no
+próprio script, com a cláusula-chave transcrita.
+
+### Correção que a coleta revelou
+
+Na v64 agrupei o **Hotshot-XL** como Apache 2.0. A API mostra
+`license:openrail++` — **CreativeML OpenRAIL++-M**, que permite uso comercial
+mas tem cláusulas de uso proibido. Está arquivado (reprovado na v32/v50), então
+não afeta o pipeline; corrigido no `LICENCAS.md` com nota explícita.
+
+Também ficou registrado que o `toonyou_beta6` é um **mirror sem licença
+declarada** — se um dia voltar, verificar no Civitai original.
+
+### Estado
+
+21 itens catalogados: 7 modelos em uso, 5 arquivados, 9 ferramentas.
+Nenhum impede o uso comercial dos sprites.
+
+### Ao adicionar modelo novo
+
+1. `python3 scripts/coletar_licencas.py`
+2. ficha em `licencas/MODELOS.md`
+3. nome do arquivo na lista `AUDITADOS` do `checar_regras.py`
+
+O passo 3 não é opcional: o `checar_regras.py` **falha** se um modelo de
+workflow ativo não estiver auditado.
