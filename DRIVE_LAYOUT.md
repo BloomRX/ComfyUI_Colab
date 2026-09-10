@@ -4695,3 +4695,51 @@ aparência. Com denoise 0.55 a silhueta do molde se mantém.
 Isso pode resolver o problema da v58 — lá o img2img não conseguia mudar a
 proporção porque partia da foto realista. Partindo de um molde que **já é
 chibi**, o conflito some.
+
+### v68b — "IPAdapter model not found": preset exige arquivo que nao temos
+
+Depois da correcao da v68, o chibi_converter falhou em execucao:
+
+```
+IPAdapterPlus.py line 599: raise Exception("IPAdapter model not found.")
+```
+
+Repare que o **CLIP Vision carregou** (a linha anterior no log confirma). O que
+faltou foi o modelo IPAdapter em si.
+
+### Causa: cada preset procura um ARQUIVO diferente
+
+Em `utils.py:29`, `get_ipadapter_file()` casa o preset com uma regex sobre os
+arquivos da pasta `ipadapter/`:
+
+| preset (SDXL) | regex | temos? |
+|---|---|---|
+| STANDARD | `ip.adapter.sdxl.vit.h` | nao |
+| **PLUS (high strength)** | `plus.sdxl.vit.h` | **SIM** |
+| PLUS FACE (portraits) | `plus.face.sdxl.vit.h` | **nao** |
+
+Nosso Drive tem `ip-adapter-plus_sdxl_vit-h.safetensors` — casa com **PLUS**,
+nao com PLUS FACE. Sao arquivos distintos (o do PLUS FACE tem "face" no nome).
+
+### Erro meu na v68
+
+O workflow original vinha com `PLUS FACE (SDXL)`, que **nao existe** na lista.
+Eu troquei pelo nome valido mais parecido (`PLUS FACE (portraits)`) sem
+verificar se o ARQUIVO correspondente estava no Drive. Corrigir o nome do
+preset resolveu a validacao da UI, mas empurrou o erro para a execucao.
+
+**Licao:** valor valido no dropdown != modelo presente no disco. Ao trocar
+preset, conferir tambem o arquivo que ele exige.
+
+### Corrigido
+
+Os tres workflows agora usam **`PLUS (high strength)`**. Conferido que os
+nossos (`Base`, `CharacterSheet`) ja usavam esse — estao todos consistentes.
+
+### Se quiser o PLUS FACE depois
+
+`ip-adapter-plus-face_sdxl_vit-h.safetensors` (848 MB, Apache 2.0), em
+`h94/IP-Adapter/sdxl_models/`. Registrado em `model_notes`.
+
+**Mas provavelmente nao vale:** PLUS FACE prioriza o rosto, e para chibi de
+corpo inteiro o PLUS costuma dar melhor resultado.

@@ -631,7 +631,8 @@
     "qwen_3_06b_base.safetensors": "text encoder Qwen3 0.6B usado pelo ANIMA.",
     "Flux2-Klein-9B-consistency-V2.safetensors": "LoRA de consistencia do Flux2 Klein.",
     "flux-2-klein-9b-nvfp4.safetensors": "variante nvfp4 (Blackwell). No T4 use a versao normal.",
-    "flux2-vae.safetensors": "VAE do Flux2 -> models/vae."
+    "flux2-vae.safetensors": "VAE do Flux2 -> models/vae.",
+    "ip-adapter-plus-face_sdxl_vit-h.safetensors": "OPCIONAL — so se quiser o preset \"PLUS FACE (portraits)\" do IPAdapterUnifiedLoader. 848 MB, pasta ipadapter/. URL: https://huggingface.co/h94/IP-Adapter/resolve/main/sdxl_models/ip-adapter-plus-face_sdxl_vit-h.safetensors  (Apache 2.0). PLUS FACE prioriza o ROSTO; PLUS (que ja temos) pega a figura inteira. Para chibi de corpo inteiro, PLUS costuma ser melhor."
   },
   "never_install": [
     "ComfyUI",
