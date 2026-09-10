@@ -1,7 +1,7 @@
 {
   "origem": "Civitai — WAI-NSFW-illustrious-SDXL v17.0",
   "url": "https://civitai.com/models/827184",
-  "licenca": "INCERTA — ver campo licenca_analise",
+  "licenca": "Illustrious License (rotulo do Civitai) — herdada de Illustrious XL 1.0 = OpenRAIL++-M provavel; autor declara \"Commercial Allowed\"",
   "licenca_url": "https://freedevproject.org/faipl-1.0-sd/",
   "base": "Illustrious XL (Onoma AI) -> SDXL",
   "saida_comercial": true,
@@ -40,5 +40,12 @@
     "copyleft forte: derivado tem de sair sob a mesma licenca",
     "servico em rede exige oferecer o fonte/modelo"
   ],
-  "acao_pendente_do_usuario": "Logar em civitai.red/models/827184, abrir a aba de licenca da v17.0 e salvar um PDF/print. E a unica forma de saber o que o AUTOR declarou, e serve de prova datada."
+  "acao_pendente_do_usuario": "Logar em civitai.red/models/827184, abrir a aba de licenca da v17.0 e salvar um PDF/print. E a unica forma de saber o que o AUTOR declarou, e serve de prova datada.",
+  "declaracao_do_autor": {
+    "_verificado_por": "usuario, logado em civitai.red (a pagina exige conta)",
+    "_data": "2026-09-10",
+    "texto_na_pagina": "Commercial Allowed",
+    "significado": "O autor do WAI (WAI0731) permite explicitamente uso comercial. Isso resolve a ambiguidade FAIPL x OpenRAIL++-M para o nosso caso: seja qual for a licenca herdada, o autor autoriza comercial, e ambas as candidatas ja permitiam uso comercial da SAIDA.",
+    "pendente": "Salvar PDF/print da pagina com a data. Texto num campo do Civitai nao e o mesmo que o texto integral da licenca — mas e a declaracao do autor, e serve de evidencia de boa-fe."
+  }
 }

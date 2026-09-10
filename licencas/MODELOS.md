@@ -20,8 +20,8 @@ Legenda de risco comercial:
 | onde | `models/checkpoints/` · ~6,5 GB |
 | origem | Civitai — WAI-NSFW-illustrious-SDXL v17.0 (autor: WAI0731) |
 | base | Illustrious XL (Onoma AI) → SDXL |
-| licença | **incerta entre FAIPL-1.0-SD e OpenRAIL++-M** — ver abaixo |
-| saída comercial | **SIM** nas duas hipóteses |
+| licença | Illustrious License (herdada) — provável OpenRAIL++-M |
+| saída comercial | **SIM** — autor declara *"Commercial Allowed"* na página |
 | restrições | dependem de qual: ver tabela |
 | download | **MANUAL** — não existe no HuggingFace, e o Civitai exige login |
 | usado em | Base, Concept, CharacterSheet, TrocarRoupa |
@@ -51,8 +51,15 @@ desatualizado.
 Se for OpenRAIL++-M, você tem **mais** liberdade: some o copyleft forte e a
 exigência de fornecer o modelo em serviço de rede.
 
-⚠️ **Pendente:** logar em `civitai.red/models/827184`, abrir a licença da
-v17.0 e salvar PDF. A página exige conta — não consegui ler.
+**Verificado em 2026-09-10** (usuário, logado no `civitai.red`): a página da
+v17.0 declara **"Commercial Allowed"**.
+
+Três camadas concordando: a licença da base permite, a licença herdada permite,
+e o autor declara explicitamente.
+
+⚠️ **Ainda vale fazer:** salvar um PDF/print dessa página com a data. Um campo
+de permissão no Civitai não é o texto integral da licença, mas é a declaração
+do autor — e serve como evidência de boa-fé se a página mudar.
 
 ⚠️ **Não apagar do Drive** — a Célula 5 não consegue rebaixar.
 ⚠️ Treinado em tags do Danbooru: **capaz de reproduzir personagens com

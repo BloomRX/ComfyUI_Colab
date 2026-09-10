@@ -42,92 +42,26 @@ Registro estruturado, com evidência datada de cada fonte:
 
 ## 1. O ponto que decide tudo: a cláusula "Output"
 
-> **Revisão (v66) — qual licença o v170 tem, afinal?**
+> **Confirmado (v67) — o autor declara "Commercial Allowed".**
 >
-> Fui verificar de novo e achei uma complicação que a v64 não viu: **a licença
-> depende de qual Illustrious é a base, e a Onoma AI mudou a licença entre
-> versões.**
+> O usuário logou no `civitai.red` e leu o bloco de permissões da v17.0:
+> **Commercial Allowed**.
 >
-> | Illustrious base | licença |
-> |---|---|
-> | v0.1 | Fair AI Public License 1.0-SD |
-> | **v1.0** | **CreativeML Open RAIL++-M** |
-> | v2.0 | CreativeML Open RAIL-M |
+> Isso encerra a ambiguidade prática. Havia dúvida sobre qual licença o v170
+> herda (a Onoma AI mudou entre versões, e o WAI mudou de base na v14):
 >
-> E o WAI mudou de base: **da v14 em diante ele usa Illustrious XL 1.0** — o
-> autor rejeitou a 2.0 por qualidade. Até a v13 era a 0.1.
+> | Illustrious base | licença | usada por |
+> |---|---|---|
+> | v0.1 | Fair AI Public License 1.0-SD | WAI até v13 |
+> | **v1.0** | **CreativeML Open RAIL++-M** | **WAI v14+ (a nossa)** |
+> | v2.0 | CreativeML Open RAIL-M | rejeitada pelo autor |
 >
-> Como usamos a **v17.0**, a licença herdada mais provável é
-> **CreativeML Open RAIL++-M**, e não a FAIPL. O Civitai continua rotulando
-> como "Illustrious License", que aponta para a FAIPL da v0.1 e **não foi
-> atualizado**.
+> **As duas candidatas já permitiam uso comercial da saída** — a FAIPL pela
+> cláusula *Output*, a OpenRAIL++-M por definir o Output como do usuário. E
+> agora o autor confirma explicitamente na página.
 >
-> **Por que isso não muda o veredito:** as duas permitem uso comercial da
-> saída. A FAIPL tem a cláusula *Output* explícita; a OpenRAIL++-M define o
-> Output como propriedade do usuário. Nos dois casos, vender o jogo está
-> liberado.
->
-> **O que muda:** a OpenRAIL++-M é *menos* restritiva que a FAIPL — não tem o
-> copyleft forte nem a exigência de fornecer o modelo em serviço de rede. Se
-> a base for mesmo a 1.0, você tem **mais** liberdade, não menos.
->
-> ⚠️ **Ação pendente sua:** a página migrou para `civitai.red` e exige login.
-> Não consegui ler o bloco de licença. Entre, abra a aba de licença da v17.0
-> e **salve um PDF**. É a única forma de saber o que o autor declarou.
-
-
-
-O `waiIllustriousSDXL` herda a **Fair AI Public License 1.0-SD** do Illustrious
-XL. Li o texto integral em freedevproject.org. A seção que importa:
-
-> ## Output
-> **The output of this software is not covered by this license, and no
-> contributor claims any rights to it.**
-
-Ou seja: **as imagens que você gera não são cobertas pela licença do modelo, e
-nenhum contribuidor reivindica direitos sobre elas.** Os sprites do seu jogo
-são seus.
-
-Isso é confirmado pelas plataformas que hospedam o modelo (TensorArt, SeaArt,
-PixAI listam "allow commercial use of generated images").
-
-### O que a FAIPL restringe de fato
-
-A licença é do tipo *copyleft* e se aplica ao **modelo**, não à saída:
-
-- **redistribuir o modelo** (ou um derivado, incluindo LoRA e merge) exige
-  manter a mesma licença e fornecer o "source code"
-- **serviço em rede**: se você deixar usuários interagirem com o modelo pela
-  internet, precisa oferecer download do modelo derivado
-- **Prohibited Uses**: nada ilegal, nada envolvendo menores, nada de
-  desinformação/assédio etc.
-
-### Como isso afeta o WAIFU SURVIVORS
-
-| o que você faz | permitido? |
-|---|---|
-| vender o jogo com os sprites gerados | **sim** — cláusula Output |
-| distribuir os PNGs dentro do .exe/.pck | **sim** — são output |
-| treinar uma LoRA da sua personagem e usar em casa | sim |
-| **publicar** essa LoRA | sim, **mas sob FAIPL** (copyleft) |
-| embutir o checkpoint no jogo | **não faça** — seria redistribuir o modelo |
-| oferecer um gerador de personagens online no jogo | **evite** — cai na
-  cláusula de rede |
-
-**Regra prática: o modelo fica no seu Colab. Só os PNGs vão para o jogo.**
-
-### A ressalva honesta
-
-Há um debate real na comunidade sobre a validade dessas cláusulas, já que nos
-EUA o Copyright Office considera saída de IA sem edição humana substancial como
-domínio público. **Não dependa disso.** A cláusula Output da FAIPL já resolve
-nosso caso sem precisar entrar nessa discussão.
-
-Também vale notar: a Onoma AI acrescentou um **TOS** ao Illustrious v0.1
-*retroativamente* em 2025. Licenças podem mudar. Recomendo **guardar uma cópia
-da página de licença** do Civitai na data do download, como registro.
-
----
+> Três camadas concordando: licença da base, licença herdada e declaração do
+> autor. **Para gerar sprites e vender o jogo, está resolvido.**
 
 ## 2. GPL-3.0 nos custom nodes — não contamina o jogo
 
@@ -199,9 +133,26 @@ arte com marca d'água de terceiro é problema.
 
 ## 6. Veredito
 
-**Para o uso que fazemos — gerar sprites e vender o jogo — o caminho está
-livre.** Todos os componentes permitem uso comercial da saída, e o Illustrious
-é explícito ao não reivindicar direito nenhum sobre o output.
+**Para gerar sprites e vender o jogo, o caminho está livre.** Todo componente
+do pipeline permite uso comercial da saída, e o `waiIllustrious` — o único que
+gerava dúvida — tem três camadas concordando: a licença da base permite, a
+licença herdada permite, e o autor declara **"Commercial Allowed"** na página.
 
-O risco real do projeto **não está nas licenças de modelo**: está em gerar
-personagens semelhantes a obras protegidas e em não revisar marca d'água.
+### O que sobra de risco (nenhum é de licença de modelo)
+
+| risco | gravidade | o que fazer |
+|---|---|---|
+| **personagem parecida com obra protegida** | **alta** | personagens originais; nada de nome de personagem existente no prompt |
+| marca d'água herdada do dataset | média | revisar cada sprite antes de integrar |
+| conteúdo adulto em loja errada | média | Steam aceita com marcação; consoles não |
+| licença mudar depois | baixa | guardar PDF datado das páginas |
+
+O primeiro é o que realmente pode custar caro, e **não some trocando de
+modelo** — qualquer modelo anime treinado em Danbooru reproduz personagens com
+copyright. Some com disciplina de prompt.
+
+### Pendência prática
+
+Salvar PDF/print da página do Civitai (v17.0, com o "Commercial Allowed"
+visível) e guardar junto do projeto. A Onoma AI já alterou termos
+retroativamente uma vez; a evidência datada é o que protege.
