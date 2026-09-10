@@ -185,22 +185,37 @@ def r_notebook():
         except SyntaxError as e:
             erro('sintaxe', f'celula {i} nao compila: {e.msg} (linha {e.lineno})')
 
-    # v64: todo modelo novo precisa entrar no LICENCAS.md (jogo comercial)
+    # v64: todo modelo de workflow ATIVO precisa estar auditado em LICENCAS.md
+    # (o jogo e comercial). A lista abaixo e explicita de proposito: heuristica
+    # de "o nome aparece no texto?" dava falso positivo com nomes abreviados.
+    AUDITADOS = {
+        'waiIllustriousSDXL_v170.safetensors',
+        'wan2.2_ti2v_5B_fp16.safetensors',
+        'wan2.2_vae.safetensors',
+        'umt5_xxl_fp8_e4m3fn_scaled.safetensors',
+        'ip-adapter-plus_sdxl_vit-h.safetensors',
+        'ip-adapter-plus_sd15.safetensors',
+        'CLIP-ViT-H-14-laion2B-s32B-b79K.safetensors',
+        'controlnet-union-sdxl-1.0.safetensors',
+        'hsxl_temporal_layers.f16.safetensors',
+        'v3_sd15_mm.ckpt',
+        'v3_sd15_sparsectrl_rgb.ckpt',
+        'toonyou_beta6.safetensors',
+    }
     import glob as _g
-    if os.path.exists(os.path.join(RAIZ, 'LICENCAS.md')):
-        doc = open(os.path.join(RAIZ, 'LICENCAS.md'), encoding='utf-8').read().lower()
-        ativos = {os.path.basename(f) for f in _g.glob(os.path.join(RAIZ, 'Workflows', '*.json'))}
-        reg2 = json.load(open(os.path.join(RAIZ, 'config', 'node_registry.json'), encoding='utf-8'))
-        for wf, ms in (reg2.get('workflow_models') or {}).items():
-            if wf not in ativos:
-                continue
-            for m in ms:
-                nome = m.get('file', '')
-                # basta o prefixo antes do primeiro '.' ou '_fp'
-                chave = re.split(r'[._]', nome)[0].lower()
-                if chave and len(chave) > 3 and chave not in doc:
-                    aviso('licenca', f'{nome} nao aparece em LICENCAS.md '
-                                     f'(jogo comercial: verificar antes de usar)')
+    _ativos = {os.path.basename(f)
+               for f in _g.glob(os.path.join(RAIZ, 'Workflows', '*.json'))}
+    _reg2 = json.load(open(os.path.join(RAIZ, 'config', 'node_registry.json'),
+                           encoding='utf-8'))
+    for _wf, _ms in (_reg2.get('workflow_models') or {}).items():
+        if _wf not in _ativos:
+            continue
+        for _m in _ms:
+            _n = _m.get('file', '')
+            if _n and _n not in AUDITADOS:
+                erro('v64', f'{_n} ({_wf}) NAO esta auditado em LICENCAS.md. '
+                            f'O jogo e comercial: verifique a licenca e '
+                            f'acrescente o arquivo a lista AUDITADOS.')
 
     # v40: o patch do 404 atras do proxy tem de estar presente
     if 'zz_proxy_userdata' not in todo:
