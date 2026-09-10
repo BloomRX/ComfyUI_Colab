@@ -20,15 +20,39 @@ Legenda de risco comercial:
 | onde | `models/checkpoints/` · ~6,5 GB |
 | origem | Civitai — WAI-NSFW-illustrious-SDXL v17.0 (autor: WAI0731) |
 | base | Illustrious XL (Onoma AI) → SDXL |
-| licença | **Fair AI Public License 1.0-SD** (herdada) |
-| saída comercial | **SIM** — cláusula *Output* renuncia a direitos |
-| restrições | copyleft ao redistribuir o **modelo**; proibido como serviço em rede |
+| licença | **incerta entre FAIPL-1.0-SD e OpenRAIL++-M** — ver abaixo |
+| saída comercial | **SIM** nas duas hipóteses |
+| restrições | dependem de qual: ver tabela |
 | download | **MANUAL** — não existe no HuggingFace, e o Civitai exige login |
 | usado em | Base, Concept, CharacterSheet, TrocarRoupa |
 
-> A cláusula que libera tudo:
-> *"The output of this software is not covered by this license, and no
-> contributor claims any rights to it."*
+#### Qual licença, afinal?
+
+A Onoma AI **mudou a licença do Illustrious entre versões**, e o WAI **mudou de
+base**:
+
+| Illustrious base | licença | usada por |
+|---|---|---|
+| v0.1 | Fair AI Public License 1.0-SD | WAI até v13 |
+| **v1.0** | **CreativeML Open RAIL++-M** | **WAI v14 em diante** |
+| v2.0 | CreativeML Open RAIL-M | rejeitada pelo autor do WAI |
+
+Como usamos a **v17.0**, a herança mais provável é **OpenRAIL++-M**. O Civitai
+ainda rotula "Illustrious License" apontando para a FAIPL da v0.1 — rótulo
+desatualizado.
+
+**As duas permitem uso comercial da saída:**
+
+- FAIPL: *"The output of this software is not covered by this license, and no
+  contributor claims any rights to it."*
+- OpenRAIL++-M: Output é do usuário; uso comercial permitido, com as
+  *use-based restrictions* propagando para derivados.
+
+Se for OpenRAIL++-M, você tem **mais** liberdade: some o copyleft forte e a
+exigência de fornecer o modelo em serviço de rede.
+
+⚠️ **Pendente:** logar em `civitai.red/models/827184`, abrir a licença da
+v17.0 e salvar PDF. A página exige conta — não consegui ler.
 
 ⚠️ **Não apagar do Drive** — a Célula 5 não consegue rebaixar.
 ⚠️ Treinado em tags do Danbooru: **capaz de reproduzir personagens com
@@ -177,3 +201,33 @@ Um PNG feito num programa GPL não vira GPL.
 
 O `checar_regras.py` **falha** se um modelo de workflow ativo não estiver
 auditado. É proposital: obriga a decisão de licença antes do uso.
+
+---
+
+## Alternativas ao Illustrious (se quiser licença sem ambiguidade)
+
+O `waiIllustrious` é o único componente do pipeline com licença incerta. Se
+isso incomodar, há saídas — todas com custo.
+
+| opção | licença | custo de trocar |
+|---|---|---|
+| **manter o WAI v170** | OpenRAIL++-M (provável) | zero |
+| Illustrious XL 1.1 oficial | OpenRAIL++-M declarada | requalificar prompts; perde o ajuste estético do WAI |
+| **treinar LoRA própria** sobre base permissiva | a que você escolher | semanas de trabalho |
+| Pony Diffusion V6 XL | OpenRAIL++-M | estilo diferente; refazer todos os testes |
+
+### Recomendação
+
+**Manter o WAI v170.** As duas licenças candidatas permitem uso comercial da
+saída — a incerteza é sobre *quais obrigações você tem ao redistribuir o
+modelo*, e nós não redistribuímos o modelo.
+
+O risco real do projeto **não é a licença do checkpoint**: é gerar personagem
+parecida com obra protegida (o modelo é treinado em Danbooru). Isso vale para
+qualquer modelo anime, inclusive os de licença "limpa".
+
+### Se um dia o jogo crescer
+
+Aí vale pagar uma consulta jurídica de algumas horas, com estes documentos em
+mãos. O custo é irrelevante perto do de um problema, e o registro datado que
+temos aqui é exatamente o que um advogado pediria.

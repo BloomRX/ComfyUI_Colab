@@ -42,6 +42,41 @@ Registro estruturado, com evidência datada de cada fonte:
 
 ## 1. O ponto que decide tudo: a cláusula "Output"
 
+> **Revisão (v66) — qual licença o v170 tem, afinal?**
+>
+> Fui verificar de novo e achei uma complicação que a v64 não viu: **a licença
+> depende de qual Illustrious é a base, e a Onoma AI mudou a licença entre
+> versões.**
+>
+> | Illustrious base | licença |
+> |---|---|
+> | v0.1 | Fair AI Public License 1.0-SD |
+> | **v1.0** | **CreativeML Open RAIL++-M** |
+> | v2.0 | CreativeML Open RAIL-M |
+>
+> E o WAI mudou de base: **da v14 em diante ele usa Illustrious XL 1.0** — o
+> autor rejeitou a 2.0 por qualidade. Até a v13 era a 0.1.
+>
+> Como usamos a **v17.0**, a licença herdada mais provável é
+> **CreativeML Open RAIL++-M**, e não a FAIPL. O Civitai continua rotulando
+> como "Illustrious License", que aponta para a FAIPL da v0.1 e **não foi
+> atualizado**.
+>
+> **Por que isso não muda o veredito:** as duas permitem uso comercial da
+> saída. A FAIPL tem a cláusula *Output* explícita; a OpenRAIL++-M define o
+> Output como propriedade do usuário. Nos dois casos, vender o jogo está
+> liberado.
+>
+> **O que muda:** a OpenRAIL++-M é *menos* restritiva que a FAIPL — não tem o
+> copyleft forte nem a exigência de fornecer o modelo em serviço de rede. Se
+> a base for mesmo a 1.0, você tem **mais** liberdade, não menos.
+>
+> ⚠️ **Ação pendente sua:** a página migrou para `civitai.red` e exige login.
+> Não consegui ler o bloco de licença. Entre, abra a aba de licença da v17.0
+> e **salve um PDF**. É a única forma de saber o que o autor declarou.
+
+
+
 O `waiIllustriousSDXL` herda a **Fair AI Public License 1.0-SD** do Illustrious
 XL. Li o texto integral em freedevproject.org. A seção que importa:
 
