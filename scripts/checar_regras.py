@@ -185,6 +185,23 @@ def r_notebook():
         except SyntaxError as e:
             erro('sintaxe', f'celula {i} nao compila: {e.msg} (linha {e.lineno})')
 
+    # v64: todo modelo novo precisa entrar no LICENCAS.md (jogo comercial)
+    import glob as _g
+    if os.path.exists(os.path.join(RAIZ, 'LICENCAS.md')):
+        doc = open(os.path.join(RAIZ, 'LICENCAS.md'), encoding='utf-8').read().lower()
+        ativos = {os.path.basename(f) for f in _g.glob(os.path.join(RAIZ, 'Workflows', '*.json'))}
+        reg2 = json.load(open(os.path.join(RAIZ, 'config', 'node_registry.json'), encoding='utf-8'))
+        for wf, ms in (reg2.get('workflow_models') or {}).items():
+            if wf not in ativos:
+                continue
+            for m in ms:
+                nome = m.get('file', '')
+                # basta o prefixo antes do primeiro '.' ou '_fp'
+                chave = re.split(r'[._]', nome)[0].lower()
+                if chave and len(chave) > 3 and chave not in doc:
+                    aviso('licenca', f'{nome} nao aparece em LICENCAS.md '
+                                     f'(jogo comercial: verificar antes de usar)')
+
     # v40: o patch do 404 atras do proxy tem de estar presente
     if 'zz_proxy_userdata' not in todo:
         erro('v40', 'falta o patch /userdata/{file:.+/.+} (404 dos workflows '

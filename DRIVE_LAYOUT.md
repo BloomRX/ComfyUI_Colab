@@ -4530,3 +4530,59 @@ introduz perda global — mesmo fora da mascara. O composite devolve os pixels
 ### Downloads: nenhum
 
 So o Illustrious, que ja esta no Drive.
+
+## v64 — auditoria de licencas para uso comercial
+
+Pergunta do usuario antes de comercializar o jogo. Levantamento completo em
+**`LICENCAS.md`**, com cada licenca checada na fonte (API do HF, API do GitHub,
+texto integral da FAIPL).
+
+### O achado que decide
+
+O `waiIllustriousSDXL` usa **Fair AI Public License 1.0-SD**, que tem uma secao
+explicita:
+
+> **Output** — The output of this software is not covered by this license, and
+> no contributor claims any rights to it.
+
+**As imagens geradas nao sao cobertas pela licenca.** Os sprites sao seus,
+vender o jogo esta liberado.
+
+A FAIPL e copyleft sobre o **modelo**, nao sobre a saida: restringe
+redistribuir o checkpoint/LoRA e oferecer o modelo como servico em rede. Nada
+disso e o nosso caso — o modelo fica no Colab, so os PNGs vao para o jogo.
+
+### Resto do stack
+
+Tudo permissivo: WAN 2.2, IP-Adapter, CLIP-ViT-H, controlnet-union e
+AnimateDiff sao **Apache 2.0**; Inspyrenet, Mira e o SAA sao **MIT**.
+
+Quatro packs sao **GPL-3.0** (IPAdapter_plus, VideoHelperSuite,
+Advanced-ControlNet, Manager). **Nao contamina o jogo**: eles rodam no Colab e
+nao sao distribuidos junto. Um PNG feito num programa GPL nao vira GPL — mesma
+logica de uma imagem feita no GIMP.
+
+### Os riscos REAIS (que nao sao de licenca de modelo)
+
+1. **Personagens de anime existentes.** O Illustrious e treinado em tags do
+   Danbooru e reproduz personagens com copyright fielmente — o SAA existe para
+   isso. Gerar alguem reconhecivel e vender **e violacao**, independente de
+   licenca de IA. As 5 personagens tem de ser originais.
+2. **Marca d'agua herdada** (~1 em 10-20 imagens, ja documentado): revisar cada
+   sprite antes de integrar.
+3. **Conteudo adulto e lojas** (v23): Steam aceita com marcacao, consoles nao.
+
+### Verificacao automatica
+
+`checar_regras.py` ganhou uma checagem: **modelo em workflow ativo que nao
+aparece no `LICENCAS.md` gera aviso**. Testado plantando um modelo ficticio no
+registry — o aviso disparou.
+
+Assim, quando adicionarmos um modelo novo, a pergunta da licenca aparece antes
+de virar problema.
+
+### Recomendacao registrada
+
+Guardar print/PDF da pagina de licenca do Civitai na data do download. A Onoma
+AI ja alterou o TOS do Illustrious v0.1 **retroativamente** em 2025 — licencas
+mudam, e o registro do estado na epoca do uso protege.
