@@ -4644,3 +4644,54 @@ Nenhum impede o uso comercial dos sprites.
 
 O passo 3 não é opcional: o `checar_regras.py` **falha** se um modelo de
 workflow ativo não estiver auditado.
+
+## v68 — correção dos 3 workflows trazidos pelo usuário
+
+O usuário commitou `workflow_chibi_converter`, `workflow_wai_img2img` e
+`workflow_wai_ipadapter`, e o ComfyUI recusou com "Entrada inválida".
+
+### O erro confirmou o diagnóstico
+
+A mensagem do ComfyUI era o sintoma exato do deslocamento de widgets:
+
+```
+weight_type    recebeu 0.6       <- devia ser texto
+start_at       recebeu 'concat'  <- devia ser float
+embeds_scaling recebeu 1         <- devia ser texto
+```
+
+O `IPAdapterAdvanced` tem **6 widgets** (conferido em `IPAdapterPlus.py`), e os
+workflows traziam **7** — um `0.6` a mais no início empurrava tudo uma casa.
+
+### Quatro correções
+
+| problema | era | ficou |
+|---|---|---|
+| checkpoint | `wai-illustrious-SDXL.safetensors` | `waiIllustriousSDXL_v170.safetensors` |
+| preset do UnifiedLoader | `PLUS FACE (SDXL)` — **não existe** | `PLUS FACE (portraits)` |
+| widgets do IPAdapter | 7 valores | 6, na ordem certa |
+| embeds_scaling | `V only` | `K+mean(V) w/ C penalty` |
+
+Sobre a pergunta do usuário ("o embeds não tem correção?"): `V only` **é** um
+valor válido — não dá erro. Mas foi a causa do neon queimado da v27, então
+trocar é decisão de qualidade, não de sintaxe. O erro dele vinha do
+deslocamento, que fazia `embeds_scaling` receber `1`.
+
+Presets válidos (de `IPAdapterPlus.py:557`): LIGHT - SD1.5 only, STANDARD,
+VIT-G, PLUS (high strength), PLUS FACE (portraits), FULL FACE - SD1.5 only.
+
+### Não mexido, a pedido
+
+`chibi_style_lora.safetensors` continua referenciado. Não está no Drive —
+o `LoraLoader` deve ficar em **bypass (Ctrl+B)** até o download.
+
+### Sobre o chibi_converter
+
+A abordagem é boa e **diferente da nossa**: em vez de o modelo inventar a
+proporção chibi, o usuário fornece um **molde** (`molde_chibi_base.png`) que
+entra por `VAEEncode` como latente, e o retrato entra pelo IPAdapter dando a
+aparência. Com denoise 0.55 a silhueta do molde se mantém.
+
+Isso pode resolver o problema da v58 — lá o img2img não conseguia mudar a
+proporção porque partia da foto realista. Partindo de um molde que **já é
+chibi**, o conflito some.

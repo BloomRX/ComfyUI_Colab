@@ -368,7 +368,11 @@
     "ImageBlur",
     "ImageQuantize",
     "PorterDuffImageComposite",
-    "ModelSamplingSD3"
+    "ModelSamplingSD3",
+    "Wan22ImageToVideoLatent",
+    "WanImageToVideo",
+    "CreateVideo",
+    "SaveVideo"
   ],
   "pack_extras": {
     "ComfyUI-SkinTokens": {
