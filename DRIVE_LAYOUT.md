@@ -1,0 +1,4745 @@
+# O que fica no Drive e o que NÃO fica
+
+> **LEIA ISTO ANTES DE DIAGNOSTICAR QUALQUER COISA.**
+> Este arquivo tem 70+ seções em ordem cronológica. O índice abaixo é por
+> SINTOMA, não por data. Procure o sintoma aqui antes de formular hipótese —
+> a maioria dos erros desta lista já custou várias tentativas erradas.
+
+## Índice por sintoma
+
+| Sintoma | Causa confirmada | Seção |
+|---|---|---|
+| "Não foi possível encontrar o fluxo de trabalho em X.json" | mensagem é `fileLoadError` = arquivo **ARRASTADO** ilegível, NÃO sidebar | v35 |
+| Workflow lista mas não abre / abas não trocam | estado no **localStorage do navegador**, não no servidor | v34, v35 |
+| Workflow abre vazio ou não renderiza | nó **deprecado** ou tipo ausente no `/object_info` | v37 |
+| Nó com entrada errada / widgets fora de ordem | JSON válido ≠ workflow válido; conferir contra a fonte do pack | v37 |
+| Não aparece botão do Manager | `--enable-manager` bloqueia o clone; usa o pacote pip | v38 |
+| Manager abre mas não instala nada | `network_mode` precisa ser `personal_cloud` | v38 |
+| Download de modelo dá 404 | URL inventada; conferir árvore via API do HF | v33 |
+| Imagens neon / cores queimadas | `embeds_scaling` do IPAdapter em `V only` | v27 |
+| Cor invertida + cabeça dupla no vídeo | módulo de movimento fora da spec (contexto/resolução/beta) | v32 |
+| Personagem muda entre splash e chibi | IPAdapter não trava identidade; falta nó de texto | v31 |
+| Chibi sai com corpo de adulto | peso do IPAdapter alto demais para deformar | v29, v31 |
+| UI lenta | era o cloudflared; usar proxy do Colab | v20 |
+| Processo morre sem mensagem | falta **RAM** (13 GB), não VRAM | v29 |
+| Erro CUDA / torch OOM | falta VRAM | v29 |
+| Pack instalado mas nó não aparece | pasta `.disabled`; rodar C4 e reiniciar C6 | v19 |
+
+## Regras invioláveis (violá-las já custou retrabalho)
+
+1. **Nunca escrever URL de modelo de memória.** Conferir em
+   `https://huggingface.co/api/models/<repo>/tree/main`. — v33
+2. **Nunca inventar nome de chave de config.** Se não foi lido no código-fonte,
+   não existe. Escrever chave inexistente falha em silêncio. — v34
+3. **Ler a string de erro no código-fonte antes de teorizar.** A preposição
+   "in" distinguia dois bugs diferentes. — v35
+4. **JSON válido não garante workflow válido.** Rodar
+   `python scripts/validar_workflows.py --server http://127.0.0.1:8188`
+   antes de considerar pronto. — v37
+5. **Estado de UI vive em dois lugares:** `user/` no servidor E o
+   localStorage/IndexedDB do navegador. — v34
+6. **Módulo de movimento tem spec fechada** (resolução, context_length,
+   beta_schedule). Não são sugestões. — v32
+7. **Nunca `if not exists(dir)` para decidir cópia** Drive↔local; sempre
+   `copytree(..., dirs_exist_ok=True)`. — v24
+8. **Toda sincronização repo→Drive precisa de manifesto** para saber o que
+   remover; copiar sem apagar acumula lixo. — v34
+9. **O mesmo sintoma resistindo a várias correções = hipótese errada**, não
+   implementação errada. Parar e reler a fonte. — v35
+10. **IPAdapter é estilo; texto é identidade.** Nenhum sozinho dá
+    consistência. — v31
+
+
+## Regra geral
+
+| Critério | Onde vive |
+|---|---|
+| Grande + demora pra baixar + não muda | **Drive** (modelos) |
+| Você não pode perder | **Drive** (outputs, inputs) |
+| Reproduzível com 1 comando em 1 min | **/content** (código, venv) |
+| Versionável em texto | **Git** (workflows, registry) |
+
+---
+
+## ✅ FICA no Drive — `MyDrive/ComfyUI_Data/`
+
+```
+ComfyUI_Data/
+├── models/            ← 95% do espaço. O que dói rebaixar.
+│   ├── diffusion_models/   krea2, flux-2-klein-9b...
+│   ├── text_encoders/      qwen3vl_4b, qwen_3_8b...
+│   ├── vae/                qwen_image_vae, flux2-vae, wan_2.1_vae
+│   ├── loras/              krea2_turbo_lora, Alb_LoRaV3, Detailer-KREA2
+│   ├── skintoken/          grpo_1400.ckpt
+│   ├── trellis2/           pesos do TRELLIS.2
+│   └── birefnet/           birefnet.safetensors
+├── output/            ← suas imagens/meshes gerados
+├── input/             ← imagens e meshes de entrada
+├── user/              ← settings da UI + workflows salvos DENTRO do ComfyUI
+└── node_cache/        ← ver aviso abaixo
+```
+
+## ❌ NÃO fica no Drive
+
+| Item | Por quê | Onde fica |
+|---|---|---|
+| `ComfyUI/` (código) | milhares de arquivos pequenos; FUSE torna o boot lento demais | `/content/ComfyUI`, reclonado em ~1 min |
+| `custom_nodes/` | idem, e ainda quebra em update | `/content`, reinstalado pela Célula 4 |
+| `venv` / `site-packages` | nunca ponha env Python no Drive | ambiente do Colab |
+| `.git` dos repos de node | lixo puro | — |
+| `temp/`, `__pycache__` | descartável | local |
+| **Workflows** | são texto, versionar é melhor | **Git**, pasta `Workflows/` |
+
+### Aviso sobre `node_cache/`
+Eu tinha colocado cache dos repos de custom node no Drive. **Para o seu caso, desligue.**
+O TRELLIS2 compila extensões CUDA (`nvdiffrast`, `cumesh`, `flex_gemm`) contra a
+versão exata de torch/CUDA da sessão. Cachear isso no Drive guarda binário que
+provavelmente não serve na próxima sessão — ocupa GB e ainda dá erro obscuro.
+Melhor reclonar. Só vale cache para nodes puros em Python.
+
+---
+
+## Sobre a pasta antiga
+
+**Sim, pode apagar `MyDrive/ComfyUI/` — mas salve os modelos antes.** Nunca apague direto.
+
+```python
+# Ver o que tem lá antes de qualquer coisa
+!du -sh /content/drive/MyDrive/ComfyUI/* | sort -h
+!find /content/drive/MyDrive/ComfyUI/models -size +50M
+```
+
+Passos:
+1. **Mova os modelos** para a estrutura nova (mover no mesmo Drive é instantâneo,
+   não re-upa nada):
+   ```python
+   !mkdir -p /content/drive/MyDrive/ComfyUI_Data
+   !mv /content/drive/MyDrive/ComfyUI/models /content/drive/MyDrive/ComfyUI_Data/models
+   ```
+2. **Salve outputs e inputs** que você queira manter (`output/`, `input/`).
+3. **Confira workflows** dentro de `ComfyUI/user/default/workflows/` — se tiver algo
+   que não está no Git, copie para `Workflows/` e commite.
+4. Aí sim apague `custom_nodes/` e o resto:
+   ```python
+   !rm -rf /content/drive/MyDrive/ComfyUI
+   ```
+
+Apagar `custom_nodes/` do Drive é a maior economia: 20 repos com `.git` completo
+costumam dar vários GB, e são 100% descartáveis.
+
+Atenção: a Lixeira do Google Drive **conta na sua cota**. Depois de apagar,
+esvazie a lixeira, senão o espaço não volta.
+
+---
+
+## VRAM dos seus 3 workflows
+
+Sua estimativa de 6 GB não bate com o que os workflows pedem:
+
+| Workflow | Modelos | Realidade |
+|---|---|---|
+| `CharDesignandPartSplitting` | krea2 int8 + qwen3vl_4b fp8 | ~8–10 GB. Cabe no T4 com `lowvram`. |
+| `Mesh_Processing` | flux-2-klein-9b + qwen_3_8b fp8 + TRELLIS2 | **9B + 8B na mesma sessão.** Não roda em T4. Precisa de A100. |
+| `Skintoken` | grpo_1400.ckpt (Qwen3-0.6B) | ~4 GB, leve. Mas exige **Blender 4.0+** instalado. |
+
+Ou seja: mais um motivo forte para uma sessão por workflow — e o `Mesh_Processing`
+não é questão de organização, é questão de não caber mesmo em GPU pequena.
+
+---
+
+# Como rodar o notebook no Colab
+
+**Direto do Git, sem baixar nada.** Abra:
+
+```
+https://colab.research.google.com/github/BloomRX/ComfyUI_Colab/blob/arena/01a05a82-comfyui-collab/notebooks/ComfyUI_Colab_Limpo.ipynb
+```
+
+Regra: troque `github.com` por `colab.research.google.com/github`.
+
+Isso abre em **modo leitura** — roda normalmente, mas `Ctrl+S` não volta para o Git.
+Para manter suas edições: *Arquivo → Salvar uma cópia no Drive*.
+
+Você **não precisa** editar o notebook para adicionar workflows (veja abaixo), então
+na prática dá para sempre abrir pelo link do GitHub e ter a versão mais recente.
+
+O notebook clona este repo dentro do Colab, então workflows e registry chegam
+sempre atualizados sem você mexer em nada.
+
+---
+
+# Adicionar workflows depois — sem me avisar
+
+O notebook se adapta sozinho. Fluxo:
+
+1. Commite o `.json` em `Workflows/` (ou solte em `ComfyUI_Data/workflows/` no Drive).
+2. Rode as células. Ele aparece na lista numerada da Célula 3 automaticamente.
+
+A Célula 3 só **lista**; a escolha é na Célula 4, escrevendo os números (`1`, `1,3`, `all`).
+Se a lista vier vazia, a Célula 2 imprime quantos workflows achou em cada pasta —
+isso diz na hora se o problema foi o clone do repo ou a pasta do Drive.
+
+Para descobrir os custom nodes, há **três camadas**, nesta ordem:
+
+| Camada | O que é | Cobre |
+|---|---|---|
+| 1. `config/node_registry.json` | mapa curado, com deps extras (Blender, DINOv3...) | seus 3 workflows, 100% |
+| 2. `extension-node-map.json` do Manager | ~2.3 MB, milhares de nodes da comunidade | quase todo node público |
+| 3. Manager na UI | *Install Missing Custom Nodes* | o resto |
+
+A camada 2 é o que faz a adaptação automática: um node que eu nunca vi, mas que existe
+no ecossistema, é resolvido sem intervenção. Na Célula 3 ele aparece marcado `(auto: ...)`.
+Se nem o Manager conhecer, aparece `[!] sem fonte` e aí é instalação manual.
+
+**Quando me chamar:** só se o node precisar de algo além de `git clone` +
+`requirements.txt` — como o SkinTokens, que precisa de Blender via `apt`, ou o
+Trellis2-GGUF, que precisa dos pesos do DINOv3. Essas coisas ficam em `pack_extras`
+no registry, e são o único caso que exige curadoria.
+
+---
+
+# O que os installers do tutorial revelaram
+
+Os `.bat` são para **ComfyUI Easy Install no Windows** (`python_embeded`, wheels
+`win_amd64`, PATH do Blender). Nada disso roda no Colab. Mas eles corrigiram os
+repositórios — meu chute inicial estava errado:
+
+| Antes (errado) | Correto, segundo o `.bat` |
+|---|---|
+| `PozzettiAndrea/ComfyUI-TRELLIS2` | `visualbruno/ComfyUI-Trellis2` (wheels) + `Aero-Ex/ComfyUI-Trellis2-GGUF` (nodes `*_GGUF`) |
+| `Rizzlord/ComfyUI-SkinToken` | `Aero-Ex/ComfyUI-SkinTokens` |
+| *(faltando)* | `Aero-Ex/Texture_Projection-Nodes` |
+
+Também extraí dos `.bat` e coloquei em `pack_extras`:
+- **DINOv3** (`PIA-SPACE-LAB/dinov3-vitl-pretrain-lvd1689m`) → baixado para
+  `models/facebook/dinov3-vitl16-pretrain-lvd1689m/`, exigido pelo Trellis2-GGUF.
+- **Blender** → instalado via `apt` quando o SkinTokens é selecionado.
+
+O que **não** dá para portar: as wheels pré-compiladas (`cumesh`, `nvdiffrast`,
+`flex_gemm`, `o_voxel`, `flash_attn`) são todas `cp312-win_amd64`. No Linux o
+`install.py` precisa compilar — é lento e pode falhar. Alvo do `.bat` é
+Torch 2.8.0 + CUDA 12.8 + Python 3.12; se o Colab divergir muito disso, o Trellis2
+é o primeiro a quebrar.
+
+---
+
+# Flags do `main.py` — cuidado
+
+**`--normalvram` não existe.** O modo normal é o padrão do ComfyUI: você não passa
+flag nenhuma. As flags reais são `--highvram`, `--lowvram`, `--novram`, `--gpu-only`, `--cpu`.
+Por isso a Célula 6 usa `auto` como padrão (= não passa nada).
+
+A Célula 6 agora roda `main.py --help` antes de subir e **descarta qualquer flag que
+aquela versão não reconheça**. Assim uma atualização do ComfyUI que remova ou renomeie
+uma flag não derruba mais o notebook.
+
+Ela também detecta `--enable-manager`: nas versões novas o ComfyUI-Manager vem
+integrado ao core e precisa dessa flag para ligar a UI dele.
+
+---
+
+# 403 no link do cloudflared
+
+Sintoma: o ComfyUI sobe, o log mostra `To see the GUI go to: http://127.0.0.1:8188`,
+mas o link `*.trycloudflare.com` responde **HTTP ERROR 403**.
+
+Causa: `--listen 127.0.0.1` faz o ComfyUI aceitar só requisições cujo `Host` seja
+localhost. O túnel encaminha o `Host: xxx.trycloudflare.com`, o servidor considera
+isso um ataque de DNS-rebinding e devolve 403 — antes mesmo de servir a página.
+
+Correção na Célula 6: **`--listen 0.0.0.0`** (+ `--enable-cors-header *`).
+Continua seguro: nada da VM do Colab é exposto além do túnel, que é efêmero.
+
+# Manager não aparecia
+
+O log trazia:
+
+```
+To use the `--enable-manager` feature, the `comfyui-manager` package must be installed first.
+```
+
+Desde as versões novas o ComfyUI-Manager virou **pacote pip do core** — clonar em
+`custom_nodes/` não basta. A Célula 6 agora roda
+`pip install -r manager_requirements.txt` antes de subir, e o ícone de plugin aparece
+(ou em *Menu → Manage Extensions*).
+
+---
+
+# "Corrigi o notebook mas o erro é o mesmo"
+
+O Colab **guarda em cache** o `.ipynb` aberto via `colab.research.google.com/github/...`.
+Reexecutar a célula roda o código velho — o commit novo não chega sozinho.
+
+Como saber: a Célula 6 imprime `Notebook Celula 6: v6-wf-inject` na primeira linha.
+Se esse marcador não aparecer, ou o comando ecoado mostrar `--listen 127.0.0.1`,
+você está numa cópia antiga.
+
+Como forçar a versão nova (qualquer uma serve):
+1. Fechar a aba do Colab e reabrir o link do GitHub;
+2. *Arquivo → Reverter para a versão salva*;
+3. Abrir o link com um parâmetro qualquer no fim, ex: `...ipynb?v=2`.
+
+Se você salvou uma cópia no Drive, ela **não** recebe atualizações do Git — nesse caso
+apague a cópia e reabra pelo link do GitHub.
+
+---
+
+# Aba "Workflows" vazia
+
+A aba lê de `<user-directory>/default/workflows/`, que no nosso caso é
+`ComfyUI_Data/user/default/workflows/`. Os workflows do repo ficam em outro lugar,
+então a aba nascia vazia.
+
+A Célula 4 agora **copia os workflows selecionados para lá** automaticamente.
+Ao abrir a UI eles já aparecem na aba, sem precisar de *Load* ou arrastar arquivo.
+
+Detalhes:
+- Só copia o que foi selecionado — a aba fica com os da sessão, não com tudo.
+- Como a pasta está no Drive, o que você editar e salvar **persiste** entre sessões.
+- Se o arquivo já existe e é idêntico, não sobrescreve (não perde suas edições).
+- Workflows em **formato API** não aparecem na aba (limitação da UI). O aviso é
+  impresso na Célula 4. Seus 3 são formato UI, então todos aparecem.
+
+> Cuidado: se você editar um workflow na UI e quiser versionar a mudança, copie de
+> volta para `Workflows/` no repo e commite. A pasta do Drive não é o Git.
+
+---
+
+# Os 2 tipos de erro ao abrir um workflow
+
+## A) "Pacotes de nós ausentes" — eu resolvo (registry)
+
+Era um bug meu, em duas partes:
+
+1. Marquei `FluxKleinOneNode` e `ResolutionSelector` como **nativos** no
+   `native_ignore`. Não são: vêm de `yanokusnir-ai/one-node-flux-2-klein`.
+   Como estavam na lista de ignorados, o notebook nunca instalava o pacote.
+2. **O parser não entrava em subgraphs.** O workflow tem um nó com nome de UUID
+   (`53a025e4-...`) que é um subgraph com **21 nós dentro** — todos invisíveis
+   para o parser. Corrigido: agora ele desce em `definitions.subgraphs`.
+
+Depois da correção, os 3 workflows resolvem com **zero nós desconhecidos**.
+
+**Quando me chamar:** sempre que a Célula 3 imprimir `[!] sem fonte: ...`, ou a UI
+acusar pacote ausente. É sinal de registry incompleto, e o conserto é no repo —
+não adianta você contornar na UI, porque na próxima sessão volta.
+
+Alternativa imediata (funciona, mas não persiste): Manager → *Install Missing
+Custom Nodes* → Restart.
+
+## B) "Modelos Ausentes" — a Célula 5 resolve
+
+Modelo é arquivo de peso, não código: nunca vem no `git clone`. Agora a **Célula 5
+baixa os modelos dos workflows selecionados**, direto para o Drive, pulando o que
+já existe. Para o `CharDesignandPartSplitting`:
+
+| Arquivo | Pasta | Tamanho |
+|---|---|---|
+| `krea2_turbo_int8_convrot.safetensors` | `diffusion_models` | 13.5 GB |
+| `qwen3vl_4b_fp8_scaled.safetensors` | `text_encoders` | 4.88 GB |
+| `krea2_turbo_lora_rank_64_bf16.safetensors` | `loras` | 469 MB |
+| `qwen_image_vae.safetensors` | `vae` | 254 MB |
+
+**~19 GB.** Baixa uma vez, fica no Drive. Confira sua cota antes.
+
+### Os que a UI listou e não têm download automático
+
+- **`krea2_raw_int8_convrot`** — existe no repo oficial (13.5 GB), mas é a variante
+  *raw*, alternativa à *turbo*. Baixar as duas = 27 GB. Está marcado `optional`;
+  desmarque `PULAR_OPCIONAIS` se quiser. Ou aponte o `UNETLoader` para a turbo.
+- **`wan_2.1_vae`** — de um ramo alternativo do grafo. O caminho principal usa
+  `qwen_image_vae`. Troque no node ou bypasse o ramo.
+- **`Detailer-KREA2`** — LoRA de detalhe, não está no repo oficial. Bypasse o
+  `LoraLoaderModelOnly` (Ctrl+B) ou procure no Manager → Model Manager.
+
+### Workflows futuros: a Célula 5 se adapta sozinha
+
+Você estava certo em desconfiar — na primeira versão, `workflow_models` era uma
+lista fixa e um workflow novo não baixaria nada. Agora são **três camadas**, igual
+ao que já fazemos com custom nodes:
+
+| Camada | O que faz | Cobre |
+|---|---|---|
+| 1. `workflow_models` no registry | curado por mim, com notas e `optional` | seus workflows atuais |
+| 2. `model-list.json` do Manager | ~281 KB, milhares de modelos conhecidos | SDXL, VAEs, upscalers, ControlNets, Flux... |
+| 3. Aviso explícito | lista o que sobrou e por quê | LoRA de Patreon, arquivo privado |
+
+Como a camada 2 funciona: a célula varre o JSON do workflow atrás de qualquer
+string terminada em `.safetensors`, `.ckpt`, `.gguf`, `.pt`, `.pth`, `.bin`, `.onnx`,
+pega o nome do arquivo e procura na base do Manager. Achou, baixa para a pasta
+certa (deduz de `save_path`/`type`) e marca `[auto]` no log.
+
+Testado com um workflow inventado: resolveu `sd_xl_base_1.0` e `4x-UltraSharp`
+sozinho, detectou que o VAE já existia no Drive e **não** rebaixou, e listou só a
+LoRA fictícia como sem fonte.
+
+Também há **deduplicação por nome em todo o `models/`**: se o arquivo já está no
+Drive em qualquer subpasta, ele pula — não importa se você baixou pelo Manager,
+manualmente ou por outro workflow.
+
+`SO_LISTAR = True` mostra o plano sem baixar nada. Use antes de um workflow pesado
+para ver quantos GB vão entrar.
+
+**Quando ainda me chamar:** só se o modelo não estiver na base do Manager e vier de
+uma fonte pública estável — aí eu adiciono em `workflow_models` com a URL e uma nota.
+Modelo de Patreon/Discord/civitai privado nunca dá para automatizar: baixe manual,
+ou use `URL_EXTRA` + `PASTA_EXTRA` na Célula 5 se tiver link direto.
+
+---
+
+# Barras de progresso (sem spam no log)
+
+Módulo `config/nbui.py`, importado por todas as células.
+
+O spam que você viu vem de duas fontes: `wget --show-progress` e barras tipo `tqdm`
+dentro de scripts de instalação. No Colab, cada atualização vira **uma linha nova**
+porque a saída é bufferizada por linha, não é um terminal de verdade.
+
+Solução: no Colab usamos `ipywidgets.FloatProgress` — um objeto que se atualiza
+**no lugar**, ocupando uma linha só de verdade. Fora do Colab cai para `\r`.
+
+O que cada célula mostra agora:
+
+| Célula | Barra |
+|---|---|
+| 1 | `Preparando ambiente: 3/4` + uma barra por git/pip |
+| 4 | `Instalando pacotes: 2/6` + barra por clone, deps e `install.py` |
+| 5 | `Modelos: 1/4` + barra por download com **MB, MB/s e ETA** |
+| 6 | barra durante o pip do Manager |
+
+Detalhes do downloader próprio (substitui o `wget`):
+- Mostra `1.2GB/13.5GB · 8.3MB/s · ETA 1470s` numa linha só.
+- Baixa para `.part` e só renomeia no fim — **arquivo truncado nunca é confundido
+  com download completo** (o `wget -c` antigo deixava lixo pela metade).
+- Retoma de onde parou via header `Range` se a sessão cair no meio.
+
+Comandos (`git clone`, `pip`, `install.py`) mostram uma barra viva com a última
+linha do log ao lado. **Se falhar, aí sim imprime as últimas 12 linhas** — silencioso
+quando dá certo, verboso quando quebra, que é quando você precisa.
+
+---
+
+# Checagem de ambiente (GPU x CPU) na Célula 6
+
+Antes de subir o servidor, a Célula 6 imprime um resumo:
+
+```
+================================================================
+  AMBIENTE DE EXECUCAO
+================================================================
+  Acelerador : GPU — Tesla T4
+  VRAM       : 15360 MB
+  PyTorch    : 2.11.0+cu128  | CUDA disponivel: True
+  RAM        : 12.9 GB   | Disco livre: 78.2 GB
+================================================================
+```
+
+**Com GPU:** segue direto, sem perguntar nada.
+
+**Sem GPU:** explica as consequências e **pergunta antes de ligar**, com dois botões
+(*Sim, ligar em CPU* / *Não, vou trocar para GPU*). Sem resposta em 120s, não liga.
+Fora do Colab cai para `input()`; sem stdin, cancela — nunca sobe por acidente.
+
+O aviso é específico, não genérico:
+- geração ~20x a 100x mais lenta;
+- Trellis2 e SkinTokens **não rodam** em CPU (dependem de kernels CUDA);
+- Krea-2 / Flux2 provavelmente estouram a RAM.
+
+Detecção cruzada: `nvidia-smi` **e** `torch.cuda.is_available()`. Se o `nvidia-smi`
+enxerga a placa mas o torch não acessa CUDA, isso é dito explicitamente — é um caso
+real (torch CPU-only instalado por engano) que passaria despercebido.
+
+Quando o modo CPU é confirmado, o notebook adiciona **`--cpu`** ao `main.py`.
+Sem essa flag o ComfyUI tenta inicializar CUDA e quebra no boot.
+
+> Trocar o ambiente **reinicia a sessão**: é preciso rodar as células 1..5 de novo.
+> Nada que já esteja no Drive é baixado outra vez, então costuma ser rápido.
+
+---
+
+# Baixar um modelo avulso do HuggingFace
+
+Exemplo: `https://huggingface.co/ShinoharaHare/Waifu-Inpaint-XL`
+
+Esse repo tem duas particularidades comuns que vale saber reconhecer.
+
+## 1. É "gated" — precisa de token
+
+A página diz *"You need to agree to share your contact information to access this
+model"*. Ele é público, mas exige aceite. Sem isso, o download retorna **401/403**.
+
+Passos:
+1. Logue no HuggingFace e abra a página do modelo.
+2. Aceite as condições (botão *Agree and access repository*). É uma vez só, por conta.
+3. Gere um token em **huggingface.co/settings/tokens** (tipo *Read* basta).
+4. Cole em **`HF_TOKEN`** na Célula 5.
+
+## 2. Tem dois formatos no mesmo repo — pegue o certo
+
+| O que é | Serve no ComfyUI? |
+|---|---|
+| `Waifu-Inpaint-XL.safetensors` (6.94 GB) | **Sim** — é este que você quer |
+| pastas `unet/`, `vae/`, `text_encoder/`, `scheduler/`... | Não — formato `diffusers`, para Python |
+
+O ComfyUI carrega **checkpoint de arquivo único**. Ignore as pastas.
+
+## Como baixar
+
+Na **Célula 5**:
+- `URL_EXTRA` = link do arquivo
+- `PASTA_EXTRA` = `checkpoints`
+- `HF_TOKEN` = seu token
+
+```
+https://huggingface.co/ShinoharaHare/Waifu-Inpaint-XL/resolve/main/Waifu-Inpaint-XL.safetensors
+```
+
+A célula aceita também o link `/blob/` (o que aparece ao clicar no arquivo) e
+converte sozinha para `/resolve/`. Se você colar a URL da **página do repo**, ela
+avisa em vez de baixar um HTML de 200 KB com nome de `.safetensors` — erro clássico,
+que só aparece depois como "checkpoint corrompido".
+
+Como pegar o link certo: aba **Files** → clique no `.safetensors` → botão **download**
+→ copiar endereço do link.
+
+## Onde cada tipo vai
+
+| Tipo | `PASTA_EXTRA` |
+|---|---|
+| Checkpoint SD/SDXL (arquivo único) | `checkpoints` |
+| LoRA | `loras` |
+| VAE avulso | `vae` |
+| ControlNet | `controlnet` |
+| Upscaler (`.pth`) | `upscale_models` |
+| UNet/GGUF isolado | `unet` ou `diffusion_models` |
+
+## Inpaint: cuidado com o workflow
+
+Modelo de inpaint SDXL não funciona num grafo txt2img comum. Precisa de
+`VAEEncodeForInpaint` (ou `SetLatentNoiseMask`) e de uma máscara. Nos templates do
+ComfyUI: *Workflow → Browse Templates → Inpainting*.
+
+---
+
+# Como pegar o token do HuggingFace
+
+## 1. Criar o token (no site)
+
+1. Crie a conta / logue em **huggingface.co**.
+2. Vá em **huggingface.co/settings/tokens**
+   (ou: sua foto no canto superior direito → *Settings* → *Access Tokens*).
+3. **Create new token**.
+4. Tipo: **Read** — é o suficiente para baixar. Nunca use *Write* aqui.
+5. Dê um nome (ex: `colab-comfyui`) e crie.
+6. **Copie na hora.** O HF mostra o token uma única vez; depois só resta gerar outro.
+   Formato: `hf_` seguido de ~34 caracteres.
+
+Antes de baixar um modelo *gated*, ainda é preciso abrir a página dele logado e
+clicar em **Agree and access repository**. O token sozinho não pula esse aceite.
+
+## 2. Guardar o token (no Colab) — sem colar no notebook
+
+**Não** existe mais campo de texto para o token no notebook. Isso foi proposital:
+um `#@param` grava o valor **dentro do arquivo .ipynb**, e se você salvasse uma
+cópia no Drive ou commitasse no Git, o token ia junto, em texto puro.
+
+Use o cofre do Colab:
+
+1. Painel esquerdo → ícone de **chave 🔑** (*Secrets*).
+2. **+ Adicionar novo secret**.
+3. Nome: **`HF_TOKEN`** (exatamente assim). Valor: o token.
+4. Ligue a chavinha **"Acesso ao notebook"**.
+5. Rode a Célula 5 de novo.
+
+Confirmação no log:
+```
+HF_TOKEN carregado de: Colab Secrets (…a1b2)
+```
+Só os 4 últimos caracteres aparecem — o suficiente para conferir qual token é,
+sem expor nada.
+
+O secret fica na sua conta Google, não no arquivo: vale para todos os notebooks,
+sobrevive à troca de sessão e nunca é commitado.
+
+### Alternativa para uma vez só
+
+Se não quiser criar o secret, rode numa célula nova:
+
+```python
+pedir_token()
+```
+
+Abre um campo mascarado (`getpass`), guarda só na memória da sessão e some quando
+o runtime reinicia. Depois é só reexecutar a Célula 5.
+
+## Ordem de busca do token
+
+1. **Colab Secrets** (`HF_TOKEN`) — recomendado
+2. Variável de ambiente `HF_TOKEN`
+3. `pedir_token()` na hora
+
+Sem nenhum dos três, a célula avisa e segue baixando só o que é público.
+
+---
+
+# `IMPORT FAILED: custom_nodes/ComfyUI`
+
+Erro no log:
+
+```
+FileNotFoundError: '/content/ComfyUI/custom_nodes/ComfyUI/__init__.py'
+Cannot import /content/ComfyUI/custom_nodes/ComfyUI module for custom nodes
+0.0 seconds (IMPORT FAILED): /content/ComfyUI/custom_nodes/ComfyUI
+```
+
+Causa: no `extension-node-map.json` do Manager, os nós **do core** aparecem
+apontando para o repo `comfyanonymous/ComfyUI`. O auto-resolve pegava esse link,
+extraía o basename `ComfyUI` e clonava para `custom_nodes/ComfyUI` — uma cópia do
+ComfyUI inteiro dentro da pasta de custom nodes. Sem `__init__.py` na raiz, o
+import falha.
+
+Era inofensivo (só barulho no log), mas desperdiçava download e podia confundir.
+
+Correções:
+- Lista `never_install` no registry (`ComfyUI`, `ComfyUI-Manager`, frontend).
+- `resolve()` devolve `None` para qualquer coisa que aponte para o repo do core.
+- A Célula 4 **apaga** `custom_nodes/ComfyUI` inválido, se já existir.
+
+## Custom nodes "sobrando" no log
+
+O log também mostrou `ComfyUI-Impact-Pack` e `ComfyUI-Impact-Subpack` carregando,
+mesmo sem estarem nos workflows selecionados. Isso é esperado: o notebook só
+desativa o que ele mesmo instalou naquela sessão. Nodes instalados **pela UI do
+Manager** ficam ativos até você desativá-los.
+
+Se quiser sessão 100% limpa, rode a Célula 4 de novo — ela renomeia para
+`.disabled` tudo que não pertence aos workflows marcados.
+
+---
+
+# Workflows 4–7: o que aconteceu
+
+Aquela listagem saiu de uma sessão **anterior ao fix `v13`**, por isso o pacote
+fantasma `ComfyUI` aparecia em quase todos. Já está corrigido.
+
+Também ampliei o registry: **37 pacotes** (era 25) e **96 nós** mapeados, cobrindo
+Comfyroll, tinyterra, mikey, WAS, ComfyMath, Chibi, AutomaticCFG, Extra-Samplers,
+QualityOfLife, temperature-settings, perturbed-attention, ComfyI2I e Cosmos-Reference.
+
+## Duas novas camadas de dedução
+
+Os "sem fonte" eram quase todos **display names**, não class types:
+
+| Antes | Agora |
+|---|---|
+| `Lora Loader Stack (rgthree)` | sufixo `(rgthree)` → `rgthree-comfy` |
+| `Image Comparer (rgthree)` | idem |
+| `CR Apply LoRA Stack` | prefixo `CR ` → `ComfyUI_Comfyroll_CustomNodes` |
+| `PrimitiveNode` | reconhecido como nativo do core |
+| `FreeU_V2 (Advanced)` | mapeado para `sd-perturbed-attention` |
+
+Prefixos conhecidos ficam em `prefix_hints` no registry (`CR `, `ttN `, `Mikey`,
+`WAS `, `Chibi`, `CM_`). Isso faz packs inteiros serem reconhecidos sem eu precisar
+listar nó por nó.
+
+Ordem de resolução agora: **registry → mapa do Manager → prefixo → sufixo `(pack)`**.
+
+## Sobre os workflows novos
+
+Eles estão só no seu Drive — no Git há apenas os 3 originais. Funciona, mas se
+commitar em `Workflows/` você ganha versionamento e eu consigo validar cada um.
+
+## Atenção ao `Efaces_Pony_XL_V01`
+
+São **15 pacotes** num workflow só. Isso multiplica o risco de conflito de
+dependência (vários deles mexem em `numpy`/`opencv`) e o tempo de import. Se algo
+quebrar depois de rodá-lo, é o primeiro suspeito — rode-o numa sessão isolada.
+
+## `WaifuInpaintXL` — só nós nativos
+
+Não precisa de nenhum custom node, só do checkpoint de 6.94 GB. Como é *gated*,
+configure o secret `HF_TOKEN` antes (veja a seção acima).
+
+---
+
+# Validação dos 7 workflows (todos no Git)
+
+Rodei o parser real em cada um. Resultado: **zero nós sem fonte**.
+
+| # | Workflow | Pacotes | Observação |
+|---|---|---|---|
+| 1 | CharDesignandPartSplitting | 1 | Krea-2, ~19 GB |
+| 2 | Detailer | 3 | Impact Pack + Subpack |
+| 3 | Efaces_Pony_XL_V01 | **14** | o mais arriscado |
+| 4 | Mesh_Processing | 6 | não cabe em T4 |
+| 5 | PotatCats-inpaint ANIMA | 8 | modelos ANIMA são do autor |
+| 6 | Skintoken | 1 | precisa de Blender |
+| 7 | WaifuInpaintXL | **0** | só nós nativos |
+
+Foram 32 nós desconhecidos mapeados nesta rodada. Os grupos maiores:
+- **Impact Pack**: `ToBasicPipe`, `FromBasicPipe`, `MaskToSEGS`, `SegsToCombinedMask`,
+  `DetailerForEachDebug`, `MaskPreview`, `ImpactImageInfo`.
+- **WAS Suite**: `Constant Number`, `Image Resize`, `Images to RGB`.
+- **Nativos do core** (não eram custom node): `BasicScheduler`, `GITSScheduler`,
+  `CLIPTextEncodeSDXL`, `PatchModelAddDownscale`, `ImageBlend`, `ImageCompositeMasked`.
+
+Registry hoje: **38 pacotes, 135 nós, 98 nativos**.
+
+## Downloads automáticos adicionados
+
+| Workflow | Arquivo | Tamanho |
+|---|---|---|
+| WaifuInpaintXL | `Waifu-Inpaint-XL.safetensors` | 6.94 GB (**gated**) |
+| Detailer | `v1-5-pruned-emaonly-fp16.safetensors` | 2.13 GB |
+| Efaces | `sdxl_vae.safetensors` | 335 MB |
+
+A Célula 5 agora **detecta modelo gated sem token** e explica o que fazer, em vez
+de tentar baixar e salvar um HTML de erro com nome de `.safetensors`.
+
+## O que continua manual (Civitai / autor)
+
+Civitai não tem URL estável para download direto, então estes ficam com nota:
+`waiIllustriousSDXL_v160`, `Eyeful_v2-Paired.pt` (vai em `models/ultralytics/bbox`),
+`aaaautismPonyFinetune_v4`, `Expressive_H-000001`, `detailed_notrigger`,
+e os modelos ANIMA (`anima-base-v1.0`, `AnimeEditV2`, `qwen_3_06b_base`).
+
+Baixe manualmente e coloque na pasta indicada, ou use `URL_EXTRA` + `PASTA_EXTRA`
+se tiver link direto.
+
+## Recomendação de ordem
+
+1. **WaifuInpaintXL** — zero custom nodes, 1 modelo. Melhor teste inicial.
+2. **Detailer** — 3 pacotes estáveis.
+3. **CharDesign** — pesado mas automático.
+4. **Efaces** — 14 pacotes: rode isolado, é o candidato natural a conflito.
+5. **Mesh_Processing** — só em GPU maior que T4.
+
+---
+
+# PixAI, Civitai e afins — de onde dá para puxar
+
+## PixAI (pixai.art)
+
+É uma **plataforma de geração**, não um repositório de modelos. Você gera na nuvem
+deles, com os modelos deles. Isso muda o que dá para trazer:
+
+| O que | Dá? |
+|---|---|
+| **Workflow ComfyUI** | **Não.** O PixAI não usa ComfyUI. Não existe JSON para exportar. |
+| **Prompt + parâmetros** | Sim — ficam visíveis na página da imagem (quando o autor compartilha). |
+| **LoRA / checkpoint** | **Às vezes.** Depende do autor ter permitido download. |
+
+Se o download existir, fica no menu de três pontinhos (`...`) na página do modelo.
+Muitos são "somente geração no site" e não têm essa opção — não há truque, é
+decisão de quem subiu.
+
+**O caminho mais produtivo:** a maioria das LoRAs de anime populares no PixAI é
+reupload (ou tem equivalente) no **Civitai** ou no **HuggingFace**. Procure pelo nome
+lá primeiro — quase sempre acha, e com download direto.
+
+O que sempre dá para aproveitar é a **receita**: prompt, negative, sampler, steps,
+CFG, LoRAs usadas e pesos. Isso você reproduz no seu ComfyUI com os modelos
+equivalentes.
+
+## Onde cada fonte se encaixa
+
+| Fonte | Modelos | Workflow ComfyUI | Download automatizável |
+|---|---|---|---|
+| **HuggingFace** | sim | às vezes | **sim** (Célula 5) |
+| **Civitai** | sim | sim (aba *Workflows*) | não (URL instável) |
+| **PixAI** | parcial | não | não |
+| **OpenArt / Comfy Workflows** | não | **sim**, feitos para ComfyUI | n/a |
+
+Para **workflows** prontos de ComfyUI, os lugares certos são
+`openart.ai/workflows`, `comfyworkflows.com`, a aba *Workflows* do Civitai e os
+templates embutidos (*Workflow → Browse Templates*).
+
+## Trazendo um workflow de fora
+
+O fluxo já está pronto para isso:
+1. Baixe o `.json` (ou arraste o **PNG** gerado pelo ComfyUI — ele carrega o grafo
+   embutido nos metadados).
+2. Ponha em `Workflows/` no repo, ou em `ComfyUI_Data/workflows/` no Drive.
+3. Rode as Células 3 → 4 → 5. Os custom nodes e os modelos conhecidos são
+   resolvidos automaticamente.
+
+> Cuidado com licença: vários modelos de anime têm restrição de uso comercial ou
+> proíbem redistribuição. Se for usar para algo além de teste pessoal, leia a
+> licença na página do modelo.
+
+---
+
+# Waifu para o Project AIRI: Live2D ou 3D (VRM)?
+
+O AIRI aceita os dois: **Live2D** e **VRM** (e, nas versoes recentes, tambem MMD,
+Spine 2D e "Tachie"). Os dois tem auto-blink, look-at, idle e lip-sync. Ou seja:
+pelo lado do AIRI, nao ha um vencedor. A escolha e sobre **producao**, nao sobre
+suporte.
+
+## O ponto que costuma ser mal entendido
+
+**O ComfyUI nao gera Live2D nem VRM.** Ele nao produz o arquivo final em nenhum
+dos dois casos. O que ele faz e produzir a **materia-prima**:
+
+- Live2D -> a arte da personagem, ja **separada em partes** (cabelo, olhos, boca,
+  braco esquerdo, etc.), em PNG com transparencia.
+- 3D/VRM -> a **referencia visual** (e, opcionalmente, uma malha bruta).
+
+O rig — o que faz a personagem se mexer — e feito **fora** do ComfyUI:
+Cubism Editor (Live2D) ou Blender/VRoid Studio (VRM). Nao existe atalho para
+essa parte hoje.
+
+## Comparacao honesta
+
+| | Live2D | 3D / VRM |
+|---|---|---|
+| Fidelidade ao seu desenho | **altissima** — e literalmente o seu desenho | media — o estilo passa por um filtro 3D |
+| Trabalho para o primeiro resultado | alto (rig manual, camada por camada) | **baixo** se usar VRoid Studio |
+| Angulos | so o angulo desenhado (~30 graus de giro) | **qualquer** angulo, camera livre |
+| Custo de mudar a personagem depois | alto | baixo |
+| Ferramenta de rig | Cubism (versao gratis limita parametros) | VRoid Studio / Blender (gratis) |
+| Curva de aprendizado | ingreme | suave |
+| Cara de "VTuber classica" | sim | mais "jogo" |
+
+## Recomendacao pratica
+
+**Comece pelo 3D (VRM), mesmo que voce prefira Live2D no fim.**
+
+O motivo nao e estetico, e de risco. Com o **VRoid Studio** (gratis) voce tem
+uma VRM funcional rodando dentro do AIRI **no mesmo dia** — e ai voce descobre
+coisas que so aparecem no uso real: se a personalidade combina, se a proporcao
+funciona na tela, se voce se cansa do design. Um rig Live2D decente leva
+**semanas** e trava o design: se voce mudar de ideia sobre o penteado, refaz
+boa parte do rig.
+
+Ou seja: use a VRM como **protótipo jogável** do conceito. Se depois de umas
+semanas convivendo com ela voce ainda quiser o visual 2D, ai sim investe no
+Live2D — e ai voce ja vai saber exatamente qual design quer rigar.
+
+## Como os SEUS workflows se encaixam
+
+Isso e o que mais importa: voce ja tem as duas trilhas montadas.
+
+### Trilha comum (defina a personagem) — faca isso primeiro
+
+| Workflow | Papel |
+|---|---|
+| `Efaces_Pony_XL_V01` ou `PotatCats-inpaint ANIMA` | gerar a personagem a partir do seu conceito |
+| `Detailer` | consertar rosto/olhos (ADetailer) |
+| `WaifuInpaintXL` | corrigir pedacos pontuais sem refazer tudo |
+
+Saida desejada: um **character sheet** — a mesma personagem de frente, 3/4,
+perfil e costas, com o mesmo outfit. Isso e o insumo das duas trilhas. Gaste
+tempo aqui; e o unico passo que nao da para refazer barato depois.
+
+Dica de consistencia: fixe a **seed** e o prompt, mude so a pose/angulo. Se a
+personagem "escorregar" entre as imagens, gere uma vez, e use `WaifuInpaintXL` /
+`Detailer` para trazer as outras de volta ao mesmo rosto.
+
+### Trilha Live2D
+
+| Workflow | Papel |
+|---|---|
+| `CharDesignandPartSplitting` | **este e o coracao da trilha 2D** — separa a personagem em partes |
+| `WaifuInpaintXL` | preencher o que fica escondido atras de outra camada |
+
+Aquele segundo workflow tem um papel que nao e obvio: no Live2D, quando o braco
+se move, aparece o pedaco do torso que estava atras dele. Esse pedaco **nunca
+foi desenhado**. O inpaint serve exatamente para inventar essas areas ocultas —
+e sem isso o rig fica com buracos. Depois disso, os PNGs vao para o **Cubism
+Editor**, e o `.model3.json` resultante voce importa no AIRI.
+
+Custo: `CharDesignandPartSplitting` puxa o Krea-2, **~19 GB**. Cabe no T4, mas
+demora para baixar. Vale deixar no Drive.
+
+### Trilha 3D
+
+| Workflow | Papel |
+|---|---|
+| `Mesh_Processing` | imagem -> malha 3D (Trellis2) |
+| `Skintoken` | texturas de pele |
+
+**Aviso importante e ja conhecido:** `Mesh_Processing` **nao roda no T4** (usa
+flux-2-klein-9b + Trellis2; precisa de A100). E o `Skintoken` exige Blender no
+PATH. Nenhum dos dois esta disponivel para voce hoje no Colab gratuito.
+
+E aqui vai a parte contraintuitiva: **isso nao te bloqueia**. A malha que o
+Trellis2 gera e uma malha bruta, sem esqueleto, sem blendshapes de expressao,
+sem os "spring bones" do cabelo — ou seja, **nao e uma VRM** e ainda daria muito
+trabalho no Blender. Para uma waifu de companhia, o **VRoid Studio** e o caminho
+mais curto e melhor: exporta VRM ja rigada, com expressoes e fisica de cabelo
+prontas. Voce usa o character sheet do ComfyUI so como **referencia visual** e
+recria no VRoid.
+
+Traduzindo: no seu hardware atual, a trilha 3D e **ComfyUI para o conceito +
+VRoid para o modelo**. O `Mesh_Processing` fica guardado para o dia que voce
+tiver uma GPU maior — e ainda assim seria mais util para props/cenario do que
+para a personagem.
+
+## Caminho sugerido
+
+1. Gerar a personagem (`Efaces` ou `ANIMA`) + `Detailer` -> travar o design.
+2. Fazer o character sheet em 4 angulos, mesma seed.
+3. Recriar no **VRoid Studio** -> exportar `.vrm` -> importar no AIRI.
+   *Voce tem uma waifu funcional aqui.*
+4. Conviver com ela algumas semanas.
+5. Se ainda quiser 2D: `CharDesignandPartSplitting` + inpaint das areas
+   ocultas -> **Cubism** -> importar no AIRI.
+
+Passos 1-3 sao viaveis no seu Colab hoje. O passo 5 tambem (o Cubism e local, no
+seu PC). Nada disso depende do `Mesh_Processing`.
+
+## Selecao no notebook
+
+Para a trilha comum + Live2D, selecione na Celula 3:
+`CharDesignandPartSplitting`, `Detailer`, `Efaces_Pony_XL_V01`, `WaifuInpaintXL`.
+
+Cuidado: o `Efaces_Pony_XL_V01` traz **14 packs** e e o mais propenso a conflito
+de dependencias (numpy/opencv). Se der erro de import, rode-o **sozinho**, em
+sessao separada dos outros.
+
+---
+
+# WaifuVroid.json — character sheet de 4 angulos
+
+Workflow proprio deste repo (nao veio do tutorial). Gera o **mesmo personagem em
+4 angulos** — front, 3/4, side, back — para servir de referencia de modelagem.
+
+**Zero custom nodes.** So nos nativos: `CheckpointLoaderSimple`, `LoraLoader`,
+`CLIPTextEncode`, `ConditioningConcat`, `EmptyLatentImage`, `KSampler`,
+`VAEDecode`, `SaveImage`. Roda em qualquer ComfyUI limpo.
+
+## Como funciona
+
+O truque esta no `ConditioningConcat`. A **identidade** do personagem e
+codificada **uma unica vez** (no no 3) e reaproveitada nos 4 ramos; so o trecho
+do **angulo** muda e e concatenado depois. Isso garante que o texto de identidade
+seja byte-a-byte identico nos quatro — se voce escrevesse quatro prompts
+completos, pequenas diferencas de tokenizacao ja fariam o personagem escorregar.
+
+Combinado com a **mesma seed** nos 4 KSamplers, e o maximo de consistencia que
+da para conseguir sem LoRA.
+
+## Como usar
+
+1. No **no 1**, escolha o checkpoint (anime SDXL — `waiIllustriousSDXL_v160`,
+   Pony, etc).
+2. No **no 3**, escreva a identidade do personagem. **Nao** escreva angulo ali.
+3. Rode. Gostou de um resultado? Copie a seed e coloque nos 4 KSamplers.
+4. Quando tiver a LoRA do personagem, selecione no **no 2** — a consistencia
+   melhora muito.
+
+Fundo branco e luz chapada sao propositais: isso e **referencia para modelagem**,
+nao arte final. Sombra dura atrapalha na hora de modelar.
+
+Custo no T4: 832x1216 x4 = ~2-3 min. Faltou VRAM? Use 768x1152.
+
+## "Preciso gerar as partes separadas para o VRoid?"
+
+**Nao.** Essa e a confusao mais comum, e vale entender a diferenca:
+
+| | Live2D (Cubism) | 3D / VRM (VRoid) |
+|---|---|---|
+| Precisa de partes separadas? | **Sim** — PNGs com alpha, camada por camada | **Nao** |
+| O que o ComfyUI entrega | os recortes de fato | so **referencia visual** |
+| Workflow | `CharDesignandPartSplitting` | `WaifuVroid` |
+
+No **Live2D** as partes recortadas *sao* o material final — elas viram camadas
+que o rig move. Por isso existe o `CharDesignandPartSplitting`.
+
+No **VRoid** e outra logica: voce nao monta a personagem colando imagens. Voce
+**esculpe** a malha e **pinta** a textura dentro do proprio VRoid, usando presets
+(blazer, saia plissada, meia knee-high ja existem prontos). A imagem do ComfyUI
+serve so para voce **olhar enquanto modela** — igual a um artista com a
+referencia aberta na segunda tela.
+
+Uma imagem 2D recortada nao ajuda a modelar 3D. O que ajuda e ver **o mesmo
+personagem de varios angulos**, para entender o volume. E exatamente o que o
+`WaifuVroid` entrega.
+
+**Onde o ComfyUI ainda ajuda no 3D:**
+- **Referencia de angulos** — o `WaifuVroid` (este workflow).
+- **Close-ups de detalhe** — rosto, brasao, acessorio. Rode o workflow mudando o
+  texto do angulo para `close-up of face` / `close-up of the emblem`. Util para
+  pintar detalhe pequeno na textura.
+- **Texturas planas** — padrao de tecido, estampa, o brasao isolado em fundo
+  branco para importar como decal.
+- **Pele** — o `Skintoken` faz isso, mas exige Blender no PATH.
+
+O que o ComfyUI **nao** faz: gerar a malha rigada. `Mesh_Processing` (Trellis2)
+produz malha bruta, sem esqueleto nem blendshapes — e nao roda em T4. Para uma
+waifu de companhia o VRoid continua o caminho mais curto.
+
+---
+
+# WaifuVroid_FromConcept.json — partindo de uma imagem de concept
+
+Mesma estrutura do `WaifuVroid`, mas com uma **imagem de referencia** entrando
+via **IPAdapter**. Serve para quem ja tem um concept art (feito no GPT/DALL-E,
+Midjourney, PixAI, ou desenhado a mao) e quer que o ComfyUI produza **aquele**
+personagem, nao um parecido.
+
+A diferenca conceitual: no `WaifuVroid` o modelo so **le** o texto; aqui ele
+tambem **olha** a imagem.
+
+Pack necessario: `ComfyUI_IPAdapter_plus` (a Celula 3 instala). Na primeira
+execucao o `IPAdapterUnifiedLoader` baixa sozinho os modelos IPAdapter +
+CLIP Vision (~2.5 GB).
+
+## Preparar a imagem (o passo que as pessoas pulam)
+
+**Nao jogue a folha de concept inteira no `LoadImage`.** Uma folha tipica tem
+varias poses, texto, barra de paleta e close-ups. O IPAdapter nao entende
+"isso e um documento" — ele trata tudo como referencia visual e tenta reproduzir
+o conjunto, **inclusive as letras**. O resultado costuma ser uma colagem borrada.
+
+Recorte **uma** imagem limpa, so o personagem, sem texto:
+- um recorte do **full body** -> referencia de roupa e proporcao;
+- um recorte do **rosto** -> referencia de identidade facial.
+
+Salve em `ComfyUI/input/` e escolha no no 2. Vale gerar os dois arquivos e
+testar qual funciona melhor: o recorte do rosto costuma dar identidade mais
+forte, o de corpo inteiro acerta melhor a roupa.
+
+## Ajustar o weight (no 4)
+
+| Weight | Efeito |
+|---|---|
+| 0.4–0.5 | inspiracao solta, muita liberdade criativa |
+| **0.75** | equilibrado — padrao do arquivo |
+| 1.0+ | copia agressiva; tende a repetir a **pose** da referencia |
+
+Sintoma tipico: os 4 angulos saem quase iguais, todos de frente. Causa: weight
+alto demais — a referencia esta impondo a pose. **Abaixe** para ~0.6. Se em vez
+disso o personagem perder a cara, suba.
+
+O parametro `weight_type` tambem ajuda: `linear` e o padrao; `style transfer`
+pega o estilo e solta a composicao, util justamente quando o angulo nao quer
+mudar.
+
+## Limitacao honesta
+
+IPAdapter da **semelhanca forte**, nao identidade travada. Detalhes pequenos —
+um brasao especifico, um acessorio incomum, um padrao de olho — vao variar entre
+as geracoes. Isso e esperado.
+
+Corrija com o que voce ja tem: `Detailer` para o rosto e `WaifuInpaintXL` para
+consertos pontuais.
+
+## O papel disto no projeto
+
+IPAdapter e a **ponte**, nao o destino:
+
+```
+concept (GPT/desenho)
+   -> WaifuVroid_FromConcept  (IPAdapter: ~20 imagens boas)
+   -> Detailer / WaifuInpaintXL  (limpar as imperfeicoes)
+   -> treinar a LoRA do personagem
+   -> WaifuVroid + LoRA  (consistencia real, character sheet final)
+   -> VRoid Studio -> .vrm -> AIRI
+```
+
+Sem imagens consistentes nao da para treinar LoRA; e sem LoRA nao da para ter
+consistencia real. O IPAdapter quebra esse circulo: ele produz o dataset inicial.
+Depois que a LoRA existir, este workflow deixa de ser necessario.
+
+---
+
+## Erro: "ClipVision model not found." (IPAdapter)
+
+**Causa:** o `IPAdapterUnifiedLoader` **nao baixa nada**. Ele so procura os
+modelos no disco e lanca excecao se nao achar. O nome "UnifiedLoader" sugere que
+ele resolve tudo sozinho — nao resolve.
+
+**Solucao:** rode a **Celula 5** com `WaifuVroid_FromConcept` selecionado. Ela
+baixa os dois arquivos, ja com o nome certo:
+
+| Arquivo | Pasta | Tamanho |
+|---|---|---|
+| `CLIP-ViT-H-14-laion2B-s32B-b79K.safetensors` | `models/clip_vision` | 2.53 GB |
+| `ip-adapter-plus_sdxl_vit-h.safetensors` | `models/ipadapter` | 848 MB |
+
+**O nome do CLIP Vision importa.** O IPAdapter identifica o encoder pelo nome do
+arquivo. No repositorio `h94/IP-Adapter` ele se chama `model.safetensors` — se
+voce baixar manualmente e nao renomear, o no continua dizendo que nao encontrou.
+A Celula 5 ja salva com o nome correto (usa o campo `file` do registry, nao o
+nome remoto).
+
+Alternativa manual: **Manager > Model Manager**, procure por `ipadapter` e por
+`clip vision`, e instale `IPAdapter plus SDXL` + `CLIP-ViT-H-14`.
+
+**Conferir se deu certo:**
+
+```
+ls -la /content/drive/MyDrive/ComfyUI_Data/models/clip_vision/
+ls -la /content/drive/MyDrive/ComfyUI_Data/models/ipadapter/
+```
+
+Os dois caminhos ja aparecem nos `extra search path` do log de boot, entao basta
+o arquivo estar la. Se voce baixou com o servidor no ar, **reinicie a Celula 6** —
+o ComfyUI indexa os modelos no boot.
+
+**Escolha do preset (no 3):** `PLUS (high strength)` casa com
+`ip-adapter-plus_sdxl_vit-h`. Se trocar o preset, o par de arquivos muda — e o
+erro volta. Mantenha o preset ou baixe o modelo correspondente.
+
+---
+
+## Imagem "queimada": cores neon, pele vermelha, fundo saturado
+
+**Causa: CFG alto demais.** Modelos **Illustrious e Pony** trabalham com CFG
+muito mais baixo que o SDXL base. CFG 7 — o padrao que se ve em tutorial de
+SD1.5 — satura as cores nesses modelos: pele fica vermelha, o fundo vira um
+amarelo/laranja neon, tudo ganha contraste artificial.
+
+| Modelo | CFG saudavel |
+|---|---|
+| SD 1.5 | 7 – 9 |
+| SDXL base | 6 – 8 |
+| **Illustrious / Pony** | **3.5 – 5.0** |
+| Turbo / Lightning / LCM | 1 – 2 |
+
+Os dois `WaifuVroid` agora vem com **CFG 4.5**. Se ainda queimar, baixe para 3.5
+e troque o sampler para `euler_a`.
+
+Sintoma parecido, causa diferente: se a imagem sair *cinzenta e sem contraste*, o
+CFG esta baixo **demais**. Suba um pouco.
+
+Tambem adicionei ao negative: `oversaturated, neon colors, burnt colors,
+high contrast, glowing skin, red skin`. Ajuda, mas **nao substitui** corrigir o
+CFG — negative nao conserta parametro errado.
+
+## O angulo "back" veio de frente
+
+O IPAdapter esta **impondo a pose** da imagem de referencia. Se o seu recorte e
+um full body de frente, com weight alto ele forca todas as saidas para frente,
+ignorando `from behind` no prompt.
+
+Solucao, em ordem:
+
+1. **Abaixe o weight** do no 4: 0.75 -> **0.6** (ja e o padrao agora) -> 0.4.
+2. Mude `weight_type` para **`style transfer`** — pega o estilo e solta a
+   composicao. E o ajuste mais eficaz quando o angulo nao muda.
+3. Reforce o texto do angulo. Os presets ja foram reforcados:
+   `from behind, back view, facing away from viewer, head turned away,
+   back of head, hair from behind, no face visible`.
+4. Acrescente ao negative, so no ramo `back`: `looking at viewer, face, frontal`.
+
+Existe um limite real: **IPAdapter e referencia, nao controle de pose.** Para
+angulo garantido seria preciso ControlNet (OpenPose) com uma pose de costas. Para
+dataset de LoRA, porem, isso nao e critico — se um angulo nao sair, gere mais
+seeds e aproveite o que vier. Variedade importa mais que os 4 angulos exatos.
+
+---
+
+## "Pacotes de nós ausentes" e o botao Instalar do Manager nao funciona
+
+Sintoma: o Manager acusa `ComfyUI_IPAdapter_plus` como ausente; voce clica em
+**Instalar** e nada acontece (ou ele diz que instalou, mas o erro continua).
+
+**O pack nao sumiu — ele foi DESATIVADO pela Celula 4.**
+
+No fim da Celula 4 existe este bloco, que e o coracao do "so os nodes da sessao":
+
+```python
+for d in sorted(os.listdir(CN)):
+    if d == 'ComfyUI-Manager' or d in need: continue
+    os.rename(pth, pth + '.disabled')
+```
+
+Ou seja: **tudo que nao pertence aos workflows selecionados vira `.disabled`.**
+Se voce rodou a Celula 4 de novo sem marcar o `WaifuVroid_FromConcept`, a pasta
+virou `ComfyUI_IPAdapter_plus.disabled` e os nos sumiram da UI.
+
+**Por que o botao Instalar do Manager falha:** a pasta `.disabled` ainda esta
+la. O `git clone` do Manager recusa gravar num destino em conflito, e o
+ComfyUI so carrega o diretorio com o nome exato. Instalar por cima nao resolve.
+
+### Conserto (o jeito certo)
+
+Rode a **Celula 3**, veja o numero do `WaifuVroid_FromConcept` na lista, e rode a
+**Celula 4** com esse numero na `SELECAO`. Ela detecta o `.disabled` e reativa:
+
+```
+reativado ComfyUI_IPAdapter_plus
+```
+
+Depois **reinicie a Celula 6**. Custom node so e carregado no boot — reativar
+com o servidor no ar nao adianta.
+
+Para usar varios workflows juntos, liste todos: `SELECAO = "2,3,9"`.
+Ou `SELECAO = "all"` para ativar tudo (mais lento no boot, porem sem surpresa).
+
+### Conserto manual (uma celula avulsa)
+
+```python
+import os
+CN='/content/ComfyUI/custom_nodes'
+for d in os.listdir(CN):
+    if d.endswith('.disabled'):
+        os.rename(f'{CN}/{d}', f'{CN}/{d[:-9]}')
+        print('reativado', d[:-9])
+```
+
+Reativa **todos** de uma vez. Reinicie a Celula 6 depois. Util para destravar
+rapido, mas lembre que na proxima Celula 4 eles voltam a ser desativados se nao
+estiverem na selecao — isso e o comportamento desejado, nao um bug.
+
+### Regra pratica
+
+> A selecao da Celula 4 e a **fonte da verdade** de quais nodes existem.
+> Instalou algo pela UI do Manager? Ou adicione o workflow correspondente a
+> selecao, ou nao rode a Celula 4 de novo naquela sessao.
+
+---
+
+# WaifuSurvivors_Assets.json — 3 saidas do mesmo personagem
+
+Para projetos de **jogo**, onde a mesma personagem precisa existir em contextos
+visuais diferentes. Um unico grafo produz:
+
+| Saida | Resolucao | Uso |
+|---|---|---|
+| **SPLASH** | 832x1216 | menu, tela de selecao, gacha |
+| **PORTRAIT** | 1024x1024 | HUD, card, dialogo |
+| **CHIBI** | 1024x1024 | sprite de gameplay, **com fundo removido** |
+
+Custom node: apenas `ComfyUI-Inspyrenet-Rembg` (ramo chibi). Todo o resto e
+nativo.
+
+## A regra de ouro: identidade separada de estilo
+
+A **identidade** fica so no no 3. Os nos de estilo dizem apenas **como**
+desenhar — nunca **quem**. Cada ramo faz `ConditioningConcat(identidade, estilo)`.
+
+Isso importa porque um jogo tem varios personagens. Com essa separacao, trocar
+de personagem e editar **um** campo; os tres estilos acompanham. Se voce
+escrevesse "chibi + identidade" num prompt so, cada personagem novo exigiria
+reescrever os tres.
+
+## Consistencia entre as tres saidas
+
+Aqui esta a parte dificil, e vale ser direto: **prompt sozinho nao garante que
+os tres sejam a mesma pessoa.** Para um jogo — onde o jogador ve o splash e o
+chibi lado a lado — isso e visivel e incomoda.
+
+Para producao real, uma **LoRA por personagem** (no 2) deixa de ser luxo e vira
+requisito. O ramo **chibi** e o que mais diverge, porque chibi e o estilo mais
+distante do que o checkpoint viu no treino.
+
+Estrategia recomendada: gere e aprove o **splash** primeiro (e a arte mais
+"cara" e a que define a personagem), depois derive portrait e chibi. Se o chibi
+teimar em nao parecer, use o splash como referencia via **IPAdapter** — o mesmo
+mecanismo do `WaifuVroid_FromConcept`.
+
+## O chibi: nao gere pequeno
+
+Erro comum: pedir 128x128 porque o sprite e pequeno. **Difusao em resolucao
+baixa produz papa** — o modelo nao foi treinado nessa escala.
+
+Gere em **1024** e reduza depois: na engine, ou num passo separado. Para pixel
+art, reduza com filtro **NEAREST** (nunca bilinear/lanczos) — e o que preserva
+a borda dura.
+
+O ramo chibi ja sai com **canal alpha** via `InspyrenetRembg`, pronto para
+importar na engine. Nao quer isso? Delete o no e ligue o `VAEDecode` direto no
+`SaveImage`.
+
+## Sobre "2 heads tall"
+
+O prompt do chibi pede proporcao de 2 cabecas. Modelos anime entendem `chibi` e
+`super deformed` bem, mas a proporcao exata varia. Se sair inconsistente entre
+personagens — o que quebra a leitura no jogo — as saidas sao: LoRA de estilo
+chibi (treinada em chibis, nao em personagem), ou padronizar via img2img a
+partir de um chibi aprovado.
+
+---
+
+# Waifu Survivors — pipeline de assets (Godot)
+
+Decisoes do projeto: **Godot**, chibi **anime** (nao pixel art), animacao
+**walk/attack/death** com flip horizontal, **~5 personagens**.
+
+Tres pecas:
+
+| Arquivo | O que faz |
+|---|---|
+| `Workflows/WaifuSurvivors_Assets.json` | splash + portrait + chibi (1 pose) |
+| `Workflows/WaifuSurvivors_ChibiPoses.json` | as **5 poses** chibi, mesma seed |
+| `scripts/batch_survivors.py` | gera **tudo, para todos**, pela API |
+
+Custom node: so `ComfyUI-Inspyrenet-Rembg` (fundo transparente do chibi).
+
+## O limite que define o design da animacao
+
+**Difusao nao faz animacao frame-a-frame consistente.** Cada imagem e gerada do
+zero: cabelo, dobra da saia e dedos mudam entre frames. Em 2 frames alternados
+quase nao se percebe; em 8, o sprite "ferve".
+
+Por isso a recomendacao para um Vampire Survivors-like:
+
+- **walk** = 2 frames (`walk_a` / `walk_b`) alternando;
+- **death** = 1 frame + tween de rotacao/fade no Godot;
+- **attack** = muitas vezes dispensavel — em bullet heaven o efeito visual e do
+  **projetil**, nao do corpo;
+- o resto = **animacao procedural** no Godot: squash & stretch, bob vertical,
+  leve rotacao, flash branco ao tomar dano.
+
+Isso e o que a maioria dos jogos do genero faz. Sprite pequeno em movimento
+rapido: ninguem percebe, e economiza a maior parte do trabalho.
+
+Flip: gere so `facing right` e use `flip_h` no Godot.
+
+## Resolucao
+
+Gere em **1024** e reduza no Godot. Nunca gere em 128 — difusao em resolucao
+baixa vira papa. No import do Godot, `Filter: Nearest` se quiser borda dura.
+
+## Automacao: `scripts/batch_survivors.py`
+
+Nao depende de workflow salvo — monta o grafo em formato API na hora. Trocar o
+elenco e editar um JSON.
+
+```bash
+cp scripts/roster.example.json scripts/roster.json   # e edite
+
+python scripts/batch_survivors.py --roster scripts/roster.json --dry-run
+python scripts/batch_survivors.py --roster scripts/roster.json
+python scripts/batch_survivors.py --only lia --kinds chibi
+```
+
+No Colab, com o servidor da Celula 6 no ar, numa celula nova:
+
+```python
+!python /content/ComfyUI_Colab/scripts/batch_survivors.py \
+        --roster /content/ComfyUI_Colab/scripts/roster.json
+```
+
+Cada personagem rende **7 imagens** (splash, portrait, 5 poses). Cinco
+personagens = 35 imagens numa tacada. O script respeita a fila
+(`--max-pending`) para nao afogar o ComfyUI.
+
+Saida: `output/survivors/<personagem>/<tipo>_<pose>_00001_.png`.
+
+O `roster.json` tem `defaults` (checkpoint, negative, cfg) e uma lista de
+`characters`, cada um com `id`, `identity`, `lora` e `seed`. Testado com
+servidor simulado: 14 jobs, zero falhas, todas as referencias entre nos validas.
+
+## Consistencia entre splash, portrait e chibi
+
+Este e **o** problema do projeto, e prompt nao resolve. Com 5 personagens e o
+jogador vendo splash e chibi lado a lado, divergencia fica obvia.
+
+Caminho recomendado, por personagem:
+
+1. Gere e **aprove o splash** — e a arte que define a personagem.
+2. Produza ~25 imagens variadas a partir dele
+   (`WaifuVroid_FromConcept` com IPAdapter + `Detailer`).
+3. **Treine uma LoRA** (ver o guia de treino).
+4. Preencha `lora` no `roster.json` e rode o batch.
+
+Com LoRA, os tres estilos passam a ser a mesma pessoa. Sem ela, o **chibi** e o
+que mais diverge — e o estilo mais distante do treino do checkpoint.
+
+Para 5 personagens sao 5 LoRAs. Parece muito, mas e o unico jeito de ter
+identidade estavel — e depois voce gera quantas variacoes quiser de graca.
+
+## Estilo chibi consistente entre personagens
+
+Cuidado separado: cada personagem pode sair com uma proporcao chibi diferente,
+o que quebra a leitura no jogo. Duas saidas: treinar uma **LoRA de estilo
+chibi** (treinada em chibis, nao em personagem) e aplica-la junto da LoRA do
+personagem; ou padronizar via img2img a partir de um chibi aprovado.
+
+---
+
+## WaifuSurvivors_Concept.json — a fase ANTES da splash oficial
+
+Explorar barato. Nao e arte final, e rascunho: **4 variacoes por Run**, 20 steps,
+768x1152 (~1 min no T4). A splash oficial usa 30 steps em 832x1216 — 3x mais
+caro. Nao gaste isso enquanto ainda esta decidindo como a personagem e.
+
+Zero custom nodes.
+
+**A diferenca de mentalidade:** nos outros workflows a identidade e fixa e voce
+varia o angulo. Aqui e o oposto — a **seed e `randomize`** e o prompt e solto,
+de proposito. Voce nao esta reproduzindo um personagem, esta **descobrindo** um.
+
+### Ciclo
+
+1. No no 2, escreva solto, com lacunas:
+   `1girl, solo, full body, knight girl, silver armor, red cape`
+   O modelo preenche os buracos e te da ideias que voce nao teve.
+2. **Run** → saem 4. Nao gostou? Run de novo.
+3. Repita ate algo te fazer parar.
+4. Anote a **seed** e o **prompt** da imagem boa.
+5. Leve para o `WaifuSurvivors_Assets` (no 3 + seed nos KSamplers) e gere em
+   qualidade cheia.
+
+Varie **uma** coisa por vez: cabelo, roupa, paleta, vibe. As combinacoes que
+funcionarem viram o seu elenco.
+
+### O criterio que importa num bullet heaven
+
+O jogador ve o sprite **pequeno**. O que le em miniatura e a **silhueta** e a
+**cor dominante** — nao o detalhe.
+
+Teste pratico: aperte os olhos olhando as 4 imagens. Ainda da para distinguir as
+personagens? Se viram todas o mesmo borrao, o elenco esta fraco. Varie
+**silhueta e paleta**, nao acessorio.
+
+Isso vale mais para o seu projeto do que qualquer ajuste de sampler: cinco
+personagens que se parecem em miniatura sao cinco personagens que o jogador nao
+vai diferenciar durante a partida.
+
+### Ordem dos workflows no projeto
+
+```
+WaifuSurvivors_Concept     -> explorar, descobrir o elenco  (rapido, 4 por vez)
+        |  escolheu? anote seed + prompt
+WaifuSurvivors_Assets      -> splash + portrait + chibi     (qualidade cheia)
+        |  chibi ficou bom?
+WaifuSurvivors_ChibiPoses  -> as 5 poses de animacao
+        |  varios personagens?
+scripts/batch_survivors.py -> tudo, para todos, de uma vez
+```
+
+---
+
+## UI trava na tela "Comfy" por muito tempo / precisa recarregar a pagina
+
+O log de boot engana: `Starting server` aparece em segundos, mas a tela preta com
+a logo continua. **O servidor esta pronto — quem esta lenta e a UI.**
+
+**Causa: `--user-directory` apontando para o Drive.**
+
+Ao abrir, o frontend faz dezenas de requisicoes pequenas em `user/`: settings,
+lista de workflows, layout, templates e o cache do Manager. Cada leitura no Drive
+passa por FUSE e custa ~100 ms. Trinta arquivos = alguns segundos so de espera,
+as vezes com timeout — e dai a necessidade de recarregar.
+
+E o mesmo motivo pelo qual o ComfyUI nao roda dentro do Drive. Faltava aplicar a
+regra ao `user/`.
+
+**Correcao (v17):** o `user/` passa a viver em `/content/comfy_user` (disco
+local, rapido) e e **espelhado no Drive a cada 2 minutos** por uma thread.
+
+- No boot, a Celula 6 copia `user/` do Drive para o local.
+- Durante a sessao, tudo e lido/escrito local — UI abre rapido.
+- A cada 2 min, o conteudo volta para o Drive.
+- A Celula 4 grava os workflows nos **dois** lugares.
+
+Para forcar o backup antes de encerrar a sessao, rode numa celula:
+
+```python
+salvar_agora()
+```
+
+Nao e obrigatorio (a thread ja salva sozinha), mas garante que os ultimos
+minutos nao se percam se voce fechar o Colab logo apos salvar um workflow.
+
+### Outras causas possiveis
+
+- **Cloudflare frio**: o primeiro acesso ao tunel demora alguns segundos. Se a
+  pagina ficar em branco *antes* de aparecer a logo, e o tunel, nao a UI.
+- **rgthree "Nodes 2.0"**: deixa a UI lenta em workflows grandes.
+  *Settings > Lite Graph > Nodes 2.0* > desligar.
+- **Muitos workflows na aba**: a UI lista todos no boot. A Celula 4 so copia os
+  selecionados, mas o que voce salvou pela UI fica la para sempre.
+
+---
+
+## A UI continua demorando (mesmo com user/ local) — como DIAGNOSTICAR
+
+A Celula 6 **bloqueia** (o `main.py` roda em primeiro plano), entao nao da para
+rodar uma celula de diagnostico depois dela. Por isso a medicao virou uma
+**thread dentro da propria Celula 6** (v18).
+
+Ela espera o servidor subir e, alguns segundos depois, imprime no meio do mesmo
+log:
+
+```
+==================================================================
+  DIAGNOSTICO DA UI (medido no localhost, sem o tunel)
+==================================================================
+  /system_stats                     0.05s        1 KB
+  /queue                            0.01s        0 KB
+  /api/userdata?dir=workflows       0.02s        2 KB
+  /embeddings                       0.01s        0 KB
+  /object_info                     12.40s     3200 KB   <<< LENTO
+  TOTAL                            12.49s
+==================================================================
+```
+
+Como as medidas sao feitas em `127.0.0.1`, elas **excluem o tunel**. Isso separa
+as duas causas possiveis:
+
+**Caso A — nenhum endpoint lento, total < 5 s.**
+O servidor esta rapido; o gargalo e o **tunel** ou o navegador. O `cloudflared`
+gratuito as vezes pega um edge ruim.
+1. **Proxy de portas do Colab** — chave inglesa no painel esquerdo > *Portas* >
+   `8188` > abrir. Nao passa pela internet publica; costuma ser o mais rapido.
+2. Reinicie a Celula 6 para sortear outro tunel (a URL muda).
+3. Troque `TUNEL` para `ngrok`.
+
+**Caso B — algum endpoint marcado LENTO.**
+O gargalo e o servidor. O suspeito e quase sempre **`/object_info`**: ele monta a
+lista de todos os nos e, para cada loader, **varre as pastas de modelos**. Com os
+modelos no Drive, cada varredura passa por FUSE. A UI nao desenha nada ate essa
+resposta chegar — e a tela da logo parada.
+
+Mitigacoes:
+- Menos custom nodes ativos: cada pack acrescenta nos ao `/object_info`.
+  Use a **menor selecao possivel** na Celula 4.
+- Limpe arquivos soltos das pastas de modelo (`.part`, duplicatas).
+- Tire da pasta os modelos gigantes que o workflow atual nao usa.
+
+### Observacao do log da 2a sessao
+
+Apareceu `one-node-flux-2-klein` entre os custom nodes e o banco rodou 6
+migracoes (`0001_assets` -> `0006_add_loader_path`). As migracoes acontecem uma
+vez so, apos atualizacao do ComfyUI — explicam aquele boot especifico, nao a
+lentidao recorrente.
+
+---
+
+## Bugs da Celula 4 corrigidos na v19
+
+Dois problemas apareceram juntos neste log:
+
+```
+desativado one-node-flux-2-klein.disabled
+Workflows na UI: ['CharDesignandPartSplitting.json', 'WaifuSurvivors_Concept.json']
+Ativos: ['ComfyUI-Manager', '__pycache__']
+```
+
+### 1. `.disabled.disabled`
+
+O laco que desativa packs nao verificava se a pasta **ja** terminava em
+`.disabled`. Resultado: `one-node-flux-2-klein.disabled` virava
+`one-node-flux-2-klein.disabled.disabled` a cada execucao da celula.
+
+O pack nunca mais seria reativado: a Celula 4 procura por `<pack>.disabled`
+exatamente, e o Manager tambem nao o encontra. Ficaria como "no ausente" para
+sempre.
+
+Corrigido: pastas ja desativadas sao ignoradas, e ha uma limpeza que renomeia
+nomes acumulados de volta ao formato certo.
+
+### 2. Workflow nao chegava no diretorio local
+
+Com a v17 (user/ local), a Celula 4 escrevia nos dois diretorios — **mas** o
+teste "ja existe e e igual" olhava so o do Drive. Se o arquivo ja estivesse la,
+ela imprimia `= (ja estava la)` e **pulava a copia para o local**, que e de onde
+a Celula 6 serve. O workflow nao aparecia na aba.
+
+Corrigido: cada diretorio e verificado e copiado independentemente.
+
+### 3. `__pycache__` listado como "Ativo"
+
+Cosmetico: `__pycache__` nao e custom node. Removido da listagem.
+
+### Sobre "workflows a mais na aba"
+
+O log mostrava `CharDesignandPartSplitting.json` mesmo com a selecao `10`. Isso
+**nao e bug**: a celula copia os selecionados, mas **nunca apaga** o que ja
+estava la. Workflows de sessoes anteriores permanecem — inclusive os que voce
+salvou pela UI. Agora a mensagem diz isso explicitamente.
+
+Se quiser limpar, apague pela aba Workflows da propria UI.
+
+---
+
+## Veredito: a lentidao era o TUNEL (v20)
+
+O autodiagnostico da v18 fechou a questao:
+
+```
+  /system_stats                     0.00s         1 KB
+  /queue                            0.00s         0 KB
+  /api/userdata?dir=workflows       0.00s         0 KB
+  /embeddings                       0.00s         0 KB
+  /object_info                      0.20s      1702 KB
+  TOTAL                             0.20s
+```
+
+**0,20 s no total** — o servidor responde instantaneamente, inclusive o
+`/object_info` (1,7 MB em 200 ms). Os minutos de tela preta eram inteiramente do
+**cloudflared**.
+
+Por que isso acontece: o `trycloudflare.com` e um tunel gratuito e anonimo. O
+trafego sai do Colab, atravessa a rede da Cloudflare, chega ao seu browser no
+Brasil e volta. O edge sorteado varia a cada execucao — as vezes bom, as vezes
+pessimo. A UI do ComfyUI baixa varios MB de JS no primeiro acesso; num edge ruim
+isso leva minutos ou estoura o timeout (dai o "recarregar resolve").
+
+### Solucao: `TUNEL = 'colab'` (novo padrao)
+
+O Colab tem um **proxy interno** (`google.colab.kernel.proxyPort`). O trafego vai
+pela mesma conexao autenticada do notebook, sem passar por terceiros. E o
+caminho mais curto e mais rapido.
+
+A Celula 6 agora imprime esse link automaticamente. Alternativa manual, a
+qualquer momento: **chave inglesa no painel esquerdo > Portas > 8188 > abrir**.
+
+Limitacao: o link so funciona **para voce, nesse navegador**, enquanto a sessao
+estiver viva. Nao da para compartilhar nem abrir no celular.
+
+Quando ainda usar os outros:
+- `cloudflared` — precisa de link publico (mostrar para alguem, abrir no
+  celular). Se estiver lento, reinicie a Celula 6 para sortear outro edge.
+- `ngrok` — mesma finalidade, com conta; costuma ser mais estavel que o
+  cloudflared gratuito.
+
+### Nota sobre as migracoes do banco
+
+O log mostrou de novo `Running upgrade 0001_assets -> ... -> 0006_add_loader_path`.
+Elas rodam a cada sessao porque o banco (`comfyui.db`) fica no `user/`, que e
+recriado. Sao rapidas (menos de 1 s) e nao tem relacao com a lentidao da UI.
+
+---
+
+## Logo / marca d'agua nas imagens
+
+Aparece porque o modelo aprendeu isso do dataset: muita arte de anime na
+internet tem assinatura do artista, logo de site ou moldura de "character card".
+O modelo nao sabe que aquilo nao faz parte do desenho — para ele e so mais um
+padrao visual que costuma acompanhar personagens.
+
+Frequencia tipica: **1 em cada 10 a 20 imagens**. Nao e defeito da sua
+configuracao.
+
+Todos os workflows `Waifu*` ganharam estes termos no negative:
+
+```
+logo, watermark, signature, artist name, username, web address,
+text, english text, japanese text, letters, title, caption,
+character sheet, reference sheet, border, frame, inset,
+speech bubble, patreon logo, twitter username
+```
+
+Isso reduz bastante, mas **nao zera**. Quando escapar, simplesmente descarte a
+imagem — na fase de concept voce gera muitas e fica com poucas, entao perder
+uma nao custa nada.
+
+Se aparecer com muita insistencia, o checkpoint provavelmente tem isso
+"assado". Alternativas: trocar de checkpoint, ou cortar a regiao da logo
+(elas quase sempre ficam num canto) e usar o `WaifuInpaintXL` para preencher.
+
+**Nao gaste tempo salvando uma imagem com logo na fase de concept.** Consertar
+custa mais do que gerar outra.
+
+---
+
+## Workflow aparece na aba mas nao abre (v21)
+
+**Causa: o campo `id` do JSON.**
+
+Comparando um workflow exportado pelo ComfyUI com os que eu gerei por script:
+
+```
+WaifuInpaintXL.json           id='49b62f18-6a99-41b9-81cf-4eadb1b9e819'   <- UUID
+WaifuSurvivors_Concept.json   id='survivors-concept'                      <- string livre
+```
+
+Todo workflow salvo pela UI recebe um **UUID**. A aba Workflows indexa os
+arquivos por esse campo; com um id em formato diferente, o item ate aparece na
+lista, mas ao clicar nao carrega. Por isso funcionava ao arrastar o arquivo
+manualmente — esse caminho nao passa pelo indice.
+
+Corrigido nos 5 workflows criados aqui. O UUID e **derivado do nome do arquivo**
+(`uuid5`), entao e sempre o mesmo — o mesmo workflow nao vira duas entradas.
+
+Tambem preenchi `extra.ds` (zoom/offset iniciais), que os workflows reais tem e
+os meus estavam com `{}`.
+
+A Celula 4 agora **valida e conserta** o `id` de todo workflow nos diretorios da
+UI, inclusive os que ja estavam la. Ids que ja sao UUID sao preservados.
+
+### Segunda causa: cache do frontend
+
+Mesmo com o JSON correto, copiar arquivos **com o servidor no ar** nao atualiza a
+lista: a aba e carregada uma vez no boot. Depois de rodar a Celula 4, sempre:
+
+1. **F5 na aba do ComfyUI** — resolve na maioria das vezes;
+2. se nao, reinicie a **Celula 6**.
+
+Ordem correta e sempre: Celula 4 -> Celula 5 -> Celula 6 -> abrir a UI.
+
+---
+
+## Recomendacoes oficiais do WAI-illustrious-SDXL (aplicadas na v22)
+
+A pagina do Civitai exige login, mas o mesmo card do autor esta espelhado em
+tensor.art, Shakker, Moescape e Tungsten. Consolidado:
+
+| Parametro | Recomendado pelo autor | O que eu tinha |
+|---|---|---|
+| Sampler | **Euler a** (`euler_ancestral`) | `dpmpp_2m` / karras |
+| CFG | **5 – 7** | 4.5 |
+| Steps | **15 – 30** | 20 – 30 (ok) |
+| Resolucao | **maior que 1024x1024** | ok |
+| VAE | **ja embutido** — nao carregar externo | ok |
+| Positive | `masterpiece, best quality, amazing quality` | tinha tags demais |
+| Negative | `bad quality, worst quality, worst detail, sketch, censor` | **longo demais** |
+
+### O aviso mais importante (e contraintuitivo)
+
+> *"Please do not add too many quality and aesthetic-related tags, nor overly
+> long negative prompts, as this will actually reduce image quality and make it
+> more blurry."*
+
+**Negative longo PIORA a imagem neste modelo.** Eu vinha empilhando termos —
+anti-queimado, anti-logo, anti-pose — e isso estava contra a recomendacao do
+autor. O negative foi enxugado para ~120 caracteres.
+
+Isso muda a estrategia contra a logo: em vez de empilhar
+`artist name, username, web address, patreon logo, twitter username...`,
+ficam so `watermark, signature, logo, text`. Vai escapar uma logo de vez em
+quando — descarte e siga.
+
+### Mudancas aplicadas em todos os `Waifu*`
+
+- Sampler → **`euler_ancestral`** + scheduler `normal`
+- CFG → **5.5** (era 4.5; a faixa do autor comeca em 5)
+- Negative → curto, base do autor + 4 termos anti-logo
+- Positive → removidos `very aesthetic`, `absurdres`, `highly detailed`,
+  `intricate details`, `newest`; ficou `masterpiece, best quality, amazing quality`
+
+### Duas dicas especificas que valem guardar
+
+- **Pontinhos brancos** na imagem → adicione ao negative:
+  `lens flare, particles, dust`
+- **Pupilas ficam vermelhas** sem motivo → adicione: `heart pupil`
+
+### Filtro de conteudo
+
+O modelo tem quatro tags de classificacao: `general`, `sensitive`, `nsfw`,
+`explicit`. O autor recomenda por **`nsfw` no negative** para evitar saidas
+inadequadas — ja incluido em todos os workflows. Para um jogo, mantenha.
+
+### Hires fix (quando for gerar a arte final)
+
+Upscale 1.5x, 20 steps, upscaler **R-ESRGAN 4x+ Anime6B**, denoise 0.35–0.5.
+No ComfyUI, o equivalente e `UpscaleModelLoader` + `ImageUpscaleWithModel`, ou
+um segundo KSampler com denoise 0.4. Nao adicionei — na fase de concept e
+desperdicio.
+
+---
+
+## Teor ecchi: menu sim, gameplay nao (v23)
+
+O WAI tem **quatro niveis de rating**, e a escolha do nivel e o controle
+principal:
+
+| Tag | Teor | Onde usar |
+|---|---|---|
+| `general` | limpo | — |
+| **`sensitive`** | **sugestivo, ecchi** | **splash, portrait** |
+| `nsfw` | nudez parcial / forte | (nao usado) |
+| `explicit` | explicito | **no negative** |
+
+Configuracao aplicada:
+
+- **SPLASH / PORTRAIT** → `sensitive, alluring pose, attractive` no positive,
+  `explicit` no negative. Sugestivo sem virar hentai.
+- **CHIBI** → deixado **limpo de proposito**. Um sprite de 64 px nao tem
+  resolucao para fanservice; tentar isso so suja a silhueta e piora a leitura
+  durante a partida.
+
+E exatamente o padrao do genero: Azur Lane, Nikke e Genshin colocam fanservice
+na arte de menu e mantem o gameplay legivel.
+
+Antes eu tinha posto `nsfw` no negative de tudo, seguindo a recomendacao
+generica do autor do modelo — o que bloqueava justamente o teor desejado.
+Removido de splash/portrait.
+
+### Subir ou baixar o teor
+
+No no de estilo **SPLASH** (ou em `STYLES` do `batch_survivors.py`):
+
+| Nivel | Positive | Negative |
+|---|---|---|
+| Recatado | (nada) | `sensitive, explicit` |
+| **Leve (atual)** | `sensitive, alluring pose` | `explicit` |
+| Medio | `+ cleavage, thighs, bare shoulders, skindentation` | `explicit` |
+| Pesado | `nsfw` | (remover `explicit`) |
+
+Para uma personagem especifica mais recatada, basta dar a ela um `negative`
+proprio no `roster.json` incluindo `sensitive`.
+
+### Distribuicao — vale saber antes de fechar o teor
+
+- **Steam**: aceita conteudo adulto, com aviso e build separada.
+- **Consoles** (Nintendo/PlayStation/Xbox) e **app stores**: bem mais
+  restritivos.
+- **`sensitive`** passa praticamente em qualquer lugar; **`explicit`** nao.
+
+Se quiser os dois, gere versao SFW e ecchi da **mesma** personagem com a **mesma
+seed** — muda so o texto de estilo — e troque os assets por build. Fica barato
+porque a identidade nao muda.
+
+### Nota sobre LoRA de personagem
+
+Quando treinar as LoRAs, o **dataset define o teor**. Se todas as imagens forem
+ecchi, a LoRA vai puxar para isso mesmo quando voce pedir algo limpo — inclusive
+no chibi. Misture: cerca de 70% neutras, 30% ecchi.
+
+---
+
+## "Nao foi possivel encontrar o fluxo de trabalho em X.json" (v24)
+
+Erro diferente dos anteriores: aqui o frontend **sabe** que o workflow existe
+(esta na lista de abas abertas) mas nao acha o arquivo.
+
+**Causa: um efeito colateral da v17.** A Celula 6 copiava o `user/` do Drive
+para o local assim:
+
+```python
+if not os.path.exists(USER_LOCAL):
+    shutil.copytree(DRIVE_USER, USER_LOCAL)
+```
+
+Mas a **Celula 4 roda antes** e ja cria `/content/comfy_user/default/workflows`
+para gravar os workflows selecionados. Quando a Celula 6 chegava, o diretorio
+**ja existia** — e o `copytree` era pulado inteiro.
+
+Consequencia: `comfy.settings.json`, `__manager/` e todos os workflows antigos
+**nunca chegavam ao diretorio local**. O frontend lia um `user/` quase vazio,
+tentava restaurar as abas abertas da sessao anterior e nao encontrava os
+arquivos. Dai a mensagem.
+
+**Correcao:** a copia virou um **merge incondicional**
+(`copytree(..., dirs_exist_ok=True)`), mais uma reconciliacao nos dois sentidos
+da pasta `workflows/`. A celula agora imprime quantos workflows estao
+disponiveis para a UI:
+
+```
+Sincronizando user/ do Drive para o disco local... ok
+Workflows disponiveis para a UI: 12
+```
+
+Se esse numero vier menor do que voce espera, o problema e anterior a UI.
+
+### Destravar sem reiniciar tudo
+
+Se a sessao ja esta no ar e voce nao quer esperar, rode numa celula nova:
+
+```python
+import shutil, os
+D='/content/drive/MyDrive/ComfyUI_Data/user'; L='/content/comfy_user'
+shutil.copytree(D, L, dirs_exist_ok=True)
+wl=f'{L}/default/workflows'
+print(len([f for f in os.listdir(wl) if f.endswith('.json')]), 'workflows')
+```
+
+Depois **F5** na aba do ComfyUI. Nao precisa reiniciar a Celula 6.
+
+### Se a mensagem insistir
+
+O frontend guarda as abas abertas em `comfy.settings.json`. Se ele continuar
+tentando reabrir um workflow que nao existe mais, feche a aba pelo X na propria
+UI — isso limpa o registro.
+
+---
+
+# WaifuSurvivors_FromConcept.json — a imagem aprovada gera TUDO (v25)
+
+Critica justa ao fluxo anterior: exigir que voce **anote a seed e recopie o
+prompt** entre workflows e fragil. Um caractere errado e a personagem muda — e
+em producao, com 5 personagens x 7 assets, isso e questao de tempo.
+
+**Este workflow elimina esse passo.** A imagem aprovada e a fonte da verdade.
+
+```
+imagem aprovada  ->  [1 Run]  ->  splash + portrait + 5 poses chibi
+```
+
+Sao **7 saidas** num unico grafo, todas condicionadas pela mesma imagem via
+IPAdapter. Nao ha seed para copiar nem texto de identidade para redigitar,
+porque a identidade **nao esta em texto**.
+
+### Como usar
+
+1. Gostou de uma imagem no `WaifuSurvivors_Concept`? Botao direito >
+   **Save Image**.
+2. Suba o arquivo para `ComfyUI_Data/input/` (ou arraste no proprio no 2).
+3. Selecione no **no 2** e clique em **Run**.
+
+So isso. As poses chibi ja saem com **alpha**, prontas para o Godot.
+
+### O unico ajuste: weight do no 4
+
+| Weight | Efeito |
+|---|---|
+| 0.5 | mais liberdade criativa |
+| **0.7** | padrao |
+| 0.9 | copia agressiva |
+
+- Chibi saiu igual ao concept, sem virar chibi? **Abaixe** para 0.5.
+- Chibi nao parece o personagem? **Suba** para 0.85.
+
+Splash e chibi podem querer weights diferentes — se precisar, rode duas vezes.
+
+### Seeds em `randomize`, de proposito
+
+Nao gostou de **um** asset? Rode de novo: so ele muda, a identidade continua
+vindo da imagem. Voce nao perde os outros seis.
+
+### Producao: o mesmo no batch
+
+O `batch_survivors.py` ganhou o campo **`concept`** no roster:
+
+```json
+{
+  "id": "lia",
+  "concept": "lia_concept.png",
+  "ipadapter_weight": 0.7
+}
+```
+
+Com `concept` preenchido, o script injeta `LoadImage` + IPAdapter em **todos** os
+7 jobs daquele personagem. Sem ele, cai no modo texto (`identity`) — que
+continua funcionando para quem ainda nao tem imagem aprovada.
+
+O script valida na entrada: personagem sem `concept` **e** sem `identity` para a
+execucao com mensagem clara. E o log diz o modo de cada um:
+
+```
+Personagens: {'lia': 'imagem', 'exemplo2': 'texto'}
+```
+
+Testado contra servidor simulado: 14 jobs, todas as referencias entre nos
+validas, IPAdapter presente so em quem tem `concept`.
+
+### Fluxo de producao recomendado
+
+```
+1. WaifuSurvivors_Concept          -> explorar, 4 por Run (rapido)
+2. salvar as imagens aprovadas em ComfyUI_Data/input/
+3. WaifuSurvivors_FromConcept      -> 7 assets por personagem
+   ou scripts/batch_survivors.py   -> 5 personagens de uma vez
+4. (opcional) treinar LoRA -> consistencia definitiva
+```
+
+Os workflows `Assets` e `ChibiPoses` continuam no repo para quem quiser
+controle manual, mas **o caminho recomendado agora e o `FromConcept`**.
+
+## v26 — abas travadas e "Nao foi possivel encontrar o fluxo de trabalho"
+
+Sintomas relatados: alerta apontando `WaifuSurvivors_FromConcept.json`, **so um
+workflow abre por vez** e **clicar nas abas de cima nao faz nada**.
+
+### Nao era o arquivo
+
+Comparei a estrutura dos workflows gerados por script com os do tutorial (que
+abrem normal): mesmas chaves de nó (`id/type/pos/size/order/flags/mode/inputs/
+outputs/properties/widgets_values`), `links` no formato de 6 posições, todo
+`output` com `links`, `id` UUID válido, sem duplicados. Estruturalmente idênticos.
+
+### Era o estado de abas do frontend
+
+O ComfyUI guarda em `user/default/comfy.settings.json`:
+
+- `Comfy.Workflow.OpenWorkflows` — as abas abertas na sessao anterior
+- `Comfy.Workflow.ActiveIndex` — qual estava ativa
+- `Comfy.PreviousWorkflow`
+
+Se **uma** entrada aponta para arquivo que nao existe mais (renomeado, workflow
+de outra sessao, `.disabled`, Drive fora de sincronia), a restauracao do tabbar
+**aborta no meio**: a primeira aba abre, as demais viram entradas mortas e os
+cliques nao respondem. O alerta cita o primeiro nome que falhou — por isso
+apareceu o `FromConcept`, que era so a vitima visivel.
+
+`ActiveIndex` apontando para um indice que nao existe mais na lista produz o
+mesmo travamento.
+
+### Correcao (C6, `v26-tabfix`)
+
+No boot, depois do merge do `user/`, roda `_sanear_settings()` nos dois lados
+(local e Drive):
+
+1. remove de `OpenWorkflows` toda referencia sem arquivo correspondente;
+2. reajusta `ActiveIndex` para um indice valido (`-1` se nao sobrou nada);
+3. descarta `PreviousWorkflow` morto;
+4. forca `WorkflowTabsPosition = Topbar` (sem isso as abas ficam so na sidebar);
+5. se o JSON estiver corrompido, salva `.bak` e zera — settings quebrado trava
+   a UI inteira.
+
+Idempotente: rodar de novo num settings limpo nao altera nada.
+
+### Destrave imediato (sem reiniciar a C6)
+
+Cole numa celula nova, rode, e **F5** na aba do ComfyUI:
+
+```python
+import json, os
+L = '/content/comfy_user/default'
+p = f'{L}/comfy.settings.json'
+st = json.load(open(p)) if os.path.exists(p) else {}
+existe = set(os.listdir(f'{L}/workflows'))
+ok = lambda w: isinstance(w, str) and os.path.basename(w) in existe
+st['Comfy.Workflow.OpenWorkflows'] = [w for w in st.get('Comfy.Workflow.OpenWorkflows', []) if ok(w)]
+st['Comfy.Workflow.ActiveIndex'] = 0 if st['Comfy.Workflow.OpenWorkflows'] else -1
+st.pop('Comfy.PreviousWorkflow', None)
+st['Comfy.Workflow.WorkflowTabsPosition'] = 'Topbar'
+json.dump(st, open(p, 'w'), indent=2)
+print('abas:', st['Comfy.Workflow.OpenWorkflows'])
+```
+
+### Regra
+
+Estado de UI que referencia arquivos **sempre** tem de ser reconciliado com o
+disco no boot. Nunca confiar que o que o frontend salvou continua existindo —
+a C4 troca os workflows disponiveis a cada sessao.
+
+## v27 — por que o Concept sai melhor que o resto (imagens neon/queimadas)
+
+Sintoma: as saidas do `Concept` sao limpas e bonitas; splash e chibis saem
+**neon, queimados, com cores saturadas irreais** e ate cabeca duplicada.
+Nao era CFG (o usuario ja tinha baixado para 5).
+
+### Causa: o Concept nao usa IPAdapter, o resto usa
+
+Comparando os grafos, o `Concept` e um pipeline nu:
+`Checkpoint -> CLIPTextEncode -> KSampler`. Nada entre o modelo e o sampler.
+
+Nos outros, o `model` do KSampler vem do `IPAdapterAdvanced`, que estava com
+`embeds_scaling = "V only"`. O proprio autor do pack (cubiq, NODES.md) diz que
+`K+mean(V) w/ C penalty` e o modo que "grants good quality at high weights
+without burning the image" — ou seja, **`V only` queima**. Com peso 0.7 em
+Illustrious (modelo ja saturado) o resultado e exatamente o neon visto.
+
+Somando: `V only` + `end_at 1.0` (IPAdapter agindo ate o ultimo passo, sem
+deixar o modelo resolver cor/contraste no final) + prompts sem ancora de
+coloracao = imagem torrada.
+
+### Correcoes aplicadas
+
+1. **`embeds_scaling` -> `K+mean(V) w/ C penalty`** nos dois IPAdapters.
+2. **`end_at` < 1.0**: 0.9 em splash/portrait, 0.7 no chibi. Os passos finais
+   voltam a ser do checkpoint, que e quem sabe fechar a imagem.
+3. **IPAdapter separado para o chibi** (novo no 50, weight **0.45**). Com 0.7 a
+   referencia realista impedia a deformacao chibi — o sprite saia com corpo
+   longo e proporcao de adulto. Splash/portrait seguem em 0.7 no no 4.
+4. **Negative anti-neon** em todos: `oversaturated, neon colors, glowing skin,
+   rim lighting, chromatic aberration, harsh shadows, high contrast,
+   extra head, duplicate, blurry`.
+5. **Negative dedicado do chibi** (no 51): + `realistic, detailed background,
+   long body, adult proportions`.
+6. **Prompts alinhados ao Concept**: adotado `flat anime coloring, soft lighting`
+   e a mesma estrutura que ja estava funcionando. O `sensitive/attractive` do
+   splash foi mantido; do chibi continua fora.
+
+### Regra
+
+Quando um workflow sai melhor que outro, **comparar os grafos antes de mexer em
+CFG**. Aqui a variavel nao era parametro de sampler, era um no a mais no caminho
+do `model`. `V only` e o default do node e e a pior escolha para Illustrious.
+
+## v28 — pipeline de animacao a partir de video (metodo do DevDude)
+
+Referencia: https://youtu.be/tU2Q99plP1Q (DevDude, "AI Spritesheet Creation
+Workflow", 8min44).
+
+### O que ele faz
+
+1. concept art da personagem de lado;
+2. coloca num **green screen solido** (usa Nano Banana 2 para isso);
+3. gera **clipes de 1 segundo** com a imagem como referencia (Grok Imagine);
+4. extrai **todo frame** do video -> spritesheet;
+5. remove o green screen (modelo Corridor Key);
+6. um analisador acha o loop e alinha os frames.
+
+**A ideia central resolve o nosso problema real.** Hoje as 5 poses chibi sao 5
+geracoes independentes: nada garante que walk_a e walk_b sejam a mesma
+personagem. Vindo do MESMO video, a consistencia e estrutural.
+
+Duas sacadas dele que valem por si:
+- **1 segundo.** Clipe longo "o modelo se confunde e inventa coisa que voce nao
+  quer". 1-2s para walk/attack, 3s para idle (tempo do cabelo ao vento).
+- **Canvas landscape para ataque.** Quadrado nao da espaco para braco/espada —
+  ele mesmo errou isso no video.
+
+### O que NAO da para copiar
+
+Ele nao usa ComfyUI. E o **Sorceress Game Suite**, produto pago dele proprio, e
+a geracao de video e **Grok Imagine na nuvem**. Nao existe workflow JSON.
+
+Portar para WAN 2.2 local **nao cabe no T4**, e o limite nao e VRAM: o 14B em
+GGUF depende de descarregar o text encoder (~9 GB) para a RAM de CPU, e as
+fontes convergem em **24-32 GB de RAM de sistema**. Temos **12.976 MB** — o
+mesmo teto que ja barrou o `Mesh_Processing`. Estimativa: 10-15 min por clipe
+de 1s com risco alto de OOM. Inviavel para iterar 5 personagens.
+
+### O que foi entregue
+
+Metade do fluxo — a que roda no T4 — mais um substituto melhor para o chroma key.
+
+**`Workflows/WaifuSurvivors_VideoToSprites.json`** (6 nos):
+`VHS_LoadVideo -> InspyrenetRembg -> ImageScale -> SaveImage`.
+O clipe entra, os frames saem ja com alpha em `output/survivors_frames/`.
+
+**Dispensa o green screen.** O Inspyrenet segmenta direto e nao deixa o
+"green edge spillage" que ele mesmo reclama do chroma classico. Um passo a
+menos que no fluxo original.
+
+**`scripts/make_spritesheet.py`** faz o que o Sprite Analyzer dele cobra:
+- descarta frames-lixo de inicio/fim (comparacao com a mediana do clipe);
+- **alinha pelo centro de massa** — mata o "jitter back" que ele conserta na mao;
+- acha o loop por ritmo: a emenda boa nao e a de frames iguais (isso premiaria
+  dois frames-lixo identicos), e a que mantem a MESMA distancia de um passo
+  normal entre o ultimo e o primeiro;
+- monta o PNG + JSON + instrucoes do Godot.
+
+Testado com 16 frames sinteticos com deriva de 3px/frame e 4 frames-lixo:
+descartou os 4, achou loop de 8 frames, caixa final 57x181.
+
+Dois bugs pegos no teste, ambos corrigidos:
+- o script lia o proprio `_sheet.png` da rodada anterior como frame;
+- **alinhar tem de vir ANTES de recortar** — com a ordem invertida a caixa de
+  uniao somava a deriva e dava 1968px de largura em vez de 57.
+
+### Como usar
+
+1. gere o clipe de 1s onde preferir (Grok Imagine, Kling, Sora), usando a
+   splash/concept aprovada como referencia;
+2. salve o `.mp4` em `ComfyUI_Data/input/`;
+3. rode o `VideoToSprites`;
+4. `python scripts/make_spritesheet.py output/survivors_frames --nome walk`;
+5. no Godot: `AnimatedSprite2D -> SpriteFrames -> Add frames from sheet`.
+
+Gere so o lado direito e use `flip_h`, como ja combinado.
+
+## v29 — consolidacao dos workflows + animacao local
+
+### Removidos
+
+`WaifuSurvivors_Assets.json`, `WaifuSurvivors_ChibiPoses.json` e
+`WaifuSurvivors_FromConcept.json` foram **apagados**. Faziam trabalho repetido
+e geravam do zero coisas que dava para derivar.
+
+### Nova estrutura (2 workflows + 1 script)
+
+```
+Concept  ->  Base  ->  Animate  ->  make_spritesheet.py
+                 \-> PORTRAIT por recorte da splash
+```
+
+**`WaifuSurvivors_Base.json`** (19 nos) — entrada unica: o concept aprovado.
+Um Run entrega **splash + chibi idle**, ambos ancorados na mesma imagem.
+Dois IPAdapters: no 4 em **0.7** (splash, fiel) e no 5 em **0.45** (o chibi
+precisa de liberdade para deformar).
+
+**PORTRAIT nao se gera: recorta-se da splash.** A identidade fica identica por
+construcao — mesmo cabelo, mesmos olhos, mesmo traco. Gerar de novo so cria
+chance de divergir. Excecao: se o portrait precisar de **expressao diferente**
+(brava, sorrindo, para dialogo), ai sim vale gerar mudando o no 6.
+
+**`WaifuSurvivors_Animate.json`** (17 nos) — AnimateDiff sobre o chibi idle.
+
+### Por que AnimateDiff e nao WAN
+
+O gargalo desta maquina e **RAM de CPU (~13 GB)**, nao VRAM (14,9 GB). Por isso
+"trocar por modelo menor" resolve pouco: mesmo o WAN 5B quer 24 GB de RAM,
+porque o text encoder T5 (~9 GB) e o decode de video moram la.
+
+O AnimateDiff **anima o checkpoint SDXL que ja temos**. Nao baixa modelo de
+video, nao tem T5. Custa ~6 GB de VRAM. E o unico caminho local viavel no T4.
+
+**Ressalva honesta:** o `mm_sdxl_v10_beta` e beta e subtreinado — a propria
+comunidade diz que "para ser usavel voce provavelmente precisa treinar voce
+mesmo". Para chibi em loop curto costuma bastar; se o movimento sair ruim, o
+plano B continua sendo clipe de 1s na nuvem + `VideoToSprites`.
+
+### Flags de memoria (C6, `v29-anim`)
+
+`ECONOMIZAR_RAM = True` adiciona:
+- `--cache-none` — descarrega cada modelo apos o uso (o mais citado para RAM)
+- `--disable-smart-memory` — nao segura modelo na memoria por precaucao
+- `--mmap-torch-files` — le o peso do disco em vez de copiar para a RAM
+
+**Diagnostico:** processo que **morre/trava sem mensagem** = falta de RAM.
+Erro **CUDA/torch out of memory** = falta de VRAM. No T4 sera quase sempre o
+primeiro.
+
+### Downloads necessarios
+
+| arquivo | pasta | tamanho | para |
+|---|---|---|---|
+| `CLIP-ViT-H-14-laion2B-s32B-b79K.safetensors` | `clip_vision` | 2,53 GB | Base + Animate |
+| `ip-adapter-plus_sdxl_vit-h.safetensors` | `ipadapter` | 848 MB | Base + Animate |
+| `mm_sdxl_v10_beta.ckpt` | `animatediff_models` | 950 MB | Animate |
+
+Os tres estao em `workflow_models` — a **Celula 5 baixa sozinha**. O CLIP Vision
+**tem de manter esse nome de arquivo**, o IPAdapter o identifica assim.
+
+### Poses: trocar so o no 9 do Animate
+
+walk `walking cycle, legs moving` · attack `attacking, swinging arm forward`
+· death `falling down, collapsing, defeated` · idle `standing, breathing, slight sway`
+
+Seed **555 fixa** mantem a aparencia entre animacoes. Para **attack**, mudar o
+no 11 para **1024x768 landscape** — quadrado corta o braco/arma (erro que o
+autor do video original cometeu ao vivo).
+
+## v30 — checkpoint v170 e a causa REAL das abas travadas
+
+### Checkpoint
+
+Trocado `waiIllustriousSDXL_v160` -> **`v170`** em tudo: 6 workflows
+(`Detailer`, `Base`, `Animate`, `Concept`, `WaifuVroid`,
+`WaifuVroid_FromConcept`), `node_registry.json` e `roster.example.json`.
+
+### As abas: meu diagnostico da v26 estava incompleto
+
+Na v26 eu limpei referencias mortas do `comfy.settings.json` (lado servidor).
+O print do usuario mostrou que o problema continuou, e revelou o que faltava:
+**a sidebar ainda listava `Assets`, `ChibiPoses` e `FromConcept`** — apagados
+do repo na v29, mas ainda presentes no Drive e no `user/` local.
+
+Duas causas somadas:
+
+**1. A C4 nunca removia workflows.** Ela so copia. Um workflow apagado do repo
+ficava para sempre no Drive e na sidebar. Clicar nele = arquivo inexistente =
+alerta "Nao foi possivel encontrar o fluxo de trabalho" e o tabbar trava.
+
+**2. Bug conhecido do frontend, nao nosso.**
+`Comfy-Org/ComfyUI_frontend#9317` descreve exatamente os sintomas: a
+restauracao de abas guarda rascunhos no armazenamento do **navegador**, e
+"tab restoration never activates the correct workflow". Relatos identicos:
+clicar numa aba abre `Unsaved Workflow (n)` em vez do workflow — que e
+precisamente o que se ve no print (aba "Unsaved Workflow" ativa ao lado de
+`WaifuSurvivors_Base`).
+
+Por isso limpar so o lado servidor nao bastava: **metade do estado vive no
+navegador**.
+
+### Correcoes
+
+**C4 — manifesto de injetados.** `user/.injetados.json` registra o que o
+notebook copiou. A cada execucao, o que esta no manifesto mas nao esta mais no
+repo e **removido dos dois lados**. Workflows criados pelo usuario na UI nunca
+entram no manifesto, entao **nunca sao apagados**.
+
+Testado com 8 workflows na UI (3 orfaos + 4 do repo + 1 pessoal): removeu os 3,
+preservou o pessoal.
+
+**C6 (`v30-tabs`) — desliga a persistencia de abas.** Agora tambem grava
+`Comfy.Workflow.Persist = false`. Sem a restauracao automatica, cada workflow
+abre limpo do disco. Perde-se reabrir as abas da sessao anterior — o que num
+Colab efemero nao vale nada — e ganha-se um tabbar que funciona.
+
+### Se ainda travar: limpar o estado do NAVEGADOR
+
+Isto o notebook nao alcanca. No navegador, com a UI aberta:
+F12 -> Application -> Storage -> **Clear site data** (ou Ctrl+Shift+Del para o
+endereco do Colab). Depois F5.
+
+Os rascunhos ficam la, nao no servidor; enquanto nao forem limpos o bug pode
+voltar mesmo com o disco correto.
+
+### Regra
+
+Estado de UI existe em **dois lugares**: `user/` no servidor e o armazenamento
+do navegador. Diagnostico de aba travada tem de considerar os dois. E toda
+sincronizacao repo->Drive precisa de **manifesto** para saber o que remover;
+copiar sem nunca apagar acumula lixo que quebra o frontend.
+
+## v31 — inconsistencia entre concept, splash e chibi
+
+Comparando o concept (piscina, chapeu de palha, close de busto) com as saidas:
+
+| | concept | splash gerada | chibi gerado |
+|---|---|---|---|
+| olhos | ambar | ambar | **azuis** |
+| cabelo | castanho claro, trancado | castanho longo solto | castanho curto |
+| roupa | biquini branco + shorts | **top azul + shorts jeans** | top azul |
+| fundo | piscina | **rosa psicodelico em espiral** | preto |
+
+### Causa 1 — IPAdapter nao carrega identidade discreta
+
+O IPAdapter transfere "clima" da imagem: paleta, iluminacao, estilo de traco.
+Ele **nao trava** cor de olho, cor de cabelo nem peca de roupa. Onde o texto
+nao diz, o modelo inventa — e inventa **diferente em cada KSampler**, porque as
+seeds sao independentes. Por isso o olho virou azul so no chibi.
+
+Era um furo do meu desenho: ao criar o `Base` eu tirei o no de IDENTIDADE que
+existia no antigo `Assets` e deixei so os textos de ESTILO, confiando demais na
+imagem. Contradiz a regra de ouro que ja estava nesta doc: **identidade num
+unico `CLIPTextEncode`**.
+
+### Causa 2 — o concept e um close, a splash e corpo inteiro
+
+O concept mostra busto e rosto. Pedir `full body` a partir dele obriga o modelo
+a **inventar pernas, calcado e a metade de baixo da roupa** — nao ha essa
+informacao na referencia. Foi assim que o biquini virou top azul.
+
+O fundo rosa em espiral tem a mesma origem: `simple background` nao diz QUAL,
+e o IPAdapter puxou a saturacao da agua da piscina.
+
+### Correcoes
+
+1. **No 20 `IDENTIDADE`** (novo) — um unico texto com cabelo, olhos, roupa e
+   calcado, concatenado (nos 21/22) ao estilo de cada saida. Splash e chibi
+   passam a receber **a mesma descricao**.
+2. Splash: `plain white background` no lugar de `simple background`; removido
+   `game character concept art` (empurrava para folha de concept).
+3. Negative + `colorful background, patterned background, swirls, spiral,
+   gradient background, bikini, swimsuit`; no chibi tambem `blue eyes`.
+4. Pesos de IPAdapter subiram: splash **0.7 -> 0.85**, chibi **0.45 -> 0.6**.
+
+### Regra
+
+**IPAdapter e estilo; texto e identidade.** Nenhum dos dois sozinho da
+consistencia. E o concept ideal para o `Base` e **corpo inteiro com fundo
+neutro** — close so serve para portrait.
+
+## v32 — a aberracao do Animate (cor invertida + cabeca dupla)
+
+Saida: chibi azul/laranja com cores invertidas, scanlines horizontais e duas
+cabecas sobrepostas. Nao foi azar de seed — foi configuracao fora da spec.
+
+### Causa: o modulo errado, rodando fora das specs
+
+Eu montei o `Animate` com `mm_sdxl_v10_beta` em **768x768, contexto 16**. Tres
+erros somados:
+
+1. **`mm_sdxl_v10_beta` e beta ha anos e continua instavel.** A doc do
+   AnimateDiff-Evolved lista como "AnimateDiff-SDXL support... **Still in beta
+   after several months**". Eu ja tinha registrado essa ressalva na v29 e
+   escolhi seguir mesmo assim — o resultado provou que nao dava.
+2. **Contexto 16 em SDXL estoura memoria e coerencia.** Relato direto da
+   comunidade: *"AnimateDiff sdxl beta has a context window of 16... Look into
+   hotshot xl, it has a context window of 8"*. A cabeca dupla e o sintoma
+   classico de janela de contexto maior que a capacidade do modulo.
+3. **768x768** — os modulos SDXL de movimento foram treinados em **512**.
+
+### Correcao: Hotshot-XL, com as specs fechadas
+
+A doc do AnimateDiff-Evolved e explicita sobre o Hotshot-XL:
+*"You will need to use autoselect or **linear (HotshotXL/default)**
+beta_schedule, the sweetspot for context_length or total frames is **8
+frames**, and you will need to use an **SDXL checkpoint**."*
+
+| parametro | antes | agora |
+|---|---|---|
+| modulo | `mm_sdxl_v10_beta.ckpt` | **`hsxl_temporal_layers.safetensors`** |
+| beta_schedule | `autoselect` | **`linear (HotshotXL/default)`** |
+| context_length | 16 | **8** |
+| resolucao | 768x768 | **512x512** |
+| frames | 16 | **8** |
+| CFG | 5.5 | **4.5** |
+| IPAdapter | 0.8, end 1.0 | **0.6, end 0.8** |
+
+O `beta_schedule` errado e o principal suspeito da **cor invertida**: e o
+cronograma de ruido: fora do esperado, o denoise termina em outro ponto do
+espaco de cor. CFG 4.5 e IPAdapter solto no fim atacam a saturacao.
+
+**8 frames ja e um ciclo de walk completo** — nao ha perda em relacao aos 16.
+
+### Download novo
+
+`hsxl_temporal_layers.safetensors` (1,2 GB, `animatediff_models`), de
+`Kosinkadink/HotShot-XL-MotionModels`. Ja em `workflow_models` — a C5 baixa.
+O `mm_sdxl_v10_beta` saiu do registry; pode apagar do Drive.
+
+### Regra
+
+Modulo de movimento tem **spec fechada** (resolucao, context_length,
+beta_schedule). Nao sao sugestoes: sair delas quebra a imagem de formas que
+parecem bug de outra coisa. Antes de culpar seed ou prompt, conferir se os
+parametros batem com o que o modulo exige.
+
+## v33 — 404 do Hotshot-XL na Celula 5
+
+`[FALHOU] hsxl_temporal_layers.safetensors — HTTP Error 404`.
+
+**Erro meu na v32: inventei a URL sem verificar.** Escrevi
+`Kosinkadink/HotShot-XL-MotionModels`, que e um repo real (por isso o nome
+parecia plausivel), mas listando a arvore pela API do HF:
+
+- `Kosinkadink/HotShot-XL-MotionModels` -> contem **so** `hotshotxl_mm_v1.pth`
+- `hotshotco/Hotshot-XL` -> contem `hsxl_temporal_layers.safetensors` (949 MB)
+  e `hsxl_temporal_layers.f16.safetensors` (475 MB)
+
+O arquivo existe; estava no repo errado.
+
+### Correcao
+
+Registrado o **f16** (475 MB, metade do tamanho, mesma qualidade pratica):
+
+```
+https://huggingface.co/hotshotco/Hotshot-XL/resolve/main/hsxl_temporal_layers.f16.safetensors
+```
+
+O no 5 do `Animate` passou a apontar para `hsxl_temporal_layers.f16.safetensors`
+— nome do arquivo e o do dropdown, os dois tem de bater.
+
+Auditadas as outras 13 URLs do `workflow_models`. As do IPAdapter (as unicas
+que importam para os workflows ativos) conferem contra a arvore do HF:
+`models/image_encoder/model.safetensors` (2,53 GB) e
+`sdxl_models/ip-adapter-plus_sdxl_vit-h.safetensors` (848 MB).
+
+### Regra
+
+**Nunca escrever URL de modelo de memoria.** Conferir sempre em
+`https://huggingface.co/api/models/<repo>/tree/main[/<subpasta>]`, que lista os
+arquivos reais com tamanho. Nome de repo plausivel nao e garantia — o Kosinkadink
+hospeda modelos do Hotshot, mas nao *este* arquivo.
+
+Obs.: no sandbox, `urllib`/`curl` para `huggingface.co` sao bloqueados; a
+verificacao tem de ser feita pela ferramenta de fetch.
+
+## v34 — revisao geral: por que as abas NUNCA funcionaram
+
+Tres tentativas minhas falharam (v24, v26, v30). A revisao do codigo achou o
+motivo: **eu estava consertando o lugar errado, com chaves que nao existem.**
+
+### Erro 1 — chaves de settings inventadas
+
+A C6 gravava `Comfy.Workflow.Persist` e `Comfy.Workflow.PersistOpenWorkflows`.
+**Nenhuma das duas existe.** Eu as deduzi do texto da doc ("Persist workflow
+state and restore on page (re)load") sem verificar o id real. Escrever chave
+inexistente no `comfy.settings.json` nao faz nada — por isso a v30 nao mudou
+coisa alguma.
+
+Removidas. O saneamento agora mexe so em chaves observadas:
+`Comfy.Workflow.OpenWorkflows`, `Comfy.PreviousWorkflow`,
+`Comfy.Workflow.ActiveIndex`.
+
+### Erro 2 — o estado nao esta no servidor
+
+Pela documentacao do frontend (`useWorkflowPersistenceV2`, `draftCacheV2`,
+`storageKeys`, `workflowDraftStoreV2`), a restauracao de abas vive no
+**localStorage / IndexedDB do NAVEGADOR**. O `comfy.settings.json` do servidor
+nao controla isso. Limpar so o disco nunca ia resolver.
+
+### Solucao: pagina de destrave servida pela propria UI
+
+A C6 instala `destravar.html` no **web_root real** e imprime o endereco.
+Abrir `<URL_DA_UI>/destravar.html` e clicar num botao limpa as chaves de
+workflow/draft/tab do localStorage e apaga o IndexedDB dos rascunhos,
+preservando tema e idioma. Segundo botao limpa tudo.
+
+**Detalhe que quase me pegou de novo:** o `web_root` **nao e** `ComfyUI/web/`.
+Em `server.py` ele vem de `FrontendManager.init_frontend()`, ou seja, do pacote
+pip `comfyui_frontend_package`. Escrever em `ComfyUI/web/` nao seria servido.
+A C6 descobre o caminho real via `comfyui_frontend_package.__file__` e so cai
+em `ComfyUI/web` como fallback.
+
+Regex e logica do botao testados: remove as 5 chaves de estado e preserva
+`Comfy.Theme`, `Comfy.Settings.Locale`, `Comfy.NodeSearchBoxImpl`.
+
+### Erro 3 — manifesto marcava mais do que copiava
+
+A C4 gravava no manifesto **todo o repo**, mas copia so os **escolhidos**. Um
+workflow nunca selecionado entrava na lista de "injetados"; se depois sumisse
+do repo, a C4 tentaria remover algo que ela nunca pos la.
+
+Corrigido: manifesto = `(anteriores | copiados agora) & repo atual`.
+Testado em 3 sessoes seguidas — remove o apagado do repo, preserva o workflow
+criado pelo usuario.
+
+### Sobre a sua ideia de web UI propria
+
+Nao vale a pena: o problema nunca foi entregar o arquivo (a C4 ja copia
+certo, e a sidebar sempre listou os workflows). Era o estado do navegador
+corrompendo a abertura. Uma UI paralela teria o mesmo problema e ainda
+duplicaria o que o ComfyUI ja faz. A pagina de destrave ataca a causa com
+~40 linhas.
+
+## v34b — WaifuSurvivors_CharacterSheet.json (novo)
+
+Turnaround front / 3-4 / side / back numa folha so, via **ControlNet Union**.
+
+**Por que ControlNet e nao so prompt:** pedir "character sheet" no texto da
+views em posicoes aleatorias e com a personagem mudando entre elas. O
+ControlNet fixa ONDE cada figura fica e em que angulo. E o Illustrious ja tende
+a repetir o mesmo rosto dentro da mesma imagem — aqui isso joga a favor.
+
+Entrada: uma **folha de poses openpose** (3-4 esqueletos lado a lado) + o
+concept opcional via IPAdapter para o estilo. O `EmptyLatentImage` tem de ter
+o mesmo tamanho da folha de poses.
+
+Download novo: `controlnet-union-sdxl-1.0.safetensors` (2,51 GB). Na origem o
+arquivo chama `diffusion_pytorch_model_promax.safetensors` — a C5 salva com o
+nome do registry, entao o dropdown bate.
+
+Serve para: referencia das 5 personagens, **dataset de LoRA pronto num Run**
+(recortar as views) e base para o VRoid Studio da Lia, que precisa das costas.
+
+## v35 — arqueologia: quando quebrou e o que a mensagem REALMENTE significa
+
+Pedido: voltar ao momento em que os workflows pararam de funcionar. Fiz isso
+lendo o historico (57 commits) e, principalmente, **o codigo-fonte do frontend
+1.51.9** (baixado do pip, o mesmo que roda no Colab).
+
+### A mensagem nunca significou o que eu achei
+
+No bundle, a string e a chave `toastMessages.fileLoadError`:
+
+```
+fileLoadError: `Unable to find workflow in {fileName}`
+```
+
+Repare no **"in"**. Nao e "nao achei o ARQUIVO", e **"nao achei workflow DENTRO
+do arquivo"**. Quem dispara e `showErrorOnFileLoad`, chamada por
+`handleFile()`, que so roda quando um **arquivo e ARRASTADO/CARREGADO na tela**.
+Ela aparece quando `getWorkflowDataFromFile()` volta vazio: JSON invalido,
+JSON sem `nodes` que tambem nao e API, ou imagem sem metadados.
+
+**Abrir pela sidebar nao passa por esse codigo.** A sidebar usa
+`GET /api/userdata/workflows%2F<nome>.json`. Sao dois caminhos totalmente
+diferentes.
+
+Consequencia: **v24, v26, v30 e v34 atacaram o alvo errado.** Passei quatro
+versoes tratando "arquivo ausente no disco" quando a mensagem falava de
+conteudo ilegivel num arquivo arrastado.
+
+### O v21 plantou uma crenca falsa
+
+O commit `808cfe8` ("v21: id do workflow precisa ser UUID para a aba Workflows
+abrir") registrou como fato que **a aba indexa por `id` UUID**. Lendo o
+frontend, isso **nao existe**: a indexacao e por **caminho** (`workflows/x.json`)
+via `/userdata`. O `id` UUID e inofensivo, mas nunca foi a causa nem a cura —
+e virou premissa de tudo que veio depois.
+
+### Estado real dos arquivos
+
+Auditei os 14 JSONs: nenhum tem NaN/Infinity, BOM, ou e confundivel com API
+JSON; todos tem `nodes`. **Nenhum dispara o `fileLoadError`.** O `Base` foi
+lido por HTTP num servidor de teste que imita a API: 22.524 bytes, 22 nos,
+`id` valido, **abrivel**.
+
+### O que a v35 entrega: parar de adivinhar
+
+`_diag_workflows()` roda na C6, 25 s apos o boot, e compara os tres niveis:
+
+1. **DISCO** — lista `USER_LOCAL/default/workflows`
+2. **API** — `GET /api/userdata?dir=workflows` (o que a sidebar enxerga)
+3. **GET real** — baixa o primeiro workflow igual a UI faz ao abrir
+
+E imprime o veredito:
+
+- arquivo no disco mas ausente da API -> problema de **servidor**
+  (`--user-directory`, permissao, usuario)
+- API completa e GET OK -> os arquivos estao sadios e o estado quebrado esta
+  no **NAVEGADOR** -> `/destravar.html`
+- GET falha -> mostra o erro exato, que e onde a UI quebra
+
+Testado nos dois cenarios (servidor coerente e servidor divergente).
+
+### Regra
+
+**Ler a string de erro no codigo-fonte antes de teorizar.** A preposicao "in"
+distinguia dois bugs completamente diferentes e custou quatro tentativas.
+Quando o mesmo sintoma resiste a varias correcoes, a hipotese provavelmente
+esta errada — nao a implementacao dela.
+
+## v36 — o diagnostico da v35 rodou cedo demais
+
+O log do usuario mostrou:
+
+```
+GET do WaifuSurvivors_Animate.json FALHOU: <urlopen error [Errno 111] Connection refused>
+```
+
+**Nao e o bug** — e falha do meu proprio diagnostico. Usei `time.sleep(25)`
+fixo, mas o boot desta sessao levou mais que isso importando custom nodes
+(Inspyrenet 2,5 s, VHS 0,7 s, AnimateDiff 0,6 s, alem do Manager e do scan de
+seguranca). Quando o diag disparou, o `Starting server` ainda nao tinha
+acontecido: nada escutava na 8188.
+
+Prova no proprio log: o autodiag, que roda mais tarde, mediu
+`/api/userdata?dir=workflows` em **0,00 s com HTTP 200**. O servidor responde.
+
+### Correcoes
+
+1. **Espera a porta, nao o relogio.** `socket.create_connection` em loop, ate
+   5 min, antes de qualquer requisicao.
+2. **Rota igual a da sidebar.** Lendo o frontend (`api-D_pCbeK9.js`), a sidebar
+   chama `listUserDataFullInfo`, ou seja:
+   `/userdata?dir=workflows&recurse=true&split=false&full_info=true`.
+   Com `full_info=true` a resposta e uma lista de **dicionarios**
+   (`{path,size,modified}`), nao de strings — o diag agora entende os dois.
+3. Imprime o **corpo bruto** da resposta, para nao restar duvida.
+
+### Observacao sobre o "0 KB" do autodiag
+
+No log, `/api/userdata?dir=workflows  0.00s  0 KB`. O `0 KB` e arredondamento
+de uma resposta pequena, e aquela rota (sem `full_info`) devolve so nomes.
+Nao indica lista vazia — a C4 confirmou **5 workflows** no disco e o servidor
+esta com `--user-directory /content/comfy_user`, o mesmo caminho.
+
+Testado contra um servidor que imita a API real: 5 itens, GET de 18.650 bytes,
+17 nos, ABRIVEL.
+
+## v37 — defeitos REAIS nos nos do Animate (achados lendo a fonte dos packs)
+
+Com o navegador limpo, o servidor OK e os arquivos integros, sobrou olhar o que
+nunca tinha sido conferido: **se os nos que eu escrevi batem com a definicao
+real dos custom nodes**. Clonei os packs e comparei.
+
+### Defeito 1 — node deprecado
+
+O no 7 usava `ADE_AnimateDiffUniformContextOptions`. Na fonte
+(`animatediff/nodes_context.py`) essa classe e `LegacyLoopedUniformContextOptionsNode`
+com **`is_deprecated=True`**. Node deprecado fica escondido da UI por padrao
+(setting "Show deprecated nodes in search" vem **Disabled**), e o frontend pode
+nao conseguir renderizar.
+
+Trocado por **`ADE_LoopedUniformContextOptions`**, a versao atual.
+
+### Defeito 2 — widgets fora de ordem e faltando um
+
+O deprecado tem 9 widgets, incluindo `context_schedule`. O atual tem 8 e **nao
+tem** esse campo. Eu tinha gravado 8 valores no formato do de 9:
+
+```
+antes: [8, 3, 4, 'uniform', False, 'flat', 'pyramid', False]   <- 'uniform' sobrando
+agora: [8, 1, 4, True, 'pyramid', True, 0.0, 1]
+```
+
+Ordem correta da fonte: `context_length, context_stride, context_overlap,
+closed_loop, fuse_method, use_on_equal_length, start_percent, guarantee_steps`.
+`closed_loop=True` e `use_on_equal_length=True` sao o que realmente fecham o
+loop quando o numero de frames e igual ao context_length — exatamente o nosso
+caso (8 e 8).
+
+### Defeito 3 — entrada opcional faltando
+
+`ADE_ApplyAnimateDiffModelSimple` tem 6 entradas; o no 6 declarava 5, sem
+`per_block`. Adicionada.
+
+### O IPAdapter estava certo
+
+Conferido contra `IPAdapterPlus.py`: `model, ipadapter, image, weight,
+weight_type, combine_embeds, start_at, end_at, embeds_scaling` + opcionais
+`image_negative, attn_mask, clip_vision`. Bate com o que geramos.
+
+### `scripts/validar_workflows.py` (novo)
+
+Para nao depender de mim reparar isso a olho de novo:
+
+```
+python scripts/validar_workflows.py --server http://127.0.0.1:8188
+```
+
+Com `--server` ele le `/object_info` (a MESMA fonte que a UI usa) e acusa:
+tipo de no inexistente, **node deprecado**, entrada com nome invalido e
+contagem de widgets errada. Sem `--server`, valida so estrutura/links/ids.
+
+Testado contra um `/object_info` simulado com 3 defeitos plantados: pegou os 3.
+
+### Regra
+
+JSON valido e links coerentes **nao garantem** que o workflow abre. A
+definicao do no e a fonte de verdade, e ela mora no codigo do pack. Todo
+workflow gerado por script tem de passar pelo validador **com o servidor
+ligado** antes de ser considerado pronto.
+
+## v38 — o Manager sumiu (explicado) e a pagina agora TESTA a abertura
+
+### Por que nao ha botao Manager
+
+Duas linhas do log explicam:
+
+```
+[INFO] Blocked by policy: /content/ComfyUI/custom_nodes/ComfyUI-Manager
+[ERROR] To use this action, security_level must be `normal or below`,
+        and network_mode must be set to `personal_cloud`.
+```
+
+**1. O clone em `custom_nodes/` foi bloqueado de proposito.** Lendo `nodes.py`
+do ComfyUI e `comfyui_manager/__init__.py`: com `--enable-manager`, o
+`should_be_disabled()` retorna True para qualquer pasta cujo nome contenha
+`comfyui-manager`. O Manager agora vem do **pacote pip** (`comfyui_manager`
+4.2.2) e o clone antigo e desativado para nao duplicar. Isso e correto — nossa
+C1 clona por habito, e o clone e ignorado.
+
+**2. As acoes estavam barradas por politica.** O default e
+`network_mode = public`, e com `--listen 0.0.0.0` o Manager entende acesso
+remoto publico e bane instalar/atualizar. O proprio Manager preve o nosso caso
+com o modo **`personal_cloud`**: maquina de nuvem de uso pessoal.
+
+A C6 agora escreve em `{USER_LOCAL}/__manager/config.ini`:
+
+```
+[default]
+network_mode = personal_cloud
+security_level = normal
+```
+
+Preserva as demais chaves e e idempotente (testado).
+
+### A pagina de destrave virou diagnostico do NAVEGADOR
+
+O diagnostico da C6 roda no servidor, e ali esta tudo OK. O que faltava era
+enxergar pelo lado do navegador. `destravar.html` ganhou **"Testar abertura"**,
+que reproduz a sequencia exata da UI:
+
+1. `GET /api/userdata?dir=workflows&...&full_info=true` — a listagem
+2. `GET /api/userdata/workflows%2F<nome>.json` — de **cada** workflow
+3. `JSON.parse` do corpo
+4. cruza os `type` dos nos com `/api/object_info`
+
+O passo 4 e o que nunca foi verificado do lado certo: **workflow integro cujo
+no nao existe no servidor nao renderiza**. Testado contra um servidor sem o
+pack do AnimateDiff — a pagina acusou os 5 nos ausentes por nome.
+
+Todas as chamadas usam caminho **relativo** (`./api/...`), entao funciona pelo
+proxy do Colab sem hardcode de host.
+
+### Observacao
+
+O log mostra os 4 packs importando sem erro (IPAdapter 0.1 s, AnimateDiff
+0.2 s, VHS 0.8 s, Inspyrenet 2.5 s), entao os nos **deveriam** estar
+registrados. O teste no navegador vai confirmar ou refutar isso — e e a
+primeira medicao feita de dentro do browser, que e onde o problema vive.
+
+## v39 — memoria que se verifica sozinha
+
+Pergunta do usuario: "voce esta anotando esses erros para nao precisar
+repensar se ocorrer de novo?"
+
+Resposta honesta: **estava anotando, e nao bastou.** Este arquivo tem 76
+secoes. O bug das abas foi documentado 4x (v24, v26, v30, v34) e eu repeti a
+mesma hipotese errada nas 4. Documentacao cronologica so ajuda quem relê 2600
+linhas antes de agir — e nao foi o que aconteceu.
+
+Duas mudancas para que a memoria funcione sem depender de leitura:
+
+### 1. Indice por SINTOMA no topo do arquivo
+
+Tabela `sintoma -> causa confirmada -> secao`, mais 10 **regras invioláveis**,
+cada uma com a versao onde foi violada. Quem chega com um sintoma acha a causa
+em segundos, em vez de formular hipotese nova.
+
+### 2. `scripts/checar_regras.py` — executa a memoria
+
+Cada checagem existe porque o erro JA ACONTECEU:
+
+| Regra | Detecta | Origem |
+|---|---|---|
+| v21 | id de workflow que nao e UUID, ou duplicado | v21 |
+| v30 | versoes de checkpoint misturadas no repo | v30 |
+| v37 | link orfao / apontando para no inexistente | v37 |
+| v37 | node_id **deprecado** (com o substituto certo) | v37 |
+| v33 | URL do HF fora do padrao `/resolve/`; com `--online`, 404 real | v33 |
+| v34 | chave de setting **inventada** no notebook | v34 |
+| v24 | copia condicional entre Drive e local | v24 |
+| sintaxe | celula do notebook que nao compila | — |
+| versao | NB_VERSION ausente ou conflitante | — |
+
+Validado plantando as 5 regressoes de volta num clone: **as 5 foram pegas**,
+cada uma citando a secao correspondente.
+
+Achou tambem um defeito que estava passando despercebido:
+`Efaces_Pony_XL_V01.json` **nao tinha `id`** — exatamente a condicao que a v21
+documentou como impeditiva para a aba abrir. Corrigido.
+
+### Como usar
+
+```
+python scripts/checar_regras.py            # rapido, offline
+python scripts/checar_regras.py --online   # confere as URLs no HF
+python scripts/validar_workflows.py --server http://127.0.0.1:8188
+```
+
+Os dois primeiros nao precisam de nada ligado. O terceiro exige o ComfyUI no ar
+e e o unico que valida os nos contra `/object_info`.
+
+### Regra
+
+**Documentar um erro nao impede a repeticao; verificar impede.** Todo bug que
+custar mais de uma tentativa vira: (a) linha no indice por sintoma e (b)
+checagem automatica, quando for verificavel por codigo.
+
+## v40 — RESOLVIDO: 404 em todo workflow atras do proxy do Colab
+
+O teste no navegador finalmente deu o dado que faltava:
+
+```
+1) listar workflows -> HTTP 200   (6 workflows)
+2) GET WaifuSurvivors_Base.json -> HTTP 404 FALHOU
+   ... todos os 6 em 404
+```
+
+**Listagem 200, GET 404 em todos.** Isso descarta arquivo corrompido, no
+ausente, permissao e estado do navegador de uma vez.
+
+### Causa
+
+O frontend pede:
+
+```
+GET /api/userdata/workflows%2FBase.json
+```
+
+O **proxy do Colab decodifica `%2F` em `/`** antes de repassar. O servidor
+recebe `/api/userdata/workflows/Base.json`. A rota do ComfyUI e
+
+```python
+@routes.get("/userdata/{file}")
+```
+
+e no aiohttp `{file}` **nao casa com barra**. Resultado: 404 em todo workflow.
+
+A **listagem** escapa porque usa querystring (`?dir=workflows`), que o proxy
+nao mexe. Dai o sintoma exato: a sidebar lista tudo e nada abre.
+
+Reproduzido em aiohttp:
+
+| pedido | rota `{file}` | rota `{file:.+/.+}` |
+|---|---|---|
+| `/userdata/workflows%2FBase.json` | 200 | 200 |
+| `/userdata/workflows/Base.json` | **404** | 200 |
+
+### Correcao
+
+A C6 instala `custom_nodes/zz_proxy_userdata/`, que registra a mesma rota com
+`{file:.+/.+}` — o `.+/.+` exige pelo menos uma barra, entao nao conflita com a
+rota original. Nao altera o codigo do ComfyUI.
+
+Guarda de path traversal testada: `../secreto`, `..%2F..%2F` e `/etc/passwd`
+retornam **403**; arquivo valido 200; inexistente 404.
+
+### Por que demorou tanto
+
+Todos os meus diagnosticos anteriores rodaram **no servidor, via 127.0.0.1** —
+onde nao ha proxy e o `%2F` chega intacto. Por isso davam sempre "tudo OK". O
+bug so existe no caminho **navegador -> proxy -> servidor**, e so apareceu
+quando a medicao foi feita de dentro do browser.
+
+### Regra
+
+**Medir do lado do cliente real.** Um teste em `127.0.0.1` nao exercita proxy,
+reescrita de URL nem CORS. Quando servidor e arquivos estao sadios e a UI
+falha, o suspeito e o caminho entre eles — e a checagem tem de partir do
+navegador.
+
+Adicionada a `checar_regras.py`: acusa se o patch sumir do notebook.
+
+## v41 — MiniMax H3: por que NAO roda nesta maquina
+
+Sugerido pelo usuario (https://huggingface.co/Comfy-Org/MiniMax-H3), com o
+relato de que "da para rodar no Colab". Verifiquei os tamanhos reais pela API
+do HF antes de opinar.
+
+### Os numeros
+
+Stack MINIMO recomendado pela doc oficial da Comfy (workflow T2V):
+
+| peca | arquivo | tamanho |
+|---|---|---|
+| DiT | `minimax_h3_fl2va_pruned_int8_convrot` | **19,5 GB** |
+| Text encoder | `qwen3vl_32b_minimax_h3_nvfp4_awq` | **14,6 GB** |
+| VAEs | video fp16 + audio fp32 | ~5,8 GB |
+| **total** | | **~40 GB** |
+
+Nossa maquina: **14,6 GB de VRAM + 12,7 GB de RAM = 27,3 GB de teto absoluto**.
+Faltam ~12,6 GB **so para os pesos**, sem contar latentes nem ativacoes.
+
+O H3 e um modelo de **33,1 B** com um text encoder Qwen3-VL de **32 B** junto.
+Nao e um WAN 5B.
+
+### E os GGUF da comunidade?
+
+Existem (Unsloth Q2_K a Q8_0; Abiray; realrebelai). O Q2_K do DiT cai para
+~6,3-8,5 GB, o que em tese caberia na VRAM. Mas **todas as fontes convergem no
+mesmo requisito de RAM de sistema**:
+
+- runaihome: "32GB+ system RAM and NVMe are **mandatory**" para cards de 12-16 GB
+- atlascloud: 16 GB VRAM e o "realistic entry point"; 8-12 GB = "experiment only"
+- comfyui-wiki: 16 GB VRAM -> GGUF Q3/Q4 **+ text encoder INT4**
+
+O gargalo e o mesmo de sempre nesta maquina: **RAM de CPU (12,7 GB)**. O
+offload precisa de lugar para onde derramar, e nao ha. Mesmo o Q2_K exigiria o
+text encoder tambem quantizado, e ainda assim ficaria acima do teto.
+
+**Nao vale a pena tentar.** Seria o `Mesh_Processing` de novo: horas de
+download para morrer em OOM.
+
+### O que muda esse veredito
+
+Colab **Pro com A100 (40 GB VRAM) ou L4**, onde a RAM de sistema tambem sobe.
+Ai o stack int8+nvfp4 cabe. No T4 gratuito, nao.
+
+### Sobre "audio nativo"
+
+O H3 gera video **com audio estereo** no mesmo passo. Irrelevante para sprites
+de jogo — jogariamos o audio fora. Mais um motivo para nao pagar o custo.
+
+### Plano de animacao inalterado
+
+1. **Hotshot-XL local** (v32) — ja configurado, 475 MB, roda no T4
+2. **clipe de 1s na nuvem** + `VideoToSprites` (v28) — se o local nao bastar
+
+Ambos continuam validos e nenhum depende de 40 GB.
+
+## v42 — LTX-2.5 e Wan2.2-Animate-2: veredito
+
+Sugeridos pelo usuario. Tamanhos conferidos pela API do HF antes de opinar.
+
+### LTX-2.5 — 22B, nao cabe
+
+| peca | tamanho |
+|---|---|
+| DiT distilled **nvfp4** (a menor que existe) | 17,4 GB |
+| DiT int8-convrot | 20,0 GB |
+| Text encoder gemma4-12b int8 | 14,3 GB |
+| **stack minimo (nvfp4 + TE int8 + VAE)** | **~34,5 GB** |
+
+Teto da maquina: 14,6 VRAM + 12,7 RAM = **27,3 GB**.
+
+O relato mais util veio de quem **conseguiu** rodar LTX-2 em 8 GB de VRAM:
+"4060 Mobile, **64 GB RAM**, aumente o **pagefile para 128 GB**, o modelo +
+clip ocupam **90 a 105 GB de RAM + memoria virtual** para carregar. Este e o
+maior ponto de falha."
+
+Ou seja: LTX-2 em pouca VRAM e possivel **as custas de RAM/swap gigantes**.
+Temos 12,7 GB de RAM e o Colab nao da swap de 128 GB. E exatamente o gargalo
+que ja nos barrou no WAN 14B e no MiniMax H3.
+
+### Wan2.2-Animate-2 — 14B, e o problema nao e so o tamanho
+
+O repo oficial so publica **bf16: 30,5 GB** (base e distillation, mesmo
+tamanho), mais umT5, VAE e CLIP-vision. Setup de referencia dos autores:
+**8x A800 a 720p**, ou 2x A800 a 480p. Existe GGUF Q4 da comunidade (~8-12 GB)
+mas com "**~32 GB de RAM de sistema**" recomendados.
+
+**O impedimento maior e conceitual:** Wan Animate e **video-to-video**. Ele
+exige um **video de referencia** (driving video) com a performance a ser
+copiada, alem da imagem do personagem. Ele nao inventa movimento — ele
+**transfere** movimento de um video que voce ja tem.
+
+Para o WAIFU SURVIVORS isso significa: para gerar um walk cycle de chibi, eu
+precisaria **ja ter um video de walk cycle de chibi**. O modelo resolve
+"anime ESTA personagem com AQUELE movimento", nao "invente um walk cycle".
+
+E uma ferramenta excelente para outra coisa (trocar personagem em filmagem,
+animar retrato com performance de ator). Nao e a nossa.
+
+### Resumo dos 3 modelos avaliados
+
+| modelo | params | stack minimo | cabe em 27,3 GB? | serve ao caso? |
+|---|---|---|---|---|
+| MiniMax H3 (v41) | 33 B | ~40 GB | nao | audio inutil p/ sprite |
+| LTX-2.5 | 22 B | ~34,5 GB | nao | sim, se coubesse |
+| Wan2.2-Animate-2 | 14 B | ~30,5 GB (so bf16) | nao | **nao** — exige driving video |
+
+### O padrao
+
+Os modelos de video de 2026 sao **14-33 B**. Mesmo quantizados, o text encoder
+(Qwen3-VL-32B, gemma4-12B, umT5) sozinho ja passa da nossa RAM. Nenhuma
+variacao deles muda isso — a variacao mexe no DiT, e o gargalo esta no
+conjunto.
+
+**Nao vale reavaliar modelo de video grande enquanto a maquina for T4 + 13 GB
+de RAM.** O que muda o veredito e Colab Pro (A100/L4) ou geracao na nuvem.
+
+### Continua valendo
+
+1. **Hotshot-XL local** (v32) — 475 MB, roda hoje
+2. **clipe de 1s na nuvem** + `VideoToSprites` (v28)
+
+## v43 — CORRECAO MINHA: o WAN 2.2 **5B** cabe no T4. Nao precisa de nuvem paga.
+
+Usuario: "os da nuvem sao pagos, fica dificil achar". Fui procurar alternativa
+gratuita e, no caminho, descobri que **eu errei na v29**.
+
+### O erro
+
+Na v29 escrevi que "mesmo o WAN 5B quer 24 GB de RAM" e parti para o
+AnimateDiff. **Nunca conferi os tamanhos do 5B.** Repeti um numero de artigo
+generico em vez de olhar o repo — exatamente a regra 1 do indice, que eu mesmo
+escrevi.
+
+### Os numeros reais (Comfy-Org/Wan_2.2_ComfyUI_Repackaged)
+
+| peca | tamanho |
+|---|---|
+| `wan2.2_ti2v_5B_fp16` | **9,31 GB** |
+| `umt5_xxl_fp8_e4m3fn_scaled` | **6,27 GB** |
+| `wan2.2_vae` | **1,31 GB** |
+| soma | 16,9 GB |
+
+Com **`--cache-none`** (que a C6 ja liga desde a v29) o ComfyUI carrega **um
+modelo por vez**: o text encoder roda primeiro e sai da memoria, depois entra o
+DiT. **O pico e ~9,3 GB**, nao 16,9 — e cabe nos 14,6 GB do T4.
+
+Confirmacao independente: notebook "Wan2GP on Colab" recomenda exatamente
+"Wan 2.2 TextImage2Video **5B** FastWan, 480p" para o T4 gratuito; e um guia de
+ComfyUI-no-Colab cita "Wan 2.2 **5B** — cabe em 8 GB de VRAM, ideal para o
+tier gratuito".
+
+### `WaifuSurvivors_AnimateWan.json` (novo)
+
+13 nos, **todos nativos** — nenhum custom node novo alem do Inspyrenet que ja
+temos. `UNETLoader` + `CLIPLoader` + `Wan22ImageToVideoLatent` + `KSampler` +
+`InspyrenetRembg` + `SaveImage`.
+
+Entrada: o **chibi idle** do `Base`. Saida: frames com alpha para o
+`make_spritesheet.py`. Mesma esteira da v28.
+
+Detalhes que importam:
+- `length=25` (~1 s a 24 fps). O campo anda de 4 em 4 (4n+1).
+- **sempre** por `static camera, no camera movement` no prompt: modelo de video
+  adora mover a camera, e isso destroi o alinhamento do sprite.
+- 512x512 para walk/idle/death; **768x512 landscape para attack**.
+- 12-25 min por clipe no T4. E lento, mas e local e gratuito.
+
+### Hotshot-XL vs WAN 5B
+
+O `Animate` (Hotshot) continua no repo. Diferenca honesta: Hotshot e um modulo
+de movimento **beta** colado no SDXL — rapido e fraco. WAN 5B e um modelo de
+video de verdade — lento e bom. Teste o WAN primeiro; o Hotshot vira plano B se
+a lentidao incomodar.
+
+### Alternativas gratuitas na nuvem (se quiser comparar)
+
+Levantadas na mesma busca, todas sem cartao:
+- **Kling** — 66 creditos/dia, i2v incluso no free (o mais generoso recorrente)
+- **Hailuo (MiniMax)** — 2-3 clipes/dia, 768p, 6 s
+- **PixVerse** — 60 creditos/dia
+- **Luma** — ~80 creditos/dia
+- **Runway** — 125 creditos, uma vez so
+
+Quase todos poem marca d'agua no free. Para chibi com fundo removido a marca
+atrapalha menos, mas o WAN local nao tem esse problema.
+
+**Grok Imagine (o do video do DevDude) nao tem mais tier gratuito** desde
+marco/2026 — o tutorial esta desatualizado nesse ponto.
+
+### Regra reforcada
+
+A regra 1 existia e eu violei: **conferir o tamanho no repo antes de declarar
+que nao cabe**. Numero de artigo generico ("14B precisa de 32 GB") nao vale
+para a variante especifica.
+
+## v44 — Analise do prompt gerado por outra IA (animacao 2D para games)
+
+O usuario trouxe um prompt detalhado feito por outra IA. Confrontei cada
+afirmacao tecnica com as fontes. Resumo: **a maior parte coincide com o que
+chegamos, e um ponto corrige um erro meu.**
+
+### Onde ele CONFIRMA o que ja fizemos
+
+| Recomendacao dele | Nosso estado |
+|---|---|
+| Nao usar modelos gigantes de video | v41/v42 — descartamos H3, LTX-2.5, Wan-Animate |
+| 512x512 / 384x384, nao 1024 | v32 — Hotshot em 512; e a regra "nao gerar chibi em 128" |
+| 8-16 frames, nao 32/64 | v32 — contexto 8 no Hotshot |
+| batch 1, FP16, liberar VRAM | C6 ja com `--cache-none --disable-smart-memory` |
+| Seed fixa para consistencia | v32 — seed 555 fixa entre animacoes |
+| Exportar frames + spritesheet + JSON | `scripts/make_spritesheet.py` (v28) faz os tres |
+| JSON com `animation/frames/fps/loop` | ja gerado pelo script |
+| 12 FPS padrao para game | ja e o default do script |
+| Remover fundo em etapa posterior | `InspyrenetRembg` em todos os workflows |
+| Prompt negativo anti-deformacao | v27/v31 — nosso negative ja tem quase toda a lista |
+| Nao inventar URLs de modelo | **regra 1** do nosso indice (v33) |
+| Consistencia > qualidade cinematografica | e exatamente a v31 |
+
+### Onde ele esta CERTO e eu errei
+
+**"AnimateDiff SD1.5 e melhor que SDXL para animacao."** Verdade, e eu escolhi
+SDXL na v29 por conveniencia (era o nosso checkpoint), nao por merito.
+
+Conferindo o repo `guoyww/animatediff`:
+
+| modulo | tamanho | estado |
+|---|---|---|
+| `v3_sd15_mm.ckpt` | 1,67 GB | maduro (v3) |
+| `mm_sd_v15_v2.ckpt` | 1,82 GB | maduro |
+| `mm_sdxl_v10_beta.ckpt` | 0,95 GB | **beta, subtreinado** |
+| `v3_sd15_sparsectrl_rgb` | 1,99 GB | so existe para SD1.5 |
+| `v3_sd15_sparsectrl_scribble` | 1,99 GB | so existe para SD1.5 |
+| `v2_lora_*` (8 MotionLoRAs) | 77 MB cada | **so funcionam em SD1.5** |
+
+E `ByteDance/AnimateDiff-Lightning` (908 MB, 1/2/4/8 step) tambem e **so SD1.5**.
+
+Ou seja: SparseCtrl, MotionLoRAs e Lightning — as tres ferramentas que dao
+CONTROLE de movimento — **nao existem em SDXL**. O ecossistema de animacao
+mora no SD1.5.
+
+**SparseCtrl e a resposta certa para o que ele descreve** (frame 1 pose A,
+frame 3 pose B...): e o unico mecanismo que condiciona frames especificos de
+uma animacao. Eu nao tinha proposto isso.
+
+### Onde o prompt esta DESATUALIZADO para o nosso caso
+
+**1. Nao sabe do WAN 2.2 TI2V-5B (v43).** Ele proibe "modelos de video" por
+assumir que todos precisam de 24 GB+. Mas o 5B tem pico de ~9,3 GB com
+`--cache-none` e cabe no T4. E um modelo de video de verdade, melhor que
+qualquer modulo AnimateDiff.
+
+**2. Conflito real: SD1.5 x nosso personagem SDXL.** Ele diz "nao use SDXL como
+principal". Mas TODO o nosso pipeline de identidade e SDXL/Illustrious:
+`Base`, `CharacterSheet`, o proprio chibi idle. Trocar para SD1.5 significa:
+- abandonar o WAI-illustrious v170 (e a LoRA futura da personagem)
+- o chibi animado sairia com traco diferente do chibi do `Base`
+- ToonYou/Mistoon sao bons, mas nao sao o nosso estilo ja aprovado
+
+Isso nao e detalhe: **quebra a consistencia que ele mesmo poe como requisito 1**.
+
+**3. Sugere "notebook do zero com 14 celulas".** Ja temos um notebook maduro
+(v44, 8 celulas) com registry, selecao de nodes, patch do proxy, diagnostico e
+validadores. Recomecar jogaria fora 44 versoes de correcoes.
+
+### Conclusao: as tres rotas, honestamente
+
+| rota | consistencia | controle de pose | custo |
+|---|---|---|---|
+| **WAN 5B** (v43, pronto) | boa (i2v do chibi) | so por prompt | 17 GB, 12-25 min/clipe |
+| **Hotshot-XL** (v32, pronto) | media | nenhum | 475 MB, rapido, fraco |
+| **SD1.5 + AnimateDiff v3 + SparseCtrl** | alta COM pose | **sim, por frame** | ~6 GB, mas troca de checkpoint |
+
+A rota SD1.5 e tecnicamente a melhor **para controle de pose**, e o preco e
+trocar o modelo do personagem.
+
+### Recomendacao
+
+Testar o **WAN 5B primeiro** (ja esta pronto, mantem o personagem). Se o
+movimento nao servir, montar a rota SD1.5+SparseCtrl como pipeline PARALELO —
+usando o chibi idle do SDXL como referencia IPAdapter para o SD1.5 herdar a
+aparencia. Nao substituir o que existe.
+
+## v45 — rota SD1.5 + SparseCtrl (paralela, para comparar com o WAN)
+
+Usuario quer as DUAS rotas para comparar. Esta e a segunda.
+
+### `WaifuSurvivors_AnimateSD15.json` (21 nos)
+
+```
+ToonYou(SD1.5) ─┐
+chibi idle SDXL ─> IPAdapter 0.8 ─┐
+                                  ├─> UseEvolvedSampling ─> KSampler ─> rembg
+AnimateDiff v3 + contexto 16 ─────┘         ^
+poses-chave ─> SparseCtrl Index ─> ControlNetApply
+```
+
+**Como o conflito SDXL x SD1.5 foi resolvido:** o **no 4 (IPAdapter)** recebe o
+`chibi_idle` gerado pelo `Base` (SDXL) e o SD1.5 **herda a aparencia**. Nao
+trocamos de personagem — trocamos so o motor da animacao.
+
+### O coracao: nos 9 e 10
+
+- **no 9**: lote de imagens de pose (uma por pose-chave)
+- **no 10** `indexes = 0,4,8,12`: em QUE frames elas entram
+- o AnimateDiff **interpola** o resto
+
+Com 16 frames e `0,4,8,12`: contact esq -> passing -> contact dir -> passing.
+E o ciclo de walk classico, exatamente o que a outra IA descreveu — e o unico
+mecanismo que faz isso, porque **SparseCtrl so existe em SD1.5**.
+
+Para desligar o controle de pose: bypass (Ctrl+B) nos nos 9, 10, 11 e 12 e
+ligar o no 13 direto no 16. Vira AnimateDiff puro.
+
+### `scripts/gerar_poses.py` (novo)
+
+Sem poses o SparseCtrl nao tem o que condicionar. O script desenha
+bonecos-palito com proporcao chibi para 7 ciclos:
+
+| anim | poses | frames | indices |
+|---|---|---|---|
+| walk | 4 | 16 | 0,4,8,12 |
+| run | 4 | 16 | 0,4,8,12 |
+| idle | 2 | 16 | 0,8 |
+| attack | 4 | 16 | 0,4,8,12 |
+| hit | 3 | 12 | 0,4,8 |
+| death | 3 | 16 | 0,6,12 |
+| jump | 4 | 16 | 0,5,10,14 |
+
+Bracos em verde, pernas em vermelho (ajuda o SparseCtrl **RGB** a separar).
+E andaime, nao arte: sketches seus do proprio chibi ficam melhores.
+
+**Bug pego na inspecao visual:** a primeira versao desenhava os membros
+apontando para CIMA, dentro da cabeca — erro de sinal no angulo. So apareceu
+ao **abrir a imagem**; os testes numericos passavam. Corrigido e verificado:
+contacts com abertura de 100 px, passings com 28 px, contacts espelhados.
+
+Licao: para codigo que gera imagem, **teste numerico nao substitui olhar**.
+
+### Downloads (8,2 GB)
+
+| arquivo | pasta | tamanho |
+|---|---|---|
+| `toonyou_beta6.safetensors` | checkpoints | 2,14 GB |
+| `v3_sd15_mm.ckpt` | animatediff_models | 1,56 GB |
+| `v3_sd15_sparsectrl_rgb.ckpt` | controlnet | 1,85 GB |
+| `ip-adapter-plus_sd15.safetensors` | ipadapter | 94 MB |
+| CLIP Vision H-14 | clip_vision | 2,53 GB (ja temos) |
+
+Todas as URLs conferidas na API do HF. Pack novo: **ComfyUI-Advanced-ControlNet**
+(6 nos ACN_ registrados no class_map).
+
+### Parametros que diferem do SDXL
+
+- `beta_schedule` = **`sqrt_linear (AnimateDiff)`** (no SDXL era linear/Hotshot)
+- contexto **16** (SD1.5 foi treinado assim; 8 e do Hotshot)
+- **CFG 7.0** — SD1.5 aguenta; Illustrious queima acima de 5,5
+- sampler `euler` simples
+
+### As tres rotas, agora todas prontas
+
+| workflow | motor | controle de pose | download |
+|---|---|---|---|
+| `AnimateWan` | WAN 2.2 5B | nao | 17 GB |
+| `AnimateSD15` | SD1.5 + SparseCtrl | **sim, por frame** | 8,2 GB |
+| `Animate` | Hotshot-XL/SDXL | nao | 475 MB |
+
+Gere o mesmo walk nas tres e compare. Minha aposta: WAN ganha em fluidez,
+SD1.5 ganha em controle e em ser um ciclo de verdade (que e o que um jogo
+precisa).
+
+## v46 — AnimateWan gerava imagem parada: faltava o `ModelSamplingSD3`
+
+Relato: o `AnimateWan` "gerou so imagens", com distorcao, e no prompt "walk" a
+personagem ficava **parada trocando a cor da roupa**.
+
+### Causa: um no que eu omiti
+
+Comparei meu workflow com o **template oficial**
+(`Comfy-Org/workflow_templates/templates/video_wan2_2_5B_ti2v.json`). A cadeia
+correta e:
+
+```
+UNETLoader -> ModelSamplingSD3 (shift=8) -> KSampler
+```
+
+Eu liguei o `UNETLoader` **direto** no KSampler. O `ModelSamplingSD3` aplica o
+deslocamento de sampling que o WAN exige; sem ele o modelo nao trata a dimensao
+temporal e produz **quadros independentes** — personagem imovel e cores
+oscilando entre frames. E exatamente o sintoma descrito.
+
+Foi o mesmo tipo de erro da v37 (nos do AnimateDiff): montei por deducao em vez
+de conferir a referencia oficial primeiro.
+
+### Tambem corrigido
+
+**Grade de tamanho.** O WAN exige largura/altura **multiplos de 32** e
+`length = 4n+1`. Eu tinha posto 512x512x25 — o 25 esta certo (4*6+1), mas a
+combinacao ficou fora do que o modelo espera. Agora **640x640 x 49** (~2 s),
+seguindo a proporcao do oficial (que usa 1280x704x121).
+
+**Seed** `fixed` -> `randomize`, como o template.
+
+**Prompt reescrito.** Descrever MOVIMENTO, nao aparencia (a aparencia vem da
+imagem). E o negative agora tem `static image, still, motionless, frozen,
+no motion, color shift` — sao esses termos que empurram o modelo a animar.
+
+### Poses do SD1.5: como encontrar
+
+Segunda pergunta do usuario. Duas correcoes:
+
+**1. O no 9 estava errado.** Era `LoadImage`, que carrega **uma** imagem.
+Trocado por **`VHS_LoadImages`**, que le uma **pasta inteira** na ordem
+alfabetica — que e o que o SparseCtrl precisa.
+
+**2. `gerar_poses.py` agora escreve direto no `input/`.** Ele detecta
+`ComfyUI_Data/input/` e cria `poses_<anim>/` la dentro. Fluxo:
+
+```
+python scripts/gerar_poses.py --anim walk
+```
+
+e a pasta ja aparece no dropdown do no 9 (recarregue a pagina com R).
+
+O script imprime os indices para o no 10 e o batch_size para o no 15.
+Ciclos prontos: walk, run, idle, attack, hit, death, jump.
+
+Alternativas as poses geradas (melhores, se voce tiver): sketches do proprio
+chibi nas poses, ou frames de um walk cycle de referencia. O SparseCtrl **RGB**
+aceita imagem colorida qualquer.
+
+### Regra reforcada
+
+Ja estava no indice desde a v37 e violei de novo: **conferir o template
+oficial antes de montar workflow de modelo novo**. Um unico no ausente muda
+"video" para "sequencia de imagens".
+
+## v47 — teste A/B: AnimateDiff (SD1.5) x WAN 2.2 5B
+
+Pedido: comparar os dois motores com a MESMA imagem, medindo tempo, VRAM e
+consistencia.
+
+**Limite honesto:** eu nao executo as geracoes — nao ha GPU no meu ambiente, o
+ComfyUI roda no Colab do usuario. O que entreguei foi o teste **pareado e
+instrumentado**; a execucao e dele.
+
+### Os dois workflows do teste
+
+`AB_A_sd15_idle.json` e `AB_B_wan_idle.json`. Pareados em tudo que da:
+
+| | A (SD1.5) | B (WAN) |
+|---|---|---|
+| imagem de entrada | a mesma | a mesma |
+| seed | 12345 fixa | 12345 fixa |
+| resolucao | 512x512 | 512x512 |
+| steps | 20 | 20 |
+| frames | 8 | **25** |
+| duracao | 1,0 s a 8 fps | ~1,04 s a 24 fps |
+
+**Por que 8 x 25 e nao 8 x 8:** o WAN exige `length = 4n+1` e roda a 24 fps.
+Igualar a **duracao** e mais justo que igualar a contagem. Isso conta a favor
+de A no spritesheet (menos frames para o mesmo ciclo) e a favor de B na
+suavidade.
+
+**SparseCtrl em bypass no lado A**, de proposito: idle nao precisa de controle
+de pose, e assim o teste isola o **motor de movimento**. O SparseCtrl e a
+vantagem estrutural do SD1.5 e deve ser medido na rodada 2 (walk), onde ele
+realmente conta.
+
+### `scripts/ab_test.py`
+
+`--rodar` monitora a VRAM ao vivo (amostra `/system_stats` a cada 2 s) enquanto
+os workflows rodam pela UI. `--medir` analisa os frames e calcula:
+
+| metrica | o que revela |
+|---|---|
+| movimento medio | se animou de verdade |
+| pico de movimento | salto brusco entre frames |
+| **instabilidade** | variacao do movimento (tremor) |
+| **deriva** (frame N vs 0) | se a identidade escapou |
+| **flicker de cor** | oscilacao de cor — o defeito da v46 |
+| emenda do loop | se o ciclo fecha |
+
+**Bug pego no proprio teste do medidor:** a primeira versao media a imagem
+inteira, e o fundo branco **diluia** o flicker — o caso B, com oscilacao
+visivel, marcava 0,79 (parecia otimo). Corrigido para ignorar fundo: passou a
+5,27 contra 1,12 do A. Validado com frames sinteticos que imitam os dois casos
+(A com respiracao real, B parado com cor oscilando).
+
+### O que o script NAO mede
+
+Se ficou bonito. Deformacao de mao, silhueta legivel, se o movimento "parece"
+respiracao — isso e olho humano, nos GIFs.
+
+### Como rodar
+
+```
+1. copie o chibi para ComfyUI_Data/input/chibi_idle.png
+2. abra AB_A_sd15_idle  -> Run   (anote o tempo do log)
+3. abra AB_B_wan_idle   -> Run   (anote o tempo)
+4. python scripts/ab_test.py --medir
+```
+
+Para VRAM, deixe `python scripts/ab_test.py --rodar` em outra celula durante as
+geracoes.
+
+### Expectativa a confirmar
+
+WAN deve ganhar em suavidade (modelo de video real, 24 fps) e perder em custo
+(17 GB de peso, 12-25 min/clipe). SD1.5 deve ganhar em velocidade, em frames
+enxutos para spritesheet e — na rodada 2 — em controle de pose. Se o WAN sair
+parado de novo, o `ModelSamplingSD3` (no 14) nao esta na cadeia.
+
+## v48 — medicao de tempo/VRAM DENTRO da C6 (o Colab so roda uma celula)
+
+Correcao do usuario: **"ja falei que nao da para rodar mais de uma celula no
+Colab"**. Ele esta certo e ja tinha dito — foi por isso que a v18 moveu o
+diagnostico para dentro da C6 como thread. Eu propus na v47 rodar
+`ab_test.py --rodar` numa celula paralela, o que **nao funciona**: a C6 e
+bloqueante e segura o kernel.
+
+### Correcao
+
+O monitor virou uma **thread dentro da propria C6** (`_monitor_vram`), no mesmo
+molde do `_autodiag`. Ele:
+
+1. espera o servidor subir;
+2. observa `/queue` a cada 2 s;
+3. quando um job comeca, cronometra e amostra `/system_stats`;
+4. quando termina, imprime no log e grava em
+   `output/ab_test/medicoes.json`.
+
+Nao exige celula extra, nao exige acao do usuario. Cada Run que voce der na UI
+vira uma linha com tempo, pico de VRAM e delta sobre o idle.
+
+Testado contra um servidor simulado com dois jobs em sequencia (10 s e 8 s,
+picos diferentes): detectou os dois, cronometrou certo e separou os picos.
+
+### `ab_test.py` simplificado
+
+O modo `--rodar` foi **removido** — era exatamente a ideia furada. Sobrou
+`--medir`, que agora junta tudo num relatorio so:
+
+```
+python scripts/ab_test.py --medir
+```
+
+Imprime tempo e VRAM (lidos do `medicoes.json` que a C6 gravou) + as metricas
+de estabilidade, deriva, flicker e loop dos frames.
+
+### Regra
+
+**Respeitar as restricoes de ambiente que o usuario ja explicou.** "Uma celula
+por vez" nao e detalhe: invalida qualquer solucao com processo paralelo. Toda
+medicao continua tem de viver dentro da celula bloqueante, como thread.
+
+## v49 — o relatorio A/B tambem vai para dentro da C6
+
+Dois erros meus, apontados pelo usuario:
+
+**1. Caminho errado.** Instrui `python scripts/ab_test.py`, e no Colab o
+diretorio corrente e `/content`. O repo e clonado em **`/content/ComfyUI_Colab`**
+(variavel `CKOUT` da C1). O comando certo seria:
+
+```
+!python /content/ComfyUI_Colab/scripts/ab_test.py --medir
+```
+
+**2. Continuei dependendo de uma segunda celula.** Na v48 tirei o monitor de
+VRAM da celula separada, mas deixei a ANALISE em script — que so roda depois de
+parar a C6. Meio-conserto.
+
+### Correcao
+
+O relatorio inteiro agora e `_relatorio_ab()`, embutido na C6, e e chamado
+**automaticamente ao fim de cada job**. Terminou uma geracao, sai no log:
+
+```
+[medicao] job levou 14.2 min | VRAM pico 9840 MB (+7100)
+
+==================================================================
+  TESTE A/B  (menor = melhor, exceto movimento)
+==================================================================
+  metrica                     A_SD1.5        B_WAN
+  frames                            8           25
+  movimento medio                5.59          2.9   animou de verdade?
+  INSTABILIDADE                  1.58         1.53   tremor entre frames
+  deriva maxima                 10.68        13.93   perdeu a identidade?
+  FLICKER de cor                 2.43         10.0   cor oscilando
+  emenda do loop                 0.43         3.14   0 = fecha certo
+==================================================================
+  !! B_WAN: flicker 10.0 — COR OSCILA entre frames
+```
+
+Zero comandos. Rode os dois workflows na UI e o comparativo aparece sozinho.
+
+O `scripts/ab_test.py` continua no repo para uso avulso, agora com o caminho
+absoluto documentado.
+
+### Regra
+
+**No Colab, o usuario nao tem terminal nem segunda celula.** Toda ferramenta
+util tem de: (a) rodar dentro da celula que ja esta em execucao, ou (b) ser
+chamada com **caminho absoluto** e prefixo `!`. Caminho relativo assume um
+diretorio corrente que nao existe la.
+
+## v50 — RESULTADO DO A/B: o SD1.5 vence para sprite de jogo
+
+Primeiro teste com numeros reais do usuario (idle, mesma imagem, seed 12345,
+512x512, 20 steps).
+
+| metrica | A (SD1.5) | B (WAN 5B) | B/A |
+|---|---|---|---|
+| frames | 8 | 25 | |
+| movimento medio | 1,92 | 7,97 | |
+| pico de movimento | 2,56 | 20,24 | |
+| **instabilidade** | **0,37** | 4,56 | **12,3x pior** |
+| **deriva maxima** | **3,26** | 28,15 | **8,6x pior** |
+| **flicker de cor** | **1,51** | 10,38 | **6,9x pior** |
+| **emenda do loop** | **0,10** | 1,35 | **13,5x pior** |
+| tempo | 5,1 min | 9,3 min | 1,8x |
+| VRAM | 3,1 GB | 9,8 GB | 3,2x |
+
+### O WAN "se move mais" — mas nao e animacao
+
+O WAN tem movimento medio 4x maior. Isso parece bom e **nao e**. Cruzando com
+a deriva:
+
+**movimento util = movimento / deriva** (quanto da mudanca e animacao, e nao o
+personagem virando outro):
+
+- A: 1,92 / 3,26 = **0,59**
+- B: 7,97 / 28,15 = **0,28**
+
+Metade do "movimento" do WAN e a personagem **mudando de aparencia**. Deriva
+28,15 com o alerta automatico disparando confirma: ela nao esta so se mexendo,
+esta se transformando.
+
+**Regularidade (pico/media):** A = 1,33x (uniforme), B = 2,54x (saltos
+bruscos). Para sprite, salto brusco = frame que "pula" na animacao.
+
+### Custo real
+
+Por frame o WAN e 1,7x mais rapido (22,3 s contra 38,2 s). Mas **um sprite nao
+precisa de 25 frames** — 8 bastam para um idle. Por **ciclo utilizavel**:
+5,1 min contra 9,3 min, com 1/3 da VRAM.
+
+### Decisao
+
+**`AnimateSD15` e a rota principal do WAIFU SURVIVORS.** Ganha em todos os
+criterios que o usuario listou como prioritarios: consistencia de identidade,
+estabilidade entre frames, ausencia de deformacao, facilidade de virar
+spritesheet (loop 0,10 = fecha quase perfeito) e custo.
+
+E ainda nem usou sua maior vantagem: o **SparseCtrl** estava em bypass. Na
+rodada de walk, com controle de pose por frame, a diferenca deve aumentar.
+
+O WAN 2.2 5B **nao foi descartado**: continua util para splash animada, cutscene
+ou qualquer coisa que nao precise fechar em loop nem virar sprite. Errado seria
+usa-lo para o que ele nao serve.
+
+### Ajuste aplicado ao SD1.5
+
+O unico numero fraco do A foi **movimento 1,92** — proximo do limiar de "parado"
+(1,5). Um idle deve ser sutil, entao nao e defeito, mas ha folga. Aumentei o
+`motion_scale` do AnimateDiff (no 6) para **1,15** via `ADE_MultivalDynamic`,
+o que da mais amplitude sem tocar na identidade.
+
+### Regra
+
+**Movimento alto isolado nao significa boa animacao.** Sempre cruzar com
+deriva: `movimento/deriva` separa "animou" de "virou outro personagem". Um
+modelo de video otimiza continuidade visual plausivel; um sprite precisa de
+**identidade travada + ciclo fechado**, que sao objetivos diferentes.
+
+### v50b — ajuste e rodada 2
+
+**Ajuste no SD1.5:** unico numero fraco do A foi movimento 1,92 (limiar de
+"parado" e 1,5). Adicionado `ADE_MultivalDynamic` em **1,15** ligado ao
+`scale_multival` do no 6, nos dois workflows SD1.5. Da amplitude sem mexer na
+identidade. Assinatura conferida em `nodes_multival.py`.
+
+**`AB_C_sd15_walk.json` (novo):** walk de 16 frames com o **SparseCtrl LIGADO**
+(no idle estava em bypass). Poses em `0,4,8,12`, seed 12345, mesma imagem.
+
+Antes de rodar:
+```
+!python /content/ComfyUI_Colab/scripts/gerar_poses.py --anim walk
+```
+depois R para recarregar, escolher `poses_walk` no no 9, e Run.
+
+O relatorio da C6 agora inclui a coluna `C_SD15_walk`.
+
+## v51 — CORRECAO DO VEREDITO: eu julguei sem olhar os frames
+
+O usuario tinha commitado os outputs em `testsAB/`. Eu vi o commit passar no
+rebase e **nao abri**. Julguei a v50 so pelos numeros. Ao montar as tiras de
+contato, o veredito mudou.
+
+### O que as imagens mostram (e as metricas nao mostravam)
+
+**A (SD1.5):** personagem **escuro**, com halo vermelho/rosa no rosto e nos
+bracos, e **fundo colorido sujo** (manchas azuis/verdes/vinho). Nao se parece
+com o chibi limpo de fundo transparente que entrou.
+
+**B (WAN):** traco **limpo e fiel** ao original — cabelo, olhos, roupa e
+proporcao preservados, iluminacao natural. Visualmente muito melhor.
+
+Numeros do perfil que confirmam:
+
+| | A (SD1.5) | B (WAN) |
+|---|---|---|
+| brilho medio | **71** (escuro) | 124 |
+| variacao do fundo | **51** (sujo) | 38 |
+| alpha transparente | 44% | 57% |
+
+### Por que minhas metricas erraram
+
+Elas mediram **estabilidade relativa**: quanto o frame N difere do N+1 e do
+frame 0. **Nenhuma comparava com a IMAGEM DE ENTRADA.**
+
+Consequencia logica: um resultado errado **de forma constante** pontua otimo.
+O A ficou escuro e sujo nos 8 frames igualmente — entao "estabilidade 0,37" e
+"deriva 3,26" sao excelentes... e irrelevantes. Ele e **consistentemente
+errado**.
+
+O B varia mais entre frames (deriva 28) porque de fato se move — mas parte do
+lugar certo.
+
+**Nao ha metrica de fidelidade a referencia no meu script.** Foi um furo de
+desenho, nao um detalhe.
+
+### Por que o SD1.5 saiu escuro e sujo
+
+Tres causas provaveis, em ordem:
+
+1. **ToonYou nao conhece a personagem.** O IPAdapter em 0,8 passa "clima", nao
+   identidade. O SD1.5 gerou a SUA interpretacao de um chibi.
+2. **CFG 7,0** — herdei do padrao SD1.5, mas com IPAdapter forte satura e
+   escurece.
+3. **`white background` no prompt sem forca suficiente** — o AnimateDiff v3
+   tende a inventar cenario, e o rembg entao recorta um fundo que ja veio sujo.
+
+### Veredito revisado
+
+**Para IDLE, o WAN 2.2 5B entrega o resultado utilizavel; o SD1.5 nao.**
+
+Isso nao anula a vantagem estrutural do SD1.5 (SparseCtrl, ciclo que fecha,
+1/3 da VRAM) — mas ela so vale se a imagem sair certa. Precisa de correcao
+antes da rodada de walk.
+
+### Regra
+
+**Sempre ABRIR as imagens antes de concluir.** Metrica de estabilidade nao
+detecta erro sistematico. E toda comparacao com imagem de referencia precisa de
+uma metrica **contra a referencia**, nao so entre frames.
+
+Ja tinha acontecido na v45 (bonecos com membros para cima passaram nos testes
+numericos). Duas vezes o mesmo erro: confiar em numero sem olhar.
+
+### v51b — correcoes aplicadas
+
+**No script/C6 — metrica que faltava:**
+- **FIDELIDADE a entrada**: compara o frame 0 com `input/chibi_idle.png`.
+  Alerta se > 30 ("estavel porem errado").
+- **brilho da saida**: alerta se < 85 (escureceu).
+
+Com isso o caso A teria sido reprovado automaticamente (brilho 71).
+
+**No SD1.5 — tres ajustes contra o escuro/sujo:**
+
+| | antes | agora | motivo |
+|---|---|---|---|
+| CFG | 7,0 | **5,0** | 7 com IPAdapter forte satura e escurece |
+| IPAdapter | 0,8 | **0,65** | peso alto transfere "clima" escuro da referencia |
+| positive | `white background` | `solid white background, isolated on white, no scenery` | v3 inventa cenario |
+| negative | — | + `dark, underexposed, colored background, red tint, color cast` | ataca o halo vermelho |
+
+Aplicado nos tres workflows SD1.5.
+
+### Proximo passo
+
+Rodar de novo o `AB_A_sd15_idle` corrigido e comparar com o WAN que ja temos.
+Se continuar escuro, a causa e o **ToonYou** nao servir para este estilo — ai o
+teste seguinte e trocar por outro checkpoint SD1.5 anime, ou aceitar o WAN
+para idle e usar o SD1.5 so onde o SparseCtrl for indispensavel.
+
+## v52 — as 4 arquiteturas avaliadas, e a que faltava
+
+Pedido: repensar o pipeline com **preservacao da arte Illustrious** como
+prioridade absoluta, avaliando 4 opcoes antes de baixar qualquer coisa.
+
+### A) Illustrious/SDXL + solucao temporal SDXL — DESCARTADA
+
+Quem gera os pixels: o Illustrious. Temporal: `mm_sdxl_v10_beta` ou Hotshot-XL.
+
+**Problema fatal, confirmado em varias fontes:** o ecossistema temporal do SDXL
+esta morto. A doc do AnimateDiff-Evolved diz "**still in beta after several
+months**"; relatos da comunidade: "SDXL animatediff is nearly useless",
+"the motion model for SDXL is terrible", "quality looks like a 144p youtube
+video". Hotshot-XL tem contexto de so 8 frames e foi treinado em 512.
+
+Nos ja testamos: a v32 documentou cor invertida e cabeca dupla. Nao e questao
+de ajuste.
+
+### B) Illustrious + IPAdapter + ControlNet, frame a frame — DESCARTADA
+
+Quem gera: Illustrious. Pose: ControlNet por frame. Temporal: **nenhum**.
+
+Cada frame seria uma geracao independente. Sem camada temporal, o flicker entre
+frames e estrutural — cada imagem resolve ruido diferente. E exatamente o que a
+v31 mostrou: olho azul num frame, ambar no outro. Serve para character sheet
+(imagens separadas), nao para animacao.
+
+### C) Illustrious GERA + WAN 2.2 ANIMA — **RECOMENDADA**
+
+Quem gera os pixels da personagem: **o Illustrious, uma vez so, offline**.
+Quem produz o movimento: o WAN, partindo dessa arte.
+
+- **identidade**: a arte aprovada ENTRA como `start_image` e vira o frame 0.
+  Nao ha reinterpretacao — e a sua imagem, literalmente.
+- **pose/movimento**: prompt de movimento + `denoise` controlando quanto pode
+  mudar.
+- **temporal**: o WAN e um modelo de video real, com atencao temporal treinada.
+- **VRAM**: pico ~9,3 GB (ja medido).
+- **spritesheet**: frames saem individuais direto do `SaveImage`.
+
+### D) AnimateDiff SD1.5 com a arte so como referencia — TESTADA E REPROVADA
+
+Quem gera: **ToonYou**, nao o Illustrious. E ai esta o furo: o IPAdapter passa
+"clima", nao identidade. O SD1.5 **redesenha** a personagem do zero.
+
+Resultado real (v51): escuro, halo vermelho, fundo sujo. Brilho 71 contra 124
+do WAN. As metricas diziam "estavel" porque estava **consistentemente errado**.
+
+### A correcao que muda tudo: `denoise`
+
+O `AnimateWan` da v46 ja era arquitetura C — **mas com `denoise 1.0`**, o que
+manda o modelo redesenhar tudo e joga fora a vantagem de partir da arte.
+
+`AB_D_illustrious_wan_idle.json` usa **`denoise 0.55`**:
+
+| denoise | efeito |
+|---|---|
+| 1.00 | ignora a imagem, inventa (o erro anterior) |
+| **0.55** | **mantem a arte, adiciona movimento** |
+| 0.40 | quase congelado |
+| 0.70 | mais movimento, comeca a derivar |
+
+E o prompt descreve **so movimento** — nada de cabelo, roupa ou cor. Descrever
+aparencia ali COMPETE com a imagem e causa deriva.
+
+### Lista minima de modelos: ZERO downloads novos
+
+O prototipo usa so o que ja esta no Drive:
+
+| arquivo | tamanho | ja baixado? |
+|---|---|---|
+| `wan2.2_ti2v_5B_fp16` | 9,31 GB | sim (v43) |
+| `umt5_xxl_fp8_e4m3fn_scaled` | 6,27 GB | sim |
+| `wan2.2_vae` | 1,31 GB | sim |
+| Inspyrenet (rembg) | pack | sim |
+
+O Illustrious **nem e carregado** neste workflow — a arte dele ja veio pronta
+em PNG. Isso e uma virtude da arquitetura: os dois modelos nunca disputam VRAM.
+
+### Prototipo
+
+9 frames (o WAN exige `4n+1`; 9 e o mais proximo de 8), 512x512, seed 12345,
+camera fixa, respiracao sutil. ~1,1 s a 8 fps.
+
+**Criterio unico:** os 9 frames parecem a MESMA personagem da entrada? O
+relatorio da C6 mede FIDELIDADE automaticamente (v51).
+
+### Regra
+
+**Preservar arte existente e problema de `denoise`, nao de escolha de modelo.**
+Qualquer i2v com denoise 1.0 esta redesenhando do zero — o start_image vira
+mera sugestao de composicao.
+
+## v53 — teste controlado de denoise (e duas correcoes que o codigo revelou)
+
+O usuario recusou aceitar "0.55 e o melhor" sem teste — corretamente, eu tinha
+afirmado sem medir. Antes de montar o teste, fui ler o no no codigo-fonte, e
+achei **duas coisas que contradizem o que eu disse**.
+
+### CORRECAO 1: "4n+1" NAO e regra rigida
+
+Eu disse que o WAN "exige length = 4n+1". Lendo `Wan22ImageToVideoLatent`:
+
+```python
+io.Int.Input("length", default=49, min=1, max=MAX_RESOLUTION, step=4)
+latent = torch.zeros([1, 48, ((length - 1) // 4) + 1, h // 16, w // 16])
+```
+
+`min=1`, e a conta e `((length-1)//4)+1`. Nao ha validacao que rejeite outros
+valores. Consequencia real:
+
+| length | frames latentes |
+|---|---|
+| 9 | 3 |
+| 10, 11, 12 | 3 (mesmos!) |
+| 13 | 4 |
+
+Valores fora de 4n+1 **nao dao erro** — apenas desperdicam, porque caem no
+mesmo numero de frames latentes do 4n+1 anterior. **4n+1 e o valor eficiente,
+nao uma regra do modelo.** Corrigido nas notas dos workflows.
+
+### CORRECAO 2: denoise aqui NAO e igual a img2img
+
+O no cria um **`noise_mask`** que zera o ruido onde o `start_image` foi
+codificado:
+
+```python
+mask[:, :, :latent_temp.shape[-3]] *= 0.0
+```
+
+E em `samplers.py` o mask protege aquela regiao a cada passo:
+
+```python
+out = out * denoise_mask + self.latent_image * latent_mask
+```
+
+Ou seja: **o frame inicial ja e protegido pelo mask**, independente do denoise.
+O denoise governa o resto da sequencia. Por isso minha regra "1.0 destroi a
+imagem" era simplista — e por isso o teste tinha de incluir 1.0.
+
+### O teste: `DEN_040` a `DEN_100`
+
+5 workflows. Verificado por script que sao **byte a byte identicos** exceto
+denoise e pasta de saida:
+
+```
+  arquivo              denoise  seed  steps  cfg   res      len  sampler
+  DEN_040_denoise.json     0.4  12345    20   4.5  512x512    9  uni_pc/simple
+  DEN_050_denoise.json     0.5  12345    20   4.5  512x512    9  uni_pc/simple
+  DEN_060_denoise.json     0.6  12345    20   4.5  512x512    9  uni_pc/simple
+  DEN_070_denoise.json     0.7  12345    20   4.5  512x512    9  uni_pc/simple
+  DEN_100_denoise.json     1.0  12345    20   4.5  512x512    9  uni_pc/simple
+```
+
+Prompt so de movimento, como pedido: `subtle breathing motion, very slight
+natural body movement, gentle hair movement, static camera, character stays
+in place`.
+
+### Comparador por REGIAO (na C6, automatico)
+
+A media global esconde onde a identidade quebra. O `_comparar_denoise()` mede
+contra o PNG de entrada em tres faixas:
+
+- **cabelo** (topo, 0-42%)
+- **rosto/olhos** (28-60%)
+- **roupa** (58-100%)
+
+mais movimento e flicker. Roda sozinho ao fim de cada job.
+
+Validado com 5 rodadas sinteticas (parado / bom / derivando / outro
+personagem): identificou o parado, escolheu o mais fiel COM movimento, e
+mostrou cabelo e rosto degradando antes da roupa — que e o padrao esperado.
+
+### Como rodar
+
+```
+1. chibi em ComfyUI_Data/input/chibi_idle.png
+2. Run em DEN_040, DEN_050, DEN_060, DEN_070, DEN_100
+3. a tabela sai sozinha no log da C6
+```
+
+Sao 5 x ~5 min. **Nenhum download novo** — so o WAN que ja esta no Drive.
+
+### Nao vou pre-julgar o resultado
+
+Se 0.40 der movimento suficiente, ganha. Se 1.00 preservar a identidade por
+causa do noise_mask, ganha. A tabela + os GIFs decidem.
+
+## v54 — RESULTADO DO TESTE DE DENOISE: eu estava errado, 1.0 vence
+
+Teste controlado do usuario, 5 rodadas identicas exceto o denoise.
+
+| rodada | FIDELID | cabelo | rosto | roupa | movim | flicker | tempo |
+|---|---|---|---|---|---|---|---|
+| d040 | 38,90 | 26,46 | 44,37 | 46,96 | 11,85 | 27,11 | 12,0 min |
+| d050 | 48,04 | 41,87 | 47,49 | 53,00 | 21,70 | 43,45 | 16,0 min |
+| d060 | 47,12 | 33,47 | 56,46 | 54,39 | 17,96 | 42,09 | 3,8 min |
+| d070 | 45,17 | 29,43 | 41,65 | 61,93 | 14,53 | 36,21 | 14,7 min |
+| **d100** | **15,08** | **11,44** | **12,29** | **20,11** | 9,33 | **16,31** | 9,3 min |
+
+**`denoise 1.0` ganhou em TODAS as metricas de fidelidade** — 2,6x mais fiel
+que o segundo colocado (d040), com o menor flicker e ainda com movimento
+suficiente (9,33).
+
+Minha recomendacao de 0.55 estava errada. O usuario exigiu o teste; sem ele eu
+teria fixado o pior ajuste possivel.
+
+### Por que 1.0 e o certo aqui (confirmado no codigo)
+
+Eu raciocinei por analogia com img2img, onde denoise baixo preserva a imagem.
+**Aqui a mecanica e outra.** Lendo `Wan22ImageToVideoLatent` com `length=9`:
+
+```python
+latent = torch.zeros([1, 48, 3, h//16, w//16])   # 3 frames latentes, TUDO ZERO
+latent_temp = vae.encode(start_image)            # ocupa 1 frame latente
+latent[:, :, :1] = latent_temp                   # so o PRIMEIRO recebe a arte
+mask[:, :, :1] *= 0.0                            # mask protege so o primeiro
+```
+
+Os frames latentes 2 e 3 permanecem **zeros** — nao sao ruido nem imagem.
+
+E o KSampler com denoise < 1 (`samplers.py:1439`):
+
+```python
+new_steps = int(steps/denoise)
+sigmas = calculate_sigmas(new_steps)[-(steps + 1):]   # comeca em sigma BAIXO
+```
+
+Denoise parcial **assume que o latente ja e uma imagem quase pronta**. Mas 2/3
+dele e zero. O sampler entao "retoca" zeros em vez de sintetizar frames — e o
+resultado e lixo estruturado. Dai fidelidade 38-48 nos parciais.
+
+**A preservacao da identidade nao vem do denoise: vem do `noise_mask`**, que ja
+protege o frame 0 independentemente. Por isso 1.0 e seguro — e necessario.
+
+### Regra (corrige a que eu escrevi na v52)
+
+A v52 dizia: *"preservar arte existente e problema de denoise"*. **Errado para
+i2v de video.** O correto:
+
+**Em i2v com `noise_mask` (WAN, e provavelmente qualquer i2v de video), o
+denoise deve ser 1.0.** O que preserva a arte e o mask, nao o denoise. Denoise
+parcial corrompe os frames que ainda sao zeros.
+
+Analogia de img2img **nao se transfere** para modelos de video com latente
+temporal.
+
+### Aplicado
+
+`denoise = 1.0` fixado em `AnimateWan` e `AB_D_illustrious_wan_idle`.
+
+### Observacao sobre os tempos
+
+Variaram de 3,8 a 16 min para o mesmo trabalho, sem correlacao com o denoise
+(d060 levou 3,8 min; d050, 16 min). Causa provavel: contencao de VRAM/RAM entre
+jobs enfileirados — o log mostra "got prompt" chegando durante execucoes
+anteriores. Para cronometrar direito, enfileirar um de cada vez.
+
+### O que falta
+
+Confirmar visualmente nos GIFs (o usuario vai commitar zipado): deformacao de
+mao e legibilidade da silhueta, que numero nao mede. Se d100 estiver visualmente
+bom, a arquitetura C esta provada e passamos para walk/attack.
+
+### v54b — confirmacao VISUAL (zip do usuario)
+
+Extraidos os 45 frames. A grade comparativa (linhas = denoise, colunas =
+frames 0,2,4,6,8) confirma os numeros de forma dramatica:
+
+- **d040**: frame 0 bom, frame 2 ja derretendo, frames 4-8 = **tela vazia**
+  (rosa/bege liso). A personagem simplesmente **desaparece**.
+- **d050**: frames 4+ viram borrao escuro e depois formas irreconheciveis.
+- **d060 / d070**: a personagem sobrevive mas com **rosto destruido** — boca
+  enorme e preta, olhos deslocados. Efeito "horror".
+- **d100**: **a personagem se mantem integra nos 9 frames.** Cabelo, olhos
+  azuis, regata azul, shorts, proporcao chibi — tudo preservado. O movimento e
+  sutil (cabeca/cabelo). Unico defeito: um borrao magenta que surge perto da
+  mao a partir do frame 5, e o fundo varia um pouco.
+
+Isto valida a explicacao do codigo: **denoise parcial estava "retocando" frames
+latentes que sao ZEROS**, e o resultado degrada quanto mais longe do frame 0 —
+exatamente o padrao visto (frame 0 sempre ok, degradacao progressiva).
+
+**Decisao final: `denoise = 1.0`.** Nao e uma escolha entre trade-offs; os
+parciais estao quebrados.
+
+### Pendencias visiveis no d100 (proxima iteracao)
+
+1. **borrao magenta perto da mao** (frames 5-8) — provavelmente o modelo
+   tentando inventar um objeto. Tratar no negative: `glowing object, magic
+   effect, particles, glow`.
+2. **fundo instavel** — varia entre frames. Como o rembg ja remove, nao e
+   critico para sprite, mas atrapalha o recorte. Reforcar
+   `plain solid background, static background`.
+
+## v55 — limpeza do Drive: `scripts/limpar_drive.py`
+
+Usuario com 80 GB no Drive, querendo saber o que da para apagar.
+
+### O que o script faz
+
+Varre `ComfyUI_Data/models/`, cruza com os workflows do repo e classifica:
+
+- **MANTER** — usado por workflow do pipeline ativo
+- **DESCARTAR** — usado so por workflow aposentado/reprovado (com o motivo)
+- **ORFAO** — nenhum workflow referencia
+
+**Nao apaga nada.** Com `--gerar-script` escreve um `apagar.sh` para revisao.
+
+```
+!python /content/ComfyUI_Colab/scripts/limpar_drive.py
+!python /content/ComfyUI_Colab/scripts/limpar_drive.py --gerar-script
+```
+
+### Bug perigoso pego no teste
+
+A primeira versao marcou **IPAdapter e CLIP Vision como ORFAOS** — e eles estao
+em uso pelo `Base` e pelo `CharacterSheet`. Seguir a recomendacao teria
+quebrado o pipeline principal.
+
+Causa: o `IPAdapterUnifiedLoader` carrega os pesos **por preset**
+(`PLUS (high strength)`), nao por nome de arquivo. Varredura de texto no JSON
+nunca os acha.
+
+Corrigido com um mapa `IMPLICITOS` de nos que carregam por preset. Validado:
+apos a correcao os dois passaram para MANTER.
+
+Testado ponta a ponta num Drive simulado com 25 arquivos: o `apagar.sh` removeu
+17 e deixou exatamente os 8 do pipeline ativo.
+
+### Pipeline ATIVO (o que fica)
+
+| workflow | papel |
+|---|---|
+| `WaifuSurvivors_Concept` | exploracao |
+| `WaifuSurvivors_Base` | concept -> splash + chibi |
+| `WaifuSurvivors_CharacterSheet` | turnaround / dataset de LoRA |
+| `WaifuSurvivors_AnimateWan` | **animacao (arquitetura vencedora)** |
+| `WaifuSurvivors_VideoToSprites` | frames -> spritesheet |
+| `AB_D_illustrious_wan_idle` | prototipo validado |
+
+Modelos correspondentes: `waiIllustriousSDXL_v170`, `wan2.2_ti2v_5B_fp16`,
+`umt5_xxl_fp8_e4m3fn_scaled`, `wan2.2_vae`, `controlnet-union-sdxl-1.0`,
+`ip-adapter-plus_sdxl_vit-h`, `CLIP-ViT-H-14`. **~23 GB.**
+
+### O que os testes aposentaram
+
+- **SD1.5** (`toonyou`, `v3_sd15_mm`, `sparsectrl_rgb`, `ip-adapter_sd15`)
+  — reprovado na v51: fidelidade 73,8, saida escura. **~5,7 GB**
+- **Hotshot-XL** (`hsxl_temporal_layers`) — reprovado v32/v50. **475 MB**
+- **Tutorial nunca usado**: krea2 (2 x 13,5 GB!), flux-2-klein, qwen encoders,
+  anima, Pony, Waifu-Inpaint-XL. **~60 GB**
+
+Os dois `krea2` sozinhos sao 27 GB — sao do `CharDesignandPartSplitting`, um
+workflow do tutorial que nunca rodamos.
+
+### Aviso
+
+`ORFAO` pode conter coisa baixada de proposito (LoRA sua, checkpoint de teste).
+Conferir antes de apagar — o script existe para informar, nao para decidir.
+
+## v57 — o Base era txt2img disfarcado (o usuario tinha razao)
+
+Observacao do usuario: *"o unico que era pra ser txt2image e o Concept; o
+chibi deveria pegar as caracteristicas a partir da foto (img2img), splash
+tambem"*.
+
+**Ele estava certo e eu nao tinha percebido.** Auditando o grafo:
+
+```
+KSampler SPLASH  latent_image <- EmptyLatentImage   (ruido puro!)
+KSampler CHIBI   latent_image <- EmptyLatentImage   (ruido puro!)
+concept (no 2)   -> so IPAdapter
+```
+
+O concept entrava **apenas** pelo IPAdapter. E IPAdapter e *conditioning*, nao
+ponto de partida: ele empurra a geracao na direcao da referencia, mas o modelo
+**redesenha do zero** a partir de ruido. Por isso a personagem "mudava" entre
+concept e resultado, e por isso a v31 precisou de tanto ajuste de peso e prompt
+para compensar — eu estava tratando sintoma.
+
+### Correcao
+
+Adicionados 4 nos: `ImageScale` + `VAEEncode` para cada saida.
+
+```
+concept -> ImageScale(832x1216) -> VAEEncode -> KSampler SPLASH
+concept -> ImageScale(1024x1024) -> VAEEncode -> KSampler CHIBI
+```
+
+O `ImageScale` e obrigatorio: o `VAEEncode` herda o tamanho da imagem, e se ele
+nao bater com o alvo a saida sai na resolucao errada.
+
+Os dois `EmptyLatentImage` foram para **bypass** (nao removidos — servem de
+referencia se alguem quiser voltar ao modo txt2img).
+
+**Agora o concept entra por dois caminhos**: latente inicial (VAEEncode) +
+conditioning (IPAdapter). E o que faz o resultado ser *derivado* da foto em vez
+de inspirado nela.
+
+### denoise: 0.75 splash / 0.85 chibi
+
+Aqui o denoise e img2img **normal** (sem `noise_mask`), entao a regra e a
+classica: menor preserva mais.
+
+O chibi usa mais (0.85) porque precisa **mudar a proporcao** — com denoise
+baixo ele nao consegue deformar para 2 cabecas de altura.
+
+**Nao confundir com o `AnimateWan`**, onde o `Wan22ImageToVideoLatent` cria um
+`noise_mask` e o denoise tem de ser 1.0 (v54). Mesmo parametro, mecanicas
+opostas — depende de haver mask ou nao.
+
+### Dois prompts errados, corrigidos
+
+1. **no 20** dizia `long brown hair, amber eyes` — descrevia a personagem do
+   concept de piscina (v31). A personagem atual tem cabelo curto e olhos azuis.
+   Corrigido para `short brown hair, blue eyes`.
+2. **no 9** tinha `blue eyes` **no negative** — proibia a cor de olho da
+   personagem atual. Era uma correcao da v31 contra outro bug, e virou tiro no
+   pe. Removido.
+
+### Regra
+
+**IPAdapter nao e img2img.** Se o `latent_image` vem de `EmptyLatentImage`, e
+txt2img — por mais referencias que estejam ligadas ao modelo. Para derivar de
+uma imagem, o latente tem de vir de `VAEEncode`.
+
+## v58 — por que a splash so trocou cor e o chibi decapitou a foto
+
+Dois sintomas, duas causas — e a segunda mostra que a v57 aplicou img2img no
+lugar errado.
+
+### Sintoma 1: "chibi so pegou o concept e cortou a cabeca"
+
+**Causa: `crop=center` no `ImageScale`.** Lendo `common_upscale` em
+`comfy/utils.py`, com crop=center ele recorta o centro para casar a proporcao
+ANTES de redimensionar. Calculando com os tamanhos reais:
+
+| destino | recorte | perda |
+|---|---|---|
+| SPLASH 832x1216 | 768x1122 | 3% (irrelevante) |
+| **CHIBI 1024x1024** | **768x768** | **33% — corta 192px do TOPO** |
+
+O concept e 768x**1152** (retrato). Para virar 1024x1024 (quadrado) o crop
+tirou 192px em cima e 192px embaixo. **192px do topo e exatamente onde esta a
+cabeca.** Nao era o modelo "cortando" — era o recorte.
+
+Corrigido para `crop='disabled'` nos dois.
+
+### Sintoma 2: "splash so trocou as cores"
+
+**Causa: denoise 0.75 baixo demais.** Em img2img, 0.75 preserva a estrutura e
+mexe so na superficie — resultado: recoloriu a foto. Subido para **0.85**.
+
+Tambem baixei o IPAdapter da splash de 0.85 para **0.55**: com img2img ligado,
+os dois puxam para a mesma coisa e o excesso trava qualquer mudanca.
+
+### O erro maior: img2img NAO serve para o chibi
+
+O usuario notou: *"nada de mudar corpo"*. Ajustar denoise nao resolveria.
+
+```
+concept = personagem realista, ~7 cabecas de altura
+chibi   = 2 cabecas de altura
+```
+
+**img2img preserva a estrutura espacial do latente** — onde ha cabeca continua
+havendo cabeca, onde ha perna continua havendo perna. Mudar de 7 para 2 cabecas
+exige **reorganizar o espaco inteiro**, que e justamente o que img2img nao faz.
+
+Escala de denoise para o chibi:
+- 0.85 -> ainda ve a silhueta antiga, sai hibrido
+- 0.95 -> quase ignora o latente
+- 1.00 -> ignora de vez = **txt2img**
+
+Ou seja: o unico denoise que funcionaria para o chibi e 1.0, que e nao usar
+img2img. **O CHIBI VOLTOU A txt2img + IPAdapter**, com IPAdapter em 0.65 (agora
+e a unica ancora de aparencia).
+
+A SPLASH continua img2img — ali faz sentido, porque a proporcao humana e a
+mesma e so mudam enquadramento e acabamento.
+
+### Estado final
+
+| saida | latente | denoise | IPAdapter |
+|---|---|---|---|
+| SPLASH | `VAEEncode` (img2img) | 0.85 | 0.55 |
+| CHIBI | `EmptyLatentImage` (txt2img) | 1.0 | 0.65 |
+
+### Regra
+
+**img2img transfere GEOMETRIA; IPAdapter transfere APARENCIA.** Se o alvo tem
+proporcao diferente da referencia, img2img atrapalha em vez de ajudar — nenhum
+denoise conserta. A escolha nao e "qual e melhor", e "a forma muda ou nao".
+
+Corolario: o pedido do usuario na v57 ("chibi tambem img2img") estava certo na
+intencao (derivar da foto) mas o mecanismo correto para mudanca de proporcao e
+o IPAdapter, nao o img2img.
+
+## v59 — Character Select SAA + ComfyUI no Colab: da, mas com um tunel
+
+Ideia do usuario: rodar o **Character Select Stand Alone App**
+(mirabarukaso, 611 estrelas) no PC e apontar para o ComfyUI do Colab.
+
+**A ideia esta arquiteturalmente certa** — o SAA e um app Electron/Node que
+conversa com o ComfyUI **so por HTTP + WebSocket**. Ele nao precisa de GPU.
+E o `thumbList` padrao dele e literalmente `waiIllustriousSDXL_v160`: foi feito
+para o nosso checkpoint.
+
+### O impedimento (lido no codigo, nao suposto)
+
+O endereco e configuravel, mas a normalizacao quebra HTTPS:
+
+```js
+// scripts/renderer/generate.js
+const url = new URL(urlInput);
+return url.host;          // <- descarta o ESQUEMA, sobra host:porta
+```
+
+E varios endpoints reconstroem com `http://` fixo:
+
+```js
+const apiUrl = `http://${this.addr}/prompt`;       // linha 2337
+const apiUrl = `http://${this.addr}/interrupt`;    // linha 730
+const wsUrl  = `ws://${this.addr}/ws?clientId=...` // linha 760
+```
+
+O proxy do Colab so serve **HTTPS** (`https://8188-xxx.prod.colab.dev`). Colando
+essa URL, o SAA guarda `8188-xxx.prod.colab.dev` e chama
+`http://8188-xxx.prod.colab.dev/prompt` -> falha. O **WebSocket e pior**: `ws://`
+puro nunca vai funcionar contra um endpoint `wss://`.
+
+Curiosidade: dois pontos do codigo (linhas 684 e 1017) JA tratam
+`^https?://` corretamente. O suporte esta pela metade — o autor comecou a
+generalizar e nao terminou.
+
+### Solucao: tunel TCP local (nao mexe no codigo do SAA)
+
+Em vez de o SAA falar HTTPS, um tunel expoe o Colab como `127.0.0.1:8188` na
+maquina do usuario. Ai o `http://` e o `ws://` funcionam nativamente.
+
+Opcoes, da mais simples para a mais robusta:
+
+1. **cloudflared** (ja conheciamos) — `cloudflared tunnel --url http://localhost:8188`
+   no Colab gera uma URL `trycloudflare.com`; no PC,
+   `cloudflared access tcp --hostname <url> --url localhost:8188`.
+   Cuidado: a v20 documentou que o cloudflared **deixa a UI lenta**. Para o SAA,
+   que faz poucas chamadas grandes (nao dezenas de leituras pequenas), o impacto
+   deve ser menor — mas precisa ser medido.
+2. **ngrok TCP** — `ngrok tcp 8188`, da `tcp://0.tcp.ngrok.io:XXXXX`. O SAA
+   aceita `host:porta` direto, sem esquema. **Provavelmente o caminho mais
+   limpo.** Exige conta gratuita.
+3. **Patch de 3 linhas no SAA** — trocar os `http://${this.addr}` por
+   `${/^https?:\/\//.test(this.addr) ? this.addr : 'http://'+this.addr}` e o
+   `ws://` por `wss://` quando houver TLS. Funciona, mas quebra a cada update.
+
+### Ressalva importante: os workflows
+
+O SAA **nao usa os nossos JSONs**. Ele monta o proprio grafo internamente e
+exige o custom node **`ComfyUI_Mira`** instalado no ComfyUI. Ou seja:
+
+- serve muito bem para o **Concept** (explorar personagens com a base de
+  ~15 mil tags do Danbooru e miniaturas)
+- **nao substitui** `Base`, `AnimateWan` nem `VideoToSprites`
+
+E um **complemento para a fase de exploracao**, nao um substituto do pipeline.
+
+### Recomendacao
+
+Vale a pena, mas so depois de fechar o pipeline de animacao. A ordem que faz
+sentido: terminar walk/attack -> depois plugar o SAA para acelerar a criacao
+dos outros 4 personagens.
+
+Se for testar agora, comecar pelo **ngrok TCP** (opcao 2) e adicionar
+`ComfyUI_Mira` ao registry.
+
+## v60 — Character Select SAA: tunel + registry + instalador
+
+Tres entregas para conectar o SAA (no PC) ao ComfyUI (no Colab).
+
+### 1. `ComfyUI_Mira` no registry
+
+Clonado e lido o `__init__.py`: **82 nos** no `NODE_CLASS_MAPPINGS`, todos
+mapeados para o pack. Inclui `illustrious_character_select`,
+`ImageColorTransferMira`, os taggers e o `CanvasCreator*`.
+
+Ressalva registrada em `pack_extras`: o `requirements.txt` pede
+`onnxruntime-gpu` (para os taggers). Se falhar no T4, o pack ainda carrega —
+so os nos de tagger ficam indisponiveis.
+
+### 2. Tunel TCP na Celula 6
+
+`TUNEL_TCP = False` (checkbox). Ligado, sobe um tunel **TCP** via pyngrok e
+imprime o endereco pronto para colar.
+
+**Por que TCP e nao o proxy do Colab:** o SAA monta as URLs com `http://` e
+`ws://` fixos (v59). O proxy so serve HTTPS -> nunca conectaria, e o WebSocket
+(por onde vem progresso e imagens) falharia de qualquer jeito. O tunel TCP
+entrega um `host:porta` cru, que e o formato nativo do SAA.
+
+Token: lido do Secret `NGROK` do Colab (nao vai para o Git).
+
+### 3. `scripts/instalar_saa.sh` + `saa/settings.json`
+
+Um comando no PC:
+
+```
+bash scripts/instalar_saa.sh
+```
+
+Clona (ou atualiza, se ja existir), aplica as configuracoes do projeto e roda
+`npm install`.
+
+Ja vem configurado: `api_interface=ComfyUI`, modelo
+`waiIllustriousSDXL_v170`, 832x1216, 30 steps, CFG 5.5, euler_ancestral, e o
+**negative do projeto** (o mesmo dos nossos workflows, com anti-neon).
+
+**O merge preserva o que e seu.** Testado com um settings pre-existente:
+favoritos e chaves pessoais foram mantidos, so as chaves do projeto foram
+sobrescritas. O arquivo anterior tambem vira `.bak` com timestamp.
+
+### O que muda a cada sessao
+
+**So o `API Address`** — o endereco do ngrok muda toda vez que o Colab
+reinicia. O resto das configuracoes fica salvo no seu PC.
+
+### Fluxo
+
+```
+Colab: C6 com TUNEL_TCP = True  ->  copia o endereco do log
+PC:    npm start  ->  Settings -> API Address = <endereco>
+```
+
+### Lembrete de escopo (v59)
+
+O SAA **nao usa nossos workflows** — ele monta o proprio grafo. Serve para
+substituir o `Concept` (explorar personagens com ~15 mil tags e miniaturas),
+nao o `Base`, o `AnimateWan` nem o `VideoToSprites`.
+
+### v60b — instalador nativo em PowerShell
+
+O usuario rodou `bash scripts/instalar_saa.sh` no PowerShell e caiu no WSL,
+que ele nao tem instalado. Instalar WSL so para isso e desproporcional.
+
+Criado **`scripts/instalar_saa.ps1`** — mesma funcao, PowerShell nativo, sem
+dependencia de WSL ou Git Bash.
+
+```powershell
+.\scripts\instalar_saa.ps1
+```
+
+Faz o mesmo: clona/atualiza, aplica o `saa/settings.json`, roda `npm install`,
+preserva favoritos e chaves pessoais, faz backup do settings anterior.
+
+Detalhe corrigido na revisao: `$antigo` so era definido dentro do `if
+(Test-Path)`, e a checagem de favoritos mais abaixo o referenciava. Com
+`Set-StrictMode` isso quebraria numa instalacao limpa. Agora e declarado como
+`$null` antes.
+
+Validado o que da sem PowerShell no sandbox: logica de merge replicada em
+Python (favoritos preservados, `_comentario` removido, `api_interface`
+sobrescrito), chaves/parenteses balanceados, `Pop-Location` dentro de
+`finally`.
+
+**Nota sobre clone no Windows:** a URL do navegador
+(`github.com/USER/REPO/tree/BRANCH`) nao serve para `git clone`. O certo e:
+
+```powershell
+git clone -b arena/01a05a82-comfyui-collab https://github.com/BloomRX/ComfyUI_Colab.git
+```
+
+### v60c — instalador do SAA ia parar fora do repo
+
+Bug relatado: instalou em `J:\character_select_saa`, na raiz do SSD, em vez de
+junto do projeto.
+
+Causa: `Join-Path (Split-Path -Parent $Aqui)` — o `$Aqui` ja e a raiz do repo,
+entao o `Split-Path -Parent` subia **mais um nivel**. No `.sh` estava pior
+ainda: `$HOME/character_select_saa`.
+
+Corrigido nos dois para `<repo>/character_select_saa`, e a pasta entrou no
+`.gitignore` (o SAA e um repo git proprio, com `node_modules` de centenas de
+MB — nao pode ser versionado dentro do nosso).
+
+`.gitignore` tambem passou a cobrir `/testsAB/`, `/denoise_test/` e `*.zip`,
+que sao saidas de teste.
+
+**Para mover o que ja foi instalado**, no PowerShell:
+
+```powershell
+Move-Item J:\character_select_saa J:\ComfyUI_Colab\character_select_saa
+```
+
+Nao precisa reinstalar — as settings estao dentro da pasta e vao junto.
+
+Observacao: `denoise_test.zip` (14 MB) e `testsAB/` (8,7 MB) ja estao no
+historico do Git. O `.gitignore` so vale para arquivos novos; remover os
+antigos exigiria reescrever o historico, o que nao compensa por 23 MB.
+
+### v60d — BOM do PowerShell quebrava o settings.json
+
+```
+SyntaxError: Unexpected token '<U+FEFF>', "<U+FEFF>{ "a"... is not valid JSON
+```
+
+Causa: `Set-Content -Encoding UTF8` no **Windows PowerShell 5.x** grava um BOM
+(`EF BB BF`) no inicio do arquivo. O `JSON.parse` do Node **rejeita** BOM.
+
+Confirmado que nao vinha do nosso `saa/settings.json` (primeiros bytes `{\n`) —
+era o instalador ao regravar.
+
+**Correcao no `instalar_saa.ps1`:**
+
+```powershell
+$semBom = New-Object System.Text.UTF8Encoding($false)
+[System.IO.File]::WriteAllText($Alvo, $json, $semBom)
+```
+
+`WriteAllText` com `UTF8Encoding($false)` funciona igual no PowerShell 5.x e
+7.x. O script ainda confere os 3 primeiros bytes depois de gravar e avisa se
+algo inserir BOM de novo.
+
+**`scripts/corrigir_bom.ps1` (novo)** conserta uma instalacao existente sem
+reinstalar: le com `ReadAllText` (o .NET descarta o BOM ao decodificar),
+regrava sem, e valida o JSON no fim.
+
+Reproduzido e validado: com BOM o Node falha com a mensagem exata do usuario;
+sem BOM le as 24 chaves normalmente; o reparo converte um no outro preservando
+o conteudo.
+
+### Regra
+
+**No Windows, JSON gravado por PowerShell precisa de `UTF8Encoding($false)`.**
+`Set-Content -Encoding UTF8` nao serve para arquivo que sera lido por Node,
+Python (`json.load` tambem falha) ou qualquer parser estrito.
+
+## v61 — o SAA pede o caminho dos checkpoints (e por que isso e um problema)
+
+Ao abrir, o SAA pede o diretorio dos `.safetensors`. Lendo
+`scripts/main/modelList.js`:
+
+```js
+files = fs.readdirSync(directory, { withFileTypes: true });
+```
+
+Ele **le o disco local** para montar as listas suspensas (checkpoints, LoRAs,
+upscalers, ControlNet, ipadapter, sams...). Nao consulta o `/object_info` do
+ComfyUI.
+
+**Isso pressupoe que o ComfyUI roda na mesma maquina** — que nao e o nosso
+caso. A pasta `models/checkpoints` esta no Google Drive, montada no Colab.
+
+### O que quebra e o que nao quebra
+
+| | funciona? |
+|---|---|
+| gerar imagem (envia o nome do modelo como string) | **sim** |
+| lista suspensa de modelos preenchida | nao |
+| LoRA/upscaler/ControlNet pelo dropdown | nao |
+
+O `api_model` no nosso `settings.json` ja e a string
+`waiIllustriousSDXL_v170.safetensors`. O SAA manda essa string no prompt da
+API, e o ComfyUI do Colab resolve o arquivo do lado dele. **O dropdown vazio e
+cosmetico** enquanto o valor gravado estiver certo.
+
+### Solucao pratica
+
+Criar uma **pasta espelho vazia** no PC, so com arquivos de mesmo nome:
+
+```
+J:\ComfyUI_Colab\model_mirror\checkpoints\waiIllustriousSDXL_v170.safetensors  (0 bytes)
+```
+
+O `readDirectory` so olha o **nome** e a extensao — nao abre o arquivo. Com
+isso o dropdown lista o modelo certo e o SAA envia a string correta.
+
+Alternativa: montar o Google Drive como unidade no Windows (Google Drive para
+Desktop) e apontar para
+`G:\Meu Drive\ComfyUI_Data\models\checkpoints`. Mais fiel, mas o SAA vai varrer
+o Drive inteiro na inicializacao — lento.
+
+### Recomendacao
+
+Comecar com a pasta espelho: e instantanea e resolve o caso de uso (temos
+**um** checkpoint). Se um dia houver muitos modelos ou LoRAs, ai vale montar o
+Drive.
+
+### v61b — `scripts/espelho_modelos.ps1`
+
+Automatiza a pasta espelho:
+
+```powershell
+.\scripts\espelho_modelos.ps1
+```
+
+Le os nomes de `config/node_registry.json` e cria arquivos de **0 byte** com a
+estrutura que o SAA espera.
+
+**Filtro importante:** so considera `workflow_models` de workflows que estao em
+`Workflows/` (ativos). Sem isso ele criaria 22 entradas, incluindo `krea2`,
+`toonyou` e outros que o usuario **apagou do Drive** na v55 — o dropdown
+listaria modelos que dariam erro ao gerar.
+
+Com o filtro: **7 arquivos**, exatamente o que existe no Drive hoje.
+
+No SAA, apontar para `<repo>\model_mirror\checkpoints`.
+
+Rodar de novo quando entrar modelo novo no registry.
+
+## v62 — ngrok passou a exigir cartao para TCP; pinggy no lugar
+
+Erro no log do usuario:
+
+```
+err="failed to start tunnel: You must add a credit or debit card before you
+can use TCP endpoints on a free account ... ERR_NGROK_8013"
+```
+
+Mudanca de politica do ngrok: **TCP agora exige cartao**, mesmo no plano
+gratuito. Nao e erro de configuracao — o token estava certo, o tunel HTTP
+funcionaria; so o TCP e barrado.
+
+### Substituto: pinggy (sem cadastro, sem cartao)
+
+```
+ssh -p 443 -R0:localhost:8188 tcp@free.pinggy.io
+```
+
+Nao precisa de conta, token nem instalar binario — usa o `ssh` que ja existe.
+Limite: **sessao de 60 minutos**.
+
+A C6 agora tem `TUNEL_TIPO` com `'pinggy'` (padrao) ou `'ngrok'`. O pinggy roda
+numa **thread com reconexao automatica**: quando a sessao de 60 min cai, ele
+reconecta e imprime o novo endereco.
+
+**O endereco MUDA a cada reconexao** (porta nova). Isso e o preco de nao pagar:
+a cada ~1h e preciso reajustar o `API Address` no SAA. A porta reservada e
+recurso pago (~US$ 2,50/mes).
+
+Se escolher `ngrok`, a mensagem de erro agora explica o motivo e sugere o
+pinggy, em vez de so dizer "falhou".
+
+### Testado
+
+- **regex de parsing**: captura `tcp://host:porta` nos dois formatos do pinggy
+  e **ignora** a URL `https://` que ele imprime junto (senao pegaria a errada)
+- **reconexao**: com um `ssh` falso que morre a cada 3 s, a thread detectou a
+  queda, reconectou e anunciou o endereco novo
+
+### Alternativas avaliadas
+
+| opcao | cadastro | cartao | TCP |
+|---|---|---|---|
+| **pinggy** | nao | nao | sim (60 min) |
+| ngrok | sim | **sim** | sim |
+| cloudflared | nao | nao | **nao** (so HTTP) |
+| localhost.run | nao | nao | so SSH/HTTP |
+| playit.gg | sim | nao | sim (feito para jogos) |
+
+O cloudflared foi descartado: **nao faz TCP puro**, e e exatamente disso que o
+SAA precisa por causa do WebSocket.
+
+## v63 — trocar a roupa sem refazer a personagem (inpaint)
+
+Problema do usuario: tem um chibi bom feito no **Flux 2**, mas o Flux recusou
+a roupa sensual da personagem.
+
+### `WaifuSurvivors_TrocarRoupa.json` (13 nos)
+
+```
+LoadImage ──IMAGE──────────────┬─> VAEEncodeForInpaint ─> KSampler ─> VAEDecode
+          └─MASK─> GrowMask ─> FeatherMask ─┘                              │
+                                    └──────────> ImageCompositeMasked <────┘
+                                                          ↑
+                                          imagem ORIGINAL (destination)
+```
+
+**So a area pintada e regerada.** Rosto, cabelo, pose e proporcao ficam
+identicos — nao ha reinterpretacao.
+
+E o **Illustrious** que gera, nao o Flux: e o nosso checkpoint e nao tem o
+filtro que barrou o usuario.
+
+### A mascara e feita na UI
+
+Clique direito no no 2 -> **Open in MaskEditor** -> pintar sobre a roupa ->
+Save to node. O `LoadImage` ja devolve `MASK` no slot 1.
+
+`GrowMask` (8px) pega a borda que ficou de fora; `FeatherMask` suaviza a
+emenda. Sem os dois fica uma linha visivel no contorno.
+
+### Duas decisoes que importam
+
+**denoise 1.0.** Em inpaint quem protege o resto e a **mascara** — o
+`VAEEncodeForInpaint` zera a area mascarada e o sampler so preenche ali.
+Denoise menor deixaria a roupa antiga aparecendo como fantasma.
+
+Terceiro contexto com regra diferente para o mesmo parametro:
+
+| workflow | mecanismo | denoise |
+|---|---|---|
+| `Base` splash | img2img puro | 0.85 |
+| `AnimateWan` | `noise_mask` do Wan | 1.0 |
+| `TrocarRoupa` | mascara de inpaint | 1.0 |
+
+**`ImageCompositeMasked` no fim.** O VAE decodifica a imagem inteira e
+introduz perda global — mesmo fora da mascara. O composite devolve os pixels
+**originais** fora da area pintada, entao so o que voce pintou muda de fato.
+
+### Verificado
+
+- a mascara sai do **slot 1** do `LoadImage` (o slot 0 e IMAGE — trocar daria
+  erro silencioso)
+- `destination` = imagem original, `source` = gerada (invertido, o composite
+  apagaria a ediçao)
+- assinaturas de `VAEEncodeForInpaint`, `GrowMask`, `FeatherMask` e
+  `ImageCompositeMasked` lidas do codigo-fonte
+
+### Downloads: nenhum
+
+So o Illustrious, que ja esta no Drive.
+
+## v64 — auditoria de licencas para uso comercial
+
+Pergunta do usuario antes de comercializar o jogo. Levantamento completo em
+**`LICENCAS.md`**, com cada licenca checada na fonte (API do HF, API do GitHub,
+texto integral da FAIPL).
+
+### O achado que decide
+
+O `waiIllustriousSDXL` usa **Fair AI Public License 1.0-SD**, que tem uma secao
+explicita:
+
+> **Output** — The output of this software is not covered by this license, and
+> no contributor claims any rights to it.
+
+**As imagens geradas nao sao cobertas pela licenca.** Os sprites sao seus,
+vender o jogo esta liberado.
+
+A FAIPL e copyleft sobre o **modelo**, nao sobre a saida: restringe
+redistribuir o checkpoint/LoRA e oferecer o modelo como servico em rede. Nada
+disso e o nosso caso — o modelo fica no Colab, so os PNGs vao para o jogo.
+
+### Resto do stack
+
+Tudo permissivo: WAN 2.2, IP-Adapter, CLIP-ViT-H, controlnet-union e
+AnimateDiff sao **Apache 2.0**; Inspyrenet, Mira e o SAA sao **MIT**.
+
+Quatro packs sao **GPL-3.0** (IPAdapter_plus, VideoHelperSuite,
+Advanced-ControlNet, Manager). **Nao contamina o jogo**: eles rodam no Colab e
+nao sao distribuidos junto. Um PNG feito num programa GPL nao vira GPL — mesma
+logica de uma imagem feita no GIMP.
+
+### Os riscos REAIS (que nao sao de licenca de modelo)
+
+1. **Personagens de anime existentes.** O Illustrious e treinado em tags do
+   Danbooru e reproduz personagens com copyright fielmente — o SAA existe para
+   isso. Gerar alguem reconhecivel e vender **e violacao**, independente de
+   licenca de IA. As 5 personagens tem de ser originais.
+2. **Marca d'agua herdada** (~1 em 10-20 imagens, ja documentado): revisar cada
+   sprite antes de integrar.
+3. **Conteudo adulto e lojas** (v23): Steam aceita com marcacao, consoles nao.
+
+### Verificacao automatica
+
+`checar_regras.py` ganhou uma checagem: **modelo em workflow ativo que nao
+aparece no `LICENCAS.md` gera aviso**. Testado plantando um modelo ficticio no
+registry — o aviso disparou.
+
+Assim, quando adicionarmos um modelo novo, a pergunta da licenca aparece antes
+de virar problema.
+
+### Recomendacao registrada
+
+Guardar print/PDF da pagina de licenca do Civitai na data do download. A Onoma
+AI ja alterou o TOS do Illustrious v0.1 **retroativamente** em 2025 — licencas
+mudam, e o registro do estado na epoca do uso protege.
+
+## v65 — registro permanente de licenças com evidência datada
+
+Pedido: manter um arquivo com licença e informação de cada modelo usado.
+
+O `LICENCAS.md` da v64 era análise em prosa — bom para entender, ruim para
+consultar e sem prova de nada. Agora há três camadas:
+
+| arquivo | o que é |
+|---|---|
+| `LICENCAS.md` | a análise: o que pode e o que não pode no jogo |
+| `licencas/MODELOS.md` | ficha por modelo: papel, tamanho, origem, restrições |
+| `licencas/INDICE.md` | tabela gerada automaticamente, uma linha por item |
+| `licencas/evidencias/*.json` | **resposta crua das APIs**, com data |
+
+### Por que guardar a resposta crua
+
+A Onoma AI alterou o TOS do Illustrious v0.1 **retroativamente** em 2025. Se a
+licença mudar depois, o JSON datado registra o estado no momento em que o
+modelo entrou no projeto. Não é interpretação minha — é o que o servidor
+devolveu, com `sha` e `lastModified`.
+
+### `scripts/coletar_licencas.py`
+
+Consulta a API do HuggingFace e do GitHub, grava as evidências e regenera o
+índice:
+
+```
+python3 scripts/coletar_licencas.py
+python3 scripts/coletar_licencas.py --resumo   # só imprime
+```
+
+Modelos sem API pública (o Illustrious, do Civitai) têm registro manual no
+próprio script, com a cláusula-chave transcrita.
+
+### Correção que a coleta revelou
+
+Na v64 agrupei o **Hotshot-XL** como Apache 2.0. A API mostra
+`license:openrail++` — **CreativeML OpenRAIL++-M**, que permite uso comercial
+mas tem cláusulas de uso proibido. Está arquivado (reprovado na v32/v50), então
+não afeta o pipeline; corrigido no `LICENCAS.md` com nota explícita.
+
+Também ficou registrado que o `toonyou_beta6` é um **mirror sem licença
+declarada** — se um dia voltar, verificar no Civitai original.
+
+### Estado
+
+21 itens catalogados: 7 modelos em uso, 5 arquivados, 9 ferramentas.
+Nenhum impede o uso comercial dos sprites.
+
+### Ao adicionar modelo novo
+
+1. `python3 scripts/coletar_licencas.py`
+2. ficha em `licencas/MODELOS.md`
+3. nome do arquivo na lista `AUDITADOS` do `checar_regras.py`
+
+O passo 3 não é opcional: o `checar_regras.py` **falha** se um modelo de
+workflow ativo não estiver auditado.
+
+## v68 — correção dos 3 workflows trazidos pelo usuário
+
+O usuário commitou `workflow_chibi_converter`, `workflow_wai_img2img` e
+`workflow_wai_ipadapter`, e o ComfyUI recusou com "Entrada inválida".
+
+### O erro confirmou o diagnóstico
+
+A mensagem do ComfyUI era o sintoma exato do deslocamento de widgets:
+
+```
+weight_type    recebeu 0.6       <- devia ser texto
+start_at       recebeu 'concat'  <- devia ser float
+embeds_scaling recebeu 1         <- devia ser texto
+```
+
+O `IPAdapterAdvanced` tem **6 widgets** (conferido em `IPAdapterPlus.py`), e os
+workflows traziam **7** — um `0.6` a mais no início empurrava tudo uma casa.
+
+### Quatro correções
+
+| problema | era | ficou |
+|---|---|---|
+| checkpoint | `wai-illustrious-SDXL.safetensors` | `waiIllustriousSDXL_v170.safetensors` |
+| preset do UnifiedLoader | `PLUS FACE (SDXL)` — **não existe** | `PLUS FACE (portraits)` |
+| widgets do IPAdapter | 7 valores | 6, na ordem certa |
+| embeds_scaling | `V only` | `K+mean(V) w/ C penalty` |
+
+Sobre a pergunta do usuário ("o embeds não tem correção?"): `V only` **é** um
+valor válido — não dá erro. Mas foi a causa do neon queimado da v27, então
+trocar é decisão de qualidade, não de sintaxe. O erro dele vinha do
+deslocamento, que fazia `embeds_scaling` receber `1`.
+
+Presets válidos (de `IPAdapterPlus.py:557`): LIGHT - SD1.5 only, STANDARD,
+VIT-G, PLUS (high strength), PLUS FACE (portraits), FULL FACE - SD1.5 only.
+
+### Não mexido, a pedido
+
+`chibi_style_lora.safetensors` continua referenciado. Não está no Drive —
+o `LoraLoader` deve ficar em **bypass (Ctrl+B)** até o download.
+
+### Sobre o chibi_converter
+
+A abordagem é boa e **diferente da nossa**: em vez de o modelo inventar a
+proporção chibi, o usuário fornece um **molde** (`molde_chibi_base.png`) que
+entra por `VAEEncode` como latente, e o retrato entra pelo IPAdapter dando a
+aparência. Com denoise 0.55 a silhueta do molde se mantém.
+
+Isso pode resolver o problema da v58 — lá o img2img não conseguia mudar a
+proporção porque partia da foto realista. Partindo de um molde que **já é
+chibi**, o conflito some.
+
+### v68b — "IPAdapter model not found": preset exige arquivo que nao temos
+
+Depois da correcao da v68, o chibi_converter falhou em execucao:
+
+```
+IPAdapterPlus.py line 599: raise Exception("IPAdapter model not found.")
+```
+
+Repare que o **CLIP Vision carregou** (a linha anterior no log confirma). O que
+faltou foi o modelo IPAdapter em si.
+
+### Causa: cada preset procura um ARQUIVO diferente
+
+Em `utils.py:29`, `get_ipadapter_file()` casa o preset com uma regex sobre os
+arquivos da pasta `ipadapter/`:
+
+| preset (SDXL) | regex | temos? |
+|---|---|---|
+| STANDARD | `ip.adapter.sdxl.vit.h` | nao |
+| **PLUS (high strength)** | `plus.sdxl.vit.h` | **SIM** |
+| PLUS FACE (portraits) | `plus.face.sdxl.vit.h` | **nao** |
+
+Nosso Drive tem `ip-adapter-plus_sdxl_vit-h.safetensors` — casa com **PLUS**,
+nao com PLUS FACE. Sao arquivos distintos (o do PLUS FACE tem "face" no nome).
+
+### Erro meu na v68
+
+O workflow original vinha com `PLUS FACE (SDXL)`, que **nao existe** na lista.
+Eu troquei pelo nome valido mais parecido (`PLUS FACE (portraits)`) sem
+verificar se o ARQUIVO correspondente estava no Drive. Corrigir o nome do
+preset resolveu a validacao da UI, mas empurrou o erro para a execucao.
+
+**Licao:** valor valido no dropdown != modelo presente no disco. Ao trocar
+preset, conferir tambem o arquivo que ele exige.
+
+### Corrigido
+
+Os tres workflows agora usam **`PLUS (high strength)`**. Conferido que os
+nossos (`Base`, `CharacterSheet`) ja usavam esse — estao todos consistentes.
+
+### Se quiser o PLUS FACE depois
+
+`ip-adapter-plus-face_sdxl_vit-h.safetensors` (848 MB, Apache 2.0), em
+`h94/IP-Adapter/sdxl_models/`. Registrado em `model_notes`.
+
+**Mas provavelmente nao vale:** PLUS FACE prioriza o rosto, e para chibi de
+corpo inteiro o PLUS costuma dar melhor resultado.

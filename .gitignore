@@ -1,0 +1,12 @@
+*.pyc
+__pycache__/
+
+# Character Select SAA: clonado por scripts/instalar_saa.*
+# Fica DENTRO do repo por conveniencia, mas e um repo git proprio
+# (com node_modules de centenas de MB) e nao deve ser versionado aqui.
+/character_select_saa/
+
+# saidas de teste e temporarios
+/testsAB/
+/denoise_test/
+*.zip

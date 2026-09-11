@@ -1,0 +1,13 @@
+{
+  "_coletado_em": "2026-09-08",
+  "_fonte": "https://huggingface.co/api/models/xinsir/controlnet-union-sdxl-1.0",
+  "_metodo": "API oficial do HuggingFace",
+  "_arquivos_que_usamos": [
+    "controlnet-union-sdxl-1.0.safetensors"
+  ],
+  "licenca": "apache-2.0",
+  "gated": false,
+  "lastModified": "2024-07-30T09:01:56.000Z",
+  "sha": "801a4a3fa3d4c936f4feea95b98607bc6726f80c",
+  "tags_licenca": "license:apache-2.0"
+}

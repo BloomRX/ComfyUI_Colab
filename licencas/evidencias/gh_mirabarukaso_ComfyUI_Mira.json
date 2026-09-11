@@ -1,0 +1,21 @@
+{
+  "_coletado_em": "2026-09-10",
+  "_fonte": "https://api.github.com/repos/mirabarukaso/ComfyUI_Mira",
+  "licenca": "MIT",
+  "licenca_url": "https://api.github.com/licenses/mit",
+  "pushed_at": "2026-07-31T05:16:43Z",
+  "resposta_crua": {
+    "full_name": "mirabarukaso/ComfyUI_Mira",
+    "license": {
+      "key": "mit",
+      "name": "MIT License",
+      "spdx_id": "MIT",
+      "url": "https://api.github.com/licenses/mit",
+      "node_id": "MDc6TGljZW5zZTEz"
+    },
+    "html_url": "https://github.com/mirabarukaso/ComfyUI_Mira",
+    "description": "Slice regions of the canvas and convert them to masks for regional conditions widh PNG preview output. And a few support nodes.",
+    "pushed_at": "2026-07-31T05:16:43Z",
+    "archived": false
+  }
+}

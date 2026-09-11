@@ -1,0 +1,14 @@
+{
+  "_coletado_em": "2026-09-08",
+  "_fonte": "https://huggingface.co/api/models/hotshotco/Hotshot-XL",
+  "_metodo": "API oficial do HuggingFace",
+  "_arquivos_que_usamos": [
+    "hsxl_temporal_layers.f16.safetensors"
+  ],
+  "licenca": "openrail++",
+  "gated": false,
+  "lastModified": "2023-10-11T17:44:31.000Z",
+  "sha": "300d6a691ab6d62e74348f2e0d430e6d82ee2864",
+  "tags_licenca": "license:openrail++",
+  "alerta": "NAO e Apache. CreativeML OpenRAIL++-M tem clausulas de uso proibido."
+}

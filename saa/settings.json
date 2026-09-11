@@ -1,0 +1,42 @@
+{
+  "_comentario": [
+    "Configuracao do Character Select SAA para o WAIFU SURVIVORS.",
+    "Copie para character_select_stand_alone_app/settings/settings.json",
+    "(ou rode scripts/instalar_saa.sh, que faz isso sozinho).",
+    "",
+    "IMPORTANTE: api_addr tem de ser trocado a cada sessao do Colab.",
+    "O endereco sai no log da Celula 6 quando TUNEL_TCP = True.",
+    "Formato: 0.tcp.sa.ngrok.io:12345  (sem http:// na frente)"
+  ],
+
+  "api_interface": "ComfyUI",
+  "api_addr": "0.tcp.ngrok.io:00000",
+  "api_preview_refresh_time": 1,
+
+  "api_model": "waiIllustriousSDXL_v170.safetensors",
+  "api_vpred": "Auto",
+
+  "api_image_width": 832,
+  "api_image_height": 1216,
+  "api_steps": 30,
+  "api_cfg": 5.5,
+  "api_sampler": "euler_ancestral",
+  "api_scheduler": "normal",
+  "api_seed": -1,
+  "api_batch": 4,
+
+  "api_prompt_ban": "bad quality, worst quality, worst detail, sketch, censor, watermark, signature, logo, text, multiple views, grid, explicit, oversaturated, neon colors, glowing skin, rim lighting, chromatic aberration, high contrast, extra head, duplicate, blurry",
+  "api_prompt_quality": "masterpiece, best quality, amazing quality",
+
+  "api_hf_enable": false,
+  "api_refiner_enable": false,
+  "api_controlnet_enable": false,
+  "api_adetailer_enable": false,
+
+  "ai_interface": "None",
+  "generate_auto_start": false,
+
+  "lora_slot": [],
+  "ad_slot": [],
+  "fav_characters": []
+}

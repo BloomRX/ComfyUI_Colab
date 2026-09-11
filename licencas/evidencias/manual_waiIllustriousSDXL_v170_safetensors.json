@@ -1,0 +1,51 @@
+{
+  "origem": "Civitai — WAI-NSFW-illustrious-SDXL v17.0",
+  "url": "https://civitai.com/models/827184",
+  "licenca": "Illustrious License (rotulo do Civitai) — herdada de Illustrious XL 1.0 = OpenRAIL++-M provavel; autor declara \"Commercial Allowed\"",
+  "licenca_url": "https://freedevproject.org/faipl-1.0-sd/",
+  "base": "Illustrious XL (Onoma AI) -> SDXL",
+  "saida_comercial": true,
+  "clausula_chave": "Output: The output of this software is not covered by this license, and no contributor claims any rights to it.",
+  "restricoes": [
+    "copyleft ao redistribuir o MODELO ou derivados (LoRA, merge)",
+    "proibido oferecer o modelo como servico em rede sem dar o fonte",
+    "Prohibited Uses: nada ilegal, nada envolvendo menores, etc."
+  ],
+  "alertas": [
+    "download MANUAL: nao existe no HuggingFace, Civitai exige login",
+    "treinado em Danbooru: reproduz personagens com copyright — as personagens do jogo tem de ser ORIGINAIS",
+    "a pagina do Civitai migrou para civitai.red (conteudo maduro) e exige login: nao consegui ler o bloco de licenca sem conta",
+    "o rotulo \"Illustrious License\" do Civitai e generico e aponta para a licenca da v0.1 — nao confie nele sem checar a base real"
+  ],
+  "nota": "A Onoma AI alterou o TOS do Illustrious v0.1 retroativamente em 2025. Guarde print da pagina do Civitai na data do download.",
+  "_coletado_em": "2026-09-10",
+  "_arquivo": "waiIllustriousSDXL_v170.safetensors",
+  "_revisado_em": "2026-09-10",
+  "nome_atual": "WAI-illustrious-SDXL (o \"NSFW\" saiu do nome; conteudo igual)",
+  "base_real": "Illustrious XL 1.0 (desde a v14 — o autor rejeitou a 2.0)",
+  "base_ate_v13": "Illustrious XL 0.1",
+  "licenca_analise": {
+    "o_problema": "A licenca depende de QUAL Illustrious e a base, e a Onoma AI mudou a licenca entre versoes:",
+    "illustrious_v0_1": "Fair AI Public License 1.0-SD (+ TOS retroativo 2025)",
+    "illustrious_v1_0": "CreativeML Open RAIL++-M (relicenciado pela Onoma)",
+    "illustrious_v2_0": "CreativeML Open RAIL-M",
+    "consequencia": "Como o WAI v14+ usa Illustrious XL 1.0 como base, a licenca herdada mais provavel e CreativeML Open RAIL++-M, NAO a FAIPL. O Civitai ainda rotula como \"Illustrious License\", que aponta para a FAIPL do v0.1 e nao foi atualizado.",
+    "por_que_nao_muda_o_veredito": "AMBAS as licencas permitem uso comercial da saida. A FAIPL tem a clausula Output explicita; a OpenRAIL++-M define Output como propriedade do usuario e permite uso comercial. O caminho para vender o jogo esta livre nos dois casos."
+  },
+  "restricoes_comuns_as_duas": [
+    "use-based restrictions propagam para derivados (nada ilegal, nada envolvendo menores, sem desinformacao/assedio)",
+    "ao redistribuir o MODELO, as restricoes de uso tem de ir junto"
+  ],
+  "restricao_so_da_faipl": [
+    "copyleft forte: derivado tem de sair sob a mesma licenca",
+    "servico em rede exige oferecer o fonte/modelo"
+  ],
+  "acao_pendente_do_usuario": "Logar em civitai.red/models/827184, abrir a aba de licenca da v17.0 e salvar um PDF/print. E a unica forma de saber o que o AUTOR declarou, e serve de prova datada.",
+  "declaracao_do_autor": {
+    "_verificado_por": "usuario, logado em civitai.red (a pagina exige conta)",
+    "_data": "2026-09-10",
+    "texto_na_pagina": "Commercial Allowed",
+    "significado": "O autor do WAI (WAI0731) permite explicitamente uso comercial. Isso resolve a ambiguidade FAIPL x OpenRAIL++-M para o nosso caso: seja qual for a licenca herdada, o autor autoriza comercial, e ambas as candidatas ja permitiam uso comercial da SAIDA.",
+    "pendente": "Salvar PDF/print da pagina com a data. Texto num campo do Civitai nao e o mesmo que o texto integral da licenca — mas e a declaracao do autor, e serve de evidencia de boa-fe."
+  }
+}

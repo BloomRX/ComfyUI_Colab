@@ -1,0 +1,707 @@
+{
+  "id": "c741ca40-1198-5750-afa4-41ce7a03ad02",
+  "revision": 0,
+  "last_node_id": 13,
+  "last_link_id": 18,
+  "nodes": [
+    {
+      "id": 1,
+      "type": "CheckpointLoaderSimple",
+      "pos": [
+        40,
+        60
+      ],
+      "size": [
+        340,
+        100
+      ],
+      "flags": {},
+      "order": 0,
+      "mode": 0,
+      "inputs": [],
+      "outputs": [
+        {
+          "name": "MODEL",
+          "type": "MODEL",
+          "links": [
+            8
+          ],
+          "slot_index": 0
+        },
+        {
+          "name": "CLIP",
+          "type": "CLIP",
+          "links": [
+            3,
+            4
+          ],
+          "slot_index": 1
+        },
+        {
+          "name": "VAE",
+          "type": "VAE",
+          "links": [
+            6,
+            13
+          ],
+          "slot_index": 2
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "CheckpointLoaderSimple"
+      },
+      "widgets_values": [
+        "waiIllustriousSDXL_v170.safetensors"
+      ],
+      "title": "1. Illustrious (nao censura como o Flux)"
+    },
+    {
+      "id": 2,
+      "type": "LoadImage",
+      "pos": [
+        40,
+        210
+      ],
+      "size": [
+        340,
+        340
+      ],
+      "flags": {},
+      "order": 1,
+      "mode": 0,
+      "inputs": [],
+      "outputs": [
+        {
+          "name": "IMAGE",
+          "type": "IMAGE",
+          "links": [
+            5,
+            14
+          ],
+          "slot_index": 0
+        },
+        {
+          "name": "MASK",
+          "type": "MASK",
+          "links": [
+            1
+          ],
+          "slot_index": 1
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "LoadImage"
+      },
+      "widgets_values": [
+        "chibi.png",
+        "image"
+      ],
+      "title": "2. SUA IMAGEM — clique direito > Open in MaskEditor e PINTE a roupa"
+    },
+    {
+      "id": 3,
+      "type": "GrowMask",
+      "pos": [
+        420,
+        210
+      ],
+      "size": [
+        300,
+        110
+      ],
+      "flags": {},
+      "order": 2,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "mask",
+          "type": "MASK",
+          "link": 1
+        }
+      ],
+      "outputs": [
+        {
+          "name": "MASK",
+          "type": "MASK",
+          "links": [
+            2
+          ],
+          "slot_index": 0
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "GrowMask"
+      },
+      "widgets_values": [
+        8,
+        true
+      ],
+      "title": "3. Expande a mascara 8px (pega a borda da roupa)"
+    },
+    {
+      "id": 4,
+      "type": "FeatherMask",
+      "pos": [
+        420,
+        360
+      ],
+      "size": [
+        300,
+        140
+      ],
+      "flags": {},
+      "order": 3,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "mask",
+          "type": "MASK",
+          "link": 2
+        }
+      ],
+      "outputs": [
+        {
+          "name": "MASK",
+          "type": "MASK",
+          "links": [
+            7,
+            16
+          ],
+          "slot_index": 0
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "FeatherMask"
+      },
+      "widgets_values": [
+        10,
+        10,
+        10,
+        10
+      ],
+      "title": "4. Suaviza a borda (evita emenda dura)"
+    },
+    {
+      "id": 5,
+      "type": "CLIPTextEncode",
+      "pos": [
+        420,
+        60
+      ],
+      "size": [
+        340,
+        120
+      ],
+      "flags": {},
+      "order": 4,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "clip",
+          "type": "CLIP",
+          "link": 3
+        }
+      ],
+      "outputs": [
+        {
+          "name": "CONDITIONING",
+          "type": "CONDITIONING",
+          "links": [
+            9
+          ],
+          "slot_index": 0
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "CLIPTextEncode"
+      },
+      "widgets_values": [
+        "black bikini, thin straps, cleavage, bare shoulders, bare midriff, sensitive, attractive, detailed fabric, masterpiece, best quality"
+      ],
+      "title": "5. A ROUPA NOVA — descreva SO a roupa"
+    },
+    {
+      "id": 6,
+      "type": "CLIPTextEncode",
+      "pos": [
+        420,
+        540
+      ],
+      "size": [
+        340,
+        120
+      ],
+      "flags": {},
+      "order": 5,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "clip",
+          "type": "CLIP",
+          "link": 4
+        }
+      ],
+      "outputs": [
+        {
+          "name": "CONDITIONING",
+          "type": "CONDITIONING",
+          "links": [
+            10
+          ],
+          "slot_index": 0
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "CLIPTextEncode"
+      },
+      "widgets_values": [
+        "bad quality, worst quality, deformed, extra limbs, mutated hands, blurry, watermark, text, censored, mosaic censoring, bar censor, covered, extra clothing, jacket, coat"
+      ],
+      "title": "6. Negative"
+    },
+    {
+      "id": 7,
+      "type": "VAEEncodeForInpaint",
+      "pos": [
+        790,
+        300
+      ],
+      "size": [
+        300,
+        140
+      ],
+      "flags": {},
+      "order": 6,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "pixels",
+          "type": "IMAGE",
+          "link": 5
+        },
+        {
+          "name": "vae",
+          "type": "VAE",
+          "link": 6
+        },
+        {
+          "name": "mask",
+          "type": "MASK",
+          "link": 7
+        }
+      ],
+      "outputs": [
+        {
+          "name": "LATENT",
+          "type": "LATENT",
+          "links": [
+            11
+          ],
+          "slot_index": 0
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "VAEEncodeForInpaint"
+      },
+      "widgets_values": [
+        6
+      ],
+      "title": "7. Inpaint: so a area pintada e regerada"
+    },
+    {
+      "id": 8,
+      "type": "KSampler",
+      "pos": [
+        1130,
+        60
+      ],
+      "size": [
+        300,
+        280
+      ],
+      "flags": {},
+      "order": 7,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "model",
+          "type": "MODEL",
+          "link": 8
+        },
+        {
+          "name": "positive",
+          "type": "CONDITIONING",
+          "link": 9
+        },
+        {
+          "name": "negative",
+          "type": "CONDITIONING",
+          "link": 10
+        },
+        {
+          "name": "latent_image",
+          "type": "LATENT",
+          "link": 11
+        }
+      ],
+      "outputs": [
+        {
+          "name": "LATENT",
+          "type": "LATENT",
+          "links": [
+            12
+          ],
+          "slot_index": 0
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "KSampler"
+      },
+      "widgets_values": [
+        0,
+        "randomize",
+        28,
+        5.5,
+        "euler_ancestral",
+        "normal",
+        1.0
+      ],
+      "title": "8. denoise 1.0 (inpaint: a mascara ja protege o resto)"
+    },
+    {
+      "id": 9,
+      "type": "VAEDecode",
+      "pos": [
+        1130,
+        380
+      ],
+      "size": [
+        300,
+        60
+      ],
+      "flags": {},
+      "order": 8,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "samples",
+          "type": "LATENT",
+          "link": 12
+        },
+        {
+          "name": "vae",
+          "type": "VAE",
+          "link": 13
+        }
+      ],
+      "outputs": [
+        {
+          "name": "IMAGE",
+          "type": "IMAGE",
+          "links": [
+            15
+          ],
+          "slot_index": 0
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "VAEDecode"
+      },
+      "widgets_values": [],
+      "title": ""
+    },
+    {
+      "id": 10,
+      "type": "ImageCompositeMasked",
+      "pos": [
+        1130,
+        480
+      ],
+      "size": [
+        300,
+        180
+      ],
+      "flags": {},
+      "order": 9,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "destination",
+          "type": "IMAGE",
+          "link": 14
+        },
+        {
+          "name": "source",
+          "type": "IMAGE",
+          "link": 15
+        },
+        {
+          "name": "mask",
+          "type": "MASK",
+          "link": 16,
+          "shape": "7"
+        }
+      ],
+      "outputs": [
+        {
+          "name": "IMAGE",
+          "type": "IMAGE",
+          "links": [
+            17,
+            18
+          ],
+          "slot_index": 0
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "ImageCompositeMasked"
+      },
+      "widgets_values": [
+        0,
+        0,
+        false
+      ],
+      "title": "10. Cola SO a area editada de volta (resto = pixels originais)"
+    },
+    {
+      "id": 11,
+      "type": "SaveImage",
+      "pos": [
+        1470,
+        60
+      ],
+      "size": [
+        420,
+        400
+      ],
+      "flags": {},
+      "order": 10,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "images",
+          "type": "IMAGE",
+          "link": 17
+        }
+      ],
+      "outputs": [],
+      "properties": {
+        "Node name for S&R": "SaveImage"
+      },
+      "widgets_values": [
+        "survivors/roupa_editada"
+      ],
+      "title": "11. Resultado"
+    },
+    {
+      "id": 12,
+      "type": "PreviewImage",
+      "pos": [
+        1470,
+        500
+      ],
+      "size": [
+        420,
+        300
+      ],
+      "flags": {},
+      "order": 11,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "images",
+          "type": "IMAGE",
+          "link": 18
+        }
+      ],
+      "outputs": [],
+      "properties": {
+        "Node name for S&R": "PreviewImage"
+      },
+      "widgets_values": [],
+      "title": "12. Antes de salvar"
+    },
+    {
+      "id": 13,
+      "type": "Note",
+      "pos": [
+        40,
+        600
+      ],
+      "size": [
+        340,
+        320
+      ],
+      "flags": {},
+      "order": 12,
+      "mode": 0,
+      "inputs": [],
+      "outputs": [],
+      "properties": {
+        "Node name for S&R": "Note"
+      },
+      "widgets_values": [
+        "TROCAR A ROUPA SEM REFAZER A PERSONAGEM\n\n### O PROBLEMA QUE ISTO RESOLVE ###\nO Flux 2 recusa roupa sensual. O Illustrious nao tem esse filtro — e ja\ne o nosso checkpoint. Aqui so a AREA PINTADA e regerada; rosto, cabelo,\npose e proporcao continuam pixel a pixel iguais.\n\n### COMO USAR (o passo da mascara e no no 2) ###\n1. carregue a imagem no no 2\n2. CLIQUE DIREITO no no 2 > 'Open in MaskEditor'\n3. pinte por cima da ROUPA (so ela; nao invada pele nem cabelo)\n4. Save to node\n5. escreva a roupa nova no no 5\n6. Run\n\nOs nos 3 e 4 tratam a mascara: GrowMask pega a borda que voce deixou de\nfora, FeatherMask suaviza a emenda. Sem eles fica uma linha visivel.\n\n### POR QUE denoise 1.0 AQUI ###\nEm inpaint a mascara e que protege o resto — o VAEEncodeForInpaint zera\na area mascarada e o KSampler so preenche ali. denoise menor deixaria\nfantasma da roupa antiga aparecendo por baixo.\n(Diferente do Base, onde img2img usa 0.85 — la nao ha mascara.)\n\n### O NO 10 ###\nO VAE decodifica a imagem inteira e introduz uma leve perda global.\nO ImageCompositeMasked devolve os pixels ORIGINAIS fora da mascara,\nentao so o que voce pintou realmente muda.\n\n### AJUSTES ###\nno 3 grow: se sobrar borda da roupa antiga, aumente para 12-16\nno 5: descreva SO a roupa. Nao repita cabelo/olhos — o resto nao muda\nseed randomize: cada Run e uma variacao. Achou boa? fixe a seed.\n\n### SE A ROUPA ANTIGA INSISTIR EM VOLTAR ###\nA mascara esta pequena. Repinte cobrindo TODA a peca, com folga."
+      ],
+      "title": "LEIA"
+    }
+  ],
+  "links": [
+    [
+      1,
+      2,
+      1,
+      3,
+      0,
+      "MASK"
+    ],
+    [
+      2,
+      3,
+      0,
+      4,
+      0,
+      "MASK"
+    ],
+    [
+      3,
+      1,
+      1,
+      5,
+      0,
+      "CLIP"
+    ],
+    [
+      4,
+      1,
+      1,
+      6,
+      0,
+      "CLIP"
+    ],
+    [
+      5,
+      2,
+      0,
+      7,
+      0,
+      "IMAGE"
+    ],
+    [
+      6,
+      1,
+      2,
+      7,
+      1,
+      "VAE"
+    ],
+    [
+      7,
+      4,
+      0,
+      7,
+      2,
+      "MASK"
+    ],
+    [
+      8,
+      1,
+      0,
+      8,
+      0,
+      "MODEL"
+    ],
+    [
+      9,
+      5,
+      0,
+      8,
+      1,
+      "CONDITIONING"
+    ],
+    [
+      10,
+      6,
+      0,
+      8,
+      2,
+      "CONDITIONING"
+    ],
+    [
+      11,
+      7,
+      0,
+      8,
+      3,
+      "LATENT"
+    ],
+    [
+      12,
+      8,
+      0,
+      9,
+      0,
+      "LATENT"
+    ],
+    [
+      13,
+      1,
+      2,
+      9,
+      1,
+      "VAE"
+    ],
+    [
+      14,
+      2,
+      0,
+      10,
+      0,
+      "IMAGE"
+    ],
+    [
+      15,
+      9,
+      0,
+      10,
+      1,
+      "IMAGE"
+    ],
+    [
+      16,
+      4,
+      0,
+      10,
+      2,
+      "MASK"
+    ],
+    [
+      17,
+      10,
+      0,
+      11,
+      0,
+      "IMAGE"
+    ],
+    [
+      18,
+      10,
+      0,
+      12,
+      0,
+      "IMAGE"
+    ]
+  ],
+  "groups": [],
+  "config": {},
+  "extra": {
+    "ds": {
+      "scale": 0.75,
+      "offset": [
+        0,
+        0
+      ]
+    }
+  },
+  "version": 0.4
+}

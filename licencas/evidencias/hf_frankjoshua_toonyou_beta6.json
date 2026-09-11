@@ -1,0 +1,10 @@
+{
+  "_coletado_em": "2026-09-08",
+  "_fonte": "https://huggingface.co/api/models/frankjoshua/toonyou_beta6",
+  "_arquivos_que_usamos": [
+    "toonyou_beta6.safetensors"
+  ],
+  "licenca": "(NAO DECLARADA no mirror)",
+  "alerta": "Mirror de um modelo do Civitai. Licenca nao declarada no HF. REPROVADO na v51; se voltar a usar, verificar no Civitai original.",
+  "status": "arquivado"
+}

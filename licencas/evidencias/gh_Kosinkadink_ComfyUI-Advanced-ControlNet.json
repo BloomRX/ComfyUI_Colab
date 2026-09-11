@@ -1,0 +1,21 @@
+{
+  "_coletado_em": "2026-09-10",
+  "_fonte": "https://api.github.com/repos/Kosinkadink/ComfyUI-Advanced-ControlNet",
+  "licenca": "GPL-3.0",
+  "licenca_url": "https://api.github.com/licenses/gpl-3.0",
+  "pushed_at": "2026-07-28T11:39:29Z",
+  "resposta_crua": {
+    "full_name": "Kosinkadink/ComfyUI-Advanced-ControlNet",
+    "license": {
+      "key": "gpl-3.0",
+      "name": "GNU General Public License v3.0",
+      "spdx_id": "GPL-3.0",
+      "url": "https://api.github.com/licenses/gpl-3.0",
+      "node_id": "MDc6TGljZW5zZTk="
+    },
+    "html_url": "https://github.com/Kosinkadink/ComfyUI-Advanced-ControlNet",
+    "description": "ControlNet scheduling and masking nodes with sliding context support",
+    "pushed_at": "2026-07-28T11:39:29Z",
+    "archived": false
+  }
+}

@@ -1,0 +1,21 @@
+{
+  "_coletado_em": "2026-09-10",
+  "_fonte": "https://api.github.com/repos/john-mnz/ComfyUI-Inspyrenet-Rembg",
+  "licenca": "MIT",
+  "licenca_url": "https://api.github.com/licenses/mit",
+  "pushed_at": "2024-07-31T13:54:32Z",
+  "resposta_crua": {
+    "full_name": "john-mnz/ComfyUI-Inspyrenet-Rembg",
+    "license": {
+      "key": "mit",
+      "name": "MIT License",
+      "spdx_id": "MIT",
+      "url": "https://api.github.com/licenses/mit",
+      "node_id": "MDc6TGljZW5zZTEz"
+    },
+    "html_url": "https://github.com/john-mnz/ComfyUI-Inspyrenet-Rembg",
+    "description": "ComfyUI node for background removal, implementing InSPyreNet the best method up to date",
+    "pushed_at": "2024-07-31T13:54:32Z",
+    "archived": false
+  }
+}

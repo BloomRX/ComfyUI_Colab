@@ -1,0 +1,26 @@
+{
+  "_comment": "Elenco do Waifu Survivors. MODO RECOMENDADO: preencha 'concept' com o nome do arquivo da imagem aprovada (em ComfyUI_Data/input/) - a identidade vem da imagem via IPAdapter, sem copiar seed nem prompt. 'identity' (texto) so como alternativa. Teor ecchi: splash/portrait usam 'sensitive'; chibi fica limpo.",
+  "defaults": {
+    "checkpoint": "waiIllustriousSDXL_v170.safetensors",
+    "negative": "bad quality, worst quality, worst detail, sketch, censor, watermark, signature, logo, text, multiple views, grid, explicit",
+    "cfg": 5.5,
+    "steps": 26,
+    "sampler": "euler_ancestral",
+    "scheduler": "normal"
+  },
+  "characters": [
+    {
+      "id": "lia",
+      "concept": "lia_concept.png",
+      "_nota": "concept = arquivo em ComfyUI_Data/input/. Com ele, 'identity' e opcional.",
+      "ipadapter_weight": 0.7,
+      "lora": null
+    },
+    {
+      "id": "exemplo_sem_imagem",
+      "identity": "1girl, solo, short blue hair, twintails, golden eyes, white sailor uniform",
+      "_nota": "modo texto: use so se ainda nao tiver imagem aprovada.",
+      "seed": 777
+    }
+  ]
+}

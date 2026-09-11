@@ -1,0 +1,14 @@
+{
+  "_coletado_em": "2026-09-08",
+  "_fonte": "https://huggingface.co/api/models/guoyww/animatediff",
+  "_metodo": "API oficial do HuggingFace",
+  "_arquivos_que_usamos": [
+    "v3_sd15_mm.ckpt",
+    "v3_sd15_sparsectrl_rgb.ckpt"
+  ],
+  "licenca": "apache-2.0",
+  "gated": false,
+  "lastModified": "2023-12-18T16:12:10.000Z",
+  "sha": "fdfe36afa161e51b3e9c24022b0e368d59e7345e",
+  "tags_licenca": "license:apache-2.0"
+}
