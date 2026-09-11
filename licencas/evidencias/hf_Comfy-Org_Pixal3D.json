@@ -3,6 +3,7 @@
   "_fonte": "https://huggingface.co/api/models/Comfy-Org/Pixal3D",
   "_metodo": "API oficial do HuggingFace (resposta resumida: campos de licenca, tags, base_model, siblings)",
   "_arquivos_que_usamos": [
+    "pixal3d_multiview_int8_convrot.safetensors",
     "dino_v3_L_naf_fp32.safetensors",
     "trellis_2_shape_vae_bf16.safetensors",
     "trellis_2_texture_vae_bf16.safetensors"

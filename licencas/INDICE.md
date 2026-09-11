@@ -9,6 +9,7 @@ cruas das APIs oficiais, arquivadas em `evidencias/`.
 | `CLIP-ViT-H-14-laion2B-s32B-b79K.safetensors` | apache-2.0 | 2026-09-08 | HF: h94/IP-Adapter |
 | `birefnet.safetensors` | mit | 2026-09-11 | HF: Comfy-Org/BiRefNet (base ZhengPeng7/BiRefNet: mit) |
 | `dino_v3_L_naf_fp32.safetensors` | mit (repack) / **DINOv3 License** (original) | 2026-09-11 | HF: Comfy-Org/Pixal3D ← facebook/dinov3-vitl16-pretrain-lvd1689m |
+| `pixal3d_multiview_int8_convrot.safetensors` | mit | 2026-09-11 | HF: Comfy-Org/Pixal3D (base TencentARC/Pixal3D: mit) |
 | `trellis_2_int8_convrot.safetensors` | mit | 2026-09-11 | HF: Comfy-Org/TRELLIS.2 (base microsoft/TRELLIS.2-4B: mit) |
 | `trellis_2_shape_vae_bf16.safetensors` | mit | 2026-09-11 | HF: Comfy-Org/Pixal3D |
 | `trellis_2_texture_vae_bf16.safetensors` | mit | 2026-09-11 | HF: Comfy-Org/Pixal3D |

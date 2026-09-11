@@ -4839,3 +4839,64 @@ shapes, e isso é fora do ComfyUI: Blender + **VRM Add-on for Blender**
 (importa GLB, auto-rig humanoide, exporta `.vrm`) ou Unity + UniVRM. O
 SkinTokens (arquivado) faria o rig automático, mas exige Blender no PATH do
 Colab — pode ser o passo seguinte se o manual ficar chato.
+
+---
+
+## v70 — multi-view: TRELLIS.2 não tem; Pixal3D tem. Entra `Lia_Pixal3D_MultiView`
+
+### A pergunta: "o Trellis não tem opção multiview?"
+
+**Não, no ComfyUI.** Conferido em `comfy_extras/nodes_trellis2.py` (master):
+os nós de conditioning registrados são `Trellis2Conditioning` (1 imagem),
+`Pixal3DConditioning` (1 imagem + FoV) e **`Pixal3DMultiViewConditioning`**
+(frente/esquerda/costas/direita). O multi-view é só do Pixal3D — que é o
+TRELLIS.2 com outra cabeça de conditioning, mesmo VAE, mesmas etapas.
+
+### O que é o novo workflow
+
+`Workflows/Lia_Pixal3D_MultiView.json`, derivado do template oficial
+`Comfy-Org/workflow_templates/templates/3d_pixal3d_multi_views.json`
+(frontend 1.51.10). Mudanças em relação ao template:
+
+| o quê | template | aqui |
+|---|---|---|
+| entrada | 1 folha turnaround + 4 `ImageCropV2` com coordenadas fixas em pixel + 4 `SaveImageAdvanced` | **4 `LoadImage`** (`Lia_front/left/back/right.png`) → BiRefNet → `ImageCropToMask` → conditioning. Sem crop em pixel hardcoded, sem salvar intermediário |
+| upsample / remesh / decimate / textura | 1536 / 768 / 700k / 4096 | **1024 / 512 / 150k / 2048** (T4, igual ao single-view) |
+| saída | `3d/ComfyUI` | `3d/Lia/Lia_pixal3d_mv` |
+
+Os restantes 50+ nós (samplers, CFG, bake, etc.) são idênticos ao template.
+
+### Regras do rig (do código do nó, não são sugestão)
+
+- Órbita fixa: azimutes 0/90/180/270, elevação 0. Se a vista "esquerda"
+  for na verdade 3/4, o mesh sai torto — não há como informar o ângulo.
+- **Só a frente é obrigatória.** As outras são `optional`; vista desconectada
+  simplesmente não entra. Dá para começar com frente + costas.
+- Mesma escala em todas: objeto ocupa ~1/1.1 do quadro. O `ImageCropToMask`
+  (pad 1.1) normaliza, desde que a máscara pegue a figura inteira em cada vista.
+- Alpha ou fundo preto. O nó multiplica RGB pelo alpha se houver.
+- `fov=20` para imagem desenhada/gerada. MoGe é só para foto real.
+- Se a vista não for 1024², o nó redimensiona com lanczos sozinho.
+
+### Modelo novo
+
+`pixal3d_multiview_int8_convrot.safetensors` (5,58 GB, `diffusion_models/`),
+conferido na árvore da API do HF. Os outros 4 arquivos são os mesmos do
+`Lia_Trellis2_Image2Mesh` — já no Drive, não baixa de novo. Licença MIT
+(Comfy-Org repack de TencentARC/Pixal3D, também MIT); evidência em
+`licencas/evidencias/hf_TencentARC_Pixal3D.json`.
+
+### De onde vêm as 4 vistas
+
+O `WaifuSurvivors_CharacterSheet` (arquivado) gera vistas com OpenPose. Para
+o rig do Pixal3D precisa ser **pose A, 4 ângulos a 90°, mesmo enquadramento**.
+Outra opção é uma folha turnaround gerada fora e cortada em 4 à mão. O
+template oficial usa um gerador de turnaround via API paga (nano banana) —
+não incluído.
+
+### Não testado em GPU (mesma ressalva da v69)
+
+Validação estática passou. No Colab, rode `validar_workflows.py --server`
+antes de considerar pronto. Pegada de VRAM é a mesma do single-view; o
+conditioning com 4 vistas passa 4 imagens pelo DINOv3 em sequência, não
+em paralelo, então não deve estourar.

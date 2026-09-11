@@ -1,0 +1,23 @@
+{
+  "_coletado_em": "2026-09-11",
+  "_fonte": "https://huggingface.co/api/models/TencentARC/Pixal3D",
+  "_metodo": "API oficial do HuggingFace (resposta resumida)",
+  "_arquivos_que_usamos": [],
+  "licenca": "mit",
+  "gated": false,
+  "lastModified": "2026-08-31T20:25:45.000Z",
+  "sha": "b0cb2e1b794cab9aa0ac38a95d794a4d9337437f",
+  "resposta_crua": {
+    "tags": [
+      "image-to-3d",
+      "arxiv:2605.10922",
+      "license:mit"
+    ],
+    "cardData": {
+      "license": "mit",
+      "license_link": "LICENSE",
+      "extra_gated_eu_disallowed": true
+    }
+  },
+  "_nota": "Base do pixal3d_multiview_int8_convrot (repack Comfy-Org, MIT). A pagina tem a flag extra_gated_eu_disallowed=true (o card do HF esconde o download para IPs da UE), mas a licenca declarada e MIT sem restricao territorial no texto. Construido sobre o TRELLIS.2 (MIT) e DINOv3 (ver nota do DINOv3)."
+}

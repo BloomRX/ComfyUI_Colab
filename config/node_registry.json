@@ -406,7 +406,11 @@
     "VoxelToMeshBasic",
     "LoadMoGeModel",
     "MoGeInference",
-    "MoGeGeometryToFOV"
+    "MoGeGeometryToFOV",
+    "Pixal3DMultiViewConditioning",
+    "Save3DAdvanced",
+    "ImageCropV2",
+    "SaveImageAdvanced"
   ],
   "pack_extras": {
     "ComfyUI-SkinTokens": {
@@ -677,6 +681,38 @@
         "size": "0.44 GB",
         "url": "https://huggingface.co/Comfy-Org/BiRefNet/resolve/main/background_removal/birefnet.safetensors"
       }
+    ],
+    "Lia_Pixal3D_MultiView.json": [
+      {
+        "file": "pixal3d_multiview_int8_convrot.safetensors",
+        "dir": "diffusion_models",
+        "size": "5.58 GB",
+        "url": "https://huggingface.co/Comfy-Org/Pixal3D/resolve/main/diffusion_models/pixal3d_multiview_int8_convrot.safetensors"
+      },
+      {
+        "file": "dino_v3_L_naf_fp32.safetensors",
+        "dir": "clip_vision",
+        "size": "1.22 GB",
+        "url": "https://huggingface.co/Comfy-Org/Pixal3D/resolve/main/clip_vision/dino_v3_L_naf_fp32.safetensors"
+      },
+      {
+        "file": "trellis_2_shape_vae_bf16.safetensors",
+        "dir": "vae",
+        "size": "1.10 GB",
+        "url": "https://huggingface.co/Comfy-Org/Pixal3D/resolve/main/vae/trellis_2_shape_vae_bf16.safetensors"
+      },
+      {
+        "file": "trellis_2_texture_vae_bf16.safetensors",
+        "dir": "vae",
+        "size": "0.95 GB",
+        "url": "https://huggingface.co/Comfy-Org/Pixal3D/resolve/main/vae/trellis_2_texture_vae_bf16.safetensors"
+      },
+      {
+        "file": "birefnet.safetensors",
+        "dir": "background_removal",
+        "size": "0.44 GB",
+        "url": "https://huggingface.co/Comfy-Org/BiRefNet/resolve/main/background_removal/birefnet.safetensors"
+      }
     ]
   },
   "model_notes": {
@@ -701,7 +737,8 @@
     "ip-adapter-plus-face_sdxl_vit-h.safetensors": "OPCIONAL — so se quiser o preset \"PLUS FACE (portraits)\" do IPAdapterUnifiedLoader. 848 MB, pasta ipadapter/. URL: https://huggingface.co/h94/IP-Adapter/resolve/main/sdxl_models/ip-adapter-plus-face_sdxl_vit-h.safetensors  (Apache 2.0). PLUS FACE prioriza o ROSTO; PLUS (que ja temos) pega a figura inteira. Para chibi de corpo inteiro, PLUS costuma ser melhor.",
     "trellis_2_bf16.safetensors": "Versao completa do TRELLIS.2 (10,3 GB). NAO cabe no T4; o workflow da Lia usa trellis_2_int8_convrot (5,3 GB).",
     "moge_2_vitl_normal_fp16.safetensors": "So necessario para o ramo Pixal3D (FoV). Removido do workflow da Lia. Se reativar: Comfy-Org/MoGe/geometry_estimation/ -> models/geometry_estimation/ (662 MB).",
-    "pixal3d_int8_convrot.safetensors": "Modelo Pixal3D (alternativa ao TRELLIS.2). Nao usado no workflow da Lia."
+    "pixal3d_int8_convrot.safetensors": "Pixal3D single-view (5,58 GB). Nao usado: para 1 imagem usamos o TRELLIS.2; para 4 vistas, o pixal3d_multiview.",
+    "pixal3d_multiview_bf16.safetensors": "Versao completa do Pixal3D MV (11 GB). Nao cabe no T4; usamos a int8_convrot."
   },
   "never_install": [
     "ComfyUI",

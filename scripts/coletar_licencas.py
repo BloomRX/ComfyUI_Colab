@@ -54,6 +54,7 @@ HF = {
         'trellis_2_int8_convrot.safetensors',
     ],
     'Comfy-Org/Pixal3D': [
+        'pixal3d_multiview_int8_convrot.safetensors',
         'dino_v3_L_naf_fp32.safetensors',
         'trellis_2_shape_vae_bf16.safetensors',
         'trellis_2_texture_vae_bf16.safetensors',
@@ -63,6 +64,7 @@ HF = {
     ],
     # bases dos repackages acima (a licenca que vale e a do ORIGINAL)
     'microsoft/TRELLIS.2-4B': [],
+    'TencentARC/Pixal3D': [],
     'ZhengPeng7/BiRefNet': [],
     'facebook/dinov3-vitl16-pretrain-lvd1689m': [],
 }

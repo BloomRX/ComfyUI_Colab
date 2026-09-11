@@ -29,6 +29,7 @@ das licenças declaradas, para você saber onde há risco real e onde não há.
 | ComfyUI-Manager | **GPL-3.0** | sim (ver nota) |
 | ComfyUI (core) | sem licença declarada na API do GitHub | ver nota |
 | **TRELLIS.2** (`trellis_2_int8_convrot`, VAEs) — projeto Lia | MIT (Comfy-Org repack de microsoft/TRELLIS.2-4B, também MIT) | sim |
+| **Pixal3D MV** (`pixal3d_multiview_int8_convrot`) — projeto Lia | MIT (repack de TencentARC/Pixal3D, MIT) | sim |
 | **BiRefNet** (`birefnet.safetensors`) — projeto Lia | MIT (repack de ZhengPeng7/BiRefNet, MIT) | sim |
 | **DINOv3 ViT-L** (`dino_v3_L_naf_fp32`) — projeto Lia | repack MIT, **mas deriva da DINOv3 License (Meta)** | sim, com **obrigação de crédito** — ver §7 |
 
@@ -175,6 +176,7 @@ origem (`hf_microsoft_TRELLIS.2-4B.json`, `hf_ZhengPeng7_BiRefNet.json`,
 | `trellis_2_shape_vae_bf16.safetensors` | MIT | microsoft/TRELLIS.2-4B — MIT | **MIT** |
 | `trellis_2_texture_vae_bf16.safetensors` | MIT | microsoft/TRELLIS.2-4B — MIT | **MIT** |
 | `birefnet.safetensors` | MIT | ZhengPeng7/BiRefNet — MIT | **MIT** |
+| `pixal3d_multiview_int8_convrot.safetensors` | MIT | TencentARC/Pixal3D — MIT | **MIT** |
 | `dino_v3_L_naf_fp32.safetensors` | MIT | facebook/dinov3-vitl16 — **DINOv3 License** | **DINOv3 License** |
 
 ### O ponto de atenção: DINOv3

@@ -207,6 +207,7 @@ def r_notebook():
         'trellis_2_shape_vae_bf16.safetensors',
         'trellis_2_texture_vae_bf16.safetensors',
         'birefnet.safetensors',
+        'pixal3d_multiview_int8_convrot.safetensors',  # MIT (TencentARC/Pixal3D)
     }
     import glob as _g
     _ativos = {os.path.basename(f)

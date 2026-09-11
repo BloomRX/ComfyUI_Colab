@@ -286,3 +286,15 @@ temos aqui é exatamente o que um advogado pediria.
 | restrições | ao redistribuir pesos/derivados: incluir a licença + "Built with DINOv3"; sem uso ITAR/militar |
 | na prática | roda só na geração; não é redistribuído no jogo → só crédito recomendado |
 | usado em | Lia_Trellis2_Image2Mesh |
+
+### pixal3d_multiview_int8_convrot.safetensors 🟢
+
+| | |
+|---|---|
+| papel | modelo de difusão 3D multi-view (4 vistas → mesh), backbone TRELLIS.2 |
+| onde | `models/diffusion_models/` · 5,58 GB |
+| origem | `Comfy-Org/Pixal3D` (repack) ← `TencentARC/Pixal3D` |
+| licença | **MIT** (repack e original) |
+| saída comercial | **SIM** |
+| obs | o card do HF da TencentARC tem `extra_gated_eu_disallowed`, mas a licença é MIT sem cláusula territorial |
+| usado em | Lia_Pixal3D_MultiView |
