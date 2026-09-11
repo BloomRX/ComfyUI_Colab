@@ -1,0 +1,30 @@
+{
+  "_coletado_em": "2026-09-11",
+  "_fonte": "https://huggingface.co/api/models/Comfy-Org/TRELLIS.2",
+  "_metodo": "API oficial do HuggingFace (resposta resumida: campos de licenca, tags, base_model, siblings)",
+  "_arquivos_que_usamos": [
+    "trellis_2_int8_convrot.safetensors"
+  ],
+  "licenca": "mit",
+  "gated": false,
+  "lastModified": "2026-08-22T10:59:31.000Z",
+  "sha": "463441b1c32829ee876e4f297dcfff533cb357a7",
+  "resposta_crua": {
+    "base_model": [
+      "microsoft/TRELLIS.2-4B"
+    ],
+    "tags": [
+      "diffusion-single-file",
+      "comfyui",
+      "base_model:microsoft/TRELLIS.2-4B",
+      "license:mit"
+    ],
+    "siblings": [
+      "clip_vision/dino_v3_vit_l.safetensors",
+      "diffusion_models/trellis_2_bf16.safetensors",
+      "diffusion_models/trellis_2_int8_convrot.safetensors",
+      "vae/trellis_2_shape_vae_bf16.safetensors",
+      "vae/trellis_2_texture_vae_bf16.safetensors"
+    ]
+  }
+}

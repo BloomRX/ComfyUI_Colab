@@ -152,7 +152,7 @@ não é questão de organização, é questão de não caber mesmo em GPU pequen
 **Direto do Git, sem baixar nada.** Abra:
 
 ```
-https://colab.research.google.com/github/BloomRX/ComfyUI_Colab/blob/arena/01a05a82-comfyui-collab/notebooks/ComfyUI_Colab_Limpo.ipynb
+https://colab.research.google.com/github/BloomRX/ComfyUI_Colab/blob/arena/01a0906c-comfyui-colab/notebooks/ComfyUI_Colab_Limpo.ipynb
 ```
 
 Regra: troque `github.com` por `colab.research.google.com/github`.
@@ -4277,7 +4277,7 @@ sobrescrito), chaves/parenteses balanceados, `Pop-Location` dentro de
 (`github.com/USER/REPO/tree/BRANCH`) nao serve para `git clone`. O certo e:
 
 ```powershell
-git clone -b arena/01a05a82-comfyui-collab https://github.com/BloomRX/ComfyUI_Colab.git
+git clone -b arena/01a0906c-comfyui-colab https://github.com/BloomRX/ComfyUI_Colab.git
 ```
 
 ### v60c — instalador do SAA ia parar fora do repo
@@ -4743,3 +4743,99 @@ nossos (`Base`, `CharacterSheet`) ja usavam esse — estao todos consistentes.
 
 **Mas provavelmente nao vale:** PLUS FACE prioriza o rosto, e para chibi de
 corpo inteiro o PLUS costuma dar melhor resultado.
+
+---
+
+## v69 — Waifu Survivors arquivado; projeto Lia (imagem → 3D) entra
+
+### O que mudou
+
+1. **Todos os workflows da pasta `Workflows/` foram para `Workflows_arquivo/`**
+   (a pedido: foco agora é a Lia em 3D). Nada foi apagado; para reativar é
+   `mv Workflows_arquivo/NOME.json Workflows/`. Os modelos deles continuam no
+   Drive — `limpar_drive.py` **não** roda sozinho.
+2. Entrou **`Workflows/Lia_Trellis2_Image2Mesh.json`**: imagem única → GLB
+   texturizado com TRELLIS.2, usando **só nós nativos do ComfyUI core**
+   (`comfy_extras/nodes_trellis2.py`, `nodes_mesh_postprocess.py`,
+   `nodes_bg_removal.py`). Zero custom node. Nem o `ComfyUI-Trellis2` do
+   visualbruno nem o GGUF são necessários — e não precisam compilar
+   cumesh/nvdiffrast/flex_gemm, o que era o motivo de o `Mesh_Processing`
+   nunca ter rodado no T4.
+
+### De onde veio e o que foi alterado
+
+Base: workflow "PixelArtistry_Trellis2_native" (Pixel Artistry). Conferi nó
+por nó contra o `comfy_extras/` do master (v0.35.0, 2026-09-09): todos os 42
+tipos existem no core. Alterações:
+
+| o quê | antes | agora | motivo |
+|---|---|---|---|
+| ramo MoGe + Pixal3DConditioning + Trellis2Conditioning duplicado (nós 55, 56, 242, 301, 306, 298, 299) | presente, em bypass | **removido** | só servia para calcular o FoV do Pixal3D, que não usamos; economiza 662 MB de download (MoGe) |
+| `ImageCropToMask` | 4 entradas (2 fantasmas `image`/`mask`), pad 1.1 | 2 entradas, **pad 1.0** | o tooltip do `Trellis2Conditioning` diz literalmente "pad_factor=1.0 for TRELLIS.2" |
+| `Trellis2UpsampleStage` | `"1536"` (string) | **1024** (int) | o widget é `IO.Int` (min 1024, max 2048, step 128); string era resquício de versão antiga. 1024 pelo T4 |
+| `RemeshMesh.resolution` | 768 | **512** | grade 768³ estoura os 13 GB de RAM do Colab |
+| `DecimateMesh` | 300k faces | **150k** | VRM/VTuber; menos que isso perde detalhe, mais que isso pesa no runtime |
+| `texture size` (PrimitiveInt → Unwrap + Bake) | 4096 | **2048** | 4096² em RAM não cabe; 2048 é o padrão de VRM |
+| `LoadImage` | `Char_Ronin_Front_v1.jpg` | `Lia_front.png` | suba a imagem da Lia com esse nome (ou troque no nó) |
+| `SaveGLB` prefixo | `3d/trellis2` | `3d/Lia/Lia_trellis2` | saída em `ComfyUI_Data/output/3d/Lia/` |
+
+Os `KSampler`, `CFGOverride`, `RescaleCFG` e `ModelSamplingSD3` ficaram
+**exatamente** como no original — são os valores que reproduzem a pipeline
+oficial do TRELLIS.2 (a Note do autor diz isso e o template oficial do
+Comfy-Org usa os mesmos números).
+
+### Modelos (5 arquivos, ~9 GB, todos conferidos na API do HF — regra 1)
+
+| arquivo | pasta | GB |
+|---|---|---|
+| `trellis_2_int8_convrot.safetensors` | `diffusion_models/` | 5,25 |
+| `dino_v3_L_naf_fp32.safetensors` | `clip_vision/` | 1,22 |
+| `trellis_2_shape_vae_bf16.safetensors` | `vae/` | 1,10 |
+| `trellis_2_texture_vae_bf16.safetensors` | `vae/` | 0,95 |
+| `birefnet.safetensors` | **`background_removal/`** | 0,44 |
+
+Atenção ao **`background_removal/`**: é a pasta que o nó nativo
+`LoadBackgroundRemovalModel` lê (`folder_paths.py`). A pasta antiga
+`birefnet/` era do custom node do visualbruno — arquivo lá **não aparece**
+no dropdown do nó nativo. A Célula 1 agora cria `background_removal/` e
+`geometry_estimation/` e as registra no `extra_model_paths.yaml`; a Célula 5
+baixa direto no lugar certo pelo `workflow_models` do registry.
+
+Se você já tem `birefnet.safetensors` em `models/birefnet/` do Drive, mova
+(é instantâneo): `mv .../models/birefnet/birefnet.safetensors .../models/background_removal/`.
+
+### Licenças
+
+TRELLIS.2 e BiRefNet: MIT (repack e original). DINOv3: o repack do Comfy-Org
+diz MIT, mas os pesos são da Meta sob a **DINOv3 License** — comercial OK,
+pede "Built with DINOv3" ao *redistribuir os pesos*. Como o encoder roda só
+na geração e não vai no jogo, é crédito recomendado, não obrigação.
+Detalhe em `LICENCAS.md §7`; evidências datadas em `licencas/evidencias/`.
+
+### O que NÃO testei
+
+Não tenho GPU aqui. A checagem foi estática (estrutura, links, tipos contra o
+código-fonte do core, URLs na API do HF). Antes de considerar pronto, rode no
+Colab com o ComfyUI ligado:
+
+```
+python /content/ComfyUI_Colab/scripts/validar_workflows.py --server http://127.0.0.1:8188
+```
+
+Riscos que espero no T4, em ordem:
+1. **RAM** no `RemeshMesh`/`UnwrapMesh` (13 GB). Se morrer sem mensagem
+   (sintoma da v29), baixe `RemeshMesh.resolution` para 384 e o
+   `DecimateMesh` para 100k.
+2. **VRAM** no `Trellis2UpsampleStage`: 1024 deve caber com int8. Se der OOM,
+   ligue `lowvram` na Célula 6 antes de mexer no workflow.
+3. O `SaveGLB` está pendurado no `Preview3DAdvanced` (saída `model_3d`); se a
+   UI não passar o arquivo adiante, ligue o `SaveGLB` direto no
+   `MeshToFile3D` (nó 285).
+
+### Próximo passo: GLB → VRM
+
+O ComfyUI entrega o GLB texturizado. O VRM precisa de rig humanoide + blend
+shapes, e isso é fora do ComfyUI: Blender + **VRM Add-on for Blender**
+(importa GLB, auto-rig humanoide, exporta `.vrm`) ou Unity + UniVRM. O
+SkinTokens (arquivado) faria o rig automático, mas exige Blender no PATH do
+Colab — pode ser o passo seguinte se o manual ficar chato.

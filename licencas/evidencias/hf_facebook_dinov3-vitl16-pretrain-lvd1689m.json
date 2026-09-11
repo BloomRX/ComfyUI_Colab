@@ -1,0 +1,22 @@
+{
+  "_coletado_em": "2026-09-11",
+  "_fonte": "https://huggingface.co/api/models/facebook/dinov3-vitl16-pretrain-lvd1689m",
+  "_metodo": "API oficial do HuggingFace (resposta resumida: campos de licenca, tags, base_model, siblings)",
+  "_arquivos_que_usamos": [],
+  "licenca": "other",
+  "gated": "manual",
+  "lastModified": "2025-08-19T09:00:52.000Z",
+  "sha": "ea8dc2863c51be0a264bab82070e3e8836b02d51",
+  "resposta_crua": {
+    "license": "other",
+    "license_name": "dinov3-license",
+    "license_link": "https://ai.meta.com/resources/models-and-libraries/dinov3-license",
+    "tags": [
+      "dinov3",
+      "image-feature-extraction",
+      "license:other"
+    ],
+    "gated": "manual"
+  },
+  "_nota": "O arquivo que usamos (dino_v3_L_naf_fp32) e distribuido por Comfy-Org/Pixal3D como MIT, mas os pesos DERIVAM do DINOv3 ViT-L da Meta. A DINOv3 License permite uso comercial, mas exige: (A) copia da licenca ao redistribuir os pesos/derivados; (B) exibir \"Built with DINOv3\" em site/UI/docs; (C) restricoes de Trade Control/ITAR. O encoder roda so na GERACAO do asset, nao vai dentro do jogo: a obrigacao de \"Built with DINOv3\" cai sobre a ferramenta/pipeline, nao sobre o GLB gerado. Fonte do texto: https://ai.meta.com/resources/models-and-libraries/dinov3-license (14/08/2025)."
+}

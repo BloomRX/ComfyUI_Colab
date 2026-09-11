@@ -1,0 +1,27 @@
+{
+  "_coletado_em": "2026-09-11",
+  "_fonte": "https://huggingface.co/api/models/Comfy-Org/BiRefNet",
+  "_metodo": "API oficial do HuggingFace (resposta resumida: campos de licenca, tags, base_model, siblings)",
+  "_arquivos_que_usamos": [
+    "birefnet.safetensors"
+  ],
+  "licenca": "mit",
+  "gated": false,
+  "lastModified": "2026-08-17T05:34:42.000Z",
+  "sha": "5a1bd8ae750548f8cd42e3c8afa854fd3eba0fb1",
+  "resposta_crua": {
+    "base_model": [
+      "ZhengPeng7/BiRefNet",
+      "egeorcun/lucida"
+    ],
+    "tags": [
+      "diffusion-single-file",
+      "comfyui",
+      "license:mit"
+    ],
+    "siblings": [
+      "background_removal/birefnet.safetensors",
+      "background_removal/lucida.safetensors"
+    ]
+  }
+}

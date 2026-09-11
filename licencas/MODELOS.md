@@ -238,3 +238,51 @@ qualquer modelo anime, inclusive os de licença "limpa".
 Aí vale pagar uma consulta jurídica de algumas horas, com estes documentos em
 mãos. O custo é irrelevante perto do de um problema, e o registro datado que
 temos aqui é exatamente o que um advogado pediria.
+
+---
+
+## Projeto Lia — imagem → 3D (workflow ativo `Lia_Trellis2_Image2Mesh`)
+
+### trellis_2_int8_convrot.safetensors 🟢
+
+| | |
+|---|---|
+| papel | modelo de difusão 3D (estrutura esparsa + shape + textura) |
+| onde | `models/diffusion_models/` · 5,25 GB |
+| origem | `Comfy-Org/TRELLIS.2` (repack) ← `microsoft/TRELLIS.2-4B` |
+| licença | **MIT** (repack e original) |
+| saída comercial | **SIM**, sem condições |
+| usado em | Lia_Trellis2_Image2Mesh |
+
+### trellis_2_shape_vae_bf16.safetensors · trellis_2_texture_vae_bf16.safetensors 🟢
+
+| | |
+|---|---|
+| papel | VAEs de shape e textura do TRELLIS.2 |
+| onde | `models/vae/` · 1,10 GB + 0,95 GB |
+| origem | `Comfy-Org/Pixal3D` (repack; mesmos arquivos em `Comfy-Org/TRELLIS.2`) ← `microsoft/TRELLIS.2-4B` |
+| licença | **MIT** |
+| usado em | Lia_Trellis2_Image2Mesh |
+
+### birefnet.safetensors 🟢
+
+| | |
+|---|---|
+| papel | remoção de fundo (máscara da personagem) |
+| onde | `models/background_removal/` · 0,44 GB |
+| origem | `Comfy-Org/BiRefNet` (repack) ← `ZhengPeng7/BiRefNet` |
+| licença | **MIT** |
+| usado em | Lia_Trellis2_Image2Mesh |
+
+### dino_v3_L_naf_fp32.safetensors 🟡
+
+| | |
+|---|---|
+| papel | encoder de imagem (CLIP Vision) que condiciona o TRELLIS.2 |
+| onde | `models/clip_vision/` · 1,22 GB |
+| origem | `Comfy-Org/Pixal3D` (repack, marcado MIT) ← `facebook/dinov3-vitl16-pretrain-lvd1689m` |
+| licença | **DINOv3 License** (Meta, 2025-08-14) — a do original prevalece |
+| saída comercial | **SIM** — output é do usuário |
+| restrições | ao redistribuir pesos/derivados: incluir a licença + "Built with DINOv3"; sem uso ITAR/militar |
+| na prática | roda só na geração; não é redistribuído no jogo → só crédito recomendado |
+| usado em | Lia_Trellis2_Image2Mesh |

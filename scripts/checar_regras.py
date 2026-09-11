@@ -201,6 +201,12 @@ def r_notebook():
         'v3_sd15_mm.ckpt',
         'v3_sd15_sparsectrl_rgb.ckpt',
         'toonyou_beta6.safetensors',
+        # projeto Lia (v69) — MIT (Comfy-Org repack); DINOv3 tem obrigacao de credito
+        'trellis_2_int8_convrot.safetensors',
+        'dino_v3_L_naf_fp32.safetensors',
+        'trellis_2_shape_vae_bf16.safetensors',
+        'trellis_2_texture_vae_bf16.safetensors',
+        'birefnet.safetensors',
     }
     import glob as _g
     _ativos = {os.path.basename(f)

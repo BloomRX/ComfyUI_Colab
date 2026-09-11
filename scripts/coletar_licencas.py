@@ -49,6 +49,22 @@ HF = {
     'frankjoshua/toonyou_beta6': [
         'toonyou_beta6.safetensors',
     ],
+    # --- projeto Lia (imagem -> 3D) ---
+    'Comfy-Org/TRELLIS.2': [
+        'trellis_2_int8_convrot.safetensors',
+    ],
+    'Comfy-Org/Pixal3D': [
+        'dino_v3_L_naf_fp32.safetensors',
+        'trellis_2_shape_vae_bf16.safetensors',
+        'trellis_2_texture_vae_bf16.safetensors',
+    ],
+    'Comfy-Org/BiRefNet': [
+        'birefnet.safetensors',
+    ],
+    # bases dos repackages acima (a licenca que vale e a do ORIGINAL)
+    'microsoft/TRELLIS.2-4B': [],
+    'ZhengPeng7/BiRefNet': [],
+    'facebook/dinov3-vitl16-pretrain-lvd1689m': [],
 }
 
 GH = [

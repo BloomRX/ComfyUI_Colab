@@ -1,0 +1,19 @@
+{
+  "_coletado_em": "2026-09-11",
+  "_fonte": "https://huggingface.co/api/models/microsoft/TRELLIS.2-4B",
+  "_metodo": "API oficial do HuggingFace (resposta resumida: campos de licenca, tags, base_model, siblings)",
+  "_arquivos_que_usamos": [],
+  "licenca": "mit",
+  "gated": false,
+  "lastModified": "2025-12-27T13:21:56.000Z",
+  "sha": "af44b45f2e35a493886929c6d786e563ec68364d",
+  "resposta_crua": {
+    "tags": [
+      "trellis2",
+      "image-to-3d",
+      "arxiv:2512.14692",
+      "license:mit"
+    ],
+    "pipeline_tag": "image-to-3d"
+  }
+}
