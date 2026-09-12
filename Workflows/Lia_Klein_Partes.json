@@ -1,8 +1,8 @@
 {
-  "id": "d7326eb7-a21c-4d3d-9fef-6c7215215287",
+  "id": "888b1de1-b35a-4ac8-89b0-98600dc2d821",
   "revision": 0,
-  "last_node_id": 29,
-  "last_link_id": 30,
+  "last_node_id": 30,
+  "last_link_id": 31,
   "nodes": [
     {
       "id": 1,
@@ -24,7 +24,7 @@
           "name": "MODEL",
           "type": "MODEL",
           "links": [
-            11
+            12
           ]
         }
       ],
@@ -65,7 +65,8 @@
           "name": "CLIP",
           "type": "CLIP",
           "links": [
-            4
+            4,
+            6
           ]
         }
       ],
@@ -108,7 +109,7 @@
           "type": "VAE",
           "links": [
             3,
-            20
+            21
           ]
         }
       ],
@@ -240,8 +241,8 @@
           "name": "LATENT",
           "type": "LATENT",
           "links": [
-            8,
-            10
+            9,
+            11
           ]
         }
       ],
@@ -282,7 +283,7 @@
         "ver": "0.14.0"
       },
       "widgets_values": [
-        "Show only this character's open right hand, palm facing the camera, fingers spread, isolated on a plain white background, same art style, same skin tone, no other body parts"
+        "Change this character to an A-pose: standing straight, arms spread apart at 45 degrees away from the body, palms facing forward, legs slightly apart, facing the camera, front view, full body, no props, no weapons, symmetrical, isolated on a plain white background, same art style, same outfit, same face"
       ],
       "title": "INSTRUÇÃO — a única coisa que você troca a cada rodada",
       "color": "#232",
@@ -322,8 +323,7 @@
           "name": "CONDITIONING",
           "type": "CONDITIONING",
           "links": [
-            6,
-            7
+            8
           ]
         }
       ],
@@ -337,24 +337,68 @@
       ]
     },
     {
+      "id": 30,
+      "type": "PrimitiveStringMultiline",
+      "pos": [
+        -920,
+        -280
+      ],
+      "size": [
+        560,
+        160
+      ],
+      "flags": {},
+      "order": 8,
+      "mode": 0,
+      "inputs": [],
+      "outputs": [
+        {
+          "name": "STRING",
+          "type": "STRING",
+          "links": [
+            7
+          ]
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "PrimitiveStringMultiline",
+        "cnr_id": "comfy-core",
+        "ver": "0.14.0"
+      },
+      "widgets_values": [
+        "extra fingers, six fingers, missing fingers, fused fingers, deformed hands, extra limbs, asymmetrical, crooked, distorted anatomy, blurry, low quality, text, watermark, cropped, multiple objects, background objects, shadow on background"
+      ],
+      "title": "NEGATIVO — só vale com CFG > 1 (ver nota)",
+      "color": "#322",
+      "bgcolor": "#533"
+    },
+    {
       "id": 9,
-      "type": "ConditioningZeroOut",
+      "type": "CLIPTextEncode",
       "pos": [
         -560,
         -480
       ],
       "size": [
-        260,
-        26
+        300,
+        80
       ],
       "flags": {},
-      "order": 8,
+      "order": 9,
       "mode": 0,
       "inputs": [
         {
-          "name": "conditioning",
-          "type": "CONDITIONING",
+          "name": "clip",
+          "type": "CLIP",
           "link": 6
+        },
+        {
+          "name": "text",
+          "type": "STRING",
+          "widget": {
+            "name": "text"
+          },
+          "link": 7
         }
       ],
       "outputs": [
@@ -362,16 +406,19 @@
           "name": "CONDITIONING",
           "type": "CONDITIONING",
           "links": [
-            9
+            10
           ]
         }
       ],
       "properties": {
-        "Node name for S&R": "ConditioningZeroOut",
+        "Node name for S&R": "CLIPTextEncode",
         "cnr_id": "comfy-core",
         "ver": "0.14.0"
       },
-      "widgets_values": []
+      "widgets_values": [
+        ""
+      ],
+      "title": "CLIPTextEncode (negativo)"
     },
     {
       "id": 10,
@@ -385,18 +432,18 @@
         46
       ],
       "flags": {},
-      "order": 9,
+      "order": 10,
       "mode": 0,
       "inputs": [
         {
           "name": "conditioning",
           "type": "CONDITIONING",
-          "link": 7
+          "link": 8
         },
         {
           "name": "latent",
           "type": "LATENT",
-          "link": 8
+          "link": 9
         }
       ],
       "outputs": [
@@ -404,7 +451,7 @@
           "name": "CONDITIONING",
           "type": "CONDITIONING",
           "links": [
-            12
+            13
           ]
         }
       ],
@@ -428,18 +475,18 @@
         46
       ],
       "flags": {},
-      "order": 10,
+      "order": 11,
       "mode": 0,
       "inputs": [
         {
           "name": "conditioning",
           "type": "CONDITIONING",
-          "link": 9
+          "link": 10
         },
         {
           "name": "latent",
           "type": "LATENT",
-          "link": 10
+          "link": 11
         }
       ],
       "outputs": [
@@ -447,7 +494,7 @@
           "name": "CONDITIONING",
           "type": "CONDITIONING",
           "links": [
-            13
+            14
           ]
         }
       ],
@@ -471,23 +518,23 @@
         98
       ],
       "flags": {},
-      "order": 11,
+      "order": 12,
       "mode": 0,
       "inputs": [
         {
           "name": "model",
           "type": "MODEL",
-          "link": 11
+          "link": 12
         },
         {
           "name": "positive",
           "type": "CONDITIONING",
-          "link": 12
+          "link": 13
         },
         {
           "name": "negative",
           "type": "CONDITIONING",
-          "link": 13
+          "link": 14
         }
       ],
       "outputs": [
@@ -495,7 +542,7 @@
           "name": "GUIDER",
           "type": "GUIDER",
           "links": [
-            15
+            16
           ]
         }
       ],
@@ -506,21 +553,22 @@
       },
       "widgets_values": [
         1
-      ]
+      ],
+      "title": "CFGGuider — 1 = negativo ignorado; 1.5–2.5 liga o negativo"
     },
     {
       "id": 13,
       "type": "EmptyFlux2LatentImage",
       "pos": [
         -230,
-        -300
+        -380
       ],
       "size": [
         300,
         106
       ],
       "flags": {},
-      "order": 12,
+      "order": 13,
       "mode": 0,
       "inputs": [],
       "outputs": [
@@ -528,7 +576,7 @@
           "name": "LATENT",
           "type": "LATENT",
           "links": [
-            18
+            19
           ]
         }
       ],
@@ -556,7 +604,7 @@
         106
       ],
       "flags": {},
-      "order": 13,
+      "order": 14,
       "mode": 0,
       "inputs": [],
       "outputs": [
@@ -564,7 +612,7 @@
           "name": "SIGMAS",
           "type": "SIGMAS",
           "links": [
-            17
+            18
           ]
         }
       ],
@@ -591,7 +639,7 @@
         58
       ],
       "flags": {},
-      "order": 14,
+      "order": 15,
       "mode": 0,
       "inputs": [],
       "outputs": [
@@ -599,7 +647,7 @@
           "name": "SAMPLER",
           "type": "SAMPLER",
           "links": [
-            16
+            17
           ]
         }
       ],
@@ -624,7 +672,7 @@
         82
       ],
       "flags": {},
-      "order": 15,
+      "order": 16,
       "mode": 0,
       "inputs": [],
       "outputs": [
@@ -632,7 +680,7 @@
           "name": "NOISE",
           "type": "NOISE",
           "links": [
-            14
+            15
           ]
         }
       ],
@@ -659,33 +707,33 @@
         120
       ],
       "flags": {},
-      "order": 16,
+      "order": 17,
       "mode": 0,
       "inputs": [
         {
           "name": "noise",
           "type": "NOISE",
-          "link": 14
+          "link": 15
         },
         {
           "name": "guider",
           "type": "GUIDER",
-          "link": 15
+          "link": 16
         },
         {
           "name": "sampler",
           "type": "SAMPLER",
-          "link": 16
+          "link": 17
         },
         {
           "name": "sigmas",
           "type": "SIGMAS",
-          "link": 17
+          "link": 18
         },
         {
           "name": "latent_image",
           "type": "LATENT",
-          "link": 18
+          "link": 19
         }
       ],
       "outputs": [
@@ -693,7 +741,7 @@
           "name": "output",
           "type": "LATENT",
           "links": [
-            19
+            20
           ]
         },
         {
@@ -721,18 +769,18 @@
         46
       ],
       "flags": {},
-      "order": 17,
+      "order": 18,
       "mode": 0,
       "inputs": [
         {
           "name": "samples",
           "type": "LATENT",
-          "link": 19
+          "link": 20
         },
         {
           "name": "vae",
           "type": "VAE",
-          "link": 20
+          "link": 21
         }
       ],
       "outputs": [
@@ -740,10 +788,10 @@
           "name": "IMAGE",
           "type": "IMAGE",
           "links": [
-            21,
-            23,
-            25,
-            28
+            22,
+            24,
+            26,
+            29
           ]
         }
       ],
@@ -766,13 +814,13 @@
         460
       ],
       "flags": {},
-      "order": 18,
+      "order": 19,
       "mode": 0,
       "inputs": [
         {
           "name": "images",
           "type": "IMAGE",
-          "link": 21
+          "link": 22
         }
       ],
       "outputs": [],
@@ -798,7 +846,7 @@
         58
       ],
       "flags": {},
-      "order": 19,
+      "order": 20,
       "mode": 0,
       "inputs": [],
       "outputs": [
@@ -806,7 +854,7 @@
           "name": "bg_model",
           "type": "BACKGROUND_REMOVAL",
           "links": [
-            22
+            23
           ]
         }
       ],
@@ -838,18 +886,18 @@
         46
       ],
       "flags": {},
-      "order": 20,
+      "order": 21,
       "mode": 0,
       "inputs": [
         {
           "name": "bg_removal_model",
           "type": "BACKGROUND_REMOVAL",
-          "link": 22
+          "link": 23
         },
         {
           "name": "image",
           "type": "IMAGE",
-          "link": 23
+          "link": 24
         }
       ],
       "outputs": [
@@ -857,8 +905,8 @@
           "name": "mask",
           "type": "MASK",
           "links": [
-            24,
-            29
+            25,
+            30
           ]
         }
       ],
@@ -881,13 +929,13 @@
         26
       ],
       "flags": {},
-      "order": 21,
+      "order": 22,
       "mode": 0,
       "inputs": [
         {
           "name": "mask",
           "type": "MASK",
-          "link": 24
+          "link": 25
         }
       ],
       "outputs": [
@@ -895,7 +943,7 @@
           "name": "MASK",
           "type": "MASK",
           "links": [
-            26
+            27
           ]
         }
       ],
@@ -919,18 +967,18 @@
         46
       ],
       "flags": {},
-      "order": 22,
+      "order": 23,
       "mode": 0,
       "inputs": [
         {
           "name": "image",
           "type": "IMAGE",
-          "link": 25
+          "link": 26
         },
         {
           "name": "alpha",
           "type": "MASK",
-          "link": 26
+          "link": 27
         }
       ],
       "outputs": [
@@ -938,7 +986,7 @@
           "name": "IMAGE",
           "type": "IMAGE",
           "links": [
-            27
+            28
           ]
         }
       ],
@@ -961,13 +1009,13 @@
         460
       ],
       "flags": {},
-      "order": 23,
+      "order": 24,
       "mode": 0,
       "inputs": [
         {
           "name": "images",
           "type": "IMAGE",
-          "link": 27
+          "link": 28
         }
       ],
       "outputs": [],
@@ -993,18 +1041,18 @@
         154
       ],
       "flags": {},
-      "order": 24,
+      "order": 25,
       "mode": 0,
       "inputs": [
         {
           "name": "images",
           "type": "IMAGE",
-          "link": 28
+          "link": 29
         },
         {
           "name": "masks",
           "type": "MASK",
-          "link": 29
+          "link": 30
         }
       ],
       "outputs": [
@@ -1012,7 +1060,7 @@
           "name": "images",
           "type": "IMAGE",
           "links": [
-            30
+            31
           ]
         }
       ],
@@ -1041,13 +1089,13 @@
         360
       ],
       "flags": {},
-      "order": 25,
+      "order": 26,
       "mode": 0,
       "inputs": [
         {
           "name": "images",
           "type": "IMAGE",
-          "link": 30
+          "link": 31
         }
       ],
       "outputs": [],
@@ -1071,34 +1119,6 @@
         640
       ],
       "flags": {},
-      "order": 26,
-      "mode": 0,
-      "inputs": [],
-      "outputs": [],
-      "properties": {
-        "Node name for S&R": "MarkdownNote",
-        "cnr_id": "comfy-core",
-        "ver": "0.14.0"
-      },
-      "widgets_values": [
-        "# Lia → peças (Flux.2 Klein 4B, edição por instrução)\n\nPega a **Lia de corpo inteiro** e gera **uma peça isolada por rodada** (mão, cabeça sem cabelo, cabelo, roupa…), em fundo branco, mantendo estilo e identidade. Cada PNG recortado vai depois para o `Lia_Trellis2_Image2Mesh` (1 vista) ou `Lia_Pixal3D_MultiView` (4 vistas), e as malhas são montadas no Blender.\n\n**Como usar**\n1. `LoadImage`: `Lia_full.png` (corpo inteiro, fundo limpo, pose A de preferência).\n2. Edite só o campo **INSTRUÇÃO** (em inglês — ver a tabela ao lado).\n3. Queue. Seed em *randomize*: **gere 3–6 vezes** e fique com a mais fiel — é assim que essa técnica funciona, não existe \"acertar de primeira\".\n4. Saídas em `output/Lia_partes/`: `raw/` (bruta, fundo branco) e o **PNG com alpha** já recortado pelo BiRefNet. A prévia mostra a peça centralizada em 1024² como o 3D vai receber.\n\n**Parâmetros** (distilled = fixos): 4 passos, CFG 1, euler, `Flux2Scheduler`. Saída 1024² (`EmptyFlux2LatentImage` + `Flux2Scheduler` — mude os dois juntos).\n\n**Por que não o Illustrious?** SDXL não entende \"isole a mão desta personagem\"; isso é edição por instrução com referência (`ReferenceLatent`), que só modelos como o Flux.2 Klein fazem. A Lia continua sendo criada no Illustrious; este workflow só a **desmonta** em peças.\n\n**T4 (15 GB)**: modelo fp8 4 GB + encoder fp8 5,6 GB + VAE. O T4 não tem bf16/fp8 nativo, então o ComfyUI sobe em fp16 — espere ~1–2 min por imagem. Se faltar RAM no Colab, o encoder `qwen_3_4b_fp4_mixed` (3,5 GB) é alternativa (menos testada em Turing).\n\n**Não testado em GPU**. Valide no Colab com `python /content/ComfyUI_Colab/scripts/validar_workflows.py --server http://127.0.0.1:8188`.\n"
-      ],
-      "title": "LEIA-ME",
-      "color": "#432",
-      "bgcolor": "#653"
-    },
-    {
-      "id": 28,
-      "type": "MarkdownNote",
-      "pos": [
-        -920,
-        70
-      ],
-      "size": [
-        880,
-        560
-      ],
-      "flags": {},
       "order": 27,
       "mode": 0,
       "inputs": [],
@@ -1109,7 +1129,35 @@
         "ver": "0.14.0"
       },
       "widgets_values": [
-        "## Biblioteca de instruções (PT → EN)\n\nSempre termine com `isolated on a plain white background, same art style`. Peça **uma** peça por vez e diga o que NÃO deve aparecer.\n\n| quero | INSTRUÇÃO |\n|---|---|\n| mão aberta | `Show only this character's open right hand, palm facing the camera, fingers spread, isolated on a plain white background, same art style, same skin tone, no other body parts` |\n| mão fechada | `Show only this character's closed fist, back of the hand facing the camera, …` |\n| cabeça sem cabelo | `Show only this character's bald head and neck, no hair, front view, same face, same eyes, isolated on a plain white background, same art style` |\n| só o cabelo | `Show only this character's hairstyle as a separate object floating, no head, no face, no body, front view, isolated on a plain white background, same art style` |\n| roupa / torso | `Show only the outfit worn by this character as if on an invisible mannequin, no skin, no head, front view, isolated on a plain white background, same art style` |\n| botas / sapatos | `Show only this character's boots, pair side by side, front view, isolated on a plain white background, same art style` |\n| acessório (X) | `Show only this character's [X], centered, large, isolated on a plain white background, same art style` |\n| corpo sem roupa (base mesh) | `Show this character wearing a plain skin-tight grey bodysuit, A-pose, arms spread, front view, no accessories, isolated on a plain white background, same art style` |\n\n**Vistas para o Pixal3D MV**: repita a mesma instrução trocando só `front view` → `left side view` / `back view` / `right side view`, e acrescente `orthographic, same scale, same framing`. Salve como `<peça>_front/left/back/right.png`.\n\n**Se a peça sair redesenhada** (cor/forma diferente): encurte a instrução, tire adjetivos, gere mais seeds. Se ainda assim variar, use `Show only … exactly as drawn in the reference`.\n"
+        "# Lia → peças (Flux.2 Klein 4B, edição por instrução)\n\nPega a **Lia de corpo inteiro** e gera **uma peça isolada por rodada** (mão, cabeça sem cabelo, cabelo, roupa…), em fundo branco, mantendo estilo e identidade. Cada PNG recortado vai depois para o `Lia_Trellis2_Image2Mesh` (1 vista) ou `Lia_Pixal3D_MultiView` (4 vistas), e as malhas são montadas no Blender.\n\n**Como usar**\n1. `LoadImage`: `Lia_full.png` (corpo inteiro, fundo limpo, pose A de preferência).\n2. Edite só o campo **INSTRUÇÃO** (em inglês — ver a tabela ao lado).\n3. Queue. Seed em *randomize*: **gere 3–6 vezes** e fique com a mais fiel — é assim que essa técnica funciona, não existe \"acertar de primeira\".\n4. Saídas em `output/Lia_partes/`: `raw/` (bruta, fundo branco) e o **PNG com alpha** já recortado pelo BiRefNet. A prévia mostra a peça centralizada em 1024² como o 3D vai receber.\n\n**Parâmetros** (distilled): 4 passos, CFG 1, euler, `Flux2Scheduler`. Saída 1024² (`EmptyFlux2LatentImage` + `Flux2Scheduler` — mude os dois juntos).\n\n**Negative prompt — leia isto.** Com **CFG 1** o ComfyUI nem calcula o negativo: o campo NEGATIVO é **ignorado**. Ele só entra em ação se você subir o `CFGGuider` para **1.5–2.5** (dobra o tempo; acima de ~3 o modelo destilado satura/queima cores). Por isso a tabela também traz as frases anti-deformação **no positivo** (`five fingers`, `anatomically correct`, `symmetrical`) — essas valem sempre. Receita: comece em CFG 1; se aparecerem 6 dedos / peça torta em várias seeds, suba para 2 e reduza a instrução ao essencial.\n\n**Por que não o Illustrious?** SDXL não entende \"isole a mão desta personagem\"; isso é edição por instrução com referência (`ReferenceLatent`), que só modelos como o Flux.2 Klein fazem. A Lia continua sendo criada no Illustrious; este workflow só a **desmonta** em peças.\n\n**T4 (15 GB)**: modelo fp8 4 GB + encoder fp8 5,6 GB + VAE. O T4 não tem bf16/fp8 nativo, então o ComfyUI sobe em fp16 — espere ~1–2 min por imagem. Se faltar RAM no Colab, o encoder `qwen_3_4b_fp4_mixed` (3,5 GB) é alternativa (menos testada em Turing).\n\n**Não testado em GPU**. Valide no Colab com `python /content/ComfyUI_Colab/scripts/validar_workflows.py --server http://127.0.0.1:8188`.\n"
+      ],
+      "title": "LEIA-ME",
+      "color": "#432",
+      "bgcolor": "#653"
+    },
+    {
+      "id": 28,
+      "type": "MarkdownNote",
+      "pos": [
+        -920,
+        -100
+      ],
+      "size": [
+        880,
+        760
+      ],
+      "flags": {},
+      "order": 28,
+      "mode": 0,
+      "inputs": [],
+      "outputs": [],
+      "properties": {
+        "Node name for S&R": "MarkdownNote",
+        "cnr_id": "comfy-core",
+        "ver": "0.14.0"
+      },
+      "widgets_values": [
+        "## Biblioteca de instruções (PT → EN)\n\nSempre termine com `isolated on a plain white background, same art style`. Peça **uma** peça por vez e diga o que NÃO deve aparecer.\n\n| quero | INSTRUÇÃO |\n|---|---|\n| **pose A** (corpo inteiro) | `Change this character to an A-pose: standing straight, arms spread apart at 45 degrees away from the body, palms facing forward, legs slightly apart, facing the camera, front view, full body, no props, no weapons, symmetrical, isolated on a plain white background, same art style, same outfit, same face` |\n| **pose T** (corpo inteiro) | `Change this character to a T-pose: standing straight, arms fully extended horizontally to the sides at shoulder height, palms facing down, legs slightly apart, facing the camera, front view, full body, no props, symmetrical, isolated on a plain white background, same art style, same outfit, same face` |\n| pose A/T — costas e lados | mesma frase trocando `front view` → `back view` / `left side view` / `right side view` + `orthographic, same scale, same framing` (gera direto as 4 vistas do `Lia_Pixal3D_MultiView`) |\n| mão aberta | `Show only this character's open right hand, palm facing the camera, fingers spread, exactly five fingers, anatomically correct, isolated on a plain white background, same art style, same skin tone, no other body parts` |\n| mão fechada | `Show only this character's closed fist, back of the hand facing the camera, …` |\n| cabeça sem cabelo | `Show only this character's bald head and neck, no hair, front view, same face, same eyes, isolated on a plain white background, same art style` |\n| só o cabelo | `Show only this character's hairstyle as a separate object floating, no head, no face, no body, front view, isolated on a plain white background, same art style` |\n| roupa / torso | `Show only the outfit worn by this character as if on an invisible mannequin, no skin, no head, front view, isolated on a plain white background, same art style` |\n| botas / sapatos | `Show only this character's boots, pair side by side, front view, isolated on a plain white background, same art style` |\n| acessório (X) | `Show only this character's [X], centered, large, isolated on a plain white background, same art style` |\n| corpo sem roupa (base mesh) | `Show this character wearing a plain skin-tight grey bodysuit, A-pose, arms spread, front view, no accessories, isolated on a plain white background, same art style` |\n\n**Vistas para o Pixal3D MV**: repita a mesma instrução trocando só `front view` → `left side view` / `back view` / `right side view`, e acrescente `orthographic, same scale, same framing`. Salve como `<peça>_front/left/back/right.png`.\n\n**Anti-deformação no positivo** (vale em CFG 1): acrescente conforme a peça — mãos: `exactly five fingers, anatomically correct hand`; corpo: `symmetrical, correct proportions, two arms, two legs`; cabeça: `symmetrical face, two eyes`. Fica **uma** peça por imagem: `single object, centered, nothing else`.\n\n**Ordem recomendada**: 1) gere a Lia em **pose A** frente (+ costas/lados) → é a referência limpa para tudo; 2) troque o `LoadImage` para essa pose A; 3) então peça as peças.\n\n**Se a peça sair redesenhada** (cor/forma diferente): encurte a instrução, tire adjetivos, gere mais seeds. Se ainda assim variar, use `Show only … exactly as drawn in the reference`.\n"
       ],
       "title": "Instruções prontas",
       "color": "#233",
@@ -1127,7 +1175,7 @@
         330
       ],
       "flags": {},
-      "order": 28,
+      "order": 29,
       "mode": 0,
       "inputs": [],
       "outputs": [],
@@ -1187,14 +1235,22 @@
     ],
     [
       6,
-      8,
+      2,
       0,
       9,
       0,
-      "CONDITIONING"
+      "CLIP"
     ],
     [
       7,
+      30,
+      0,
+      9,
+      1,
+      "STRING"
+    ],
+    [
+      8,
       8,
       0,
       10,
@@ -1202,7 +1258,7 @@
       "CONDITIONING"
     ],
     [
-      8,
+      9,
       6,
       0,
       10,
@@ -1210,7 +1266,7 @@
       "LATENT"
     ],
     [
-      9,
+      10,
       9,
       0,
       11,
@@ -1218,7 +1274,7 @@
       "CONDITIONING"
     ],
     [
-      10,
+      11,
       6,
       0,
       11,
@@ -1226,7 +1282,7 @@
       "LATENT"
     ],
     [
-      11,
+      12,
       1,
       0,
       12,
@@ -1234,7 +1290,7 @@
       "MODEL"
     ],
     [
-      12,
+      13,
       10,
       0,
       12,
@@ -1242,7 +1298,7 @@
       "CONDITIONING"
     ],
     [
-      13,
+      14,
       11,
       0,
       12,
@@ -1250,7 +1306,7 @@
       "CONDITIONING"
     ],
     [
-      14,
+      15,
       16,
       0,
       17,
@@ -1258,7 +1314,7 @@
       "NOISE"
     ],
     [
-      15,
+      16,
       12,
       0,
       17,
@@ -1266,7 +1322,7 @@
       "GUIDER"
     ],
     [
-      16,
+      17,
       15,
       0,
       17,
@@ -1274,7 +1330,7 @@
       "SAMPLER"
     ],
     [
-      17,
+      18,
       14,
       0,
       17,
@@ -1282,7 +1338,7 @@
       "SIGMAS"
     ],
     [
-      18,
+      19,
       13,
       0,
       17,
@@ -1290,7 +1346,7 @@
       "LATENT"
     ],
     [
-      19,
+      20,
       17,
       0,
       18,
@@ -1298,7 +1354,7 @@
       "LATENT"
     ],
     [
-      20,
+      21,
       3,
       0,
       18,
@@ -1306,7 +1362,7 @@
       "VAE"
     ],
     [
-      21,
+      22,
       18,
       0,
       19,
@@ -1314,7 +1370,7 @@
       "IMAGE"
     ],
     [
-      22,
+      23,
       20,
       0,
       21,
@@ -1322,7 +1378,7 @@
       "BACKGROUND_REMOVAL"
     ],
     [
-      23,
+      24,
       18,
       0,
       21,
@@ -1330,23 +1386,23 @@
       "IMAGE"
     ],
     [
-      24,
+      25,
       21,
       0,
       22,
       0,
       "MASK"
-    ],
-    [
-      25,
-      18,
-      0,
-      23,
-      0,
-      "IMAGE"
     ],
     [
       26,
+      18,
+      0,
+      23,
+      0,
+      "IMAGE"
+    ],
+    [
+      27,
       22,
       0,
       23,
@@ -1354,23 +1410,23 @@
       "MASK"
     ],
     [
-      27,
+      28,
       23,
       0,
       24,
-      0,
-      "IMAGE"
-    ],
-    [
-      28,
-      18,
-      0,
-      25,
       0,
       "IMAGE"
     ],
     [
       29,
+      18,
+      0,
+      25,
+      0,
+      "IMAGE"
+    ],
+    [
+      30,
       21,
       0,
       25,
@@ -1378,7 +1434,7 @@
       "MASK"
     ],
     [
-      30,
+      31,
       25,
       0,
       26,
@@ -1394,7 +1450,7 @@
         -1420,
         -680,
         1220,
-        1380
+        1400
       ],
       "color": "#3f789e",
       "flags": {}

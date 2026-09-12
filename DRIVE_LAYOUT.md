@@ -4978,3 +4978,17 @@ fidelidade ficar insuficiente, a alternativa é o Illustrious + IPAdapter
   `checar_regras.py`). No Colab, rode `validar_workflows.py --server`.
 - Montagem final: rig (UniRig/SkinTokens) espera uma malha ou peças
   parentadas ao mesmo esqueleto — juntar/parentar no Blender antes do VRM.
+
+### v71b — pose A/T na tabela + campo NEGATIVO
+
+- Tabela de instruções ganhou **pose A**, **pose T** e a variante costas/lados
+  (serve de entrada direta para o `Lia_Pixal3D_MultiView`). A instrução
+  padrão do workflow agora é a pose A; ordem recomendada: pose A primeiro →
+  vira a referência → depois as peças.
+- `ConditioningZeroOut` substituído por um segundo `CLIPTextEncode` ligado a
+  um campo **NEGATIVO** (6 dedos, membros extras, torto, borrado, texto…).
+  **Ressalva importante:** com `CFGGuider = 1` (padrão do distilled) o
+  ComfyUI não avalia o negativo — o campo é ignorado. Só entra com CFG
+  1.5–2.5 (2× o tempo; >3 satura). Por isso as frases anti-deformação
+  (`exactly five fingers`, `symmetrical`, `anatomically correct`) também
+  estão no **positivo**, que vale sempre. Tudo documentado na nota LEIA-ME.
