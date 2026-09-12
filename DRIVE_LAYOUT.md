@@ -4900,3 +4900,81 @@ Validação estática passou. No Colab, rode `validar_workflows.py --server`
 antes de considerar pronto. Pegada de VRAM é a mesma do single-view; o
 conditioning com 4 vistas passa 4 imagens pelo DINOv3 em sequência, não
 em paralelo, então não deve estourar.
+
+## v71 — `Lia_Klein_Partes`: desmontar a Lia em peças (mão, cabeça, cabelo, roupa) para modelar por partes
+
+### De onde veio
+
+Do vídeo do PixelArtistry *"This Open-Source 3D AI Workflow is Insane! (6GB VRAM)"*
+(youtu.be/Ff_tdMsndzQ). O `CharDesignandPartSplitting.json` de lá **não tem
+split de malha**: a "esquerda" é txt2img com Krea 2 e a "direita" é um único
+nó custom (`one-node-flux-2-klein`) com o Flux.2 Klein **9B** + a *Separation
+LoRA* do Aero-Ex, que gera cada peça da personagem **em imagem** ("separate,
+the head from the character onto a white background"); cada peça vai
+separada ao Trellis2/Pixal3D e a montagem é no Blender. O ganho é
+resolução: cada peça usa o grid 3D inteiro.
+
+Removido `Workflows/CharDesignandPartSplitting.json` (era duplicata do que
+já está em `Workflows_arquivo/`, e puxava 30 GB de Krea 2 que não usamos).
+
+### O que entrou
+
+`Workflows/Lia_Klein_Partes.json` — 26 nós de trabalho + 3 notas, **só core**
+(sem o nó custom do vídeo), derivado do template oficial
+`image_flux2_klein_image_edit_4b_distilled.json` desmembrado do subgraph:
+
+```
+LoadImage Lia_full.png → ImageScaleToTotalPixels 1MP → VAEEncode → ReferenceLatent (pos e neg)
+PrimitiveStringMultiline INSTRUÇÃO → CLIPTextEncode ─┘
+UNETLoader klein-4b-fp8 + CLIPLoader qwen_3_4b (type flux2) + VAELoader flux2-vae
+EmptyFlux2LatentImage 1024² → SamplerCustomAdvanced (CFGGuider cfg1, Flux2Scheduler 4 passos, euler, RandomNoise randomize)
+→ VAEDecode → SaveImage Lia_partes/raw/
+            → BiRefNet RemoveBackground → InvertMask → JoinImageWithAlpha → SaveImage Lia_partes/ (PNG alpha)
+                                        → ImageCropToMask 1024² pad 1.1 → PreviewImage (o que o 3D vai ver)
+```
+
+Um único campo a editar por rodada: a INSTRUÇÃO. A nota "Instruções
+prontas" traz a tabela PT→EN (mão aberta, cabeça sem cabelo, só cabelo,
+roupa em manequim invisível, botas, acessório, corpo base) e como pedir as
+4 vistas para o `Lia_Pixal3D_MultiView`.
+
+### Por que Klein 4B e não o 9B do vídeo
+
+| | 4B (aqui) | 9B (vídeo) |
+|---|---|---|
+| licença | **Apache-2.0** | FLUX Non-Commercial, gated |
+| Drive | 4,08 + 5,63 + 0,34 = **10 GB** | ~19 GB |
+| T4 15 GB | cabe | só com offload |
+| Separation LoRA | não existe para 4B → **só prompt** | sim |
+
+Consequência: sem a LoRA, o 4B às vezes redesenha a peça em vez de
+recortá-la. Mitigação prevista no workflow: seed randomize (gerar 3–6 e
+escolher), instruções curtas, "exactly as drawn in the reference". Se a
+fidelidade ficar insuficiente, a alternativa é o Illustrious + IPAdapter
+(arquivado, zero download) para peças estilizadas.
+
+### Modelos novos (o notebook baixa pelo `workflow_models`)
+
+| arquivo | pasta | GB | fonte |
+|---|---|---|---|
+| `flux-2-klein-4b-fp8.safetensors` | diffusion_models | 4,08 | black-forest-labs/FLUX.2-klein-4b-fp8 |
+| `qwen_3_4b_fp8_mixed.safetensors` | text_encoders | 5,63 | Comfy-Org/z_image_turbo (mesmo que o template oficial usa) |
+| `flux2-vae.safetensors` | vae | 0,34 | Comfy-Org/flux2-dev (sha256 idêntico ao VAE do Klein 4B) |
+
+`birefnet.safetensors` já está no Drive (v69). Evidências de licença em
+`licencas/evidencias/hf_black-forest-labs_FLUX.2-klein-4b-fp8.json`,
+`hf_black-forest-labs_FLUX.2-klein-4B.json`, `hf_Comfy-Org_z_image_turbo.json`,
+`hf_Comfy-Org_flux2-dev.json`; linhas em LICENCAS.md §7, INDICE.md, MODELOS.md.
+
+### Riscos / não testado em GPU
+
+- T4 não tem fp8/bf16 nativo → ComfyUI desquantiza para fp16. Estimativa
+  1–2 min por imagem 1024² em 4 passos. RAM do Colab (13 GB) é o gargalo
+  na carga do encoder; se estourar, trocar para `qwen_3_4b_fp4_mixed`
+  (3,5 GB, mesmo repo) no `CLIPLoader`.
+- `ImageScaleToTotalPixels` em 1 MP: o Klein espera referência ~1MP; a
+  Lia de corpo inteiro em 2:3 fica ~816×1224.
+- Validação estática ok (`validar_workflows.py --only Lia_Klein`,
+  `checar_regras.py`). No Colab, rode `validar_workflows.py --server`.
+- Montagem final: rig (UniRig/SkinTokens) espera uma malha ou peças
+  parentadas ao mesmo esqueleto — juntar/parentar no Blender antes do VRM.

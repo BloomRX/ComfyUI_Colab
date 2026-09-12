@@ -1,0 +1,29 @@
+{
+ "_coletado_em": "2026-09-12",
+ "_fonte": "https://huggingface.co/api/models/black-forest-labs/FLUX.2-klein-4b-fp8",
+ "_metodo": "API oficial do HuggingFace (resposta resumida)",
+ "_arquivos_que_usamos": [
+  "flux-2-klein-4b-fp8.safetensors"
+ ],
+ "licenca": "apache-2.0",
+ "gated": false,
+ "lastModified": "2026-02-24T00:50:22.000Z",
+ "sha": "5b4408e59397a4a37ccb46afe426d8ed86379441",
+ "resposta_crua": {
+  "tags": [
+   "diffusion-single-file",
+   "text-to-image",
+   "image-editing",
+   "flux",
+   "image-to-image",
+   "license:apache-2.0"
+  ],
+  "cardData": {
+   "license": "apache-2.0",
+   "language": [
+    "en"
+   ]
+  }
+ },
+ "_nota": "Flux.2 Klein 4B distilled em fp8, publicado pela propria BFL. Apache-2.0, nao gated. ATENCAO: o Klein 9B (black-forest-labs/FLUX.2-klein-9B) e 'flux-non-commercial-license' e gated — nao usar no projeto."
+}

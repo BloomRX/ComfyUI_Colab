@@ -62,11 +62,21 @@ HF = {
     'Comfy-Org/BiRefNet': [
         'birefnet.safetensors',
     ],
+    'black-forest-labs/FLUX.2-klein-4b-fp8': [
+        'flux-2-klein-4b-fp8.safetensors',
+    ],
+    'Comfy-Org/z_image_turbo': [
+        'qwen_3_4b_fp8_mixed.safetensors',
+    ],
+    'Comfy-Org/flux2-dev': [
+        'flux2-vae.safetensors',
+    ],
     # bases dos repackages acima (a licenca que vale e a do ORIGINAL)
     'microsoft/TRELLIS.2-4B': [],
     'TencentARC/Pixal3D': [],
     'ZhengPeng7/BiRefNet': [],
     'facebook/dinov3-vitl16-pretrain-lvd1689m': [],
+    'black-forest-labs/FLUX.2-klein-4B': [],
 }
 
 GH = [

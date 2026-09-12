@@ -1,0 +1,24 @@
+{
+ "_coletado_em": "2026-09-12",
+ "_fonte": "https://huggingface.co/api/models/Comfy-Org/z_image_turbo",
+ "_metodo": "API oficial do HuggingFace (resposta resumida)",
+ "_arquivos_que_usamos": [
+  "qwen_3_4b_fp8_mixed.safetensors"
+ ],
+ "licenca": "apache-2.0",
+ "gated": false,
+ "lastModified": "2026-08-17T06:15:14.000Z",
+ "sha": "08d04455279082882deaabc8d0d09fc914c071e1",
+ "resposta_crua": {
+  "tags": [
+   "diffusion-single-file",
+   "comfyui",
+   "base_model:Tongyi-MAI/Z-Image-Turbo",
+   "license:apache-2.0"
+  ],
+  "cardData": {
+   "license": "apache-2.0"
+  }
+ },
+ "_nota": "So o text encoder Qwen3-4B (fp8 mixed, 5,63 GB) e usado; e o mesmo encoder que o template oficial do Klein 4B aponta. Qwen3 e Apache-2.0. O Z-Image em si nao e usado."
+}

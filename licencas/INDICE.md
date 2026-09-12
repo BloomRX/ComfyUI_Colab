@@ -8,6 +8,9 @@ cruas das APIs oficiais, arquivadas em `evidencias/`.
 |---|---|---|---|
 | `CLIP-ViT-H-14-laion2B-s32B-b79K.safetensors` | apache-2.0 | 2026-09-08 | HF: h94/IP-Adapter |
 | `birefnet.safetensors` | mit | 2026-09-11 | HF: Comfy-Org/BiRefNet (base ZhengPeng7/BiRefNet: mit) |
+| `flux-2-klein-4b-fp8.safetensors` | apache-2.0 | 2026-09-12 | HF: black-forest-labs/FLUX.2-klein-4b-fp8 |
+| `flux2-vae.safetensors` | other (repo) / **apache-2.0** (mesmo arquivo do Klein 4B) | 2026-09-12 | HF: Comfy-Org/flux2-dev ← black-forest-labs/FLUX.2-klein-4B |
+| `qwen_3_4b_fp8_mixed.safetensors` | apache-2.0 | 2026-09-12 | HF: Comfy-Org/z_image_turbo |
 | `dino_v3_L_naf_fp32.safetensors` | mit (repack) / **DINOv3 License** (original) | 2026-09-11 | HF: Comfy-Org/Pixal3D ← facebook/dinov3-vitl16-pretrain-lvd1689m |
 | `pixal3d_multiview_int8_convrot.safetensors` | mit | 2026-09-11 | HF: Comfy-Org/Pixal3D (base TencentARC/Pixal3D: mit) |
 | `trellis_2_int8_convrot.safetensors` | mit | 2026-09-11 | HF: Comfy-Org/TRELLIS.2 (base microsoft/TRELLIS.2-4B: mit) |

@@ -208,6 +208,9 @@ def r_notebook():
         'trellis_2_texture_vae_bf16.safetensors',
         'birefnet.safetensors',
         'pixal3d_multiview_int8_convrot.safetensors',  # MIT (TencentARC/Pixal3D)
+        'flux-2-klein-4b-fp8.safetensors',  # Apache-2.0 (black-forest-labs, 4B; o 9B NAO)
+        'qwen_3_4b_fp8_mixed.safetensors',  # Apache-2.0 (Comfy-Org/z_image_turbo)
+        'flux2-vae.safetensors',  # Apache-2.0 (VAE do Klein 4B; repack Comfy-Org/flux2-dev)
     }
     import glob as _g
     _ativos = {os.path.basename(f)

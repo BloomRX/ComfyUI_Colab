@@ -1,0 +1,23 @@
+{
+ "_coletado_em": "2026-09-12",
+ "_fonte": "https://huggingface.co/api/models/Comfy-Org/flux2-dev",
+ "_metodo": "API oficial do HuggingFace (resposta resumida)",
+ "_arquivos_que_usamos": [
+  "flux2-vae.safetensors"
+ ],
+ "licenca": "other",
+ "gated": false,
+ "lastModified": "",
+ "sha": "",
+ "resposta_crua": {
+  "tags": [
+   "diffusion-single-file",
+   "comfyui",
+   "license:other"
+  ],
+  "cardData": {
+   "license": "other"
+  }
+ },
+ "_nota": "O repo esta marcado 'other' por causa do FLUX.2 dev (non-commercial). Usamos SOMENTE o flux2-vae.safetensors (0,34 GB), que e byte-a-byte o mesmo VAE distribuido dentro de black-forest-labs/FLUX.2-klein-4B (Apache-2.0; mesmo sha256 no repack Comfy-Org/vae-text-encorder-for-flux-klein-4b, oid 78f8fcf4...). A licenca que vale para o VAE e a do Klein 4B: Apache-2.0. Se preferir zero ambiguidade, baixe do repack do klein-4b."
+}

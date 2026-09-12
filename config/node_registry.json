@@ -713,6 +713,32 @@
         "size": "0.44 GB",
         "url": "https://huggingface.co/Comfy-Org/BiRefNet/resolve/main/background_removal/birefnet.safetensors"
       }
+    ],
+    "Lia_Klein_Partes.json": [
+      {
+        "file": "flux-2-klein-4b-fp8.safetensors",
+        "dir": "diffusion_models",
+        "size": "4.08 GB",
+        "url": "https://huggingface.co/black-forest-labs/FLUX.2-klein-4b-fp8/resolve/main/flux-2-klein-4b-fp8.safetensors"
+      },
+      {
+        "file": "qwen_3_4b_fp8_mixed.safetensors",
+        "dir": "text_encoders",
+        "size": "5.63 GB",
+        "url": "https://huggingface.co/Comfy-Org/z_image_turbo/resolve/main/split_files/text_encoders/qwen_3_4b_fp8_mixed.safetensors"
+      },
+      {
+        "file": "flux2-vae.safetensors",
+        "dir": "vae",
+        "size": "0.34 GB",
+        "url": "https://huggingface.co/Comfy-Org/flux2-dev/resolve/main/split_files/vae/flux2-vae.safetensors"
+      },
+      {
+        "file": "birefnet.safetensors",
+        "dir": "background_removal",
+        "size": "0.44 GB",
+        "url": "https://huggingface.co/Comfy-Org/BiRefNet/resolve/main/background_removal/birefnet.safetensors"
+      }
     ]
   },
   "model_notes": {
@@ -738,7 +764,9 @@
     "trellis_2_bf16.safetensors": "Versao completa do TRELLIS.2 (10,3 GB). NAO cabe no T4; o workflow da Lia usa trellis_2_int8_convrot (5,3 GB).",
     "moge_2_vitl_normal_fp16.safetensors": "So necessario para o ramo Pixal3D (FoV). Removido do workflow da Lia. Se reativar: Comfy-Org/MoGe/geometry_estimation/ -> models/geometry_estimation/ (662 MB).",
     "pixal3d_int8_convrot.safetensors": "Pixal3D single-view (5,58 GB). Nao usado: para 1 imagem usamos o TRELLIS.2; para 4 vistas, o pixal3d_multiview.",
-    "pixal3d_multiview_bf16.safetensors": "Versao completa do Pixal3D MV (11 GB). Nao cabe no T4; usamos a int8_convrot."
+    "pixal3d_multiview_bf16.safetensors": "Versao completa do Pixal3D MV (11 GB). Nao cabe no T4; usamos a int8_convrot.",
+    "flux-2-klein-4b-fp8.safetensors": "Flux.2 Klein 4B distilled fp8 (Apache-2.0). Edicao por instrucao com referencia; usado no Lia_Klein_Partes. NAO confundir com o 9B (FLUX Non-Commercial).",
+    "qwen_3_4b_fp8_mixed.safetensors": "Text encoder do Klein 4B (mesmo arquivo do Z-Image Turbo). Alternativa menor: qwen_3_4b_fp4_mixed (3.5 GB)."
   },
   "never_install": [
     "ComfyUI",

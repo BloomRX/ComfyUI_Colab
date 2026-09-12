@@ -298,3 +298,38 @@ temos aqui é exatamente o que um advogado pediria.
 | saída comercial | **SIM** |
 | obs | o card do HF da TencentARC tem `extra_gated_eu_disallowed`, mas a licença é MIT sem cláusula territorial |
 | usado em | Lia_Pixal3D_MultiView |
+
+### flux-2-klein-4b-fp8.safetensors 🟢
+
+| | |
+|---|---|
+| papel | edição de imagem por instrução com referência (Flux.2 Klein 4B distilled, 4 passos) |
+| onde | `models/diffusion_models/` · 4,08 GB |
+| origem | `black-forest-labs/FLUX.2-klein-4b-fp8` (publicado pela BFL) |
+| licença | **Apache-2.0** |
+| saída comercial | **SIM** |
+| obs | o irmão **9B** é FLUX Non-Commercial — vetado |
+| usado em | Lia_Klein_Partes |
+
+### qwen_3_4b_fp8_mixed.safetensors 🟢
+
+| | |
+|---|---|
+| papel | text encoder do Klein 4B (Qwen3-4B) |
+| onde | `models/text_encoders/` · 5,63 GB |
+| origem | `Comfy-Org/z_image_turbo` ← `Qwen/Qwen3-4B` |
+| licença | **Apache-2.0** |
+| saída comercial | **SIM** |
+| usado em | Lia_Klein_Partes |
+
+### flux2-vae.safetensors 🟢
+
+| | |
+|---|---|
+| papel | VAE do Flux.2 (Klein 4B) |
+| onde | `models/vae/` · 0,34 GB |
+| origem | `Comfy-Org/flux2-dev` (mesmo arquivo, sha256 idêntico, do `black-forest-labs/FLUX.2-klein-4B`) |
+| licença | **Apache-2.0** (a do Klein 4B; o repo flux2-dev é `other` por causa do modelo dev, que não usamos) |
+| saída comercial | **SIM** |
+| usado em | Lia_Klein_Partes |
+

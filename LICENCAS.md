@@ -32,6 +32,7 @@ das licenças declaradas, para você saber onde há risco real e onde não há.
 | **Pixal3D MV** (`pixal3d_multiview_int8_convrot`) — projeto Lia | MIT (repack de TencentARC/Pixal3D, MIT) | sim |
 | **BiRefNet** (`birefnet.safetensors`) — projeto Lia | MIT (repack de ZhengPeng7/BiRefNet, MIT) | sim |
 | **DINOv3 ViT-L** (`dino_v3_L_naf_fp32`) — projeto Lia | repack MIT, **mas deriva da DINOv3 License (Meta)** | sim, com **obrigação de crédito** — ver §7 |
+| **Flux.2 Klein 4B** (`flux-2-klein-4b-fp8`, `qwen_3_4b_fp8_mixed`, `flux2-vae`) — projeto Lia | **Apache-2.0** (BFL; encoder Qwen3 Apache-2.0) | sim — ver §7 (o **9B** é Non-Commercial e está **vetado**) |
 
 > **Correção (v65):** eu havia agrupado o Hotshot-XL como Apache 2.0. A API do
 > HuggingFace mostra `license:openrail++` — **CreativeML OpenRAIL++-M**, que
@@ -178,6 +179,9 @@ origem (`hf_microsoft_TRELLIS.2-4B.json`, `hf_ZhengPeng7_BiRefNet.json`,
 | `birefnet.safetensors` | MIT | ZhengPeng7/BiRefNet — MIT | **MIT** |
 | `pixal3d_multiview_int8_convrot.safetensors` | MIT | TencentARC/Pixal3D — MIT | **MIT** |
 | `dino_v3_L_naf_fp32.safetensors` | MIT | facebook/dinov3-vitl16 — **DINOv3 License** | **DINOv3 License** |
+| `flux-2-klein-4b-fp8.safetensors` | — (publicado pela própria BFL) | black-forest-labs/FLUX.2-klein-4B — Apache-2.0 | **Apache-2.0** |
+| `qwen_3_4b_fp8_mixed.safetensors` | Apache-2.0 (Comfy-Org/z_image_turbo) | Qwen/Qwen3-4B — Apache-2.0 | **Apache-2.0** |
+| `flux2-vae.safetensors` | repo Comfy-Org/flux2-dev marcado `other` | mesmo arquivo (sha256 idêntico) do black-forest-labs/FLUX.2-klein-4B — Apache-2.0 | **Apache-2.0** (ver nota) |
 
 ### O ponto de atenção: DINOv3
 
@@ -202,3 +206,21 @@ Não há nada equivalente ao problema da FAIPL/Illustrious aqui: os três
 modelos-base são MIT ou permitem comercial explicitamente.
 
 **Não sou advogado; isto é levantamento técnico das licenças declaradas.**
+
+### Flux.2 Klein: 4B sim, 9B não (v71)
+
+O `Lia_Klein_Partes` usa o **Klein 4B** (Apache-2.0, não gated). A família
+Flux.2 tem duas licenças diferentes e é fácil confundir:
+
+| modelo | licença | no projeto |
+|---|---|---|
+| FLUX.2 [klein] **4B** (base e distilled) | Apache-2.0 | **sim** |
+| FLUX.2 [klein] **9B** | FLUX Non-Commercial License (gated) | **não** |
+| FLUX.2 [dev] | FLUX Non-Commercial License | **não** |
+| Separation LoRA (Aero-Ex/Klein9B-Separation_LoRa) | sem licença declarada; treinada no 9B | **não** |
+
+Nota sobre o VAE: o `flux2-vae.safetensors` está hospedado no repo
+`Comfy-Org/flux2-dev` (marcado `other` por causa do dev), mas é o mesmo
+arquivo do Klein 4B (mesmo oid/sha256 no `Comfy-Org/vae-text-encorder-for-flux-klein-4b`).
+Evidência: `licencas/evidencias/hf_Comfy-Org_flux2-dev.json`.
+
