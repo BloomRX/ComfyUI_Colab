@@ -1,8 +1,8 @@
 {
-  "id": "7f1fe422-aa93-42e2-a54f-9749ecc30807",
+  "id": "c0587440-d235-4a94-ad0c-506b933ed846",
   "revision": 0,
-  "last_node_id": 309,
-  "last_link_id": 603,
+  "last_node_id": 266,
+  "last_link_id": 491,
   "nodes": [
     {
       "id": 1,
@@ -347,19 +347,11 @@
             368,
             373,
             420,
-            434,
-            461,
-            465,
-            492,
-            496,
-            523,
-            527,
-            554,
-            558,
-            585,
-            589,
-            596,
-            601
+            425,
+            472,
+            477,
+            484,
+            489
           ]
         }
       ],
@@ -404,8 +396,8 @@
           "name": "normal_map",
           "type": "IMAGE",
           "links": [
-            594,
-            599
+            482,
+            487
           ]
         }
       ],
@@ -452,8 +444,8 @@
           "name": "occlusion",
           "type": "IMAGE",
           "links": [
-            595,
-            598
+            483,
+            486
           ]
         }
       ],
@@ -569,7 +561,7 @@
             272,
             324,
             376,
-            430
+            428
           ]
         },
         {
@@ -618,7 +610,8 @@
             221,
             273,
             325,
-            377
+            377,
+            429
           ]
         },
         {
@@ -665,7 +658,8 @@
             222,
             274,
             326,
-            378
+            378,
+            430
           ]
         },
         {
@@ -712,7 +706,8 @@
             223,
             275,
             327,
-            379
+            379,
+            431
           ]
         },
         {
@@ -759,7 +754,8 @@
             250,
             302,
             354,
-            406
+            406,
+            458
           ]
         }
       ],
@@ -807,7 +803,8 @@
             235,
             287,
             339,
-            391
+            391,
+            443
           ]
         }
       ],
@@ -881,7 +878,11 @@
             382,
             384,
             386,
-            415
+            415,
+            434,
+            436,
+            438,
+            467
           ]
         }
       ],
@@ -928,7 +929,8 @@
             256,
             308,
             360,
-            412
+            412,
+            464
           ]
         }
       ],
@@ -970,7 +972,8 @@
             255,
             307,
             359,
-            411
+            411,
+            463
           ]
         }
       ],
@@ -1010,7 +1013,8 @@
             234,
             286,
             338,
-            390
+            390,
+            442
           ]
         }
       ],
@@ -2069,7 +2073,9 @@
             347,
             353,
             399,
-            405
+            405,
+            451,
+            457
           ]
         }
       ],
@@ -10522,8 +10528,8 @@
           "name": "state",
           "type": "LIA_TEXSTATE",
           "links": [
-            435,
-            464
+            426,
+            475
           ]
         },
         {
@@ -10599,481 +10605,28 @@
     },
     {
       "id": 229,
-      "type": "CheckpointLoaderSimple",
-      "pos": [
-        1200,
-        -700
-      ],
-      "size": [
-        400,
-        98
-      ],
-      "flags": {},
-      "order": 229,
-      "mode": 0,
-      "inputs": [],
-      "outputs": [
-        {
-          "name": "MODEL",
-          "type": "MODEL",
-          "links": [
-            425
-          ]
-        },
-        {
-          "name": "CLIP",
-          "type": "CLIP",
-          "links": [
-            431,
-            432,
-            438,
-            469,
-            500,
-            531,
-            562
-          ]
-        },
-        {
-          "name": "VAE",
-          "type": "VAE",
-          "links": [
-            445,
-            448,
-            456,
-            476,
-            479,
-            487,
-            507,
-            510,
-            518,
-            538,
-            541,
-            549,
-            569,
-            572,
-            580
-          ]
-        }
-      ],
-      "properties": {
-        "Node name for S&R": "CheckpointLoaderSimple",
-        "cnr_id": "comfy-core",
-        "ver": "0.16.3",
-        "models": [
-          {
-            "name": "Waifu-Inpaint-XL.safetensors",
-            "url": "https://huggingface.co/ShinoharaHare/Waifu-Inpaint-XL/resolve/main/Waifu-Inpaint-XL.safetensors",
-            "directory": "checkpoints"
-          }
-        ]
-      },
-      "widgets_values": [
-        "Waifu-Inpaint-XL.safetensors"
-      ],
-      "title": "Waifu-Inpaint-XL (gated: HF_TOKEN na Célula 5)"
-    },
-    {
-      "id": 230,
-      "type": "ModelSamplingDiscrete",
-      "pos": [
-        1200,
-        -560
-      ],
-      "size": [
-        400,
-        82
-      ],
-      "flags": {},
-      "order": 230,
-      "mode": 0,
-      "inputs": [
-        {
-          "name": "model",
-          "type": "MODEL",
-          "link": 425
-        }
-      ],
-      "outputs": [
-        {
-          "name": "MODEL",
-          "type": "MODEL",
-          "links": [
-            426
-          ]
-        }
-      ],
-      "properties": {
-        "Node name for S&R": "ModelSamplingDiscrete",
-        "cnr_id": "comfy-core",
-        "ver": "0.16.3"
-      },
-      "widgets_values": [
-        "v_prediction",
-        true
-      ],
-      "title": "v-prediction + ZSNR (o WAI v14 é v-pred)"
-    },
-    {
-      "id": 231,
-      "type": "RescaleCFG",
-      "pos": [
-        1200,
-        -440
-      ],
-      "size": [
-        400,
-        58
-      ],
-      "flags": {},
-      "order": 231,
-      "mode": 0,
-      "inputs": [
-        {
-          "name": "model",
-          "type": "MODEL",
-          "link": 426
-        }
-      ],
-      "outputs": [
-        {
-          "name": "MODEL",
-          "type": "MODEL",
-          "links": [
-            427
-          ]
-        }
-      ],
-      "properties": {
-        "Node name for S&R": "RescaleCFG",
-        "cnr_id": "comfy-core",
-        "ver": "0.16.3"
-      },
-      "widgets_values": [
-        0.7
-      ]
-    },
-    {
-      "id": 232,
-      "type": "IPAdapterUnifiedLoader",
-      "pos": [
-        1200,
-        -350
-      ],
-      "size": [
-        400,
-        82
-      ],
-      "flags": {},
-      "order": 232,
-      "mode": 0,
-      "inputs": [
-        {
-          "name": "model",
-          "type": "MODEL",
-          "link": 427
-        },
-        {
-          "name": "ipadapter",
-          "type": "IPADAPTER",
-          "link": null
-        }
-      ],
-      "outputs": [
-        {
-          "name": "model",
-          "type": "MODEL",
-          "links": [
-            428
-          ]
-        },
-        {
-          "name": "ipadapter",
-          "type": "IPADAPTER",
-          "links": [
-            429
-          ]
-        }
-      ],
-      "properties": {
-        "Node name for S&R": "IPAdapterUnifiedLoader",
-        "aux_id": "cubiq/ComfyUI_IPAdapter_plus"
-      },
-      "widgets_values": [
-        "PLUS (high strength)"
-      ]
-    },
-    {
-      "id": 233,
-      "type": "IPAdapterAdvanced",
-      "pos": [
-        1200,
-        -230
-      ],
-      "size": [
-        400,
-        300
-      ],
-      "flags": {},
-      "order": 233,
-      "mode": 0,
-      "inputs": [
-        {
-          "name": "model",
-          "type": "MODEL",
-          "link": 428
-        },
-        {
-          "name": "ipadapter",
-          "type": "IPADAPTER",
-          "link": 429
-        },
-        {
-          "name": "image",
-          "type": "IMAGE",
-          "link": 430
-        },
-        {
-          "name": "image_negative",
-          "type": "IMAGE",
-          "link": null
-        },
-        {
-          "name": "attn_mask",
-          "type": "MASK",
-          "link": null
-        },
-        {
-          "name": "clip_vision",
-          "type": "CLIP_VISION",
-          "link": null
-        }
-      ],
-      "outputs": [
-        {
-          "name": "MODEL",
-          "type": "MODEL",
-          "links": [
-            451,
-            482,
-            513,
-            544,
-            575
-          ]
-        }
-      ],
-      "properties": {
-        "Node name for S&R": "IPAdapterAdvanced",
-        "aux_id": "cubiq/ComfyUI_IPAdapter_plus"
-      },
-      "widgets_values": [
-        0.55,
-        "style transfer",
-        "concat",
-        0.0,
-        0.8,
-        "K+mean(V) w/ C penalty"
-      ],
-      "title": "IP-Adapter: estilo/cores da Lia 2D (frente)"
-    },
-    {
-      "id": 234,
-      "type": "CLIPTextEncode",
-      "pos": [
-        1200,
-        110
-      ],
-      "size": [
-        400,
-        160
-      ],
-      "flags": {},
-      "order": 234,
-      "mode": 0,
-      "inputs": [
-        {
-          "name": "clip",
-          "type": "CLIP",
-          "link": 431
-        }
-      ],
-      "outputs": [
-        {
-          "name": "CONDITIONING",
-          "type": "CONDITIONING",
-          "links": [
-            439,
-            470,
-            501,
-            532,
-            563
-          ]
-        }
-      ],
-      "properties": {
-        "Node name for S&R": "CLIPTextEncode",
-        "cnr_id": "comfy-core",
-        "ver": "0.16.3"
-      },
-      "widgets_values": [
-        "masterpiece, best quality, 1girl, black hair with red tips, short bob, black long-sleeved dress with gold trim and gold belt, ornate gold hem, flat color, cel shading, anime coloring, simple white background, texture sheet, no lighting"
-      ],
-      "title": "WAI positivo — AJUSTE as tags para a sua Lia",
-      "color": "#232",
-      "bgcolor": "#353"
-    },
-    {
-      "id": 235,
-      "type": "CLIPTextEncode",
-      "pos": [
-        1200,
-        310
-      ],
-      "size": [
-        400,
-        120
-      ],
-      "flags": {},
-      "order": 235,
-      "mode": 0,
-      "inputs": [
-        {
-          "name": "clip",
-          "type": "CLIP",
-          "link": 432
-        }
-      ],
-      "outputs": [
-        {
-          "name": "CONDITIONING",
-          "type": "CONDITIONING",
-          "links": [
-            442,
-            473,
-            504,
-            535,
-            566
-          ]
-        }
-      ],
-      "properties": {
-        "Node name for S&R": "CLIPTextEncode",
-        "cnr_id": "comfy-core",
-        "ver": "0.16.3"
-      },
-      "widgets_values": [
-        "worst quality, low quality, blurry, jpeg artifacts, shadow, dramatic lighting, lens flare, depth of field, 3d, realistic, extra face, extra eyes, text, watermark, signature, multiple views, gradient background"
-      ],
-      "title": "WAI negativo"
-    },
-    {
-      "id": 236,
-      "type": "ControlNetLoader",
-      "pos": [
-        1200,
-        470
-      ],
-      "size": [
-        400,
-        58
-      ],
-      "flags": {},
-      "order": 236,
-      "mode": 0,
-      "inputs": [],
-      "outputs": [
-        {
-          "name": "CONTROL_NET",
-          "type": "CONTROL_NET",
-          "links": [
-            433
-          ]
-        }
-      ],
-      "properties": {
-        "Node name for S&R": "ControlNetLoader",
-        "cnr_id": "comfy-core",
-        "ver": "0.16.3",
-        "models": [
-          {
-            "name": "controlnet-union-sdxl-1.0.safetensors",
-            "url": "https://huggingface.co/xinsir/controlnet-union-sdxl-1.0/resolve/main/diffusion_pytorch_model_promax.safetensors",
-            "directory": "controlnet"
-          }
-        ]
-      },
-      "widgets_values": [
-        "controlnet-union-sdxl-1.0.safetensors"
-      ],
-      "title": "ControlNet Union SDXL (2,5 GB)"
-    },
-    {
-      "id": 237,
-      "type": "SetUnionControlNetType",
-      "pos": [
-        1200,
-        560
-      ],
-      "size": [
-        400,
-        58
-      ],
-      "flags": {},
-      "order": 237,
-      "mode": 0,
-      "inputs": [
-        {
-          "name": "control_net",
-          "type": "CONTROL_NET",
-          "link": 433
-        }
-      ],
-      "outputs": [
-        {
-          "name": "CONTROL_NET",
-          "type": "CONTROL_NET",
-          "links": [
-            443,
-            474,
-            505,
-            536,
-            567
-          ]
-        }
-      ],
-      "properties": {
-        "Node name for S&R": "SetUnionControlNetType",
-        "cnr_id": "comfy-core",
-        "ver": "0.16.3"
-      },
-      "widgets_values": [
-        "normal"
-      ],
-      "title": "tipo = normal (o normal map do render trava a geometria)"
-    },
-    {
-      "id": 238,
       "type": "LiaRenderTextured",
       "pos": [
-        1660,
-        -700
+        -1500,
+        5380
       ],
       "size": [
         330,
         250
       ],
       "flags": {},
-      "order": 238,
+      "order": 229,
       "mode": 0,
       "inputs": [
         {
           "name": "mesh",
           "type": "MESH",
-          "link": 434
+          "link": 425
         },
         {
           "name": "state",
           "type": "LIA_TEXSTATE",
-          "link": 435
+          "link": 426
         }
       ],
       "outputs": [
@@ -11081,9 +10634,9 @@
           "name": "image",
           "type": "IMAGE",
           "links": [
-            436,
-            449,
-            457
+            427,
+            437,
+            468
           ]
         },
         {
@@ -11095,14 +10648,16 @@
           "name": "silhouette",
           "type": "MASK",
           "links": [
-            437
+            440,
+            470,
+            474
           ]
         },
         {
           "name": "normals",
           "type": "IMAGE",
           "links": [
-            444
+            435
           ]
         },
         {
@@ -11120,34 +10675,34 @@
         0.0,
         1024,
         1.1,
-        0,
+        12,
         "grey",
-        1.0,
-        0.0
+        3.0,
+        0.42
       ],
-      "title": "F1 Frente: render da textura Klein (zoom 1)",
+      "title": "9 Rosto (zoom 3x): render parcial + máscara",
       "color": "#223",
       "bgcolor": "#335"
     },
     {
-      "id": 239,
+      "id": 230,
       "type": "PreviewImage",
       "pos": [
-        1660,
-        -410
+        -1500,
+        5670
       ],
       "size": [
         330,
         300
       ],
       "flags": {},
-      "order": 239,
+      "order": 230,
       "mode": 0,
       "inputs": [
         {
           "name": "images",
           "type": "IMAGE",
-          "link": 436
+          "link": 427
         }
       ],
       "outputs": [],
@@ -11157,70 +10712,395 @@
         "ver": "0.16.3"
       },
       "widgets_values": [],
-      "title": "F1 Frente: antes"
+      "title": "9 Rosto (zoom 3x): o que já existe (cinza = a pintar)"
     },
     {
-      "id": 240,
-      "type": "GrowMask",
+      "id": 231,
+      "type": "LiaPickReference",
       "pos": [
-        2030,
-        -700
+        -1130,
+        5380
       ],
       "size": [
         300,
-        82
+        130
       ],
       "flags": {},
-      "order": 240,
+      "order": 231,
       "mode": 0,
       "inputs": [
         {
-          "name": "mask",
-          "type": "MASK",
-          "link": 437
+          "name": "front",
+          "type": "IMAGE",
+          "link": 428
+        },
+        {
+          "name": "back",
+          "type": "IMAGE",
+          "link": 429
+        },
+        {
+          "name": "left",
+          "type": "IMAGE",
+          "link": 430
+        },
+        {
+          "name": "right",
+          "type": "IMAGE",
+          "link": 431
         }
       ],
       "outputs": [
         {
-          "name": "MASK",
-          "type": "MASK",
+          "name": "image",
+          "type": "IMAGE",
           "links": [
-            450,
-            459,
-            463
+            432
+          ]
+        },
+        {
+          "name": "used",
+          "type": "STRING",
+          "links": []
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "LiaPickReference",
+        "aux_id": "BloomRX/ComfyUI_Colab"
+      },
+      "widgets_values": [
+        "front"
+      ],
+      "title": "referência da vista (front)"
+    },
+    {
+      "id": 232,
+      "type": "ImageScaleToTotalPixels",
+      "pos": [
+        -1130,
+        5550
+      ],
+      "size": [
+        300,
+        106
+      ],
+      "flags": {},
+      "order": 232,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "image",
+          "type": "IMAGE",
+          "link": 432
+        }
+      ],
+      "outputs": [
+        {
+          "name": "IMAGE",
+          "type": "IMAGE",
+          "links": [
+            433
           ]
         }
       ],
       "properties": {
-        "Node name for S&R": "GrowMask",
+        "Node name for S&R": "ImageScaleToTotalPixels",
         "cnr_id": "comfy-core",
         "ver": "0.16.3"
       },
       "widgets_values": [
-        -6,
-        true
-      ],
-      "title": "silhueta −6 px"
+        "lanczos",
+        1,
+        1
+      ]
     },
     {
-      "id": 241,
-      "type": "CLIPTextEncode",
+      "id": 233,
+      "type": "VAEEncode",
       "pos": [
-        2030,
-        -570
+        -1130,
+        5690
       ],
       "size": [
         300,
-        100
+        46
       ],
       "flags": {},
-      "order": 241,
+      "order": 233,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "pixels",
+          "type": "IMAGE",
+          "link": 433
+        },
+        {
+          "name": "vae",
+          "type": "VAE",
+          "link": 434
+        }
+      ],
+      "outputs": [
+        {
+          "name": "LATENT",
+          "type": "LATENT",
+          "links": [
+            447,
+            453
+          ]
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "VAEEncode",
+        "cnr_id": "comfy-core",
+        "ver": "0.16.3"
+      },
+      "widgets_values": [],
+      "title": "image 1 = referência"
+    },
+    {
+      "id": 234,
+      "type": "VAEEncode",
+      "pos": [
+        -1130,
+        5770
+      ],
+      "size": [
+        300,
+        46
+      ],
+      "flags": {},
+      "order": 234,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "pixels",
+          "type": "IMAGE",
+          "link": 435
+        },
+        {
+          "name": "vae",
+          "type": "VAE",
+          "link": 436
+        }
+      ],
+      "outputs": [
+        {
+          "name": "LATENT",
+          "type": "LATENT",
+          "links": [
+            449,
+            455
+          ]
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "VAEEncode",
+        "cnr_id": "comfy-core",
+        "ver": "0.16.3"
+      },
+      "widgets_values": [],
+      "title": "image 2 = normal map"
+    },
+    {
+      "id": 235,
+      "type": "VAEEncode",
+      "pos": [
+        -1130,
+        5850
+      ],
+      "size": [
+        300,
+        46
+      ],
+      "flags": {},
+      "order": 235,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "pixels",
+          "type": "IMAGE",
+          "link": 437
+        },
+        {
+          "name": "vae",
+          "type": "VAE",
+          "link": 438
+        }
+      ],
+      "outputs": [
+        {
+          "name": "LATENT",
+          "type": "LATENT",
+          "links": [
+            439
+          ]
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "VAEEncode",
+        "cnr_id": "comfy-core",
+        "ver": "0.16.3"
+      },
+      "widgets_values": [],
+      "title": "latente = render parcial"
+    },
+    {
+      "id": 236,
+      "type": "SetLatentNoiseMask",
+      "pos": [
+        -1130,
+        5930
+      ],
+      "size": [
+        300,
+        46
+      ],
+      "flags": {},
+      "order": 236,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "samples",
+          "type": "LATENT",
+          "link": 439
+        },
+        {
+          "name": "mask",
+          "type": "MASK",
+          "link": 440
+        }
+      ],
+      "outputs": [
+        {
+          "name": "LATENT",
+          "type": "LATENT",
+          "links": [
+            465
+          ]
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "SetLatentNoiseMask",
+        "cnr_id": "comfy-core",
+        "ver": "0.16.3"
+      },
+      "widgets_values": [],
+      "title": "inpaint só do que falta"
+    },
+    {
+      "id": 237,
+      "type": "PrimitiveStringMultiline",
+      "pos": [
+        -790,
+        5380
+      ],
+      "size": [
+        280,
+        110
+      ],
+      "flags": {},
+      "order": 237,
+      "mode": 0,
+      "inputs": [],
+      "outputs": [
+        {
+          "name": "STRING",
+          "type": "STRING",
+          "links": [
+            441
+          ]
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "PrimitiveStringMultiline",
+        "cnr_id": "comfy-core",
+        "ver": "0.16.3"
+      },
+      "widgets_values": [
+        "close-up portrait: head and shoulders of the SAME character, front view, looking at the camera. Detailed face exactly like image 1: same red eyes, same expression, same bangs and hair parting, same hair color with red tips. Sharp clean lines"
+      ],
+      "title": "Vista: 9 Rosto (zoom 3x)"
+    },
+    {
+      "id": 238,
+      "type": "StringConcatenate",
+      "pos": [
+        -790,
+        5530
+      ],
+      "size": [
+        280,
+        82
+      ],
+      "flags": {},
+      "order": 238,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "string_a",
+          "type": "STRING",
+          "widget": {
+            "name": "string_a"
+          },
+          "link": 441
+        },
+        {
+          "name": "string_b",
+          "type": "STRING",
+          "widget": {
+            "name": "string_b"
+          },
+          "link": 442
+        }
+      ],
+      "outputs": [
+        {
+          "name": "STRING",
+          "type": "STRING",
+          "links": [
+            444
+          ]
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "StringConcatenate",
+        "cnr_id": "comfy-core",
+        "ver": "0.16.3"
+      },
+      "widgets_values": [
+        "",
+        "",
+        ". "
+      ]
+    },
+    {
+      "id": 239,
+      "type": "CLIPTextEncode",
+      "pos": [
+        -790,
+        5650
+      ],
+      "size": [
+        280,
+        80
+      ],
+      "flags": {},
+      "order": 239,
       "mode": 0,
       "inputs": [
         {
           "name": "clip",
           "type": "CLIP",
-          "link": 438
+          "link": 443
+        },
+        {
+          "name": "text",
+          "type": "STRING",
+          "widget": {
+            "name": "text"
+          },
+          "link": 444
         }
       ],
       "outputs": [
@@ -11228,7 +11108,8 @@
           "name": "CONDITIONING",
           "type": "CONDITIONING",
           "links": [
-            440
+            445,
+            446
           ]
         }
       ],
@@ -11238,19 +11119,98 @@
         "ver": "0.16.3"
       },
       "widgets_values": [
-        "full body, front view, standing, arms at sides"
+        ""
+      ]
+    },
+    {
+      "id": 240,
+      "type": "ConditioningZeroOut",
+      "pos": [
+        -790,
+        5770
       ],
-      "title": "F1 Frente: tags da vista"
+      "size": [
+        280,
+        26
+      ],
+      "flags": {},
+      "order": 240,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "conditioning",
+          "type": "CONDITIONING",
+          "link": 445
+        }
+      ],
+      "outputs": [
+        {
+          "name": "CONDITIONING",
+          "type": "CONDITIONING",
+          "links": [
+            452
+          ]
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "ConditioningZeroOut",
+        "cnr_id": "comfy-core",
+        "ver": "0.16.3"
+      },
+      "widgets_values": []
+    },
+    {
+      "id": 241,
+      "type": "ReferenceLatent",
+      "pos": [
+        -470,
+        5380
+      ],
+      "size": [
+        240,
+        46
+      ],
+      "flags": {},
+      "order": 241,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "conditioning",
+          "type": "CONDITIONING",
+          "link": 446
+        },
+        {
+          "name": "latent",
+          "type": "LATENT",
+          "link": 447
+        }
+      ],
+      "outputs": [
+        {
+          "name": "CONDITIONING",
+          "type": "CONDITIONING",
+          "links": [
+            448
+          ]
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "ReferenceLatent",
+        "cnr_id": "comfy-core",
+        "ver": "0.16.3"
+      },
+      "widgets_values": [],
+      "title": "ref 1 (referência) +"
     },
     {
       "id": 242,
-      "type": "ConditioningConcat",
+      "type": "ReferenceLatent",
       "pos": [
-        2030,
-        -430
+        -470,
+        5450
       ],
       "size": [
-        300,
+        240,
         46
       ],
       "flags": {},
@@ -11258,14 +11218,14 @@
       "mode": 0,
       "inputs": [
         {
-          "name": "conditioning_to",
+          "name": "conditioning",
           "type": "CONDITIONING",
-          "link": 439
+          "link": 448
         },
         {
-          "name": "conditioning_from",
-          "type": "CONDITIONING",
-          "link": 440
+          "name": "latent",
+          "type": "LATENT",
+          "link": 449
         }
       ],
       "outputs": [
@@ -11273,230 +11233,156 @@
           "name": "CONDITIONING",
           "type": "CONDITIONING",
           "links": [
-            441
+            450
           ]
         }
       ],
       "properties": {
-        "Node name for S&R": "ConditioningConcat",
+        "Node name for S&R": "ReferenceLatent",
         "cnr_id": "comfy-core",
         "ver": "0.16.3"
       },
-      "widgets_values": []
+      "widgets_values": [],
+      "title": "ref 2 (normal) +"
     },
     {
       "id": 243,
-      "type": "ControlNetApplyAdvanced",
+      "type": "ReferenceLatent",
       "pos": [
-        2030,
-        -360
+        -470,
+        5520
       ],
       "size": [
-        300,
-        190
+        240,
+        46
       ],
       "flags": {},
       "order": 243,
       "mode": 0,
       "inputs": [
         {
-          "name": "positive",
+          "name": "conditioning",
           "type": "CONDITIONING",
-          "link": 441
+          "link": 450
         },
         {
-          "name": "negative",
-          "type": "CONDITIONING",
-          "link": 442
-        },
-        {
-          "name": "control_net",
-          "type": "CONTROL_NET",
-          "link": 443
-        },
-        {
-          "name": "image",
-          "type": "IMAGE",
-          "link": 444
-        },
-        {
-          "name": "vae",
-          "type": "VAE",
-          "link": 445
+          "name": "latent",
+          "type": "LATENT",
+          "link": 451
         }
       ],
       "outputs": [
         {
-          "name": "positive",
+          "name": "CONDITIONING",
           "type": "CONDITIONING",
           "links": [
-            446
-          ]
-        },
-        {
-          "name": "negative",
-          "type": "CONDITIONING",
-          "links": [
-            447
+            459
           ]
         }
       ],
       "properties": {
-        "Node name for S&R": "ControlNetApplyAdvanced",
+        "Node name for S&R": "ReferenceLatent",
         "cnr_id": "comfy-core",
         "ver": "0.16.3"
       },
-      "widgets_values": [
-        0.85,
-        0.0,
-        0.9
-      ],
-      "title": "ControlNet normal 0,85: contorno do cabelo/rosto = o do mesh"
+      "widgets_values": [],
+      "title": "ref 3 (frente pintada) +"
     },
     {
       "id": 244,
-      "type": "InpaintModelConditioning",
+      "type": "ReferenceLatent",
       "pos": [
-        2370,
-        -700
+        -470,
+        5620
       ],
       "size": [
-        300,
-        150
+        240,
+        46
       ],
       "flags": {},
       "order": 244,
       "mode": 0,
       "inputs": [
         {
-          "name": "positive",
+          "name": "conditioning",
           "type": "CONDITIONING",
-          "link": 446
-        },
-        {
-          "name": "negative",
-          "type": "CONDITIONING",
-          "link": 447
-        },
-        {
-          "name": "vae",
-          "type": "VAE",
-          "link": 448
-        },
-        {
-          "name": "pixels",
-          "type": "IMAGE",
-          "link": 449
-        },
-        {
-          "name": "mask",
-          "type": "MASK",
-          "link": 450
-        }
-      ],
-      "outputs": [
-        {
-          "name": "positive",
-          "type": "CONDITIONING",
-          "links": [
-            452
-          ]
-        },
-        {
-          "name": "negative",
-          "type": "CONDITIONING",
-          "links": [
-            453
-          ]
+          "link": 452
         },
         {
           "name": "latent",
           "type": "LATENT",
+          "link": 453
+        }
+      ],
+      "outputs": [
+        {
+          "name": "CONDITIONING",
+          "type": "CONDITIONING",
           "links": [
             454
           ]
         }
       ],
       "properties": {
-        "Node name for S&R": "InpaintModelConditioning",
+        "Node name for S&R": "ReferenceLatent",
         "cnr_id": "comfy-core",
         "ver": "0.16.3"
       },
-      "widgets_values": [
-        true
-      ],
-      "title": "inpaint 9 canais (modelo de inpaint de verdade)"
+      "widgets_values": [],
+      "title": "ref 1 (referência) −"
     },
     {
       "id": 245,
-      "type": "KSampler",
+      "type": "ReferenceLatent",
       "pos": [
-        2370,
-        -510
+        -470,
+        5690
       ],
       "size": [
-        300,
-        262
+        240,
+        46
       ],
       "flags": {},
       "order": 245,
       "mode": 0,
       "inputs": [
         {
-          "name": "model",
-          "type": "MODEL",
-          "link": 451
-        },
-        {
-          "name": "positive",
+          "name": "conditioning",
           "type": "CONDITIONING",
-          "link": 452
-        },
-        {
-          "name": "negative",
-          "type": "CONDITIONING",
-          "link": 453
-        },
-        {
-          "name": "latent_image",
-          "type": "LATENT",
           "link": 454
+        },
+        {
+          "name": "latent",
+          "type": "LATENT",
+          "link": 455
         }
       ],
       "outputs": [
         {
-          "name": "LATENT",
-          "type": "LATENT",
+          "name": "CONDITIONING",
+          "type": "CONDITIONING",
           "links": [
-            455
+            456
           ]
         }
       ],
       "properties": {
-        "Node name for S&R": "KSampler",
+        "Node name for S&R": "ReferenceLatent",
         "cnr_id": "comfy-core",
         "ver": "0.16.3"
       },
-      "widgets_values": [
-        300,
-        "fixed",
-        24,
-        4.5,
-        "euler_ancestral",
-        "normal",
-        0.3
-      ],
-      "title": "F1 Frente: denoise 0.3 (sobe = muda mais)"
+      "widgets_values": [],
+      "title": "ref 2 (normal) −"
     },
     {
       "id": 246,
-      "type": "VAEDecode",
+      "type": "ReferenceLatent",
       "pos": [
-        2710,
-        -700
+        -470,
+        5760
       ],
       "size": [
-        280,
+        240,
         46
       ],
       "flags": {},
@@ -11504,806 +11390,346 @@
       "mode": 0,
       "inputs": [
         {
-          "name": "samples",
-          "type": "LATENT",
-          "link": 455
+          "name": "conditioning",
+          "type": "CONDITIONING",
+          "link": 456
         },
         {
-          "name": "vae",
-          "type": "VAE",
-          "link": 456
+          "name": "latent",
+          "type": "LATENT",
+          "link": 457
         }
       ],
       "outputs": [
         {
-          "name": "IMAGE",
-          "type": "IMAGE",
+          "name": "CONDITIONING",
+          "type": "CONDITIONING",
           "links": [
-            458
+            460
           ]
         }
       ],
       "properties": {
-        "Node name for S&R": "VAEDecode",
+        "Node name for S&R": "ReferenceLatent",
         "cnr_id": "comfy-core",
         "ver": "0.16.3"
       },
-      "widgets_values": []
+      "widgets_values": [],
+      "title": "ref 3 (frente pintada) −"
     },
     {
       "id": 247,
-      "type": "ImageCompositeMasked",
+      "type": "CFGGuider",
       "pos": [
-        2710,
-        -610
+        -190,
+        5380
       ],
       "size": [
-        280,
-        130
+        260,
+        98
       ],
       "flags": {},
       "order": 247,
       "mode": 0,
       "inputs": [
         {
-          "name": "destination",
-          "type": "IMAGE",
-          "link": 457
-        },
-        {
-          "name": "source",
-          "type": "IMAGE",
+          "name": "model",
+          "type": "MODEL",
           "link": 458
         },
         {
-          "name": "mask",
-          "type": "MASK",
+          "name": "positive",
+          "type": "CONDITIONING",
           "link": 459
+        },
+        {
+          "name": "negative",
+          "type": "CONDITIONING",
+          "link": 460
         }
       ],
       "outputs": [
         {
-          "name": "IMAGE",
-          "type": "IMAGE",
+          "name": "GUIDER",
+          "type": "GUIDER",
           "links": [
-            460,
             462
           ]
         }
       ],
       "properties": {
-        "Node name for S&R": "ImageCompositeMasked",
+        "Node name for S&R": "CFGGuider",
         "cnr_id": "comfy-core",
         "ver": "0.16.3"
       },
       "widgets_values": [
-        0,
-        0,
-        false
-      ],
-      "title": "cola só dentro da silhueta"
+        1
+      ]
     },
     {
       "id": 248,
-      "type": "PreviewImage",
+      "type": "RandomNoise",
       "pos": [
-        2710,
-        -440
+        -190,
+        5520
       ],
       "size": [
-        280,
-        300
+        260,
+        82
       ],
       "flags": {},
       "order": 248,
       "mode": 0,
-      "inputs": [
+      "inputs": [],
+      "outputs": [
         {
-          "name": "images",
-          "type": "IMAGE",
-          "link": 460
+          "name": "NOISE",
+          "type": "NOISE",
+          "links": [
+            461
+          ]
         }
       ],
-      "outputs": [],
       "properties": {
-        "Node name for S&R": "PreviewImage",
+        "Node name for S&R": "RandomNoise",
         "cnr_id": "comfy-core",
         "ver": "0.16.3"
       },
-      "widgets_values": [],
-      "title": "F1 Frente: depois (WAI)"
+      "widgets_values": [
+        208,
+        "fixed"
+      ]
     },
     {
       "id": 249,
-      "type": "LiaProjectTextureAccumulate",
+      "type": "SamplerCustomAdvanced",
       "pos": [
-        3030,
-        -700
+        110,
+        5380
       ],
       "size": [
-        340,
-        380
+        280,
+        120
       ],
       "flags": {},
       "order": 249,
       "mode": 0,
       "inputs": [
         {
-          "name": "mesh",
-          "type": "MESH",
+          "name": "noise",
+          "type": "NOISE",
           "link": 461
         },
         {
-          "name": "image",
-          "type": "IMAGE",
+          "name": "guider",
+          "type": "GUIDER",
           "link": 462
         },
         {
-          "name": "state",
-          "type": "LIA_TEXSTATE",
+          "name": "sampler",
+          "type": "SAMPLER",
+          "link": 463
+        },
+        {
+          "name": "sigmas",
+          "type": "SIGMAS",
           "link": 464
         },
         {
-          "name": "mask",
-          "type": "MASK",
-          "link": 463
+          "name": "latent_image",
+          "type": "LATENT",
+          "link": 465
         }
       ],
       "outputs": [
         {
-          "name": "state",
-          "type": "LIA_TEXSTATE",
+          "name": "output",
+          "type": "LATENT",
           "links": [
-            466,
-            495
+            466
           ]
         },
         {
-          "name": "base_color",
-          "type": "IMAGE",
-          "links": []
-        },
-        {
-          "name": "coverage",
-          "type": "IMAGE",
-          "links": []
-        },
-        {
-          "name": "info",
-          "type": "STRING",
+          "name": "denoised_output",
+          "type": "LATENT",
           "links": []
         }
       ],
       "properties": {
-        "Node name for S&R": "LiaProjectTextureAccumulate",
-        "aux_id": "BloomRX/ComfyUI_Colab"
+        "Node name for S&R": "SamplerCustomAdvanced",
+        "cnr_id": "comfy-core",
+        "ver": "0.16.3"
       },
-      "widgets_values": [
-        0.0,
-        0.0,
-        1.1,
-        2048,
-        1.0,
-        4.0,
-        0.35,
-        0.015,
-        false,
-        false,
-        1.0,
-        0.0,
-        true
-      ],
-      "title": "F1 Frente: SUBSTITUI no atlas (replace)",
-      "color": "#323",
-      "bgcolor": "#535"
+      "widgets_values": []
     },
     {
       "id": 250,
-      "type": "LiaRenderTextured",
+      "type": "VAEDecode",
       "pos": [
-        1660,
-        60
+        110,
+        5540
       ],
       "size": [
-        330,
-        250
+        280,
+        46
       ],
       "flags": {},
       "order": 250,
       "mode": 0,
       "inputs": [
         {
-          "name": "mesh",
-          "type": "MESH",
-          "link": 465
+          "name": "samples",
+          "type": "LATENT",
+          "link": 466
         },
         {
-          "name": "state",
-          "type": "LIA_TEXSTATE",
-          "link": 466
+          "name": "vae",
+          "type": "VAE",
+          "link": 467
         }
       ],
       "outputs": [
         {
-          "name": "image",
+          "name": "IMAGE",
           "type": "IMAGE",
           "links": [
-            467,
-            480,
-            488
+            469
           ]
-        },
-        {
-          "name": "inpaint_mask",
-          "type": "MASK",
-          "links": []
-        },
-        {
-          "name": "silhouette",
-          "type": "MASK",
-          "links": [
-            468
-          ]
-        },
-        {
-          "name": "normals",
-          "type": "IMAGE",
-          "links": [
-            475
-          ]
-        },
-        {
-          "name": "missing_fraction",
-          "type": "FLOAT",
-          "links": []
         }
       ],
       "properties": {
-        "Node name for S&R": "LiaRenderTextured",
-        "aux_id": "BloomRX/ComfyUI_Colab"
+        "Node name for S&R": "VAEDecode",
+        "cnr_id": "comfy-core",
+        "ver": "0.16.3"
       },
-      "widgets_values": [
-        180.0,
-        0.0,
-        1024,
-        1.1,
-        0,
-        "grey",
-        1.0,
-        0.0
-      ],
-      "title": "F2 Costas: render da textura Klein (zoom 1)",
-      "color": "#223",
-      "bgcolor": "#335"
+      "widgets_values": []
     },
     {
       "id": 251,
-      "type": "PreviewImage",
+      "type": "ImageCompositeMasked",
       "pos": [
-        1660,
-        350
+        110,
+        5630
       ],
       "size": [
-        330,
-        300
+        280,
+        130
       ],
       "flags": {},
       "order": 251,
       "mode": 0,
       "inputs": [
         {
-          "name": "images",
+          "name": "destination",
           "type": "IMAGE",
-          "link": 467
+          "link": 468
+        },
+        {
+          "name": "source",
+          "type": "IMAGE",
+          "link": 469
+        },
+        {
+          "name": "mask",
+          "type": "MASK",
+          "link": 470
         }
       ],
-      "outputs": [],
+      "outputs": [
+        {
+          "name": "IMAGE",
+          "type": "IMAGE",
+          "links": [
+            471,
+            473
+          ]
+        }
+      ],
       "properties": {
-        "Node name for S&R": "PreviewImage",
+        "Node name for S&R": "ImageCompositeMasked",
         "cnr_id": "comfy-core",
         "ver": "0.16.3"
       },
-      "widgets_values": [],
-      "title": "F2 Costas: antes"
+      "widgets_values": [
+        0,
+        0,
+        false
+      ],
+      "title": "cola só a área da máscara (fora dela nada muda)"
     },
     {
       "id": 252,
-      "type": "GrowMask",
+      "type": "PreviewImage",
       "pos": [
-        2030,
-        60
+        110,
+        5800
       ],
       "size": [
-        300,
-        82
+        280,
+        300
       ],
       "flags": {},
       "order": 252,
       "mode": 0,
       "inputs": [
         {
-          "name": "mask",
-          "type": "MASK",
-          "link": 468
+          "name": "images",
+          "type": "IMAGE",
+          "link": 471
         }
       ],
-      "outputs": [
-        {
-          "name": "MASK",
-          "type": "MASK",
-          "links": [
-            481,
-            490,
-            494
-          ]
-        }
-      ],
+      "outputs": [],
       "properties": {
-        "Node name for S&R": "GrowMask",
+        "Node name for S&R": "PreviewImage",
         "cnr_id": "comfy-core",
         "ver": "0.16.3"
       },
-      "widgets_values": [
-        -6,
-        true
-      ],
-      "title": "silhueta −6 px"
+      "widgets_values": [],
+      "title": "9 Rosto (zoom 3x): pintada"
     },
     {
       "id": 253,
-      "type": "CLIPTextEncode",
+      "type": "LiaProjectTextureAccumulate",
       "pos": [
-        2030,
-        190
+        440,
+        5380
       ],
       "size": [
-        300,
-        100
+        340,
+        350
       ],
       "flags": {},
       "order": 253,
       "mode": 0,
       "inputs": [
         {
-          "name": "clip",
-          "type": "CLIP",
-          "link": 469
-        }
-      ],
-      "outputs": [
-        {
-          "name": "CONDITIONING",
-          "type": "CONDITIONING",
-          "links": [
-            471
-          ]
-        }
-      ],
-      "properties": {
-        "Node name for S&R": "CLIPTextEncode",
-        "cnr_id": "comfy-core",
-        "ver": "0.16.3"
-      },
-      "widgets_values": [
-        "full body, from behind, back of the head is hair only"
-      ],
-      "title": "F2 Costas: tags da vista"
-    },
-    {
-      "id": 254,
-      "type": "ConditioningConcat",
-      "pos": [
-        2030,
-        330
-      ],
-      "size": [
-        300,
-        46
-      ],
-      "flags": {},
-      "order": 254,
-      "mode": 0,
-      "inputs": [
-        {
-          "name": "conditioning_to",
-          "type": "CONDITIONING",
-          "link": 470
-        },
-        {
-          "name": "conditioning_from",
-          "type": "CONDITIONING",
-          "link": 471
-        }
-      ],
-      "outputs": [
-        {
-          "name": "CONDITIONING",
-          "type": "CONDITIONING",
-          "links": [
-            472
-          ]
-        }
-      ],
-      "properties": {
-        "Node name for S&R": "ConditioningConcat",
-        "cnr_id": "comfy-core",
-        "ver": "0.16.3"
-      },
-      "widgets_values": []
-    },
-    {
-      "id": 255,
-      "type": "ControlNetApplyAdvanced",
-      "pos": [
-        2030,
-        400
-      ],
-      "size": [
-        300,
-        190
-      ],
-      "flags": {},
-      "order": 255,
-      "mode": 0,
-      "inputs": [
-        {
-          "name": "positive",
-          "type": "CONDITIONING",
+          "name": "mesh",
+          "type": "MESH",
           "link": 472
         },
         {
-          "name": "negative",
-          "type": "CONDITIONING",
+          "name": "image",
+          "type": "IMAGE",
           "link": 473
         },
         {
-          "name": "control_net",
-          "type": "CONTROL_NET",
-          "link": 474
-        },
-        {
-          "name": "image",
-          "type": "IMAGE",
+          "name": "state",
+          "type": "LIA_TEXSTATE",
           "link": 475
         },
         {
-          "name": "vae",
-          "type": "VAE",
-          "link": 476
+          "name": "mask",
+          "type": "MASK",
+          "link": 474
         }
       ],
       "outputs": [
         {
-          "name": "positive",
-          "type": "CONDITIONING",
-          "links": [
-            477
-          ]
-        },
-        {
-          "name": "negative",
-          "type": "CONDITIONING",
+          "name": "state",
+          "type": "LIA_TEXSTATE",
           "links": [
             478
           ]
-        }
-      ],
-      "properties": {
-        "Node name for S&R": "ControlNetApplyAdvanced",
-        "cnr_id": "comfy-core",
-        "ver": "0.16.3"
-      },
-      "widgets_values": [
-        0.85,
-        0.0,
-        0.9
-      ],
-      "title": "ControlNet normal 0,85: contorno do cabelo/rosto = o do mesh"
-    },
-    {
-      "id": 256,
-      "type": "InpaintModelConditioning",
-      "pos": [
-        2370,
-        60
-      ],
-      "size": [
-        300,
-        150
-      ],
-      "flags": {},
-      "order": 256,
-      "mode": 0,
-      "inputs": [
-        {
-          "name": "positive",
-          "type": "CONDITIONING",
-          "link": 477
-        },
-        {
-          "name": "negative",
-          "type": "CONDITIONING",
-          "link": 478
-        },
-        {
-          "name": "vae",
-          "type": "VAE",
-          "link": 479
-        },
-        {
-          "name": "pixels",
-          "type": "IMAGE",
-          "link": 480
-        },
-        {
-          "name": "mask",
-          "type": "MASK",
-          "link": 481
-        }
-      ],
-      "outputs": [
-        {
-          "name": "positive",
-          "type": "CONDITIONING",
-          "links": [
-            483
-          ]
-        },
-        {
-          "name": "negative",
-          "type": "CONDITIONING",
-          "links": [
-            484
-          ]
-        },
-        {
-          "name": "latent",
-          "type": "LATENT",
-          "links": [
-            485
-          ]
-        }
-      ],
-      "properties": {
-        "Node name for S&R": "InpaintModelConditioning",
-        "cnr_id": "comfy-core",
-        "ver": "0.16.3"
-      },
-      "widgets_values": [
-        true
-      ],
-      "title": "inpaint 9 canais (modelo de inpaint de verdade)"
-    },
-    {
-      "id": 257,
-      "type": "KSampler",
-      "pos": [
-        2370,
-        250
-      ],
-      "size": [
-        300,
-        262
-      ],
-      "flags": {},
-      "order": 257,
-      "mode": 0,
-      "inputs": [
-        {
-          "name": "model",
-          "type": "MODEL",
-          "link": 482
-        },
-        {
-          "name": "positive",
-          "type": "CONDITIONING",
-          "link": 483
-        },
-        {
-          "name": "negative",
-          "type": "CONDITIONING",
-          "link": 484
-        },
-        {
-          "name": "latent_image",
-          "type": "LATENT",
-          "link": 485
-        }
-      ],
-      "outputs": [
-        {
-          "name": "LATENT",
-          "type": "LATENT",
-          "links": [
-            486
-          ]
-        }
-      ],
-      "properties": {
-        "Node name for S&R": "KSampler",
-        "cnr_id": "comfy-core",
-        "ver": "0.16.3"
-      },
-      "widgets_values": [
-        301,
-        "fixed",
-        24,
-        4.5,
-        "euler_ancestral",
-        "normal",
-        0.3
-      ],
-      "title": "F2 Costas: denoise 0.3 (sobe = muda mais)"
-    },
-    {
-      "id": 258,
-      "type": "VAEDecode",
-      "pos": [
-        2710,
-        60
-      ],
-      "size": [
-        280,
-        46
-      ],
-      "flags": {},
-      "order": 258,
-      "mode": 0,
-      "inputs": [
-        {
-          "name": "samples",
-          "type": "LATENT",
-          "link": 486
-        },
-        {
-          "name": "vae",
-          "type": "VAE",
-          "link": 487
-        }
-      ],
-      "outputs": [
-        {
-          "name": "IMAGE",
-          "type": "IMAGE",
-          "links": [
-            489
-          ]
-        }
-      ],
-      "properties": {
-        "Node name for S&R": "VAEDecode",
-        "cnr_id": "comfy-core",
-        "ver": "0.16.3"
-      },
-      "widgets_values": []
-    },
-    {
-      "id": 259,
-      "type": "ImageCompositeMasked",
-      "pos": [
-        2710,
-        150
-      ],
-      "size": [
-        280,
-        130
-      ],
-      "flags": {},
-      "order": 259,
-      "mode": 0,
-      "inputs": [
-        {
-          "name": "destination",
-          "type": "IMAGE",
-          "link": 488
-        },
-        {
-          "name": "source",
-          "type": "IMAGE",
-          "link": 489
-        },
-        {
-          "name": "mask",
-          "type": "MASK",
-          "link": 490
-        }
-      ],
-      "outputs": [
-        {
-          "name": "IMAGE",
-          "type": "IMAGE",
-          "links": [
-            491,
-            493
-          ]
-        }
-      ],
-      "properties": {
-        "Node name for S&R": "ImageCompositeMasked",
-        "cnr_id": "comfy-core",
-        "ver": "0.16.3"
-      },
-      "widgets_values": [
-        0,
-        0,
-        false
-      ],
-      "title": "cola só dentro da silhueta"
-    },
-    {
-      "id": 260,
-      "type": "PreviewImage",
-      "pos": [
-        2710,
-        320
-      ],
-      "size": [
-        280,
-        300
-      ],
-      "flags": {},
-      "order": 260,
-      "mode": 0,
-      "inputs": [
-        {
-          "name": "images",
-          "type": "IMAGE",
-          "link": 491
-        }
-      ],
-      "outputs": [],
-      "properties": {
-        "Node name for S&R": "PreviewImage",
-        "cnr_id": "comfy-core",
-        "ver": "0.16.3"
-      },
-      "widgets_values": [],
-      "title": "F2 Costas: depois (WAI)"
-    },
-    {
-      "id": 261,
-      "type": "LiaProjectTextureAccumulate",
-      "pos": [
-        3030,
-        60
-      ],
-      "size": [
-        340,
-        380
-      ],
-      "flags": {},
-      "order": 261,
-      "mode": 0,
-      "inputs": [
-        {
-          "name": "mesh",
-          "type": "MESH",
-          "link": 492
-        },
-        {
-          "name": "image",
-          "type": "IMAGE",
-          "link": 493
-        },
-        {
-          "name": "state",
-          "type": "LIA_TEXSTATE",
-          "link": 495
-        },
-        {
-          "name": "mask",
-          "type": "MASK",
-          "link": 494
-        }
-      ],
-      "outputs": [
-        {
-          "name": "state",
-          "type": "LIA_TEXSTATE",
-          "links": [
-            497,
-            526
-          ]
         },
         {
           "name": "base_color",
@@ -12313,1947 +11739,9 @@
         {
           "name": "coverage",
           "type": "IMAGE",
-          "links": []
-        },
-        {
-          "name": "info",
-          "type": "STRING",
-          "links": []
-        }
-      ],
-      "properties": {
-        "Node name for S&R": "LiaProjectTextureAccumulate",
-        "aux_id": "BloomRX/ComfyUI_Colab"
-      },
-      "widgets_values": [
-        180.0,
-        0.0,
-        1.1,
-        2048,
-        1.0,
-        4.0,
-        0.35,
-        0.015,
-        false,
-        false,
-        1.0,
-        0.0,
-        true
-      ],
-      "title": "F2 Costas: SUBSTITUI no atlas (replace)",
-      "color": "#323",
-      "bgcolor": "#535"
-    },
-    {
-      "id": 262,
-      "type": "LiaRenderTextured",
-      "pos": [
-        1660,
-        820
-      ],
-      "size": [
-        330,
-        250
-      ],
-      "flags": {},
-      "order": 262,
-      "mode": 0,
-      "inputs": [
-        {
-          "name": "mesh",
-          "type": "MESH",
-          "link": 496
-        },
-        {
-          "name": "state",
-          "type": "LIA_TEXSTATE",
-          "link": 497
-        }
-      ],
-      "outputs": [
-        {
-          "name": "image",
-          "type": "IMAGE",
           "links": [
-            498,
-            511,
-            519
+            476
           ]
-        },
-        {
-          "name": "inpaint_mask",
-          "type": "MASK",
-          "links": []
-        },
-        {
-          "name": "silhouette",
-          "type": "MASK",
-          "links": [
-            499
-          ]
-        },
-        {
-          "name": "normals",
-          "type": "IMAGE",
-          "links": [
-            506
-          ]
-        },
-        {
-          "name": "missing_fraction",
-          "type": "FLOAT",
-          "links": []
-        }
-      ],
-      "properties": {
-        "Node name for S&R": "LiaRenderTextured",
-        "aux_id": "BloomRX/ComfyUI_Colab"
-      },
-      "widgets_values": [
-        90.0,
-        0.0,
-        1024,
-        1.1,
-        0,
-        "grey",
-        1.0,
-        0.0
-      ],
-      "title": "F3 Esquerda: render da textura Klein (zoom 1)",
-      "color": "#223",
-      "bgcolor": "#335"
-    },
-    {
-      "id": 263,
-      "type": "PreviewImage",
-      "pos": [
-        1660,
-        1110
-      ],
-      "size": [
-        330,
-        300
-      ],
-      "flags": {},
-      "order": 263,
-      "mode": 0,
-      "inputs": [
-        {
-          "name": "images",
-          "type": "IMAGE",
-          "link": 498
-        }
-      ],
-      "outputs": [],
-      "properties": {
-        "Node name for S&R": "PreviewImage",
-        "cnr_id": "comfy-core",
-        "ver": "0.16.3"
-      },
-      "widgets_values": [],
-      "title": "F3 Esquerda: antes"
-    },
-    {
-      "id": 264,
-      "type": "GrowMask",
-      "pos": [
-        2030,
-        820
-      ],
-      "size": [
-        300,
-        82
-      ],
-      "flags": {},
-      "order": 264,
-      "mode": 0,
-      "inputs": [
-        {
-          "name": "mask",
-          "type": "MASK",
-          "link": 499
-        }
-      ],
-      "outputs": [
-        {
-          "name": "MASK",
-          "type": "MASK",
-          "links": [
-            512,
-            521,
-            525
-          ]
-        }
-      ],
-      "properties": {
-        "Node name for S&R": "GrowMask",
-        "cnr_id": "comfy-core",
-        "ver": "0.16.3"
-      },
-      "widgets_values": [
-        -6,
-        true
-      ],
-      "title": "silhueta −6 px"
-    },
-    {
-      "id": 265,
-      "type": "CLIPTextEncode",
-      "pos": [
-        2030,
-        950
-      ],
-      "size": [
-        300,
-        100
-      ],
-      "flags": {},
-      "order": 265,
-      "mode": 0,
-      "inputs": [
-        {
-          "name": "clip",
-          "type": "CLIP",
-          "link": 500
-        }
-      ],
-      "outputs": [
-        {
-          "name": "CONDITIONING",
-          "type": "CONDITIONING",
-          "links": [
-            502
-          ]
-        }
-      ],
-      "properties": {
-        "Node name for S&R": "CLIPTextEncode",
-        "cnr_id": "comfy-core",
-        "ver": "0.16.3"
-      },
-      "widgets_values": [
-        "full body, from side, profile"
-      ],
-      "title": "F3 Esquerda: tags da vista"
-    },
-    {
-      "id": 266,
-      "type": "ConditioningConcat",
-      "pos": [
-        2030,
-        1090
-      ],
-      "size": [
-        300,
-        46
-      ],
-      "flags": {},
-      "order": 266,
-      "mode": 0,
-      "inputs": [
-        {
-          "name": "conditioning_to",
-          "type": "CONDITIONING",
-          "link": 501
-        },
-        {
-          "name": "conditioning_from",
-          "type": "CONDITIONING",
-          "link": 502
-        }
-      ],
-      "outputs": [
-        {
-          "name": "CONDITIONING",
-          "type": "CONDITIONING",
-          "links": [
-            503
-          ]
-        }
-      ],
-      "properties": {
-        "Node name for S&R": "ConditioningConcat",
-        "cnr_id": "comfy-core",
-        "ver": "0.16.3"
-      },
-      "widgets_values": []
-    },
-    {
-      "id": 267,
-      "type": "ControlNetApplyAdvanced",
-      "pos": [
-        2030,
-        1160
-      ],
-      "size": [
-        300,
-        190
-      ],
-      "flags": {},
-      "order": 267,
-      "mode": 0,
-      "inputs": [
-        {
-          "name": "positive",
-          "type": "CONDITIONING",
-          "link": 503
-        },
-        {
-          "name": "negative",
-          "type": "CONDITIONING",
-          "link": 504
-        },
-        {
-          "name": "control_net",
-          "type": "CONTROL_NET",
-          "link": 505
-        },
-        {
-          "name": "image",
-          "type": "IMAGE",
-          "link": 506
-        },
-        {
-          "name": "vae",
-          "type": "VAE",
-          "link": 507
-        }
-      ],
-      "outputs": [
-        {
-          "name": "positive",
-          "type": "CONDITIONING",
-          "links": [
-            508
-          ]
-        },
-        {
-          "name": "negative",
-          "type": "CONDITIONING",
-          "links": [
-            509
-          ]
-        }
-      ],
-      "properties": {
-        "Node name for S&R": "ControlNetApplyAdvanced",
-        "cnr_id": "comfy-core",
-        "ver": "0.16.3"
-      },
-      "widgets_values": [
-        0.85,
-        0.0,
-        0.9
-      ],
-      "title": "ControlNet normal 0,85: contorno do cabelo/rosto = o do mesh"
-    },
-    {
-      "id": 268,
-      "type": "InpaintModelConditioning",
-      "pos": [
-        2370,
-        820
-      ],
-      "size": [
-        300,
-        150
-      ],
-      "flags": {},
-      "order": 268,
-      "mode": 0,
-      "inputs": [
-        {
-          "name": "positive",
-          "type": "CONDITIONING",
-          "link": 508
-        },
-        {
-          "name": "negative",
-          "type": "CONDITIONING",
-          "link": 509
-        },
-        {
-          "name": "vae",
-          "type": "VAE",
-          "link": 510
-        },
-        {
-          "name": "pixels",
-          "type": "IMAGE",
-          "link": 511
-        },
-        {
-          "name": "mask",
-          "type": "MASK",
-          "link": 512
-        }
-      ],
-      "outputs": [
-        {
-          "name": "positive",
-          "type": "CONDITIONING",
-          "links": [
-            514
-          ]
-        },
-        {
-          "name": "negative",
-          "type": "CONDITIONING",
-          "links": [
-            515
-          ]
-        },
-        {
-          "name": "latent",
-          "type": "LATENT",
-          "links": [
-            516
-          ]
-        }
-      ],
-      "properties": {
-        "Node name for S&R": "InpaintModelConditioning",
-        "cnr_id": "comfy-core",
-        "ver": "0.16.3"
-      },
-      "widgets_values": [
-        true
-      ],
-      "title": "inpaint 9 canais (modelo de inpaint de verdade)"
-    },
-    {
-      "id": 269,
-      "type": "KSampler",
-      "pos": [
-        2370,
-        1010
-      ],
-      "size": [
-        300,
-        262
-      ],
-      "flags": {},
-      "order": 269,
-      "mode": 0,
-      "inputs": [
-        {
-          "name": "model",
-          "type": "MODEL",
-          "link": 513
-        },
-        {
-          "name": "positive",
-          "type": "CONDITIONING",
-          "link": 514
-        },
-        {
-          "name": "negative",
-          "type": "CONDITIONING",
-          "link": 515
-        },
-        {
-          "name": "latent_image",
-          "type": "LATENT",
-          "link": 516
-        }
-      ],
-      "outputs": [
-        {
-          "name": "LATENT",
-          "type": "LATENT",
-          "links": [
-            517
-          ]
-        }
-      ],
-      "properties": {
-        "Node name for S&R": "KSampler",
-        "cnr_id": "comfy-core",
-        "ver": "0.16.3"
-      },
-      "widgets_values": [
-        302,
-        "fixed",
-        24,
-        4.5,
-        "euler_ancestral",
-        "normal",
-        0.3
-      ],
-      "title": "F3 Esquerda: denoise 0.3 (sobe = muda mais)"
-    },
-    {
-      "id": 270,
-      "type": "VAEDecode",
-      "pos": [
-        2710,
-        820
-      ],
-      "size": [
-        280,
-        46
-      ],
-      "flags": {},
-      "order": 270,
-      "mode": 0,
-      "inputs": [
-        {
-          "name": "samples",
-          "type": "LATENT",
-          "link": 517
-        },
-        {
-          "name": "vae",
-          "type": "VAE",
-          "link": 518
-        }
-      ],
-      "outputs": [
-        {
-          "name": "IMAGE",
-          "type": "IMAGE",
-          "links": [
-            520
-          ]
-        }
-      ],
-      "properties": {
-        "Node name for S&R": "VAEDecode",
-        "cnr_id": "comfy-core",
-        "ver": "0.16.3"
-      },
-      "widgets_values": []
-    },
-    {
-      "id": 271,
-      "type": "ImageCompositeMasked",
-      "pos": [
-        2710,
-        910
-      ],
-      "size": [
-        280,
-        130
-      ],
-      "flags": {},
-      "order": 271,
-      "mode": 0,
-      "inputs": [
-        {
-          "name": "destination",
-          "type": "IMAGE",
-          "link": 519
-        },
-        {
-          "name": "source",
-          "type": "IMAGE",
-          "link": 520
-        },
-        {
-          "name": "mask",
-          "type": "MASK",
-          "link": 521
-        }
-      ],
-      "outputs": [
-        {
-          "name": "IMAGE",
-          "type": "IMAGE",
-          "links": [
-            522,
-            524
-          ]
-        }
-      ],
-      "properties": {
-        "Node name for S&R": "ImageCompositeMasked",
-        "cnr_id": "comfy-core",
-        "ver": "0.16.3"
-      },
-      "widgets_values": [
-        0,
-        0,
-        false
-      ],
-      "title": "cola só dentro da silhueta"
-    },
-    {
-      "id": 272,
-      "type": "PreviewImage",
-      "pos": [
-        2710,
-        1080
-      ],
-      "size": [
-        280,
-        300
-      ],
-      "flags": {},
-      "order": 272,
-      "mode": 0,
-      "inputs": [
-        {
-          "name": "images",
-          "type": "IMAGE",
-          "link": 522
-        }
-      ],
-      "outputs": [],
-      "properties": {
-        "Node name for S&R": "PreviewImage",
-        "cnr_id": "comfy-core",
-        "ver": "0.16.3"
-      },
-      "widgets_values": [],
-      "title": "F3 Esquerda: depois (WAI)"
-    },
-    {
-      "id": 273,
-      "type": "LiaProjectTextureAccumulate",
-      "pos": [
-        3030,
-        820
-      ],
-      "size": [
-        340,
-        380
-      ],
-      "flags": {},
-      "order": 273,
-      "mode": 0,
-      "inputs": [
-        {
-          "name": "mesh",
-          "type": "MESH",
-          "link": 523
-        },
-        {
-          "name": "image",
-          "type": "IMAGE",
-          "link": 524
-        },
-        {
-          "name": "state",
-          "type": "LIA_TEXSTATE",
-          "link": 526
-        },
-        {
-          "name": "mask",
-          "type": "MASK",
-          "link": 525
-        }
-      ],
-      "outputs": [
-        {
-          "name": "state",
-          "type": "LIA_TEXSTATE",
-          "links": [
-            528,
-            557
-          ]
-        },
-        {
-          "name": "base_color",
-          "type": "IMAGE",
-          "links": []
-        },
-        {
-          "name": "coverage",
-          "type": "IMAGE",
-          "links": []
-        },
-        {
-          "name": "info",
-          "type": "STRING",
-          "links": []
-        }
-      ],
-      "properties": {
-        "Node name for S&R": "LiaProjectTextureAccumulate",
-        "aux_id": "BloomRX/ComfyUI_Colab"
-      },
-      "widgets_values": [
-        90.0,
-        0.0,
-        1.1,
-        2048,
-        0.8,
-        4.0,
-        0.35,
-        0.015,
-        false,
-        false,
-        1.0,
-        0.0,
-        true
-      ],
-      "title": "F3 Esquerda: SUBSTITUI no atlas (replace)",
-      "color": "#323",
-      "bgcolor": "#535"
-    },
-    {
-      "id": 274,
-      "type": "LiaRenderTextured",
-      "pos": [
-        1660,
-        1580
-      ],
-      "size": [
-        330,
-        250
-      ],
-      "flags": {},
-      "order": 274,
-      "mode": 0,
-      "inputs": [
-        {
-          "name": "mesh",
-          "type": "MESH",
-          "link": 527
-        },
-        {
-          "name": "state",
-          "type": "LIA_TEXSTATE",
-          "link": 528
-        }
-      ],
-      "outputs": [
-        {
-          "name": "image",
-          "type": "IMAGE",
-          "links": [
-            529,
-            542,
-            550
-          ]
-        },
-        {
-          "name": "inpaint_mask",
-          "type": "MASK",
-          "links": []
-        },
-        {
-          "name": "silhouette",
-          "type": "MASK",
-          "links": [
-            530
-          ]
-        },
-        {
-          "name": "normals",
-          "type": "IMAGE",
-          "links": [
-            537
-          ]
-        },
-        {
-          "name": "missing_fraction",
-          "type": "FLOAT",
-          "links": []
-        }
-      ],
-      "properties": {
-        "Node name for S&R": "LiaRenderTextured",
-        "aux_id": "BloomRX/ComfyUI_Colab"
-      },
-      "widgets_values": [
-        270.0,
-        0.0,
-        1024,
-        1.1,
-        0,
-        "grey",
-        1.0,
-        0.0
-      ],
-      "title": "F4 Direita: render da textura Klein (zoom 1)",
-      "color": "#223",
-      "bgcolor": "#335"
-    },
-    {
-      "id": 275,
-      "type": "PreviewImage",
-      "pos": [
-        1660,
-        1870
-      ],
-      "size": [
-        330,
-        300
-      ],
-      "flags": {},
-      "order": 275,
-      "mode": 0,
-      "inputs": [
-        {
-          "name": "images",
-          "type": "IMAGE",
-          "link": 529
-        }
-      ],
-      "outputs": [],
-      "properties": {
-        "Node name for S&R": "PreviewImage",
-        "cnr_id": "comfy-core",
-        "ver": "0.16.3"
-      },
-      "widgets_values": [],
-      "title": "F4 Direita: antes"
-    },
-    {
-      "id": 276,
-      "type": "GrowMask",
-      "pos": [
-        2030,
-        1580
-      ],
-      "size": [
-        300,
-        82
-      ],
-      "flags": {},
-      "order": 276,
-      "mode": 0,
-      "inputs": [
-        {
-          "name": "mask",
-          "type": "MASK",
-          "link": 530
-        }
-      ],
-      "outputs": [
-        {
-          "name": "MASK",
-          "type": "MASK",
-          "links": [
-            543,
-            552,
-            556
-          ]
-        }
-      ],
-      "properties": {
-        "Node name for S&R": "GrowMask",
-        "cnr_id": "comfy-core",
-        "ver": "0.16.3"
-      },
-      "widgets_values": [
-        -6,
-        true
-      ],
-      "title": "silhueta −6 px"
-    },
-    {
-      "id": 277,
-      "type": "CLIPTextEncode",
-      "pos": [
-        2030,
-        1710
-      ],
-      "size": [
-        300,
-        100
-      ],
-      "flags": {},
-      "order": 277,
-      "mode": 0,
-      "inputs": [
-        {
-          "name": "clip",
-          "type": "CLIP",
-          "link": 531
-        }
-      ],
-      "outputs": [
-        {
-          "name": "CONDITIONING",
-          "type": "CONDITIONING",
-          "links": [
-            533
-          ]
-        }
-      ],
-      "properties": {
-        "Node name for S&R": "CLIPTextEncode",
-        "cnr_id": "comfy-core",
-        "ver": "0.16.3"
-      },
-      "widgets_values": [
-        "full body, from side, profile"
-      ],
-      "title": "F4 Direita: tags da vista"
-    },
-    {
-      "id": 278,
-      "type": "ConditioningConcat",
-      "pos": [
-        2030,
-        1850
-      ],
-      "size": [
-        300,
-        46
-      ],
-      "flags": {},
-      "order": 278,
-      "mode": 0,
-      "inputs": [
-        {
-          "name": "conditioning_to",
-          "type": "CONDITIONING",
-          "link": 532
-        },
-        {
-          "name": "conditioning_from",
-          "type": "CONDITIONING",
-          "link": 533
-        }
-      ],
-      "outputs": [
-        {
-          "name": "CONDITIONING",
-          "type": "CONDITIONING",
-          "links": [
-            534
-          ]
-        }
-      ],
-      "properties": {
-        "Node name for S&R": "ConditioningConcat",
-        "cnr_id": "comfy-core",
-        "ver": "0.16.3"
-      },
-      "widgets_values": []
-    },
-    {
-      "id": 279,
-      "type": "ControlNetApplyAdvanced",
-      "pos": [
-        2030,
-        1920
-      ],
-      "size": [
-        300,
-        190
-      ],
-      "flags": {},
-      "order": 279,
-      "mode": 0,
-      "inputs": [
-        {
-          "name": "positive",
-          "type": "CONDITIONING",
-          "link": 534
-        },
-        {
-          "name": "negative",
-          "type": "CONDITIONING",
-          "link": 535
-        },
-        {
-          "name": "control_net",
-          "type": "CONTROL_NET",
-          "link": 536
-        },
-        {
-          "name": "image",
-          "type": "IMAGE",
-          "link": 537
-        },
-        {
-          "name": "vae",
-          "type": "VAE",
-          "link": 538
-        }
-      ],
-      "outputs": [
-        {
-          "name": "positive",
-          "type": "CONDITIONING",
-          "links": [
-            539
-          ]
-        },
-        {
-          "name": "negative",
-          "type": "CONDITIONING",
-          "links": [
-            540
-          ]
-        }
-      ],
-      "properties": {
-        "Node name for S&R": "ControlNetApplyAdvanced",
-        "cnr_id": "comfy-core",
-        "ver": "0.16.3"
-      },
-      "widgets_values": [
-        0.85,
-        0.0,
-        0.9
-      ],
-      "title": "ControlNet normal 0,85: contorno do cabelo/rosto = o do mesh"
-    },
-    {
-      "id": 280,
-      "type": "InpaintModelConditioning",
-      "pos": [
-        2370,
-        1580
-      ],
-      "size": [
-        300,
-        150
-      ],
-      "flags": {},
-      "order": 280,
-      "mode": 0,
-      "inputs": [
-        {
-          "name": "positive",
-          "type": "CONDITIONING",
-          "link": 539
-        },
-        {
-          "name": "negative",
-          "type": "CONDITIONING",
-          "link": 540
-        },
-        {
-          "name": "vae",
-          "type": "VAE",
-          "link": 541
-        },
-        {
-          "name": "pixels",
-          "type": "IMAGE",
-          "link": 542
-        },
-        {
-          "name": "mask",
-          "type": "MASK",
-          "link": 543
-        }
-      ],
-      "outputs": [
-        {
-          "name": "positive",
-          "type": "CONDITIONING",
-          "links": [
-            545
-          ]
-        },
-        {
-          "name": "negative",
-          "type": "CONDITIONING",
-          "links": [
-            546
-          ]
-        },
-        {
-          "name": "latent",
-          "type": "LATENT",
-          "links": [
-            547
-          ]
-        }
-      ],
-      "properties": {
-        "Node name for S&R": "InpaintModelConditioning",
-        "cnr_id": "comfy-core",
-        "ver": "0.16.3"
-      },
-      "widgets_values": [
-        true
-      ],
-      "title": "inpaint 9 canais (modelo de inpaint de verdade)"
-    },
-    {
-      "id": 281,
-      "type": "KSampler",
-      "pos": [
-        2370,
-        1770
-      ],
-      "size": [
-        300,
-        262
-      ],
-      "flags": {},
-      "order": 281,
-      "mode": 0,
-      "inputs": [
-        {
-          "name": "model",
-          "type": "MODEL",
-          "link": 544
-        },
-        {
-          "name": "positive",
-          "type": "CONDITIONING",
-          "link": 545
-        },
-        {
-          "name": "negative",
-          "type": "CONDITIONING",
-          "link": 546
-        },
-        {
-          "name": "latent_image",
-          "type": "LATENT",
-          "link": 547
-        }
-      ],
-      "outputs": [
-        {
-          "name": "LATENT",
-          "type": "LATENT",
-          "links": [
-            548
-          ]
-        }
-      ],
-      "properties": {
-        "Node name for S&R": "KSampler",
-        "cnr_id": "comfy-core",
-        "ver": "0.16.3"
-      },
-      "widgets_values": [
-        303,
-        "fixed",
-        24,
-        4.5,
-        "euler_ancestral",
-        "normal",
-        0.3
-      ],
-      "title": "F4 Direita: denoise 0.3 (sobe = muda mais)"
-    },
-    {
-      "id": 282,
-      "type": "VAEDecode",
-      "pos": [
-        2710,
-        1580
-      ],
-      "size": [
-        280,
-        46
-      ],
-      "flags": {},
-      "order": 282,
-      "mode": 0,
-      "inputs": [
-        {
-          "name": "samples",
-          "type": "LATENT",
-          "link": 548
-        },
-        {
-          "name": "vae",
-          "type": "VAE",
-          "link": 549
-        }
-      ],
-      "outputs": [
-        {
-          "name": "IMAGE",
-          "type": "IMAGE",
-          "links": [
-            551
-          ]
-        }
-      ],
-      "properties": {
-        "Node name for S&R": "VAEDecode",
-        "cnr_id": "comfy-core",
-        "ver": "0.16.3"
-      },
-      "widgets_values": []
-    },
-    {
-      "id": 283,
-      "type": "ImageCompositeMasked",
-      "pos": [
-        2710,
-        1670
-      ],
-      "size": [
-        280,
-        130
-      ],
-      "flags": {},
-      "order": 283,
-      "mode": 0,
-      "inputs": [
-        {
-          "name": "destination",
-          "type": "IMAGE",
-          "link": 550
-        },
-        {
-          "name": "source",
-          "type": "IMAGE",
-          "link": 551
-        },
-        {
-          "name": "mask",
-          "type": "MASK",
-          "link": 552
-        }
-      ],
-      "outputs": [
-        {
-          "name": "IMAGE",
-          "type": "IMAGE",
-          "links": [
-            553,
-            555
-          ]
-        }
-      ],
-      "properties": {
-        "Node name for S&R": "ImageCompositeMasked",
-        "cnr_id": "comfy-core",
-        "ver": "0.16.3"
-      },
-      "widgets_values": [
-        0,
-        0,
-        false
-      ],
-      "title": "cola só dentro da silhueta"
-    },
-    {
-      "id": 284,
-      "type": "PreviewImage",
-      "pos": [
-        2710,
-        1840
-      ],
-      "size": [
-        280,
-        300
-      ],
-      "flags": {},
-      "order": 284,
-      "mode": 0,
-      "inputs": [
-        {
-          "name": "images",
-          "type": "IMAGE",
-          "link": 553
-        }
-      ],
-      "outputs": [],
-      "properties": {
-        "Node name for S&R": "PreviewImage",
-        "cnr_id": "comfy-core",
-        "ver": "0.16.3"
-      },
-      "widgets_values": [],
-      "title": "F4 Direita: depois (WAI)"
-    },
-    {
-      "id": 285,
-      "type": "LiaProjectTextureAccumulate",
-      "pos": [
-        3030,
-        1580
-      ],
-      "size": [
-        340,
-        380
-      ],
-      "flags": {},
-      "order": 285,
-      "mode": 0,
-      "inputs": [
-        {
-          "name": "mesh",
-          "type": "MESH",
-          "link": 554
-        },
-        {
-          "name": "image",
-          "type": "IMAGE",
-          "link": 555
-        },
-        {
-          "name": "state",
-          "type": "LIA_TEXSTATE",
-          "link": 557
-        },
-        {
-          "name": "mask",
-          "type": "MASK",
-          "link": 556
-        }
-      ],
-      "outputs": [
-        {
-          "name": "state",
-          "type": "LIA_TEXSTATE",
-          "links": [
-            559,
-            588
-          ]
-        },
-        {
-          "name": "base_color",
-          "type": "IMAGE",
-          "links": []
-        },
-        {
-          "name": "coverage",
-          "type": "IMAGE",
-          "links": []
-        },
-        {
-          "name": "info",
-          "type": "STRING",
-          "links": []
-        }
-      ],
-      "properties": {
-        "Node name for S&R": "LiaProjectTextureAccumulate",
-        "aux_id": "BloomRX/ComfyUI_Colab"
-      },
-      "widgets_values": [
-        270.0,
-        0.0,
-        1.1,
-        2048,
-        0.8,
-        4.0,
-        0.35,
-        0.015,
-        false,
-        false,
-        1.0,
-        0.0,
-        true
-      ],
-      "title": "F4 Direita: SUBSTITUI no atlas (replace)",
-      "color": "#323",
-      "bgcolor": "#535"
-    },
-    {
-      "id": 286,
-      "type": "LiaRenderTextured",
-      "pos": [
-        1660,
-        2340
-      ],
-      "size": [
-        330,
-        250
-      ],
-      "flags": {},
-      "order": 286,
-      "mode": 0,
-      "inputs": [
-        {
-          "name": "mesh",
-          "type": "MESH",
-          "link": 558
-        },
-        {
-          "name": "state",
-          "type": "LIA_TEXSTATE",
-          "link": 559
-        }
-      ],
-      "outputs": [
-        {
-          "name": "image",
-          "type": "IMAGE",
-          "links": [
-            560,
-            573,
-            581
-          ]
-        },
-        {
-          "name": "inpaint_mask",
-          "type": "MASK",
-          "links": []
-        },
-        {
-          "name": "silhouette",
-          "type": "MASK",
-          "links": [
-            561
-          ]
-        },
-        {
-          "name": "normals",
-          "type": "IMAGE",
-          "links": [
-            568
-          ]
-        },
-        {
-          "name": "missing_fraction",
-          "type": "FLOAT",
-          "links": []
-        }
-      ],
-      "properties": {
-        "Node name for S&R": "LiaRenderTextured",
-        "aux_id": "BloomRX/ComfyUI_Colab"
-      },
-      "widgets_values": [
-        0.0,
-        0.0,
-        1024,
-        1.1,
-        0,
-        "grey",
-        3.0,
-        0.42
-      ],
-      "title": "F5 Rosto: render da textura Klein (zoom 3)",
-      "color": "#223",
-      "bgcolor": "#335"
-    },
-    {
-      "id": 287,
-      "type": "PreviewImage",
-      "pos": [
-        1660,
-        2630
-      ],
-      "size": [
-        330,
-        300
-      ],
-      "flags": {},
-      "order": 287,
-      "mode": 0,
-      "inputs": [
-        {
-          "name": "images",
-          "type": "IMAGE",
-          "link": 560
-        }
-      ],
-      "outputs": [],
-      "properties": {
-        "Node name for S&R": "PreviewImage",
-        "cnr_id": "comfy-core",
-        "ver": "0.16.3"
-      },
-      "widgets_values": [],
-      "title": "F5 Rosto: antes"
-    },
-    {
-      "id": 288,
-      "type": "GrowMask",
-      "pos": [
-        2030,
-        2340
-      ],
-      "size": [
-        300,
-        82
-      ],
-      "flags": {},
-      "order": 288,
-      "mode": 0,
-      "inputs": [
-        {
-          "name": "mask",
-          "type": "MASK",
-          "link": 561
-        }
-      ],
-      "outputs": [
-        {
-          "name": "MASK",
-          "type": "MASK",
-          "links": [
-            574,
-            583,
-            587
-          ]
-        }
-      ],
-      "properties": {
-        "Node name for S&R": "GrowMask",
-        "cnr_id": "comfy-core",
-        "ver": "0.16.3"
-      },
-      "widgets_values": [
-        -6,
-        true
-      ],
-      "title": "silhueta −6 px"
-    },
-    {
-      "id": 289,
-      "type": "CLIPTextEncode",
-      "pos": [
-        2030,
-        2470
-      ],
-      "size": [
-        300,
-        100
-      ],
-      "flags": {},
-      "order": 289,
-      "mode": 0,
-      "inputs": [
-        {
-          "name": "clip",
-          "type": "CLIP",
-          "link": 562
-        }
-      ],
-      "outputs": [
-        {
-          "name": "CONDITIONING",
-          "type": "CONDITIONING",
-          "links": [
-            564
-          ]
-        }
-      ],
-      "properties": {
-        "Node name for S&R": "CLIPTextEncode",
-        "cnr_id": "comfy-core",
-        "ver": "0.16.3"
-      },
-      "widgets_values": [
-        "close-up of the face and hair, looking at viewer, detailed red eyes, symmetrical face, small mouth"
-      ],
-      "title": "F5 Rosto: tags da vista"
-    },
-    {
-      "id": 290,
-      "type": "ConditioningConcat",
-      "pos": [
-        2030,
-        2610
-      ],
-      "size": [
-        300,
-        46
-      ],
-      "flags": {},
-      "order": 290,
-      "mode": 0,
-      "inputs": [
-        {
-          "name": "conditioning_to",
-          "type": "CONDITIONING",
-          "link": 563
-        },
-        {
-          "name": "conditioning_from",
-          "type": "CONDITIONING",
-          "link": 564
-        }
-      ],
-      "outputs": [
-        {
-          "name": "CONDITIONING",
-          "type": "CONDITIONING",
-          "links": [
-            565
-          ]
-        }
-      ],
-      "properties": {
-        "Node name for S&R": "ConditioningConcat",
-        "cnr_id": "comfy-core",
-        "ver": "0.16.3"
-      },
-      "widgets_values": []
-    },
-    {
-      "id": 291,
-      "type": "ControlNetApplyAdvanced",
-      "pos": [
-        2030,
-        2680
-      ],
-      "size": [
-        300,
-        190
-      ],
-      "flags": {},
-      "order": 291,
-      "mode": 0,
-      "inputs": [
-        {
-          "name": "positive",
-          "type": "CONDITIONING",
-          "link": 565
-        },
-        {
-          "name": "negative",
-          "type": "CONDITIONING",
-          "link": 566
-        },
-        {
-          "name": "control_net",
-          "type": "CONTROL_NET",
-          "link": 567
-        },
-        {
-          "name": "image",
-          "type": "IMAGE",
-          "link": 568
-        },
-        {
-          "name": "vae",
-          "type": "VAE",
-          "link": 569
-        }
-      ],
-      "outputs": [
-        {
-          "name": "positive",
-          "type": "CONDITIONING",
-          "links": [
-            570
-          ]
-        },
-        {
-          "name": "negative",
-          "type": "CONDITIONING",
-          "links": [
-            571
-          ]
-        }
-      ],
-      "properties": {
-        "Node name for S&R": "ControlNetApplyAdvanced",
-        "cnr_id": "comfy-core",
-        "ver": "0.16.3"
-      },
-      "widgets_values": [
-        0.85,
-        0.0,
-        0.9
-      ],
-      "title": "ControlNet normal 0,85: contorno do cabelo/rosto = o do mesh"
-    },
-    {
-      "id": 292,
-      "type": "InpaintModelConditioning",
-      "pos": [
-        2370,
-        2340
-      ],
-      "size": [
-        300,
-        150
-      ],
-      "flags": {},
-      "order": 292,
-      "mode": 0,
-      "inputs": [
-        {
-          "name": "positive",
-          "type": "CONDITIONING",
-          "link": 570
-        },
-        {
-          "name": "negative",
-          "type": "CONDITIONING",
-          "link": 571
-        },
-        {
-          "name": "vae",
-          "type": "VAE",
-          "link": 572
-        },
-        {
-          "name": "pixels",
-          "type": "IMAGE",
-          "link": 573
-        },
-        {
-          "name": "mask",
-          "type": "MASK",
-          "link": 574
-        }
-      ],
-      "outputs": [
-        {
-          "name": "positive",
-          "type": "CONDITIONING",
-          "links": [
-            576
-          ]
-        },
-        {
-          "name": "negative",
-          "type": "CONDITIONING",
-          "links": [
-            577
-          ]
-        },
-        {
-          "name": "latent",
-          "type": "LATENT",
-          "links": [
-            578
-          ]
-        }
-      ],
-      "properties": {
-        "Node name for S&R": "InpaintModelConditioning",
-        "cnr_id": "comfy-core",
-        "ver": "0.16.3"
-      },
-      "widgets_values": [
-        true
-      ],
-      "title": "inpaint 9 canais (modelo de inpaint de verdade)"
-    },
-    {
-      "id": 293,
-      "type": "KSampler",
-      "pos": [
-        2370,
-        2530
-      ],
-      "size": [
-        300,
-        262
-      ],
-      "flags": {},
-      "order": 293,
-      "mode": 0,
-      "inputs": [
-        {
-          "name": "model",
-          "type": "MODEL",
-          "link": 575
-        },
-        {
-          "name": "positive",
-          "type": "CONDITIONING",
-          "link": 576
-        },
-        {
-          "name": "negative",
-          "type": "CONDITIONING",
-          "link": 577
-        },
-        {
-          "name": "latent_image",
-          "type": "LATENT",
-          "link": 578
-        }
-      ],
-      "outputs": [
-        {
-          "name": "LATENT",
-          "type": "LATENT",
-          "links": [
-            579
-          ]
-        }
-      ],
-      "properties": {
-        "Node name for S&R": "KSampler",
-        "cnr_id": "comfy-core",
-        "ver": "0.16.3"
-      },
-      "widgets_values": [
-        304,
-        "fixed",
-        24,
-        4.5,
-        "euler_ancestral",
-        "normal",
-        0.4
-      ],
-      "title": "F5 Rosto: denoise 0.4 (sobe = muda mais)"
-    },
-    {
-      "id": 294,
-      "type": "VAEDecode",
-      "pos": [
-        2710,
-        2340
-      ],
-      "size": [
-        280,
-        46
-      ],
-      "flags": {},
-      "order": 294,
-      "mode": 0,
-      "inputs": [
-        {
-          "name": "samples",
-          "type": "LATENT",
-          "link": 579
-        },
-        {
-          "name": "vae",
-          "type": "VAE",
-          "link": 580
-        }
-      ],
-      "outputs": [
-        {
-          "name": "IMAGE",
-          "type": "IMAGE",
-          "links": [
-            582
-          ]
-        }
-      ],
-      "properties": {
-        "Node name for S&R": "VAEDecode",
-        "cnr_id": "comfy-core",
-        "ver": "0.16.3"
-      },
-      "widgets_values": []
-    },
-    {
-      "id": 295,
-      "type": "ImageCompositeMasked",
-      "pos": [
-        2710,
-        2430
-      ],
-      "size": [
-        280,
-        130
-      ],
-      "flags": {},
-      "order": 295,
-      "mode": 0,
-      "inputs": [
-        {
-          "name": "destination",
-          "type": "IMAGE",
-          "link": 581
-        },
-        {
-          "name": "source",
-          "type": "IMAGE",
-          "link": 582
-        },
-        {
-          "name": "mask",
-          "type": "MASK",
-          "link": 583
-        }
-      ],
-      "outputs": [
-        {
-          "name": "IMAGE",
-          "type": "IMAGE",
-          "links": [
-            584,
-            586
-          ]
-        }
-      ],
-      "properties": {
-        "Node name for S&R": "ImageCompositeMasked",
-        "cnr_id": "comfy-core",
-        "ver": "0.16.3"
-      },
-      "widgets_values": [
-        0,
-        0,
-        false
-      ],
-      "title": "cola só dentro da silhueta"
-    },
-    {
-      "id": 296,
-      "type": "PreviewImage",
-      "pos": [
-        2710,
-        2600
-      ],
-      "size": [
-        280,
-        300
-      ],
-      "flags": {},
-      "order": 296,
-      "mode": 0,
-      "inputs": [
-        {
-          "name": "images",
-          "type": "IMAGE",
-          "link": 584
-        }
-      ],
-      "outputs": [],
-      "properties": {
-        "Node name for S&R": "PreviewImage",
-        "cnr_id": "comfy-core",
-        "ver": "0.16.3"
-      },
-      "widgets_values": [],
-      "title": "F5 Rosto: depois (WAI)"
-    },
-    {
-      "id": 297,
-      "type": "LiaProjectTextureAccumulate",
-      "pos": [
-        3030,
-        2340
-      ],
-      "size": [
-        340,
-        380
-      ],
-      "flags": {},
-      "order": 297,
-      "mode": 0,
-      "inputs": [
-        {
-          "name": "mesh",
-          "type": "MESH",
-          "link": 585
-        },
-        {
-          "name": "image",
-          "type": "IMAGE",
-          "link": 586
-        },
-        {
-          "name": "state",
-          "type": "LIA_TEXSTATE",
-          "link": 588
-        },
-        {
-          "name": "mask",
-          "type": "MASK",
-          "link": 587
-        }
-      ],
-      "outputs": [
-        {
-          "name": "state",
-          "type": "LIA_TEXSTATE",
-          "links": [
-            590
-          ]
-        },
-        {
-          "name": "base_color",
-          "type": "IMAGE",
-          "links": []
-        },
-        {
-          "name": "coverage",
-          "type": "IMAGE",
-          "links": []
         },
         {
           "name": "info",
@@ -14280,15 +11768,45 @@
         0.42,
         true
       ],
-      "title": "F5 Rosto: SUBSTITUI no atlas (replace)",
+      "title": "9 Rosto (zoom 3x): acumula no atlas",
       "color": "#323",
       "bgcolor": "#535"
     },
     {
-      "id": 298,
+      "id": 254,
+      "type": "PreviewImage",
+      "pos": [
+        820,
+        5380
+      ],
+      "size": [
+        280,
+        280
+      ],
+      "flags": {},
+      "order": 254,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "images",
+          "type": "IMAGE",
+          "link": 476
+        }
+      ],
+      "outputs": [],
+      "properties": {
+        "Node name for S&R": "PreviewImage",
+        "cnr_id": "comfy-core",
+        "ver": "0.16.3"
+      },
+      "widgets_values": [],
+      "title": "9 Rosto (zoom 3x): cobertura (vermelho = falta)"
+    },
+    {
+      "id": 255,
       "type": "LiaTextureFinalize",
       "pos": [
-        3500,
+        1200,
         -700
       ],
       "size": [
@@ -14296,18 +11814,18 @@
         170
       ],
       "flags": {},
-      "order": 298,
+      "order": 255,
       "mode": 0,
       "inputs": [
         {
           "name": "mesh",
           "type": "MESH",
-          "link": 589
+          "link": 477
         },
         {
           "name": "state",
           "type": "LIA_TEXSTATE",
-          "link": 590
+          "link": 478
         }
       ],
       "outputs": [
@@ -14315,16 +11833,16 @@
           "name": "base_color",
           "type": "IMAGE",
           "links": [
-            591,
-            593,
-            597
+            479,
+            481,
+            485
           ]
         },
         {
           "name": "coverage",
           "type": "IMAGE",
           "links": [
-            592
+            480
           ]
         },
         {
@@ -14336,7 +11854,7 @@
           "name": "state",
           "type": "LIA_TEXSTATE",
           "links": [
-            602
+            490
           ]
         }
       ],
@@ -14354,10 +11872,10 @@
       "bgcolor": "#535"
     },
     {
-      "id": 299,
+      "id": 256,
       "type": "PreviewImage",
       "pos": [
-        3500,
+        1200,
         -480
       ],
       "size": [
@@ -14365,13 +11883,13 @@
         340
       ],
       "flags": {},
-      "order": 299,
+      "order": 256,
       "mode": 0,
       "inputs": [
         {
           "name": "images",
           "type": "IMAGE",
-          "link": 591
+          "link": 479
         }
       ],
       "outputs": [],
@@ -14384,10 +11902,10 @@
       "title": "Atlas final"
     },
     {
-      "id": 300,
+      "id": 257,
       "type": "PreviewImage",
       "pos": [
-        3500,
+        1200,
         -100
       ],
       "size": [
@@ -14395,13 +11913,13 @@
         340
       ],
       "flags": {},
-      "order": 300,
+      "order": 257,
       "mode": 0,
       "inputs": [
         {
           "name": "images",
           "type": "IMAGE",
-          "link": 592
+          "link": 480
         }
       ],
       "outputs": [],
@@ -14414,10 +11932,10 @@
       "title": "Cobertura final"
     },
     {
-      "id": 301,
+      "id": 258,
       "type": "SaveImage",
       "pos": [
-        3880,
+        1580,
         -700
       ],
       "size": [
@@ -14425,13 +11943,13 @@
         340
       ],
       "flags": {},
-      "order": 301,
+      "order": 258,
       "mode": 0,
       "inputs": [
         {
           "name": "images",
           "type": "IMAGE",
-          "link": 593
+          "link": 481
         }
       ],
       "outputs": [],
@@ -14446,10 +11964,10 @@
       "title": "PNG albedo (Blender/VRM MToon)"
     },
     {
-      "id": 302,
+      "id": 259,
       "type": "SaveImage",
       "pos": [
-        3880,
+        1580,
         -320
       ],
       "size": [
@@ -14457,13 +11975,13 @@
         340
       ],
       "flags": {},
-      "order": 302,
+      "order": 259,
       "mode": 0,
       "inputs": [
         {
           "name": "images",
           "type": "IMAGE",
-          "link": 594
+          "link": 482
         }
       ],
       "outputs": [],
@@ -14478,10 +11996,10 @@
       "title": "PNG normal map"
     },
     {
-      "id": 303,
+      "id": 260,
       "type": "SaveImage",
       "pos": [
-        3880,
+        1580,
         60
       ],
       "size": [
@@ -14489,13 +12007,13 @@
         340
       ],
       "flags": {},
-      "order": 303,
+      "order": 260,
       "mode": 0,
       "inputs": [
         {
           "name": "images",
           "type": "IMAGE",
-          "link": 595
+          "link": 483
         }
       ],
       "outputs": [],
@@ -14510,10 +12028,10 @@
       "title": "PNG AO"
     },
     {
-      "id": 304,
+      "id": 261,
       "type": "ApplyTextureToMesh",
       "pos": [
-        3500,
+        1200,
         300
       ],
       "size": [
@@ -14521,18 +12039,18 @@
         130
       ],
       "flags": {},
-      "order": 304,
+      "order": 261,
       "mode": 0,
       "inputs": [
         {
           "name": "mesh",
           "type": "MESH",
-          "link": 596
+          "link": 484
         },
         {
           "name": "base_color",
           "type": "IMAGE",
-          "link": 597
+          "link": 485
         },
         {
           "name": "metallic",
@@ -14547,12 +12065,12 @@
         {
           "name": "occlusion",
           "type": "IMAGE",
-          "link": 598
+          "link": 486
         },
         {
           "name": "normal_map",
           "type": "IMAGE",
-          "link": 599
+          "link": 487
         }
       ],
       "outputs": [
@@ -14560,7 +12078,7 @@
           "name": "mesh",
           "type": "MESH",
           "links": [
-            600
+            488
           ]
         }
       ],
@@ -14572,10 +12090,10 @@
       "widgets_values": []
     },
     {
-      "id": 305,
+      "id": 262,
       "type": "SaveGLB",
       "pos": [
-        3500,
+        1200,
         480
       ],
       "size": [
@@ -14583,13 +12101,13 @@
         500
       ],
       "flags": {},
-      "order": 305,
+      "order": 262,
       "mode": 0,
       "inputs": [
         {
           "name": "mesh",
           "type": "MESH",
-          "link": 600
+          "link": 488
         }
       ],
       "outputs": [],
@@ -14605,10 +12123,10 @@
       "title": "GLB final (game-ready: UV novo + albedo + normal + AO)"
     },
     {
-      "id": 306,
+      "id": 263,
       "type": "LiaRenderTextured",
       "pos": [
-        4260,
+        1960,
         -700
       ],
       "size": [
@@ -14616,18 +12134,18 @@
         250
       ],
       "flags": {},
-      "order": 306,
+      "order": 263,
       "mode": 0,
       "inputs": [
         {
           "name": "mesh",
           "type": "MESH",
-          "link": 601
+          "link": 489
         },
         {
           "name": "state",
           "type": "LIA_TEXSTATE",
-          "link": 602
+          "link": 490
         }
       ],
       "outputs": [
@@ -14635,7 +12153,7 @@
           "name": "image",
           "type": "IMAGE",
           "links": [
-            603
+            491
           ]
         },
         {
@@ -14678,10 +12196,10 @@
       "bgcolor": "#335"
     },
     {
-      "id": 307,
+      "id": 264,
       "type": "PreviewImage",
       "pos": [
-        4260,
+        1960,
         -420
       ],
       "size": [
@@ -14689,13 +12207,13 @@
         330
       ],
       "flags": {},
-      "order": 307,
+      "order": 264,
       "mode": 0,
       "inputs": [
         {
           "name": "images",
           "type": "IMAGE",
-          "link": 603
+          "link": 491
         }
       ],
       "outputs": [],
@@ -14708,7 +12226,7 @@
       "title": "Conferência"
     },
     {
-      "id": 308,
+      "id": 265,
       "type": "MarkdownNote",
       "pos": [
         -3720,
@@ -14719,7 +12237,7 @@
         900
       ],
       "flags": {},
-      "order": 308,
+      "order": 265,
       "mode": 0,
       "inputs": [],
       "outputs": [],
@@ -14729,14 +12247,14 @@
         "ver": "0.16.3"
       },
       "widgets_values": [
-        "# Lia → textura por projeção **v2** (projeta-e-completa, estilo Modddif)\n\nEntrada: **GLB** do `Lia_Trellis2_Image2Mesh` / `Lia_Pixal3D_MultiView` + a imagem 2D **frontal** da Lia (obrigatória) e, se tiver, costas/esquerda/direita (as mesmas do Pixal3D — opcionais, ligue com Ctrl+B).\n\n## O que mudou em relação à v1\nA v1 pintava 4 vistas **independentes** e misturava: costas com outra paleta, tênis de dentro branco, buracos. Agora as vistas são pintadas **em ordem**, cada uma **vendo o que já foi pintado**:\n\n1. **Retopo game-ready** — `Weld` → `Decimate` (30 k faces, ajuste) → `UnwrapMesh` (UV **novo**, limpo, padding 8 — o padding 1 do fluxo antigo era o que causava as franjas coloridas na silhueta do normal map) → normais suaves. Normal map + AO são *bakeados* do mesh alto original, então o detalhe não se perde. `Remesh` fica em bypass; ligue se o GLB vier com casca dupla/não-manifold.\n2. **Vista 1 (frente)** — geração completa (image1 = Lia, image2 = normal map).\n3. **Vistas 2–8** — `Render Textured View` renderiza o mesh **com a textura parcial**; o que falta sai **cinza** e vira máscara. O Klein recebe esse render como latente + `SetLatentNoiseMask` e só pinta o cinza, continuando o que já existe. `Accumulate` corrige o tom da vista nova pelo que já está pintado (`color_match`) e soma no atlas.\n4. Ordem: frente → costas → esq → dir → frente/cima 30° → costas/cima → frente/baixo −30° → costas/baixo. As inclinadas fecham ombros, axila, queixo, parte de dentro do tênis. O **topo absoluto** da cabeça e as solas ficam para o preenchimento por vizinhança do `Finalize` (cabelo continua cabelo) — a 55° o Klein pintava um rosto no topo da cabeça.\n5. `Finalize` → `ApplyTextureToMesh` (+ normal + AO) → `SaveGLB` em `output/3d/Lia/`. PNGs separados para MToon/VRM.\n\n## v2.1 (após o 1º teste real, relatório `docs/Logs/relatorio_20260914_0421`)\n- **Image 3 = frente pintada** em todas as vistas 2–8: costas/lados nunca têm texels em comum com a frente, então o Klein não \"via\" a frente e inventava decote/roupa. Agora vê.\n- `ImageCompositeMasked` cola só a área da máscara de volta no render parcial: fora dela **nada** muda.\n- `color_match` virou ganho escalar de brilho, só em pixels claros, clamp 0,85–1,2 (antes lavava o casaco preto).\n- Vistas de cima/baixo em `fill_only` (só preenchem, não misturam). `min_cos` 0,10 e `depth_tolerance` 0,015 (menos frestas magenta).\n- `Remesh` ligado por padrão: triângulos uniformes → ilhas UV grandes em vez de 900 tiras.\n\n## v2.2\n- Vistas inclinadas 55°/−50° → **±30°**: a 55° faltava só o topo da cabeça e o Klein inventava um rosto ali (olhos no cabelo). A ±30° o que falta são frestas que ele continua do vizinho.\n- Conferência agora usa a textura **finalizada** (antes mostrava costuras de UV ainda não dilatadas como magenta).\n\n## v2.3\n- `Render Textured View` dilata a textura 4 texels para dentro das bordas das ilhas antes de amostrar → acaba o chuvisco magenta/cinza espalhado (era borda de ilha UV, não buraco). O inpaint agora só recebe buracos reais.\n- `UnwrapMesh` **pec** com weld 0,001 e padding 12 (v78: o `adaptive` foi testado e gerou 4266 ilhas em 82 s — pior que as 921 do pec).\n\n## v3 (v82) — passe de correção com Waifu-Inpaint-XL\nDepois das 8 vistas Klein (que garantem **cobertura**), 5 passes com o **Waifu-Inpaint-XL** (SDXL inpaint anime, 9 canais) refinam o que o jogador vê de perto: **rosto em zoom 3×** (o Klein pintava o rosto com ~150 px; agora são ~700 px de rosto no mesmo atlas), frente, costas e lados. Cada passe: render da textura atual → `InpaintModelConditioning` (máscara = silhueta encolhida, então o fundo e o enquadramento **não mudam**) → KSampler denoise 0,35–0,45 (img2img: mantém a composição do Klein, redesenha linha/cor no estilo anime) → `Accumulate` com **replace** (o novo substitui o Klein onde a vista enxerga, `min_cos` 0,25 para não substituir em ângulo raso). IP-Adapter PLUS com a frente 2D segura estilo e paleta. `ModelSamplingDiscrete v_prediction+zsnr` e `RescaleCFG 0,7` porque o WAI v14 é v-pred. Teste no Qwen-Image-Edit (relatórios 0919–1141) foi descartado: 9–17 min/vista e quebra com máscara.\n- **Tags**: o positivo do WAI está genérico (\"black hair with red tips, black dress with gold trim…\") — ajuste para a sua Lia; é Illustrious, responde a tags Danbooru.\n- Rosto torto/duplicado → baixe o denoise F5 para 0,3 ou troque o seed (304). Trocou demais a roupa → denoise F1–F4 0,25. O rosto é o **último** passe de propósito (replace: o último ganha).\n- Não quer o passe → Ctrl+B nos 5 `KSampler` do grupo 4b (o `Finalize` continua recebendo o estado, só que sem correção)… ou mais simples: ligue o `Finalize.state` direto no último `Accumulate` do grupo 4.\n\n### v3.1 (v86)\nRelatório 1410: as imagens do WAI ficaram ótimas, mas no GLB apareceu **pele no cabelo e mechas cortadas**. Causa: sem guia de geometria, o WAI (denoise 0,35–0,45) moveu franja, contorno do cabelo e olhos alguns pixels; a projeção então colocou pele onde o mesh é cabelo. Correção: **ControlNet Union tipo `normal`** (0,85, até 90 % dos passos) alimentado pelo normal map do `Render Textured View` — o WAI agora redesenha cor/linha **dentro** do contorno do mesh. Denoise 0,30 (rosto 0,40) e `min_cos` 0,35 no replace (não substitui em ângulo raso, que era onde saíam os cortes).\n- Ainda deslocou? ControlNet 1,0 e denoise 0,25. Ficou \"duro\"/sem detalhe? ControlNet 0,7.\n\n## Ajustes\n- Uma vista saiu ruim → mude só o seed daquela vista (`RandomNoise`, fixos 200–207); as anteriores ficam em cache.\n- Conferência (magenta) mostra texels que **nenhuma** vista viu; se sobrar, adicione uma vista copiando um bloco (render → Klein → accumulate) e encadeando o `state`.\n- Faces de jogo: `DecimateMesh` 15 k (mobile) / 30 k (PC/VRM) / 80 k (alta).\n- `view_weight`: frente/costas 1.0, lados 0.8, cima/baixo 0.4–0.5 (só completam, não sobrescrevem).\n- `grow_mask_px` 12: borda extra para o Klein fundir o novo com o antigo; suba se aparecer costura, desça se ele \"repintar\" demais.\n\n**T4**: 8 gerações Klein 4B (~40 s cada) + 5 passes WAI (SDXL 24 passos ≈ 50–70 s cada) + bakes ≈ **15–20 min**. Drive: +6,9 GB `Waifu-Inpaint-XL` (gated — HF_TOKEN) + IP-Adapter/CLIP-ViT-H (3,4 GB) + ControlNet Union SDXL (2,5 GB) — os três já usados nos WaifuSurvivors. Nós próprios MIT em `custom_nodes/ComfyUI-Lia-TextureProjection` (torch puro).\n"
+        "# Lia → textura por projeção **v2** (projeta-e-completa, estilo Modddif)\n\nEntrada: **GLB** do `Lia_Trellis2_Image2Mesh` / `Lia_Pixal3D_MultiView` + a imagem 2D **frontal** da Lia (obrigatória) e, se tiver, costas/esquerda/direita (as mesmas do Pixal3D — opcionais, ligue com Ctrl+B).\n\n## O que mudou em relação à v1\nA v1 pintava 4 vistas **independentes** e misturava: costas com outra paleta, tênis de dentro branco, buracos. Agora as vistas são pintadas **em ordem**, cada uma **vendo o que já foi pintado**:\n\n1. **Retopo game-ready** — `Weld` → `Decimate` (30 k faces, ajuste) → `UnwrapMesh` (UV **novo**, limpo, padding 8 — o padding 1 do fluxo antigo era o que causava as franjas coloridas na silhueta do normal map) → normais suaves. Normal map + AO são *bakeados* do mesh alto original, então o detalhe não se perde. `Remesh` fica em bypass; ligue se o GLB vier com casca dupla/não-manifold.\n2. **Vista 1 (frente)** — geração completa (image1 = Lia, image2 = normal map).\n3. **Vistas 2–8** — `Render Textured View` renderiza o mesh **com a textura parcial**; o que falta sai **cinza** e vira máscara. O Klein recebe esse render como latente + `SetLatentNoiseMask` e só pinta o cinza, continuando o que já existe. `Accumulate` corrige o tom da vista nova pelo que já está pintado (`color_match`) e soma no atlas.\n4. Ordem: frente → costas → esq → dir → frente/cima 30° → costas/cima → frente/baixo −30° → costas/baixo. As inclinadas fecham ombros, axila, queixo, parte de dentro do tênis. O **topo absoluto** da cabeça e as solas ficam para o preenchimento por vizinhança do `Finalize` (cabelo continua cabelo) — a 55° o Klein pintava um rosto no topo da cabeça.\n5. `Finalize` → `ApplyTextureToMesh` (+ normal + AO) → `SaveGLB` em `output/3d/Lia/`. PNGs separados para MToon/VRM.\n\n## v2.1 (após o 1º teste real, relatório `docs/Logs/relatorio_20260914_0421`)\n- **Image 3 = frente pintada** em todas as vistas 2–8: costas/lados nunca têm texels em comum com a frente, então o Klein não \"via\" a frente e inventava decote/roupa. Agora vê.\n- `ImageCompositeMasked` cola só a área da máscara de volta no render parcial: fora dela **nada** muda.\n- `color_match` virou ganho escalar de brilho, só em pixels claros, clamp 0,85–1,2 (antes lavava o casaco preto).\n- Vistas de cima/baixo em `fill_only` (só preenchem, não misturam). `min_cos` 0,10 e `depth_tolerance` 0,015 (menos frestas magenta).\n- `Remesh` ligado por padrão: triângulos uniformes → ilhas UV grandes em vez de 900 tiras.\n\n## v2.2\n- Vistas inclinadas 55°/−50° → **±30°**: a 55° faltava só o topo da cabeça e o Klein inventava um rosto ali (olhos no cabelo). A ±30° o que falta são frestas que ele continua do vizinho.\n- Conferência agora usa a textura **finalizada** (antes mostrava costuras de UV ainda não dilatadas como magenta).\n\n## v2.3\n- `Render Textured View` dilata a textura 4 texels para dentro das bordas das ilhas antes de amostrar → acaba o chuvisco magenta/cinza espalhado (era borda de ilha UV, não buraco). O inpaint agora só recebe buracos reais.\n- `UnwrapMesh` **pec** com weld 0,001 e padding 12 (v78: o `adaptive` foi testado e gerou 4266 ilhas em 82 s — pior que as 921 do pec).\n\n## v3 → v4 (v82–v87): o passe Waifu-Inpaint-XL foi testado e removido\nRelatórios 1410 e 1514: as **imagens** do WAI ficavam lindas, mas no **GLB** apareciam pele no cabelo, mechas cortadas e (com ControlNet normal) olhos semicerrados — o TRELLIS não modela olhos, então o normal map \"diz\" que ali não há olho. Um img2img SDXL não obedece pixel a pixel à geometria, e projeção exige isso. Descartado.\nO que **realmente** melhorou o rosto foi a resolução: por isso a **vista 9 \"Rosto (zoom 3x)\"** — mesma câmera frontal, quadro 3× menor centrado na cabeça (`zoom` 3, `offset_y` 0,42), o **Klein** repinta a cabeça inteira (máscara = silhueta) com image 1 = Lia 2D, image 2 = normal map em zoom, image 3 = frente já pintada, e o `Accumulate` **substitui** (`replace`, `min_cos` 0,35) o rosto de 150 px por um de ~700 px no mesmo atlas.\n- Rosto saiu diferente da 2D → troque o seed da vista 9 (208) ou aumente `offset_y` se a cabeça não estiver centrada no preview \"o que já existe\".\n\n## Ajustes\n- Uma vista saiu ruim → mude só o seed daquela vista (`RandomNoise`, fixos 200–207); as anteriores ficam em cache.\n- Conferência (magenta) mostra texels que **nenhuma** vista viu; se sobrar, adicione uma vista copiando um bloco (render → Klein → accumulate) e encadeando o `state`.\n- Faces de jogo: `DecimateMesh` 15 k (mobile) / 30 k (PC/VRM) / 80 k (alta).\n- `view_weight`: frente/costas 1.0, lados 0.8, cima/baixo 0.4–0.5 (só completam, não sobrescrevem).\n- `grow_mask_px` 12: borda extra para o Klein fundir o novo com o antigo; suba se aparecer costura, desça se ele \"repintar\" demais.\n\n**T4**: 9 gerações Klein 4B (~40 s cada) + retopo/bakes ≈ **10–12 min**. Só Klein 4B + encoder + VAE (10 GB, já no Drive). Nós próprios MIT em `custom_nodes/ComfyUI-Lia-TextureProjection` (torch puro).\n"
       ],
       "title": "LEIA-ME",
       "color": "#432",
       "bgcolor": "#653"
     },
     {
-      "id": 309,
+      "id": 266,
       "type": "MarkdownNote",
       "pos": [
         -3720,
@@ -14747,7 +12265,7 @@
         520
       ],
       "flags": {},
-      "order": 309,
+      "order": 266,
       "mode": 0,
       "inputs": [],
       "outputs": [],
@@ -18159,299 +15677,299 @@
     ],
     [
       425,
+      7,
+      0,
+      229,
+      0,
+      "MESH"
+    ],
+    [
+      426,
+      227,
+      0,
+      229,
+      1,
+      "LIA_TEXSTATE"
+    ],
+    [
+      427,
       229,
       0,
       230,
       0,
-      "MODEL"
-    ],
-    [
-      426,
-      230,
-      0,
-      231,
-      0,
-      "MODEL"
-    ],
-    [
-      427,
-      231,
-      0,
-      232,
-      0,
-      "MODEL"
+      "IMAGE"
     ],
     [
       428,
-      232,
+      12,
       0,
-      233,
+      231,
       0,
-      "MODEL"
+      "IMAGE"
     ],
     [
       429,
-      232,
+      13,
+      0,
+      231,
       1,
-      233,
-      1,
-      "IPADAPTER"
+      "IMAGE"
     ],
     [
       430,
-      12,
+      14,
       0,
-      233,
+      231,
       2,
       "IMAGE"
     ],
     [
       431,
-      229,
-      1,
-      234,
+      15,
       0,
-      "CLIP"
+      231,
+      3,
+      "IMAGE"
     ],
     [
       432,
-      229,
-      1,
-      235,
+      231,
       0,
-      "CLIP"
-    ],
-    [
-      433,
-      236,
-      0,
-      237,
-      0,
-      "CONTROL_NET"
-    ],
-    [
-      434,
-      7,
-      0,
-      238,
-      0,
-      "MESH"
-    ],
-    [
-      435,
-      227,
-      0,
-      238,
-      1,
-      "LIA_TEXSTATE"
-    ],
-    [
-      436,
-      238,
-      0,
-      239,
+      232,
       0,
       "IMAGE"
     ],
     [
-      437,
-      238,
-      2,
-      240,
+      433,
+      232,
       0,
-      "MASK"
+      233,
+      0,
+      "IMAGE"
+    ],
+    [
+      434,
+      18,
+      0,
+      233,
+      1,
+      "VAE"
+    ],
+    [
+      435,
+      229,
+      3,
+      234,
+      0,
+      "IMAGE"
+    ],
+    [
+      436,
+      18,
+      0,
+      234,
+      1,
+      "VAE"
+    ],
+    [
+      437,
+      229,
+      0,
+      235,
+      0,
+      "IMAGE"
     ],
     [
       438,
-      229,
-      1,
-      241,
+      18,
       0,
-      "CLIP"
+      235,
+      1,
+      "VAE"
     ],
     [
       439,
-      234,
+      235,
       0,
-      242,
+      236,
       0,
-      "CONDITIONING"
+      "LATENT"
     ],
     [
       440,
-      241,
-      0,
-      242,
+      229,
+      2,
+      236,
       1,
-      "CONDITIONING"
+      "MASK"
     ],
     [
       441,
-      242,
+      237,
       0,
-      243,
+      238,
       0,
-      "CONDITIONING"
+      "STRING"
     ],
     [
       442,
-      235,
+      21,
       0,
-      243,
+      238,
       1,
-      "CONDITIONING"
+      "STRING"
     ],
     [
       443,
-      237,
+      17,
       0,
-      243,
-      2,
-      "CONTROL_NET"
+      239,
+      0,
+      "CLIP"
     ],
     [
       444,
       238,
-      3,
-      243,
-      3,
-      "IMAGE"
+      0,
+      239,
+      1,
+      "STRING"
     ],
     [
       445,
-      229,
-      2,
-      243,
-      4,
-      "VAE"
+      239,
+      0,
+      240,
+      0,
+      "CONDITIONING"
     ],
     [
       446,
-      243,
+      239,
       0,
-      244,
+      241,
       0,
       "CONDITIONING"
     ],
     [
       447,
-      243,
+      233,
+      0,
+      241,
       1,
-      244,
-      1,
-      "CONDITIONING"
+      "LATENT"
     ],
     [
       448,
-      229,
-      2,
-      244,
-      2,
-      "VAE"
+      241,
+      0,
+      242,
+      0,
+      "CONDITIONING"
     ],
     [
       449,
-      238,
+      234,
       0,
-      244,
-      3,
-      "IMAGE"
+      242,
+      1,
+      "LATENT"
     ],
     [
       450,
-      240,
+      242,
       0,
-      244,
-      4,
-      "MASK"
+      243,
+      0,
+      "CONDITIONING"
     ],
     [
       451,
-      233,
+      44,
       0,
-      245,
-      0,
-      "MODEL"
+      243,
+      1,
+      "LATENT"
     ],
     [
       452,
+      240,
+      0,
       244,
       0,
-      245,
-      1,
       "CONDITIONING"
     ],
     [
       453,
+      233,
+      0,
       244,
       1,
-      245,
-      2,
-      "CONDITIONING"
+      "LATENT"
     ],
     [
       454,
       244,
-      2,
+      0,
       245,
-      3,
-      "LATENT"
+      0,
+      "CONDITIONING"
     ],
     [
       455,
+      234,
+      0,
       245,
-      0,
-      246,
-      0,
+      1,
       "LATENT"
     ],
     [
       456,
-      229,
-      2,
+      245,
+      0,
       246,
-      1,
-      "VAE"
+      0,
+      "CONDITIONING"
     ],
     [
       457,
-      238,
+      44,
       0,
-      247,
-      0,
-      "IMAGE"
+      246,
+      1,
+      "LATENT"
     ],
     [
       458,
-      246,
+      16,
       0,
       247,
-      1,
-      "IMAGE"
+      0,
+      "MODEL"
     ],
     [
       459,
-      240,
+      243,
       0,
       247,
-      2,
-      "MASK"
+      1,
+      "CONDITIONING"
     ],
     [
       460,
+      246,
+      0,
       247,
-      0,
-      248,
-      0,
-      "IMAGE"
+      2,
+      "CONDITIONING"
     ],
     [
       461,
-      7,
+      248,
       0,
       249,
       0,
-      "MESH"
+      "NOISE"
     ],
     [
       462,
@@ -18459,242 +15977,178 @@
       0,
       249,
       1,
-      "IMAGE"
+      "GUIDER"
     ],
     [
       463,
-      240,
-      0,
-      249,
-      3,
-      "MASK"
-    ],
-    [
-      464,
-      227,
+      20,
       0,
       249,
       2,
-      "LIA_TEXSTATE"
+      "SAMPLER"
+    ],
+    [
+      464,
+      19,
+      0,
+      249,
+      3,
+      "SIGMAS"
     ],
     [
       465,
-      7,
+      236,
       0,
-      250,
-      0,
-      "MESH"
+      249,
+      4,
+      "LATENT"
     ],
     [
       466,
       249,
       0,
       250,
-      1,
-      "LIA_TEXSTATE"
+      0,
+      "LATENT"
     ],
     [
       467,
+      18,
+      0,
       250,
+      1,
+      "VAE"
+    ],
+    [
+      468,
+      229,
       0,
       251,
       0,
       "IMAGE"
     ],
     [
-      468,
-      250,
-      2,
-      252,
-      0,
-      "MASK"
-    ],
-    [
       469,
-      229,
-      1,
-      253,
-      0,
-      "CLIP"
-    ],
-    [
-      470,
-      234,
-      0,
-      254,
-      0,
-      "CONDITIONING"
-    ],
-    [
-      471,
-      253,
-      0,
-      254,
-      1,
-      "CONDITIONING"
-    ],
-    [
-      472,
-      254,
-      0,
-      255,
-      0,
-      "CONDITIONING"
-    ],
-    [
-      473,
-      235,
-      0,
-      255,
-      1,
-      "CONDITIONING"
-    ],
-    [
-      474,
-      237,
-      0,
-      255,
-      2,
-      "CONTROL_NET"
-    ],
-    [
-      475,
       250,
-      3,
-      255,
-      3,
+      0,
+      251,
+      1,
       "IMAGE"
     ],
     [
-      476,
+      470,
       229,
       2,
-      255,
-      4,
-      "VAE"
+      251,
+      2,
+      "MASK"
+    ],
+    [
+      471,
+      251,
+      0,
+      252,
+      0,
+      "IMAGE"
+    ],
+    [
+      472,
+      7,
+      0,
+      253,
+      0,
+      "MESH"
+    ],
+    [
+      473,
+      251,
+      0,
+      253,
+      1,
+      "IMAGE"
+    ],
+    [
+      474,
+      229,
+      2,
+      253,
+      3,
+      "MASK"
+    ],
+    [
+      475,
+      227,
+      0,
+      253,
+      2,
+      "LIA_TEXSTATE"
+    ],
+    [
+      476,
+      253,
+      2,
+      254,
+      0,
+      "IMAGE"
     ],
     [
       477,
+      7,
+      0,
       255,
       0,
-      256,
-      0,
-      "CONDITIONING"
+      "MESH"
     ],
     [
       478,
+      253,
+      0,
       255,
       1,
-      256,
-      1,
-      "CONDITIONING"
+      "LIA_TEXSTATE"
     ],
     [
       479,
-      229,
-      2,
+      255,
+      0,
       256,
-      2,
-      "VAE"
+      0,
+      "IMAGE"
     ],
     [
       480,
-      250,
+      255,
+      1,
+      257,
       0,
-      256,
-      3,
       "IMAGE"
     ],
     [
       481,
-      252,
+      255,
       0,
-      256,
-      4,
-      "MASK"
+      258,
+      0,
+      "IMAGE"
     ],
     [
       482,
-      233,
+      8,
       0,
-      257,
+      259,
       0,
-      "MODEL"
+      "IMAGE"
     ],
     [
       483,
-      256,
-      0,
-      257,
-      1,
-      "CONDITIONING"
-    ],
-    [
-      484,
-      256,
-      1,
-      257,
-      2,
-      "CONDITIONING"
-    ],
-    [
-      485,
-      256,
-      2,
-      257,
-      3,
-      "LATENT"
-    ],
-    [
-      486,
-      257,
-      0,
-      258,
-      0,
-      "LATENT"
-    ],
-    [
-      487,
-      229,
-      2,
-      258,
-      1,
-      "VAE"
-    ],
-    [
-      488,
-      250,
-      0,
-      259,
-      0,
-      "IMAGE"
-    ],
-    [
-      489,
-      258,
-      0,
-      259,
-      1,
-      "IMAGE"
-    ],
-    [
-      490,
-      252,
-      0,
-      259,
-      2,
-      "MASK"
-    ],
-    [
-      491,
-      259,
+      9,
       0,
       260,
       0,
       "IMAGE"
     ],
     [
-      492,
+      484,
       7,
       0,
       261,
@@ -18702,890 +16156,58 @@
       "MESH"
     ],
     [
-      493,
-      259,
+      485,
+      255,
       0,
       261,
       1,
       "IMAGE"
     ],
     [
-      494,
-      252,
-      0,
-      261,
-      3,
-      "MASK"
-    ],
-    [
-      495,
-      249,
-      0,
-      261,
-      2,
-      "LIA_TEXSTATE"
-    ],
-    [
-      496,
-      7,
-      0,
-      262,
-      0,
-      "MESH"
-    ],
-    [
-      497,
-      261,
-      0,
-      262,
-      1,
-      "LIA_TEXSTATE"
-    ],
-    [
-      498,
-      262,
-      0,
-      263,
-      0,
-      "IMAGE"
-    ],
-    [
-      499,
-      262,
-      2,
-      264,
-      0,
-      "MASK"
-    ],
-    [
-      500,
-      229,
-      1,
-      265,
-      0,
-      "CLIP"
-    ],
-    [
-      501,
-      234,
-      0,
-      266,
-      0,
-      "CONDITIONING"
-    ],
-    [
-      502,
-      265,
-      0,
-      266,
-      1,
-      "CONDITIONING"
-    ],
-    [
-      503,
-      266,
-      0,
-      267,
-      0,
-      "CONDITIONING"
-    ],
-    [
-      504,
-      235,
-      0,
-      267,
-      1,
-      "CONDITIONING"
-    ],
-    [
-      505,
-      237,
-      0,
-      267,
-      2,
-      "CONTROL_NET"
-    ],
-    [
-      506,
-      262,
-      3,
-      267,
-      3,
-      "IMAGE"
-    ],
-    [
-      507,
-      229,
-      2,
-      267,
-      4,
-      "VAE"
-    ],
-    [
-      508,
-      267,
-      0,
-      268,
-      0,
-      "CONDITIONING"
-    ],
-    [
-      509,
-      267,
-      1,
-      268,
-      1,
-      "CONDITIONING"
-    ],
-    [
-      510,
-      229,
-      2,
-      268,
-      2,
-      "VAE"
-    ],
-    [
-      511,
-      262,
-      0,
-      268,
-      3,
-      "IMAGE"
-    ],
-    [
-      512,
-      264,
-      0,
-      268,
-      4,
-      "MASK"
-    ],
-    [
-      513,
-      233,
-      0,
-      269,
-      0,
-      "MODEL"
-    ],
-    [
-      514,
-      268,
-      0,
-      269,
-      1,
-      "CONDITIONING"
-    ],
-    [
-      515,
-      268,
-      1,
-      269,
-      2,
-      "CONDITIONING"
-    ],
-    [
-      516,
-      268,
-      2,
-      269,
-      3,
-      "LATENT"
-    ],
-    [
-      517,
-      269,
-      0,
-      270,
-      0,
-      "LATENT"
-    ],
-    [
-      518,
-      229,
-      2,
-      270,
-      1,
-      "VAE"
-    ],
-    [
-      519,
-      262,
-      0,
-      271,
-      0,
-      "IMAGE"
-    ],
-    [
-      520,
-      270,
-      0,
-      271,
-      1,
-      "IMAGE"
-    ],
-    [
-      521,
-      264,
-      0,
-      271,
-      2,
-      "MASK"
-    ],
-    [
-      522,
-      271,
-      0,
-      272,
-      0,
-      "IMAGE"
-    ],
-    [
-      523,
-      7,
-      0,
-      273,
-      0,
-      "MESH"
-    ],
-    [
-      524,
-      271,
-      0,
-      273,
-      1,
-      "IMAGE"
-    ],
-    [
-      525,
-      264,
-      0,
-      273,
-      3,
-      "MASK"
-    ],
-    [
-      526,
-      261,
-      0,
-      273,
-      2,
-      "LIA_TEXSTATE"
-    ],
-    [
-      527,
-      7,
-      0,
-      274,
-      0,
-      "MESH"
-    ],
-    [
-      528,
-      273,
-      0,
-      274,
-      1,
-      "LIA_TEXSTATE"
-    ],
-    [
-      529,
-      274,
-      0,
-      275,
-      0,
-      "IMAGE"
-    ],
-    [
-      530,
-      274,
-      2,
-      276,
-      0,
-      "MASK"
-    ],
-    [
-      531,
-      229,
-      1,
-      277,
-      0,
-      "CLIP"
-    ],
-    [
-      532,
-      234,
-      0,
-      278,
-      0,
-      "CONDITIONING"
-    ],
-    [
-      533,
-      277,
-      0,
-      278,
-      1,
-      "CONDITIONING"
-    ],
-    [
-      534,
-      278,
-      0,
-      279,
-      0,
-      "CONDITIONING"
-    ],
-    [
-      535,
-      235,
-      0,
-      279,
-      1,
-      "CONDITIONING"
-    ],
-    [
-      536,
-      237,
-      0,
-      279,
-      2,
-      "CONTROL_NET"
-    ],
-    [
-      537,
-      274,
-      3,
-      279,
-      3,
-      "IMAGE"
-    ],
-    [
-      538,
-      229,
-      2,
-      279,
-      4,
-      "VAE"
-    ],
-    [
-      539,
-      279,
-      0,
-      280,
-      0,
-      "CONDITIONING"
-    ],
-    [
-      540,
-      279,
-      1,
-      280,
-      1,
-      "CONDITIONING"
-    ],
-    [
-      541,
-      229,
-      2,
-      280,
-      2,
-      "VAE"
-    ],
-    [
-      542,
-      274,
-      0,
-      280,
-      3,
-      "IMAGE"
-    ],
-    [
-      543,
-      276,
-      0,
-      280,
-      4,
-      "MASK"
-    ],
-    [
-      544,
-      233,
-      0,
-      281,
-      0,
-      "MODEL"
-    ],
-    [
-      545,
-      280,
-      0,
-      281,
-      1,
-      "CONDITIONING"
-    ],
-    [
-      546,
-      280,
-      1,
-      281,
-      2,
-      "CONDITIONING"
-    ],
-    [
-      547,
-      280,
-      2,
-      281,
-      3,
-      "LATENT"
-    ],
-    [
-      548,
-      281,
-      0,
-      282,
-      0,
-      "LATENT"
-    ],
-    [
-      549,
-      229,
-      2,
-      282,
-      1,
-      "VAE"
-    ],
-    [
-      550,
-      274,
-      0,
-      283,
-      0,
-      "IMAGE"
-    ],
-    [
-      551,
-      282,
-      0,
-      283,
-      1,
-      "IMAGE"
-    ],
-    [
-      552,
-      276,
-      0,
-      283,
-      2,
-      "MASK"
-    ],
-    [
-      553,
-      283,
-      0,
-      284,
-      0,
-      "IMAGE"
-    ],
-    [
-      554,
-      7,
-      0,
-      285,
-      0,
-      "MESH"
-    ],
-    [
-      555,
-      283,
-      0,
-      285,
-      1,
-      "IMAGE"
-    ],
-    [
-      556,
-      276,
-      0,
-      285,
-      3,
-      "MASK"
-    ],
-    [
-      557,
-      273,
-      0,
-      285,
-      2,
-      "LIA_TEXSTATE"
-    ],
-    [
-      558,
-      7,
-      0,
-      286,
-      0,
-      "MESH"
-    ],
-    [
-      559,
-      285,
-      0,
-      286,
-      1,
-      "LIA_TEXSTATE"
-    ],
-    [
-      560,
-      286,
-      0,
-      287,
-      0,
-      "IMAGE"
-    ],
-    [
-      561,
-      286,
-      2,
-      288,
-      0,
-      "MASK"
-    ],
-    [
-      562,
-      229,
-      1,
-      289,
-      0,
-      "CLIP"
-    ],
-    [
-      563,
-      234,
-      0,
-      290,
-      0,
-      "CONDITIONING"
-    ],
-    [
-      564,
-      289,
-      0,
-      290,
-      1,
-      "CONDITIONING"
-    ],
-    [
-      565,
-      290,
-      0,
-      291,
-      0,
-      "CONDITIONING"
-    ],
-    [
-      566,
-      235,
-      0,
-      291,
-      1,
-      "CONDITIONING"
-    ],
-    [
-      567,
-      237,
-      0,
-      291,
-      2,
-      "CONTROL_NET"
-    ],
-    [
-      568,
-      286,
-      3,
-      291,
-      3,
-      "IMAGE"
-    ],
-    [
-      569,
-      229,
-      2,
-      291,
-      4,
-      "VAE"
-    ],
-    [
-      570,
-      291,
-      0,
-      292,
-      0,
-      "CONDITIONING"
-    ],
-    [
-      571,
-      291,
-      1,
-      292,
-      1,
-      "CONDITIONING"
-    ],
-    [
-      572,
-      229,
-      2,
-      292,
-      2,
-      "VAE"
-    ],
-    [
-      573,
-      286,
-      0,
-      292,
-      3,
-      "IMAGE"
-    ],
-    [
-      574,
-      288,
-      0,
-      292,
-      4,
-      "MASK"
-    ],
-    [
-      575,
-      233,
-      0,
-      293,
-      0,
-      "MODEL"
-    ],
-    [
-      576,
-      292,
-      0,
-      293,
-      1,
-      "CONDITIONING"
-    ],
-    [
-      577,
-      292,
-      1,
-      293,
-      2,
-      "CONDITIONING"
-    ],
-    [
-      578,
-      292,
-      2,
-      293,
-      3,
-      "LATENT"
-    ],
-    [
-      579,
-      293,
-      0,
-      294,
-      0,
-      "LATENT"
-    ],
-    [
-      580,
-      229,
-      2,
-      294,
-      1,
-      "VAE"
-    ],
-    [
-      581,
-      286,
-      0,
-      295,
-      0,
-      "IMAGE"
-    ],
-    [
-      582,
-      294,
-      0,
-      295,
-      1,
-      "IMAGE"
-    ],
-    [
-      583,
-      288,
-      0,
-      295,
-      2,
-      "MASK"
-    ],
-    [
-      584,
-      295,
-      0,
-      296,
-      0,
-      "IMAGE"
-    ],
-    [
-      585,
-      7,
-      0,
-      297,
-      0,
-      "MESH"
-    ],
-    [
-      586,
-      295,
-      0,
-      297,
-      1,
-      "IMAGE"
-    ],
-    [
-      587,
-      288,
-      0,
-      297,
-      3,
-      "MASK"
-    ],
-    [
-      588,
-      285,
-      0,
-      297,
-      2,
-      "LIA_TEXSTATE"
-    ],
-    [
-      589,
-      7,
-      0,
-      298,
-      0,
-      "MESH"
-    ],
-    [
-      590,
-      297,
-      0,
-      298,
-      1,
-      "LIA_TEXSTATE"
-    ],
-    [
-      591,
-      298,
-      0,
-      299,
-      0,
-      "IMAGE"
-    ],
-    [
-      592,
-      298,
-      1,
-      300,
-      0,
-      "IMAGE"
-    ],
-    [
-      593,
-      298,
-      0,
-      301,
-      0,
-      "IMAGE"
-    ],
-    [
-      594,
-      8,
-      0,
-      302,
-      0,
-      "IMAGE"
-    ],
-    [
-      595,
+      486,
       9,
       0,
-      303,
-      0,
-      "IMAGE"
-    ],
-    [
-      596,
-      7,
-      0,
-      304,
-      0,
-      "MESH"
-    ],
-    [
-      597,
-      298,
-      0,
-      304,
-      1,
-      "IMAGE"
-    ],
-    [
-      598,
-      9,
-      0,
-      304,
+      261,
       4,
       "IMAGE"
     ],
     [
-      599,
+      487,
       8,
       0,
-      304,
+      261,
       5,
       "IMAGE"
     ],
     [
-      600,
-      304,
+      488,
+      261,
       0,
-      305,
+      262,
       0,
       "MESH"
     ],
     [
-      601,
+      489,
       7,
       0,
-      306,
+      263,
       0,
       "MESH"
     ],
     [
-      602,
-      298,
+      490,
+      255,
       3,
-      306,
+      263,
       1,
       "LIA_TEXSTATE"
     ],
     [
-      603,
-      306,
+      491,
+      263,
       0,
-      307,
+      264,
       0,
       "IMAGE"
     ]
@@ -19634,28 +16256,16 @@
         -1520,
         -780,
         2680,
-        6180
+        6940
       ],
       "color": "#a1309b",
-      "flags": {}
-    },
-    {
-      "id": 6,
-      "title": "4b. Passe de correção — Waifu-Inpaint-XL (rosto em zoom + 4 vistas, substitui a textura Klein)",
-      "bounding": [
-        1180,
-        -780,
-        2260,
-        3900
-      ],
-      "color": "#a55",
       "flags": {}
     },
     {
       "id": 5,
       "title": "5. Textura final + GLB",
       "bounding": [
-        3480,
+        1180,
         -780,
         1160,
         1800

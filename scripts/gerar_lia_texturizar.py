@@ -139,7 +139,12 @@ VIEWS = [
     (180, 30, 0.5, "back", "back view seen slightly from above (camera 30 degrees up). The top of the head is hair only, never a face", "6 Costas/cima"),
     (0, -30, 0.4, "front", "front view seen slightly from below (camera 30 degrees down). Underside of the chin, sleeves and skirt hem, shoes; no extra face", "7 Frente/baixo"),
     (180, -30, 0.4, "back", "back view seen slightly from below (camera 30 degrees down). Underside of the hem and shoes; no extra face", "8 Costas/baixo"),
+    # v87: vista dedicada do ROSTO — mesma câmera frontal, zoom 3x centrado na cabeça. Repinta a cabeça inteira (máscara = silhueta)
+    # com o triplo de pixels e SUBSTITUI no atlas. Klein e não WAI: o Klein obedece ao normal map e à referência sem mover o contorno.
+    (0, 0, 1.5, "front", "close-up portrait: head and shoulders of the SAME character, front view, looking at the camera. Detailed face exactly like image 1: "
+                         "same red eyes, same expression, same bangs and hair parting, same hair color with red tips. Sharp clean lines", "9 Rosto (zoom 3x)"),
 ]
+FACE = {"9 Rosto (zoom 3x)": (3.0, 0.42)}   # nome → (zoom, offset_y)
 X3 = -1500
 ROW = 760
 prev_state = None
@@ -147,8 +152,10 @@ acc_nodes = []
 front_latent = None   # vista 1 pintada → image 3 das demais
 for i, (az, el, wgt, refk, vtxt, name) in enumerate(VIEWS):
     fill_only = el != 0   # cima/baixo só preenchem o que falta
+    zm, oy = FACE.get(name, (1.0, 0.0))
+    face = name in FACE   # repinta tudo o que a vista vê e substitui no atlas
     y = -700 + i * ROW
-    ren = N("LiaRenderTextured", (X3, y), (330, 250), [float(az), float(el), 1024, 1.1, 12, "grey", 1.0, 0.0], inputs=[("mesh", "MESH")],
+    ren = N("LiaRenderTextured", (X3, y), (330, 250), [float(az), float(el), 1024, 1.1, 12, "grey", zm, oy], inputs=[("mesh", "MESH")],
             outputs=[("image", "IMAGE"), ("inpaint_mask", "MASK"), ("silhouette", "MASK"), ("normals", "IMAGE"), ("missing_fraction", "FLOAT")],
             cnr=LIA, title=f"{name}: render parcial + máscara", color=BLUE)
     opt_in(ren, "state", "LIA_TEXSTATE")
@@ -173,7 +180,8 @@ for i, (az, el, wgt, refk, vtxt, name) in enumerate(VIEWS):
     conn(pick, 0, rsc, "image", "IMAGE"); conn(rsc, 0, renc, "pixels", "IMAGE"); conn(vae, 0, renc, "vae", "VAE")
     conn(ren, 3, nenc, "pixels", "IMAGE"); conn(vae, 0, nenc, "vae", "VAE")
     conn(ren, 0, penc, "pixels", "IMAGE"); conn(vae, 0, penc, "vae", "VAE")
-    conn(penc, 0, nmask, "samples", "LATENT"); conn(ren, 1, nmask, "mask", "MASK")
+    MSLOT = 2 if face else 1   # rosto: máscara = silhueta inteira (repinta), demais: só o que falta
+    conn(penc, 0, nmask, "samples", "LATENT"); conn(ren, MSLOT, nmask, "mask", "MASK")
 
     vt = N("PrimitiveStringMultiline", (X3 + 710, y), (280, 110), [vtxt], outputs=[("STRING", "STRING")], title=f"Vista: {name}")
     cat = N("StringConcatenate", (X3 + 710, y + 150), (280, 82), ["", "", ". "], outputs=[("STRING", "STRING")])
@@ -209,19 +217,19 @@ for i, (az, el, wgt, refk, vtxt, name) in enumerate(VIEWS):
     conn(nz, 0, sca, "noise", "NOISE"); conn(gd, 0, sca, "guider", "GUIDER"); conn(samp, 0, sca, "sampler", "SAMPLER"); conn(sched, 0, sca, "sigmas", "SIGMAS")
     conn(nmask, 0, sca, "latent_image", "LATENT")
     conn(sca, 0, dec, "samples", "LATENT"); conn(vae, 0, dec, "vae", "VAE")
-    conn(ren, 0, comp, "destination", "IMAGE"); conn(dec, 0, comp, "source", "IMAGE"); conn(ren, 1, comp, "mask", "MASK")
+    conn(ren, 0, comp, "destination", "IMAGE"); conn(dec, 0, comp, "source", "IMAGE"); conn(ren, MSLOT, comp, "mask", "MASK")
     conn(comp, 0, pv, "images", "IMAGE")
     if front_latent is None:
         fenc = N("VAEEncode", (X3 + 1940, y + 420), (300, 46), inputs=[("pixels", "IMAGE"), ("vae", "VAE")], outputs=[("LATENT", "LATENT")], title="frente pintada → image 3 das outras vistas")
         conn(comp, 0, fenc, "pixels", "IMAGE"); conn(vae, 0, fenc, "vae", "VAE")
         front_latent = fenc
 
-    acc = N("LiaProjectTextureAccumulate", (X3 + 1940, y), (340, 350), [float(az), float(el), 1.1, 2048, wgt, 4.0, 0.10, 0.015, True, fill_only, 1.0, 0.0, False],
+    acc = N("LiaProjectTextureAccumulate", (X3 + 1940, y), (340, 350), [float(az), float(el), 1.1, 2048, wgt, 4.0, 0.35 if face else 0.10, 0.015, not face, fill_only, zm, oy, face],
             inputs=[("mesh", "MESH"), ("image", "IMAGE")],
             outputs=[("state", "LIA_TEXSTATE"), ("base_color", "IMAGE"), ("coverage", "IMAGE"), ("info", "STRING")],
             cnr=LIA, title=f"{name}: acumula no atlas", color=PURPLE)
     opt_in(acc, "state", "LIA_TEXSTATE"); opt_in(acc, "mask", "MASK")
-    conn(MESH, 0, acc, "mesh", "MESH"); conn(comp, 0, acc, "image", "IMAGE"); conn(ren, 1, acc, "mask", "MASK")
+    conn(MESH, 0, acc, "mesh", "MESH"); conn(comp, 0, acc, "image", "IMAGE"); conn(ren, MSLOT, acc, "mask", "MASK")
     if prev_state is not None:
         conn(prev_state, 0, acc, "state", "LIA_TEXSTATE")
     pvc = N("PreviewImage", (X3 + 2320, y), (280, 280), inputs=[("images", "IMAGE")], title=f"{name}: cobertura (vermelho = falta)")
@@ -229,103 +237,8 @@ for i, (az, el, wgt, refk, vtxt, name) in enumerate(VIEWS):
     prev_state = acc
     acc_nodes.append(acc)
 
-# ---------------------------------------------------------------- 4b. passe de correção — Waifu-Inpaint-XL (SDXL inpaint anime)
-# O Klein preenche tudo (cobertura); o WAI-Inpaint refina as vistas que o jogador
-# vê de perto: repinta rosto/frente/costas/lados em img2img de baixo denoise com
-# IP-Adapter da referência 2D, e o resultado SUBSTITUI (replace) o que existia.
-XB = X3 + 2700
-ckpt = N("CheckpointLoaderSimple", (XB, -700), (400, 98), ["Waifu-Inpaint-XL.safetensors"], outputs=[("MODEL", "MODEL"), ("CLIP", "CLIP"), ("VAE", "VAE")],
-         props={"models": [{"name": "Waifu-Inpaint-XL.safetensors", "url": HF + "ShinoharaHare/Waifu-Inpaint-XL/resolve/main/Waifu-Inpaint-XL.safetensors", "directory": "checkpoints"}]},
-         title="Waifu-Inpaint-XL (gated: HF_TOKEN na Célula 5)")
-vpred = N("ModelSamplingDiscrete", (XB, -560), (400, 82), ["v_prediction", True], inputs=[("model", "MODEL")], outputs=[("MODEL", "MODEL")], title="v-prediction + ZSNR (o WAI v14 é v-pred)")
-rcfg = N("RescaleCFG", (XB, -440), (400, 58), [0.7], inputs=[("model", "MODEL")], outputs=[("MODEL", "MODEL")])
-ipl = N("IPAdapterUnifiedLoader", (XB, -350), (400, 82), ["PLUS (high strength)"], inputs=[("model", "MODEL")], outputs=[("model", "MODEL"), ("ipadapter", "IPADAPTER")], cnr="cubiq/ComfyUI_IPAdapter_plus")
-opt_in(ipl, "ipadapter", "IPADAPTER")
-ipa = N("IPAdapterAdvanced", (XB, -230), (400, 300), [0.55, "style transfer", "concat", 0.0, 0.8, "K+mean(V) w/ C penalty"],
-        inputs=[("model", "MODEL"), ("ipadapter", "IPADAPTER"), ("image", "IMAGE")], outputs=[("MODEL", "MODEL")], cnr="cubiq/ComfyUI_IPAdapter_plus",
-        title="IP-Adapter: estilo/cores da Lia 2D (frente)")
-for k, t in (("image_negative", "IMAGE"), ("attn_mask", "MASK"), ("clip_vision", "CLIP_VISION")):
-    opt_in(ipa, k, t)
-conn(ckpt, 0, vpred, "model", "MODEL"); conn(vpred, 0, rcfg, "model", "MODEL"); conn(rcfg, 0, ipl, "model", "MODEL")
-conn(ipl, 0, ipa, "model", "MODEL"); conn(ipl, 1, ipa, "ipadapter", "IPADAPTER"); conn(refs["front"], 0, ipa, "image", "IMAGE")
-wpos = N("CLIPTextEncode", (XB, 110), (400, 160),
-         ["masterpiece, best quality, 1girl, black hair with red tips, short bob, black long-sleeved dress with gold trim and gold belt, ornate gold hem, "
-          "flat color, cel shading, anime coloring, simple white background, texture sheet, no lighting"],
-         inputs=[("clip", "CLIP")], outputs=[("CONDITIONING", "CONDITIONING")], title="WAI positivo — AJUSTE as tags para a sua Lia", color=GREEN)
-wneg = N("CLIPTextEncode", (XB, 310), (400, 120),
-         ["worst quality, low quality, blurry, jpeg artifacts, shadow, dramatic lighting, lens flare, depth of field, 3d, realistic, "
-          "extra face, extra eyes, text, watermark, signature, multiple views, gradient background"],
-         inputs=[("clip", "CLIP")], outputs=[("CONDITIONING", "CONDITIONING")], title="WAI negativo")
-conn(ckpt, 1, wpos, "clip", "CLIP"); conn(ckpt, 1, wneg, "clip", "CLIP")
-cnl = N("ControlNetLoader", (XB, 470), (400, 58), ["controlnet-union-sdxl-1.0.safetensors"], outputs=[("CONTROL_NET", "CONTROL_NET")],
-        props={"models": [{"name": "controlnet-union-sdxl-1.0.safetensors", "url": HF + "xinsir/controlnet-union-sdxl-1.0/resolve/main/diffusion_pytorch_model_promax.safetensors", "directory": "controlnet"}]},
-        title="ControlNet Union SDXL (2,5 GB)")
-cnt = N("SetUnionControlNetType", (XB, 560), (400, 58), ["normal"], inputs=[("control_net", "CONTROL_NET")], outputs=[("CONTROL_NET", "CONTROL_NET")],
-        title="tipo = normal (o normal map do render trava a geometria)")
-conn(cnl, 0, cnt, "control_net", "CONTROL_NET")
-
-FIX_VIEWS = [
-    # az, el, zoom, offset_y, denoise, weight, texto, nome
-    (0, 0, 1.0, 0.0, 0.30, 1.0, "full body, front view, standing, arms at sides", "F1 Frente"),
-    (180, 0, 1.0, 0.0, 0.30, 1.0, "full body, from behind, back of the head is hair only", "F2 Costas"),
-    (90, 0, 1.0, 0.0, 0.30, 0.8, "full body, from side, profile", "F3 Esquerda"),
-    (270, 0, 1.0, 0.0, 0.30, 0.8, "full body, from side, profile", "F4 Direita"),
-    # rosto POR ÚLTIMO: com replace, quem vem depois ganha — na v82 a frente 1x sobrescrevia o rosto 3x (olhos ficaram escuros)
-    (0, 0, 3.0, 0.42, 0.40, 1.5, "close-up of the face and hair, looking at viewer, detailed red eyes, symmetrical face, small mouth", "F5 Rosto"),
-]
-fix_state = prev_state
-for j, (az, el, zm, oy, dn, wgt, vtxt, name) in enumerate(FIX_VIEWS):
-    y = -700 + j * ROW
-    x0 = XB + 460
-    renf = N("LiaRenderTextured", (x0, y), (330, 250), [float(az), float(el), 1024, 1.1, 0, "grey", zm, oy], inputs=[("mesh", "MESH")],
-             outputs=[("image", "IMAGE"), ("inpaint_mask", "MASK"), ("silhouette", "MASK"), ("normals", "IMAGE"), ("missing_fraction", "FLOAT")],
-             cnr=LIA, title=f"{name}: render da textura Klein (zoom {zm:g})", color=BLUE)
-    opt_in(renf, "state", "LIA_TEXSTATE")
-    conn(MESH, 0, renf, "mesh", "MESH"); conn(fix_state, 0, renf, "state", "LIA_TEXSTATE")
-    pvf0 = N("PreviewImage", (x0, y + 290), (330, 300), inputs=[("images", "IMAGE")], title=f"{name}: antes")
-    conn(renf, 0, pvf0, "images", "IMAGE")
-    # máscara = silhueta encolhida 6 px (não toca a borda → o fundo branco fica intacto e o enquadramento não muda)
-    shrink = N("GrowMask", (x0 + 370, y), (300, 82), [-6, True], inputs=[("mask", "MASK")], outputs=[("MASK", "MASK")], title="silhueta −6 px")
-    conn(renf, 2, shrink, "mask", "MASK")
-    vtn = N("CLIPTextEncode", (x0 + 370, y + 130), (300, 100), [vtxt], inputs=[("clip", "CLIP")], outputs=[("CONDITIONING", "CONDITIONING")], title=f"{name}: tags da vista")
-    conn(ckpt, 1, vtn, "clip", "CLIP")
-    ccat = N("ConditioningConcat", (x0 + 370, y + 270), (300, 46), inputs=[("conditioning_to", "CONDITIONING"), ("conditioning_from", "CONDITIONING")], outputs=[("CONDITIONING", "CONDITIONING")])
-    conn(wpos, 0, ccat, "conditioning_to", "CONDITIONING"); conn(vtn, 0, ccat, "conditioning_from", "CONDITIONING")
-    cna = N("ControlNetApplyAdvanced", (x0 + 370, y + 340), (300, 190), [0.85, 0.0, 0.9],
-            inputs=[("positive", "CONDITIONING"), ("negative", "CONDITIONING"), ("control_net", "CONTROL_NET"), ("image", "IMAGE")],
-            outputs=[("positive", "CONDITIONING"), ("negative", "CONDITIONING")], title="ControlNet normal 0,85: contorno do cabelo/rosto = o do mesh")
-    opt_in(cna, "vae", "VAE")
-    conn(ccat, 0, cna, "positive", "CONDITIONING"); conn(wneg, 0, cna, "negative", "CONDITIONING"); conn(cnt, 0, cna, "control_net", "CONTROL_NET")
-    conn(renf, 3, cna, "image", "IMAGE"); conn(ckpt, 2, cna, "vae", "VAE")
-    imc = N("InpaintModelConditioning", (x0 + 710, y), (300, 150), [True],
-            inputs=[("positive", "CONDITIONING"), ("negative", "CONDITIONING"), ("vae", "VAE"), ("pixels", "IMAGE"), ("mask", "MASK")],
-            outputs=[("positive", "CONDITIONING"), ("negative", "CONDITIONING"), ("latent", "LATENT")], title="inpaint 9 canais (modelo de inpaint de verdade)")
-    conn(cna, 0, imc, "positive", "CONDITIONING"); conn(cna, 1, imc, "negative", "CONDITIONING"); conn(ckpt, 2, imc, "vae", "VAE")
-    conn(renf, 0, imc, "pixels", "IMAGE"); conn(shrink, 0, imc, "mask", "MASK")
-    ks = N("KSampler", (x0 + 710, y + 190), (300, 262), [300 + j, "fixed", 24, 4.5, "euler_ancestral", "normal", dn],
-           inputs=[("model", "MODEL"), ("positive", "CONDITIONING"), ("negative", "CONDITIONING"), ("latent_image", "LATENT")], outputs=[("LATENT", "LATENT")],
-           title=f"{name}: denoise {dn:g} (sobe = muda mais)")
-    conn(ipa, 0, ks, "model", "MODEL"); conn(imc, 0, ks, "positive", "CONDITIONING"); conn(imc, 1, ks, "negative", "CONDITIONING"); conn(imc, 2, ks, "latent_image", "LATENT")
-    decf = N("VAEDecode", (x0 + 1050, y), (280, 46), inputs=[("samples", "LATENT"), ("vae", "VAE")], outputs=[("IMAGE", "IMAGE")])
-    conn(ks, 0, decf, "samples", "LATENT"); conn(ckpt, 2, decf, "vae", "VAE")
-    compf = N("ImageCompositeMasked", (x0 + 1050, y + 90), (280, 130), [0, 0, False],
-              inputs=[("destination", "IMAGE"), ("source", "IMAGE")], outputs=[("IMAGE", "IMAGE")], title="cola só dentro da silhueta")
-    opt_in(compf, "mask", "MASK")
-    conn(renf, 0, compf, "destination", "IMAGE"); conn(decf, 0, compf, "source", "IMAGE"); conn(shrink, 0, compf, "mask", "MASK")
-    pvf = N("PreviewImage", (x0 + 1050, y + 260), (280, 300), inputs=[("images", "IMAGE")], title=f"{name}: depois (WAI)")
-    conn(compf, 0, pvf, "images", "IMAGE")
-    accf = N("LiaProjectTextureAccumulate", (x0 + 1370, y), (340, 380), [float(az), float(el), 1.1, 2048, wgt, 4.0, 0.35, 0.015, False, False, zm, oy, True],
-             inputs=[("mesh", "MESH"), ("image", "IMAGE")],
-             outputs=[("state", "LIA_TEXSTATE"), ("base_color", "IMAGE"), ("coverage", "IMAGE"), ("info", "STRING")],
-             cnr=LIA, title=f"{name}: SUBSTITUI no atlas (replace)", color=PURPLE)
-    opt_in(accf, "state", "LIA_TEXSTATE"); opt_in(accf, "mask", "MASK")
-    conn(MESH, 0, accf, "mesh", "MESH"); conn(compf, 0, accf, "image", "IMAGE"); conn(shrink, 0, accf, "mask", "MASK")
-    conn(fix_state, 0, accf, "state", "LIA_TEXSTATE")
-    fix_state = accf
-prev_state = fix_state
-
 # ---------------------------------------------------------------- 5. finalização
-X4 = XB + 2300
+X4 = X3 + 2700
 fin = N("LiaTextureFinalize", (X4, -700), (340, 170), [8, True, 64], inputs=[("mesh", "MESH"), ("state", "LIA_TEXSTATE")],
         outputs=[("base_color", "IMAGE"), ("coverage", "IMAGE"), ("unseen_mask", "MASK"), ("state", "LIA_TEXSTATE")], cnr=LIA, title="Fecha a textura", color=PURPLE)
 conn(MESH, 0, fin, "mesh", "MESH"); conn(prev_state, 0, fin, "state", "LIA_TEXSTATE")
@@ -378,15 +291,10 @@ A v1 pintava 4 vistas **independentes** e misturava: costas com outra paleta, t�
 - `Render Textured View` dilata a textura 4 texels para dentro das bordas das ilhas antes de amostrar → acaba o chuvisco magenta/cinza espalhado (era borda de ilha UV, não buraco). O inpaint agora só recebe buracos reais.
 - `UnwrapMesh` **pec** com weld 0,001 e padding 12 (v78: o `adaptive` foi testado e gerou 4266 ilhas em 82 s — pior que as 921 do pec).
 
-## v3 (v82) — passe de correção com Waifu-Inpaint-XL
-Depois das 8 vistas Klein (que garantem **cobertura**), 5 passes com o **Waifu-Inpaint-XL** (SDXL inpaint anime, 9 canais) refinam o que o jogador vê de perto: **rosto em zoom 3×** (o Klein pintava o rosto com ~150 px; agora são ~700 px de rosto no mesmo atlas), frente, costas e lados. Cada passe: render da textura atual → `InpaintModelConditioning` (máscara = silhueta encolhida, então o fundo e o enquadramento **não mudam**) → KSampler denoise 0,35–0,45 (img2img: mantém a composição do Klein, redesenha linha/cor no estilo anime) → `Accumulate` com **replace** (o novo substitui o Klein onde a vista enxerga, `min_cos` 0,25 para não substituir em ângulo raso). IP-Adapter PLUS com a frente 2D segura estilo e paleta. `ModelSamplingDiscrete v_prediction+zsnr` e `RescaleCFG 0,7` porque o WAI v14 é v-pred. Teste no Qwen-Image-Edit (relatórios 0919–1141) foi descartado: 9–17 min/vista e quebra com máscara.
-- **Tags**: o positivo do WAI está genérico ("black hair with red tips, black dress with gold trim…") — ajuste para a sua Lia; é Illustrious, responde a tags Danbooru.
-- Rosto torto/duplicado → baixe o denoise F5 para 0,3 ou troque o seed (304). Trocou demais a roupa → denoise F1–F4 0,25. O rosto é o **último** passe de propósito (replace: o último ganha).
-- Não quer o passe → Ctrl+B nos 5 `KSampler` do grupo 4b (o `Finalize` continua recebendo o estado, só que sem correção)… ou mais simples: ligue o `Finalize.state` direto no último `Accumulate` do grupo 4.
-
-### v3.1 (v86)
-Relatório 1410: as imagens do WAI ficaram ótimas, mas no GLB apareceu **pele no cabelo e mechas cortadas**. Causa: sem guia de geometria, o WAI (denoise 0,35–0,45) moveu franja, contorno do cabelo e olhos alguns pixels; a projeção então colocou pele onde o mesh é cabelo. Correção: **ControlNet Union tipo `normal`** (0,85, até 90 % dos passos) alimentado pelo normal map do `Render Textured View` — o WAI agora redesenha cor/linha **dentro** do contorno do mesh. Denoise 0,30 (rosto 0,40) e `min_cos` 0,35 no replace (não substitui em ângulo raso, que era onde saíam os cortes).
-- Ainda deslocou? ControlNet 1,0 e denoise 0,25. Ficou "duro"/sem detalhe? ControlNet 0,7.
+## v3 → v4 (v82–v87): o passe Waifu-Inpaint-XL foi testado e removido
+Relatórios 1410 e 1514: as **imagens** do WAI ficavam lindas, mas no **GLB** apareciam pele no cabelo, mechas cortadas e (com ControlNet normal) olhos semicerrados — o TRELLIS não modela olhos, então o normal map "diz" que ali não há olho. Um img2img SDXL não obedece pixel a pixel à geometria, e projeção exige isso. Descartado.
+O que **realmente** melhorou o rosto foi a resolução: por isso a **vista 9 "Rosto (zoom 3x)"** — mesma câmera frontal, quadro 3× menor centrado na cabeça (`zoom` 3, `offset_y` 0,42), o **Klein** repinta a cabeça inteira (máscara = silhueta) com image 1 = Lia 2D, image 2 = normal map em zoom, image 3 = frente já pintada, e o `Accumulate` **substitui** (`replace`, `min_cos` 0,35) o rosto de 150 px por um de ~700 px no mesmo atlas.
+- Rosto saiu diferente da 2D → troque o seed da vista 9 (208) ou aumente `offset_y` se a cabeça não estiver centrada no preview "o que já existe".
 
 ## Ajustes
 - Uma vista saiu ruim → mude só o seed daquela vista (`RandomNoise`, fixos 200–207); as anteriores ficam em cache.
@@ -395,7 +303,7 @@ Relatório 1410: as imagens do WAI ficaram ótimas, mas no GLB apareceu **pele n
 - `view_weight`: frente/costas 1.0, lados 0.8, cima/baixo 0.4–0.5 (só completam, não sobrescrevem).
 - `grow_mask_px` 12: borda extra para o Klein fundir o novo com o antigo; suba se aparecer costura, desça se ele "repintar" demais.
 
-**T4**: 8 gerações Klein 4B (~40 s cada) + 5 passes WAI (SDXL 24 passos ≈ 50–70 s cada) + bakes ≈ **15–20 min**. Drive: +6,9 GB `Waifu-Inpaint-XL` (gated — HF_TOKEN) + IP-Adapter/CLIP-ViT-H (3,4 GB) + ControlNet Union SDXL (2,5 GB) — os três já usados nos WaifuSurvivors. Nós próprios MIT em `custom_nodes/ComfyUI-Lia-TextureProjection` (torch puro).
+**T4**: 9 gerações Klein 4B (~40 s cada) + retopo/bakes ≈ **10–12 min**. Só Klein 4B + encoder + VAE (10 GB, já no Drive). Nós próprios MIT em `custom_nodes/ComfyUI-Lia-TextureProjection` (torch puro).
 """], title="LEIA-ME", color=BROWN)
 N("MarkdownNote", (X1 - 720, 260), (680, 520), ["""## Comparação com o Modddif
 
@@ -417,7 +325,6 @@ groups = [
     {"id": 2, "title": "2. Referências (frente obrigatória; costas/lados opcionais)", "bounding": [X1 - 20, 180, 400, 1620], "color": "#8A8", "flags": {}},
     {"id": 3, "title": "3. Flux.2 Klein 4B", "bounding": [X2 - 20, 180, 460, 980], "color": "#88A", "flags": {}},
     {"id": 4, "title": "4. Vistas em sequência: render parcial → inpaint → acumula (a ordem importa)", "bounding": [X3 - 20, -780, 2680, ROW * len(VIEWS) + 100], "color": "#a1309b", "flags": {}},
-    {"id": 6, "title": "4b. Passe de correção — Waifu-Inpaint-XL (rosto em zoom + 4 vistas, substitui a textura Klein)", "bounding": [XB - 20, -780, 2260, ROW * 5 + 100], "color": "#a55", "flags": {}},
     {"id": 5, "title": "5. Textura final + GLB", "bounding": [X4 - 20, -780, 1160, 1800], "color": "#b58b2a", "flags": {}},
 ]
 wf = {"id": str(uuid.uuid4()), "revision": 0, "last_node_id": nid[0], "last_link_id": lid[0], "nodes": nodes, "links": links,

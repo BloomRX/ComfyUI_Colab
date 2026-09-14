@@ -5224,3 +5224,13 @@ alimentado pelo normal map do próprio `Render Textured View` (contorno = mesh).
 Denoise 0,30 (rosto 0,40); `min_cos` 0,35 no replace. 309 nós / 603 links.
 Modelo: `controlnet/controlnet-union-sdxl-1.0.safetensors` (2,5 GB, o mesmo
 do CharacterSheet — provavelmente já no Drive).
+
+## v87 — passe WAI removido; rosto vira a 9ª vista Klein (zoom 3×, replace)
+Relatório 1514 (resumido em HISTORICO.md): com ControlNet normal o WAI passou a
+pintar olhos semicerrados (o mesh não tem olhos), e a pele no cabelo continuou.
+Conclusão: img2img SDXL não obedece pixel a pixel à geometria — inviável para
+projeção. Grupo 4b apagado (−7 GB de modelos: WAI, IP-Adapter, ControlNet saem
+do `workflow_models`). No lugar: vista **9 "Rosto (zoom 3x)"** no próprio grupo
+4 — Klein, câmera frontal `zoom 3` / `offset_y 0.42`, máscara = silhueta
+(repinta a cabeça), refs = Lia 2D + normal map em zoom + frente pintada,
+`Accumulate` com `replace` e `min_cos 0.35`. 266 nós / 491 links; T4 ≈ 10–12 min.

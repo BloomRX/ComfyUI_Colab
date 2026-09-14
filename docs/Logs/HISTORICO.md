@@ -15,6 +15,8 @@ Os relatórios completos (log, JSON do grafo, PNGs; ~35 MB) ficaram no históric
 
 | 1410 | v3 (v82) Klein + passe WAI-Inpaint | 28m52 | 7,1 GB | **Melhor resultado**: rosto (zoom 3×) nítido com olhos vermelhos, lados sem "escorrido", conferência 0,0 %. Bug: F2 frente 1× rodava depois do rosto e o sobrescrevia (replace) → v85: rosto é o último passe |
 
+| 1514 | v3.1 (v86) + ControlNet normal 0,85 | 31m18 | 8,9 GB | Pior: ControlNet normal fez o WAI pintar **olhos semicerrados** (o mesh TRELLIS não tem olhos → normal map liso). Pele no cabelo continuou. **Passe WAI removido (v87)**; o rosto passa a ser uma 9ª vista Klein em zoom 3× com replace |
+
 Aprendizados fixos: Klein 4B 4 passos ≈ 30–40 s por vista 1024²; Remesh+Decimate+Unwrap pec ≈ 2 min;
 o rosto sai com ~150 px no atlas (motivo do passe de correção em zoom, v82).
 
