@@ -1,0 +1,59 @@
+{"t": "2026-09-14 08:34:24", "tipo": "inicio", "comfy": "/content/ComfyUI", "output": "/content/drive/MyDrive/ComfyUI_Data/output"}
+{"t": "2026-09-14 08:35:15", "tipo": "servidor_ok", "system_stats": {"system": {"os": "linux", "ram_total": 13605830656, "ram_free": 10905755648, "comfyui_version": "0.35.0", "required_frontend_version": "1.52.7", "installed_templates_version": "0.11.59", "required_templates_version": "0.11.59", "comfy_package_versions": [{"name": "comfyui-frontend-package", "installed": "1.52.7", "required": "1.52.7"}, {"name": "comfyui-workflow-templates", "installed": "0.11.59", "required": "0.11.59"}, {"name": "comfyui-embedded-docs", "installed": "0.5.11", "required": "0.5.11"}, {"name": "comfy-kitchen", "installed": "0.2.33", "required": "0.2.33"}, {"name": "comfy-aimdo", "installed": "0.5.3", "required": "0.5.3"}], "python_version": "3.13.15 (main, Aug  6 2026, 11:06:22) [GCC 13.3.0]", "pytorch_version": "2.11.0+cu128", "embedded_python": false, "deploy_environment": "local-git", "argv": ["main.py", "--listen", "0.0.0.0", "--port", "8188", "--enable-cors-header", "*", "--output-directory", "/content/drive/MyDrive/ComfyUI_Data/output", "--input-directory", "/content/drive/MyDrive/ComfyUI_Data/input", "--user-directory", "/content/comfy_user", "--preview-method", "auto", "--disable-auto-launch", "--cache-none", "--disable-smart-memory", "--mmap-torch-files", "--enable-manager"]}, "devices": [{"name": "cuda:0 Tesla T4 : cudaMallocAsync", "type": "cuda", "index": 0, "vram_total": 15637086208, "vram_free": 15527116800, "torch_vram_total": 0, "torch_vram_free": 0}]}}
+{"t": "2026-09-14 08:35:19", "tipo": "fila", "rodando": 0, "pendente": 0}
+{"t": "2026-09-14 08:35:19", "tipo": "vram_pico", "gb": 0.1}
+{"t": "2026-09-14 08:40:06", "tipo": "fila", "rodando": 1, "pendente": 0}
+{"t": "2026-09-14 08:40:10", "tipo": "vram_pico", "gb": 0.17}
+{"t": "2026-09-14 08:40:14", "tipo": "vram_pico", "gb": 0.7}
+{"t": "2026-09-14 08:40:18", "tipo": "vram_pico", "gb": 1.14}
+{"t": "2026-09-14 08:40:51", "tipo": "vram_pico", "gb": 2.43}
+{"t": "2026-09-14 08:42:31", "tipo": "vram_pico", "gb": 2.78}
+{"t": "2026-09-14 08:42:35", "tipo": "vram_pico", "gb": 2.94}
+{"t": "2026-09-14 08:42:39", "tipo": "vram_pico", "gb": 3.0}
+{"t": "2026-09-14 08:42:43", "tipo": "vram_pico", "gb": 3.22}
+{"t": "2026-09-14 08:42:47", "tipo": "vram_pico", "gb": 3.5}
+{"t": "2026-09-14 08:42:51", "tipo": "vram_pico", "gb": 3.56}
+{"t": "2026-09-14 08:42:55", "tipo": "vram_pico", "gb": 3.88}
+{"t": "2026-09-14 08:43:03", "tipo": "vram_pico", "gb": 3.91}
+{"t": "2026-09-14 08:43:07", "tipo": "vram_pico", "gb": 4.03}
+{"t": "2026-09-14 08:43:11", "tipo": "vram_pico", "gb": 4.28}
+{"t": "2026-09-14 08:43:15", "tipo": "vram_pico", "gb": 4.32}
+{"t": "2026-09-14 08:43:59", "tipo": "vram_pico", "gb": 4.6}
+{"t": "2026-09-14 08:44:03", "tipo": "vram_pico", "gb": 4.72}
+{"t": "2026-09-14 08:44:07", "tipo": "vram_pico", "gb": 5.04}
+{"t": "2026-09-14 08:44:12", "tipo": "vram_pico", "gb": 5.6}
+{"t": "2026-09-14 08:44:20", "tipo": "vram_pico", "gb": 5.69}
+{"t": "2026-09-14 08:44:24", "tipo": "vram_pico", "gb": 5.79}
+{"t": "2026-09-14 08:45:57", "tipo": "vram_pico", "gb": 5.79}
+{"t": "2026-09-14 08:46:01", "tipo": "vram_pico", "gb": 5.98}
+{"t": "2026-09-14 08:46:05", "tipo": "vram_pico", "gb": 6.01}
+{"t": "2026-09-14 08:46:09", "tipo": "vram_pico", "gb": 6.69}
+{"t": "2026-09-14 08:50:19", "tipo": "vram_pico", "gb": 6.95}
+{"t": "2026-09-14 08:50:28", "tipo": "vram_pico", "gb": 6.98}
+{"t": "2026-09-14 08:50:50", "tipo": "vram_pico", "gb": 7.13}
+{"t": "2026-09-14 08:50:54", "tipo": "vram_pico", "gb": 7.35}
+{"t": "2026-09-14 08:50:58", "tipo": "vram_pico", "gb": 7.51}
+{"t": "2026-09-14 08:51:04", "tipo": "vram_pico", "gb": 7.54}
+{"t": "2026-09-14 08:51:54", "tipo": "vram_pico", "gb": 7.67}
+{"t": "2026-09-14 08:52:37", "tipo": "vram_pico", "gb": 7.85}
+{"t": "2026-09-14 08:52:51", "tipo": "vram_pico", "gb": 8.2}
+{"t": "2026-09-14 08:53:39", "tipo": "vram_pico", "gb": 8.29}
+{"t": "2026-09-14 08:54:00", "tipo": "vram_pico", "gb": 8.38}
+{"t": "2026-09-14 08:54:04", "tipo": "vram_pico", "gb": 8.57}
+{"t": "2026-09-14 08:54:44", "tipo": "vram_pico", "gb": 8.67}
+{"t": "2026-09-14 08:55:49", "tipo": "vram_pico", "gb": 8.76}
+{"t": "2026-09-14 08:56:37", "tipo": "vram_pico", "gb": 8.88}
+{"t": "2026-09-14 09:04:05", "tipo": "vram_pico", "gb": 9.22}
+{"t": "2026-09-14 09:04:09", "tipo": "vram_pico", "gb": 9.28}
+{"t": "2026-09-14 09:04:29", "tipo": "vram_pico", "gb": 11.88}
+{"t": "2026-09-14 09:04:33", "tipo": "vram_pico", "gb": 11.94}
+{"t": "2026-09-14 09:04:37", "tipo": "vram_pico", "gb": 12.0}
+{"t": "2026-09-14 09:04:41", "tipo": "vram_pico", "gb": 12.03}
+{"t": "2026-09-14 09:04:53", "tipo": "vram_pico", "gb": 12.06}
+{"t": "2026-09-14 09:05:09", "tipo": "vram_pico", "gb": 12.13}
+{"t": "2026-09-14 09:06:02", "tipo": "vram_pico", "gb": 12.16}
+{"t": "2026-09-14 09:06:18", "tipo": "vram_pico", "gb": 12.19}
+{"t": "2026-09-14 09:09:12", "tipo": "vram_pico", "gb": 12.22}
+{"t": "2026-09-14 09:11:30", "tipo": "vram_pico", "gb": 12.25}
+{"t": "2026-09-14 09:17:55", "tipo": "fila", "rodando": 0, "pendente": 0}
+{"t": "2026-09-14 09:18:00", "tipo": "prompt", "tag": "001_4f0332da", "status": "success", "n_nos": 50, "imagens": 5, "erros": 0, "tipos": ["CFGGuider", "CFGNorm", "CLIPLoader", "CLIPTextEncode", "ConditioningZeroOut", "DecimateMesh", "EmptyFlux2LatentImage", "EmptySD3LatentImage", "Flux2Scheduler", "Get3DComponents", "ImageScaleToTotalPixels", "KSampler", "KSamplerSelect", "LiaPickReference", "LiaRenderTextured", "Load3D", "LoadImage", "LoraLoaderModelOnly", "MeshSmoothNormals", "ModelSamplingAuraFlow", "PreviewImage", "PrimitiveStringMultiline", "RandomNoise", "ReferenceLatent", "RemeshMesh", "SamplerCustomAdvanced", "SaveImage", "TextEncodeQwenImageEditPlus", "UNETLoader", "UnetLoaderGGUF", "UnwrapMesh", "VAEDecode", "VAEEncode", "VAELoader", "WeldVertices"]}
