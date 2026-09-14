@@ -39,7 +39,8 @@
     "ComfyI2I": "https://github.com/ManglerFTW/ComfyI2I",
     "ComfyUI-Cosmos-Reference": "https://github.com/kijai/ComfyUI-Cosmos-Reference",
     "ComfyUI-Image-Saver": "https://github.com/alexopus/ComfyUI-Image-Saver",
-    "ComfyUI_Mira": "https://github.com/mirabarukaso/ComfyUI_Mira"
+    "ComfyUI_Mira": "https://github.com/mirabarukaso/ComfyUI_Mira",
+    "ComfyUI-Lia-TextureProjection": "local:custom_nodes/ComfyUI-Lia-TextureProjection"
   },
   "class_map": {
     "Reroute (rgthree)": "rgthree-comfy",
@@ -267,7 +268,10 @@
     "ImageSaverMira": "ComfyUI_Mira",
     "cl_tagger_mira": "ComfyUI_Mira",
     "camie_tagger_mira": "ComfyUI_Mira",
-    "wd_tagger_mira": "ComfyUI_Mira"
+    "wd_tagger_mira": "ComfyUI_Mira",
+    "LiaProjectionAngles": "ComfyUI-Lia-TextureProjection",
+    "LiaRenderProjectionViews": "ComfyUI-Lia-TextureProjection",
+    "LiaProjectTexture": "ComfyUI-Lia-TextureProjection"
   },
   "native_ignore": [
     "SaveImage",
@@ -441,6 +445,9 @@
     },
     "ComfyUI_Mira": {
       "note": "Exigido pelo Character Select SAA. 82 nos. requirements inclui onnxruntime-gpu (taggers); se falhar no T4, o pack ainda carrega."
+    },
+    "ComfyUI-Lia-TextureProjection": {
+      "note": "pacote do proprio repo (custom_nodes/), MIT, torch puro. E linkado, nao clonado."
     }
   },
   "workflow_models": {
@@ -738,6 +745,26 @@
         "dir": "background_removal",
         "size": "0.44 GB",
         "url": "https://huggingface.co/Comfy-Org/BiRefNet/resolve/main/background_removal/birefnet.safetensors"
+      }
+    ],
+    "Lia_Texturizar.json": [
+      {
+        "file": "flux-2-klein-4b-fp8.safetensors",
+        "dir": "diffusion_models",
+        "size": "4.08 GB",
+        "url": "https://huggingface.co/black-forest-labs/FLUX.2-klein-4b-fp8/resolve/main/flux-2-klein-4b-fp8.safetensors"
+      },
+      {
+        "file": "qwen_3_4b_fp8_mixed.safetensors",
+        "dir": "text_encoders",
+        "size": "5.63 GB",
+        "url": "https://huggingface.co/Comfy-Org/z_image_turbo/resolve/main/split_files/text_encoders/qwen_3_4b_fp8_mixed.safetensors"
+      },
+      {
+        "file": "flux2-vae.safetensors",
+        "dir": "vae",
+        "size": "0.34 GB",
+        "url": "https://huggingface.co/Comfy-Org/flux2-dev/resolve/main/split_files/vae/flux2-vae.safetensors"
       }
     ]
   },

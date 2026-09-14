@@ -1,0 +1,7 @@
+[project]
+name = "comfyui-lia-textureprojection"
+version = "0.1.0"
+description = "Projecao de texturas multi-vista para meshes (torch puro, sem nvdiffrast). Clean-room, MIT."
+license = { file = "LICENSE" }
+requires-python = ">=3.10"
+dependencies = []

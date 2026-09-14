@@ -32,6 +32,7 @@ das licenças declaradas, para você saber onde há risco real e onde não há.
 | **Pixal3D MV** (`pixal3d_multiview_int8_convrot`) — projeto Lia | MIT (repack de TencentARC/Pixal3D, MIT) | sim |
 | **BiRefNet** (`birefnet.safetensors`) — projeto Lia | MIT (repack de ZhengPeng7/BiRefNet, MIT) | sim |
 | **DINOv3 ViT-L** (`dino_v3_L_naf_fp32`) — projeto Lia | repack MIT, **mas deriva da DINOv3 License (Meta)** | sim, com **obrigação de crédito** — ver §7 |
+| **ComfyUI-Lia-TextureProjection** (`custom_nodes/`, nosso) — projeto Lia | **MIT** (clean-room; torch puro, sem nvdiffrast/Hunyuan/LumiTex) | sim |
 | **Flux.2 Klein 4B** (`flux-2-klein-4b-fp8`, `qwen_3_4b_fp8_mixed`, `flux2-vae`) — projeto Lia | **Apache-2.0** (BFL; encoder Qwen3 Apache-2.0) | sim — ver §7 (o **9B** é Non-Commercial e está **vetado**) |
 
 > **Correção (v65):** eu havia agrupado o Hotshot-XL como Apache 2.0. A API do
@@ -223,4 +224,22 @@ Nota sobre o VAE: o `flux2-vae.safetensors` está hospedado no repo
 `Comfy-Org/flux2-dev` (marcado `other` por causa do dev), mas é o mesmo
 arquivo do Klein 4B (mesmo oid/sha256 no `Comfy-Org/vae-text-encorder-for-flux-klein-4b`).
 Evidência: `licencas/evidencias/hf_Comfy-Org_flux2-dev.json`.
+
+### Projeção de texturas: por que escrevemos o nó (v72)
+
+O pacote `Aero-Ex/Texture_Projection-Nodes` (usado no vídeo do PixelArtistry)
+declara MIT no `pyproject.toml`, mas **não tem arquivo LICENSE**, o README
+admite código de terceiros non-commercial, e a árvore contém:
+
+| componente | licença | onde |
+|---|---|---|
+| nvdiffrast (NVIDIA Source Code License) | **não comercial** | `requirements.txt`, importado pelos renderers |
+| `Renderer/DifferentiableRenderer/MeshRender.py` | cabeçalho **Tencent Hunyuan Non-Commercial** | copiado para dentro do pacote |
+| `texkit` (LumiTex) | Apache-2.0 no repo original, mas o próprio LumiTex embute FLUX/Hunyuan non-commercial | vendorizado |
+
+Veredito: `Texture_ProjectionRenderConditions` e `Texture_ProjectionBakeTextures`
+**não** podem ser usados no projeto. Em vez de auditar/limpar, o
+`custom_nodes/ComfyUI-Lia-TextureProjection` foi escrito do zero (torch puro:
+rasterização UV em tiles, z-buffer ortográfico, peso cos^k, dilatação) sem
+consultar o código daquele pacote. MIT, arquivo LICENSE incluído.
 

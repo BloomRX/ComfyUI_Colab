@@ -4992,3 +4992,54 @@ fidelidade ficar insuficiente, a alternativa é o Illustrious + IPAdapter
   1.5–2.5 (2× o tempo; >3 satura). Por isso as frases anti-deformação
   (`exactly five fingers`, `symmetrical`, `anatomically correct`) também
   estão no **positivo**, que vale sempre. Tudo documentado na nota LEIA-ME.
+
+
+## v72 — textura por projeção: guia Blender + nó próprio + `Lia_Texturizar`
+
+### Diagnóstico
+
+A textura "feia" dos dois workflows Lia é estrutural: o TRELLIS.2/Pixal3D
+gera **cor por voxel** (1024³ ≈ 1,7 mm na Lia inteira) e o
+`BakeTextureFromVoxel` só interpola. Textura 4096 não ajuda. A saída é
+manter os dois workflows como **geradores de forma** e refazer a textura
+por **projeção de imagens 2D** da própria Lia.
+
+### O que entrou
+
+1. `docs/Blender_Texturizar_Lia.md` — caminho manual (Texture Paint com
+   stencil / Project from View + bake Emit). Serve para validar a técnica
+   e como fallback sem GPU.
+2. `custom_nodes/ComfyUI-Lia-TextureProjection/` — **pacote próprio, MIT,
+   clean-room** (ver LICENCAS.md). Três nós:
+   `LiaProjectionAngles` (presets 4/6/8 vistas), `LiaRenderProjectionViews`
+   (normal map em espaço de câmera, máscara, profundidade, prévia) e
+   `LiaProjectTexture` (z-buffer ortográfico → peso cos^k → média → dilatação
+   → `base_color`). Só torch; sem nvdiffrast, sem CUDA custom. Teste em
+   `tests/test_projection.py` (esfera: erro médio 0,0008 em CPU).
+   O notebook (célula 4) agora entende `packs` com URL `local:` e cria um
+   symlink de `/content/ComfyUI_Colab/custom_nodes/...` para
+   `ComfyUI/custom_nodes/`.
+3. `Workflows/Lia_Texturizar.json` — 86 nós: `Load3D` (GLB do Trellis) →
+   `Get3DComponents` → render 4 vistas → **4 ramos Klein 4B** (image 1 = Lia
+   2D, image 2 = normal map da vista; seeds fixas 100–103 para regerar uma
+   vista sem perder as outras) → `ImageBatch` ×3 → `LiaProjectTexture` 2048
+   (`view_weights` 1/0.8/1/0.8) → `ApplyTextureToMesh` → `SaveGLB`
+   `3d/Lia/Lia_texturizado` + PNG do atlas em `3d/Lia/Lia_albedo_projetado`.
+   Modelos = os mesmos do `Lia_Klein_Partes` (já no `workflow_models`).
+
+### Convenções que importam
+
+- Mesh em Y-up; azimute 0 = frente (câmera em +Z). O GLB do Trellis sai com
+  a frente para +Z quando a imagem de entrada era a frente — se o mesh
+  vier girado, use `RotateMesh` do core antes do render.
+- Render e bake usam a **mesma** string `angles` (com `frame_scale`), então
+  as imagens encaixam pixel a pixel; nunca troque o preset só de um lado.
+- Prompt de pintura pede "flat unlit albedo, no shadows" — é o que MToon/VRM
+  quer. Sem metallic/roughness (o nó não gera PBR; o `ApplyTextureToMesh`
+  fica só com base_color).
+
+### Não testado em GPU
+
+Validação estática ok. No Colab: célula 4 com `Lia_Texturizar` selecionado
+(linka o pacote), depois `validar_workflows.py --server`. Custo estimado
+no T4: ~8–12 min por personagem (4 gerações Klein dominam).
