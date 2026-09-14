@@ -342,6 +342,8 @@ class LiaProjectTextureAccumulate(IO.ComfyNode):
                 IO.Float.Input("offset_y", default=0.0, min=-0.5, max=0.5, step=0.01, tooltip="Igual ao do Render Textured View desta vista."),
                 IO.Boolean.Input("replace", default=False,
                                  tooltip="Passe de correção: onde esta vista enxerga (dentro da mask), o novo SUBSTITUI o que existia em vez de fazer média."),
+                IO.Int.Input("mask_erode_px", default=3, min=0, max=32,
+                             tooltip="Encolhe a máscara antes de projetar: a borda da silhueta é anti-aliasing com o fundo (branco) e, em ângulo raso, vazava branco para dentro da roupa nas outras vistas."),
                 TexState.Input("state", optional=True),
                 IO.Mask.Input("mask", optional=True, tooltip="1 = usar este pixel. Ligue a inpaint_mask (só o novo) ou a silhouette (tudo)."),
             ],
@@ -356,7 +358,7 @@ class LiaProjectTextureAccumulate(IO.ComfyNode):
     @classmethod
     def execute(cls, mesh, image, azimuth, elevation, frame_scale, texture_size, view_weight, cos_power,
                 min_cos, depth_tolerance, color_match, fill_only, zoom=1.0, offset_y=0.0, replace=False,
-                state=None, mask=None):
+                mask_erode_px=3, state=None, mask=None):
         v, f, uv = _first_item(mesh)
         if uv is None:
             raise ValueError("O mesh não tem UV. Ligue um UnwrapMesh antes deste nó.")
@@ -368,6 +370,9 @@ class LiaProjectTextureAccumulate(IO.ComfyNode):
             if m.shape != img.shape[:2]:
                 m = torch.nn.functional.interpolate(m[None, None], size=img.shape[:2], mode="bilinear",
                                                     align_corners=False)[0, 0]
+            if int(mask_erode_px) > 0:
+                k = int(mask_erode_px) * 2 + 1
+                m = -torch.nn.functional.max_pool2d(-(m > 0.5).float()[None, None], k, 1, k // 2)[0, 0]
         tex, w, cover, st = P.accumulate_view(v, f, uv, tex, w, img, m, float(azimuth), float(elevation),
                                               frame_scale=float(frame_scale), cos_power=float(cos_power),
                                               depth_tolerance=float(depth_tolerance), min_cos=float(min_cos),

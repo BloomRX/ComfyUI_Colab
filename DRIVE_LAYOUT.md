@@ -5249,3 +5249,11 @@ corrigiu olhos e franja. Restou o Klein pintar capa/braço de branco nas
 laterais (cinza grande encostado no fundo). Prompt de estilo: "toda área cinza
 é personagem, nunca branco, roupa tem a mesma cor por dentro e por fora";
 vistas 3/4 avisam que as formas finas são manga/capa de perfil.
+
+## v90 — branco nas laterais era vazamento da borda (relatório 1834)
+O branco na capa/braço já existia antes do Klein pintar as laterais: as vistas
+frente/costas, em ângulo raso (min_cos 0,10), amostravam a borda anti-aliasada
+da silhueta (fundo branco) e projetavam isso nos texels laterais. Correção:
+`LiaProjectTextureAccumulate` ganhou `mask_erode_px` (default 3: encolhe a
+máscara antes de projetar) e o Texturizar usa `min_cos` 0,30 nas vistas
+principais. Prompt da v89 fica. Smoke test ok.

@@ -225,7 +225,7 @@ for i, (az, el, wgt, refk, vtxt, name) in enumerate(VIEWS):
         conn(comp, 0, fenc, "pixels", "IMAGE"); conn(vae, 0, fenc, "vae", "VAE")
         front_latent = fenc
 
-    acc = N("LiaProjectTextureAccumulate", (X3 + 1940, y), (340, 350), [float(az), float(el), 1.1, 2048, wgt, 4.0, 0.35 if face else 0.10, 0.015, not face, fill_only, zm, oy, face],
+    acc = N("LiaProjectTextureAccumulate", (X3 + 1940, y), (340, 350), [float(az), float(el), 1.1, 2048, wgt, 4.0, 0.35 if face else 0.30, 0.015, not face, fill_only, zm, oy, face, 3],
             inputs=[("mesh", "MESH"), ("image", "IMAGE")],
             outputs=[("state", "LIA_TEXSTATE"), ("base_color", "IMAGE"), ("coverage", "IMAGE"), ("info", "STRING")],
             cnr=LIA, title=f"{name}: acumula no atlas", color=PURPLE)
@@ -302,6 +302,9 @@ No mesh novo (capa fina, chifres, pernas finas) a silhueta saiu em **triângulos
 
 ### v4.2 (v89) — relatório 1749: mesh ok, rosto ok, faltou "branco"
 Com o Remesh desligado a silhueta ficou perfeita e a **vista 9 consertou o rosto** (olhos vermelhos, franja certa — a vista 1 tinha pintado olhos verdes). Sobrou: nas vistas laterais o Klein pintou **capa e braço de branco** (áreas cinza grandes encostadas no fundo branco viraram "fundo"), e isso vazou para a conferência. Prompt agora diz explicitamente que toda área cinza é personagem e nunca branco; lados avisam que as formas finas são manga/capa de perfil.
+
+### v4.3 (v90) — relatório 1834: o branco NÃO era o Klein
+O preview "o que já existe" das laterais mostrava listras **brancas já pintadas** antes do Klein tocar nelas: frente e costas, projetadas em ângulo raso (`min_cos` 0,10), amostravam a **borda anti-aliasada da silhueta** (mistura com o fundo branco) e espalhavam isso pelas laterais da capa e do braço. Correção nos dados, não no prompt: `Accumulate` **`mask_erode_px` 3** (encolhe a máscara antes de projetar — a borda não entra) e `min_cos` **0,30** nas vistas principais (ângulo raso fica para a vista que olha de frente). A cobertura por vista cai um pouco e as laterais passam a receber mais cinza para pintar — que é o certo.
 
 ## Ajustes
 - Uma vista saiu ruim → mude só o seed daquela vista (`RandomNoise`, fixos 200–207); as anteriores ficam em cache.

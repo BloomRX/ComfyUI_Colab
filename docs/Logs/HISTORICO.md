@@ -21,6 +21,8 @@ Os relatórios completos (log, JSON do grafo, PNGs; ~35 MB) ficaram no históric
 
 | 1749 | v4.1 (v88) mesh novo, Remesh off, 60k QEM | 20m02 | 6,8 GB | Silhueta limpa (59 158 faces, 1377 ilhas). **Vista 9 (rosto zoom) funcionou**: olhos vermelhos, franja fiel (vista 1 tinha olhos verdes). Falha: lados pintaram capa/braço de **branco** (cinza grande junto ao fundo = "fundo") → v89: prompt "cinza nunca é branco", aviso de capa de perfil |
 
+| 1834 | v4.2 (v89) prompt anti-branco | 19m18 | 6,8 GB | Rosto ok. Branco nas laterais **persistiu**: não era o Klein — o "o que já existe" já vinha com listras brancas: frente/costas em ângulo raso (min_cos 0,10) amostravam a borda anti-aliasada da silhueta (fundo branco). → v90: `mask_erode_px` 3 no Accumulate, min_cos 0,30 |
+
 Aprendizados fixos: Klein 4B 4 passos ≈ 30–40 s por vista 1024²; Remesh+Decimate+Unwrap pec ≈ 2 min;
 o rosto sai com ~150 px no atlas (motivo do passe de correção em zoom, v82).
 
