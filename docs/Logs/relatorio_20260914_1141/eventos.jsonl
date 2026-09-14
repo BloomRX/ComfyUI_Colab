@@ -1,0 +1,63 @@
+{"t": "2026-09-14 11:09:06", "tipo": "inicio", "comfy": "/content/ComfyUI", "output": "/content/drive/MyDrive/ComfyUI_Data/output"}
+{"t": "2026-09-14 11:09:42", "tipo": "servidor_ok", "system_stats": {"system": {"os": "linux", "ram_total": 13605830656, "ram_free": 10840829952, "comfyui_version": "0.35.0", "required_frontend_version": "1.52.7", "installed_templates_version": "0.11.59", "required_templates_version": "0.11.59", "comfy_package_versions": [{"name": "comfyui-frontend-package", "installed": "1.52.7", "required": "1.52.7"}, {"name": "comfyui-workflow-templates", "installed": "0.11.59", "required": "0.11.59"}, {"name": "comfyui-embedded-docs", "installed": "0.5.11", "required": "0.5.11"}, {"name": "comfy-kitchen", "installed": "0.2.33", "required": "0.2.33"}, {"name": "comfy-aimdo", "installed": "0.5.3", "required": "0.5.3"}], "python_version": "3.13.15 (main, Aug  6 2026, 11:06:22) [GCC 13.3.0]", "pytorch_version": "2.11.0+cu128", "embedded_python": false, "deploy_environment": "local-git", "argv": ["main.py", "--listen", "0.0.0.0", "--port", "8188", "--enable-cors-header", "*", "--output-directory", "/content/drive/MyDrive/ComfyUI_Data/output", "--input-directory", "/content/drive/MyDrive/ComfyUI_Data/input", "--user-directory", "/content/comfy_user", "--preview-method", "auto", "--disable-auto-launch", "--cache-none", "--disable-smart-memory", "--mmap-torch-files", "--enable-manager"]}, "devices": [{"name": "cuda:0 Tesla T4 : cudaMallocAsync", "type": "cuda", "index": 0, "vram_total": 15637086208, "vram_free": 15527116800, "torch_vram_total": 0, "torch_vram_free": 0}]}}
+{"t": "2026-09-14 11:09:46", "tipo": "fila", "rodando": 0, "pendente": 0}
+{"t": "2026-09-14 11:09:46", "tipo": "vram_pico", "gb": 0.1}
+{"t": "2026-09-14 11:12:13", "tipo": "fila", "rodando": 1, "pendente": 0}
+{"t": "2026-09-14 11:12:13", "tipo": "vram_pico", "gb": 0.12}
+{"t": "2026-09-14 11:12:17", "tipo": "vram_pico", "gb": 0.7}
+{"t": "2026-09-14 11:12:21", "tipo": "vram_pico", "gb": 1.14}
+{"t": "2026-09-14 11:12:25", "tipo": "vram_pico", "gb": 2.01}
+{"t": "2026-09-14 11:12:29", "tipo": "vram_pico", "gb": 2.74}
+{"t": "2026-09-14 11:13:50", "tipo": "vram_pico", "gb": 2.85}
+{"t": "2026-09-14 11:13:54", "tipo": "vram_pico", "gb": 3.35}
+{"t": "2026-09-14 11:13:58", "tipo": "vram_pico", "gb": 3.44}
+{"t": "2026-09-14 11:14:02", "tipo": "vram_pico", "gb": 3.6}
+{"t": "2026-09-14 11:14:06", "tipo": "vram_pico", "gb": 3.72}
+{"t": "2026-09-14 11:14:10", "tipo": "vram_pico", "gb": 3.91}
+{"t": "2026-09-14 11:14:14", "tipo": "vram_pico", "gb": 3.97}
+{"t": "2026-09-14 11:14:18", "tipo": "vram_pico", "gb": 4.04}
+{"t": "2026-09-14 11:14:22", "tipo": "vram_pico", "gb": 4.25}
+{"t": "2026-09-14 11:14:26", "tipo": "vram_pico", "gb": 4.41}
+{"t": "2026-09-14 11:14:31", "tipo": "vram_pico", "gb": 4.66}
+{"t": "2026-09-14 11:14:35", "tipo": "vram_pico", "gb": 4.79}
+{"t": "2026-09-14 11:14:39", "tipo": "vram_pico", "gb": 4.88}
+{"t": "2026-09-14 11:14:43", "tipo": "vram_pico", "gb": 5.07}
+{"t": "2026-09-14 11:14:47", "tipo": "vram_pico", "gb": 5.19}
+{"t": "2026-09-14 11:14:51", "tipo": "vram_pico", "gb": 5.23}
+{"t": "2026-09-14 11:14:55", "tipo": "vram_pico", "gb": 5.45}
+{"t": "2026-09-14 11:14:59", "tipo": "vram_pico", "gb": 5.57}
+{"t": "2026-09-14 11:15:03", "tipo": "vram_pico", "gb": 5.76}
+{"t": "2026-09-14 11:15:07", "tipo": "vram_pico", "gb": 5.88}
+{"t": "2026-09-14 11:15:11", "tipo": "vram_pico", "gb": 6.04}
+{"t": "2026-09-14 11:15:15", "tipo": "vram_pico", "gb": 6.07}
+{"t": "2026-09-14 11:15:19", "tipo": "vram_pico", "gb": 6.2}
+{"t": "2026-09-14 11:15:23", "tipo": "vram_pico", "gb": 6.29}
+{"t": "2026-09-14 11:15:27", "tipo": "vram_pico", "gb": 6.39}
+{"t": "2026-09-14 11:15:31", "tipo": "vram_pico", "gb": 6.54}
+{"t": "2026-09-14 11:15:35", "tipo": "vram_pico", "gb": 6.73}
+{"t": "2026-09-14 11:15:39", "tipo": "vram_pico", "gb": 6.76}
+{"t": "2026-09-14 11:15:43", "tipo": "vram_pico", "gb": 6.92}
+{"t": "2026-09-14 11:15:47", "tipo": "vram_pico", "gb": 7.04}
+{"t": "2026-09-14 11:15:51", "tipo": "vram_pico", "gb": 7.14}
+{"t": "2026-09-14 11:16:08", "tipo": "vram_pico", "gb": 7.26}
+{"t": "2026-09-14 11:16:12", "tipo": "vram_pico", "gb": 7.51}
+{"t": "2026-09-14 11:16:16", "tipo": "vram_pico", "gb": 7.54}
+{"t": "2026-09-14 11:16:36", "tipo": "vram_pico", "gb": 7.64}
+{"t": "2026-09-14 11:16:40", "tipo": "vram_pico", "gb": 7.7}
+{"t": "2026-09-14 11:16:44", "tipo": "vram_pico", "gb": 7.89}
+{"t": "2026-09-14 11:16:56", "tipo": "vram_pico", "gb": 7.95}
+{"t": "2026-09-14 11:17:28", "tipo": "vram_pico", "gb": 8.17}
+{"t": "2026-09-14 11:17:32", "tipo": "vram_pico", "gb": 8.35}
+{"t": "2026-09-14 11:17:36", "tipo": "vram_pico", "gb": 8.45}
+{"t": "2026-09-14 11:18:05", "tipo": "vram_pico", "gb": 8.54}
+{"t": "2026-09-14 11:18:37", "tipo": "vram_pico", "gb": 8.64}
+{"t": "2026-09-14 11:18:45", "tipo": "vram_pico", "gb": 8.7}
+{"t": "2026-09-14 11:27:02", "tipo": "vram_pico", "gb": 11.0}
+{"t": "2026-09-14 11:27:06", "tipo": "vram_pico", "gb": 11.13}
+{"t": "2026-09-14 11:27:10", "tipo": "vram_pico", "gb": 11.16}
+{"t": "2026-09-14 11:27:14", "tipo": "vram_pico", "gb": 11.19}
+{"t": "2026-09-14 11:27:22", "tipo": "vram_pico", "gb": 11.25}
+{"t": "2026-09-14 11:31:28", "tipo": "vram_pico", "gb": 11.34}
+{"t": "2026-09-14 11:34:18", "tipo": "vram_pico", "gb": 11.41}
+{"t": "2026-09-14 11:40:52", "tipo": "fila", "rodando": 0, "pendente": 0}
+{"t": "2026-09-14 11:40:57", "tipo": "prompt", "tag": "001_9c295c93", "status": "success", "n_nos": 53, "imagens": 6, "erros": 0, "tipos": ["CFGGuider", "CFGNorm", "CLIPLoader", "CLIPTextEncode", "ConditioningZeroOut", "DecimateMesh", "EmptyFlux2LatentImage", "Flux2Scheduler", "Get3DComponents", "ImageCrop", "ImageScale", "ImageScaleToTotalPixels", "KSampler", "KSamplerSelect", "LiaPickReference", "LiaRenderTextured", "Load3D", "LoadImage", "LoraLoaderModelOnly", "MeshSmoothNormals", "ModelSamplingAuraFlow", "PreviewImage", "PrimitiveStringMultiline", "RandomNoise", "ReferenceLatent", "RemeshMesh", "SamplerCustomAdvanced", "SaveImage", "SetLatentNoiseMask", "TextEncodeQwenImageEditPlus", "UNETLoader", "UnetLoaderGGUF", "UnwrapMesh", "VAEDecode", "VAEEncode", "VAELoader", "WeldVertices"]}

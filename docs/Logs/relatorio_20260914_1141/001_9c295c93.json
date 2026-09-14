@@ -1,0 +1,1001 @@
+{
+ "prompt_id": "9c295c93-6390-41e2-8a07-f4e372eddf7c",
+ "registrado_em": "2026-09-14 11:40:57",
+ "status": "success",
+ "completo": true,
+ "tipos_de_no": [
+  "CFGGuider",
+  "CFGNorm",
+  "CLIPLoader",
+  "CLIPTextEncode",
+  "ConditioningZeroOut",
+  "DecimateMesh",
+  "EmptyFlux2LatentImage",
+  "Flux2Scheduler",
+  "Get3DComponents",
+  "ImageCrop",
+  "ImageScale",
+  "ImageScaleToTotalPixels",
+  "KSampler",
+  "KSamplerSelect",
+  "LiaPickReference",
+  "LiaRenderTextured",
+  "Load3D",
+  "LoadImage",
+  "LoraLoaderModelOnly",
+  "MeshSmoothNormals",
+  "ModelSamplingAuraFlow",
+  "PreviewImage",
+  "PrimitiveStringMultiline",
+  "RandomNoise",
+  "ReferenceLatent",
+  "RemeshMesh",
+  "SamplerCustomAdvanced",
+  "SaveImage",
+  "SetLatentNoiseMask",
+  "TextEncodeQwenImageEditPlus",
+  "UNETLoader",
+  "UnetLoaderGGUF",
+  "UnwrapMesh",
+  "VAEDecode",
+  "VAEEncode",
+  "VAELoader",
+  "WeldVertices"
+ ],
+ "n_nos": 53,
+ "erros": [],
+ "mensagens": [
+  [
+   "execution_start",
+   {
+    "prompt_id": "9c295c93-6390-41e2-8a07-f4e372eddf7c",
+    "timestamp": 1789384330566
+   }
+  ],
+  [
+   "execution_cached",
+   {
+    "nodes": [],
+    "prompt_id": "9c295c93-6390-41e2-8a07-f4e372eddf7c",
+    "timestamp": 1789384330567
+   }
+  ],
+  [
+   "execution_success",
+   {
+    "prompt_id": "9c295c93-6390-41e2-8a07-f4e372eddf7c",
+    "timestamp": 1789386048422
+   }
+  ]
+ ],
+ "textos_saida": {
+  "12": [
+   "az 180 el 0: 100.0% da vista ainda sem textura"
+  ]
+ },
+ "imagens": [
+  {
+   "node": "13",
+   "arquivo": "ComfyUI_temp_fnryy_00001_.png",
+   "tipo": "temp",
+   "copia": "001_9c295c93__temp__ComfyUI_temp_fnryy_00001_.png"
+  },
+  {
+   "node": "26",
+   "arquivo": "ComfyUI_temp_ygddr_00001_.png",
+   "tipo": "temp",
+   "copia": "001_9c295c93__temp__ComfyUI_temp_ygddr_00001_.png"
+  },
+  {
+   "node": "53",
+   "arquivo": "ComfyUI_temp_fxrhz_00001_.png",
+   "tipo": "temp",
+   "copia": "001_9c295c93__temp__ComfyUI_temp_fxrhz_00001_.png"
+  },
+  {
+   "node": "54",
+   "arquivo": "teste_costas_B_qwenedit_00003_.png",
+   "tipo": "output",
+   "copia": "001_9c295c93__output__teste_costas_B_qwenedit_00003_.png"
+  },
+  {
+   "node": "39",
+   "arquivo": "ComfyUI_temp_tkayu_00001_.png",
+   "tipo": "temp",
+   "copia": "001_9c295c93__temp__ComfyUI_temp_tkayu_00001_.png"
+  },
+  {
+   "node": "40",
+   "arquivo": "teste_costas_A_klein_00003_.png",
+   "tipo": "output",
+   "copia": "001_9c295c93__output__teste_costas_A_klein_00003_.png"
+  }
+ ],
+ "titulos": {
+  "1": "GLB da Lia",
+  "2": "Obter componentes 3D",
+  "3": "Remalhar Malha (DC de Banda Estreita)",
+  "4": "Soldar Vértices",
+  "5": "Decimar Malha",
+  "6": "Desdobrar UVs da malha",
+  "7": "mesh BAIXO com UV",
+  "8": "Lia FRENTE 2D",
+  "10": "referência das costas",
+  "11": "Redimensionar Imagem para Total de Pixels",
+  "12": "Costas: render (tudo cinza) + normal map",
+  "13": "normal map das costas",
+  "14": "Prompt (igual para os dois)",
+  "15": "Carregar Modelo de Difusão",
+  "16": "Carregar CLIP",
+  "17": "Carregar VAE",
+  "18": "Flux2Scheduler",
+  "19": "KSamplerSelect",
+  "20": "Empty Flux 2 Latent",
+  "21": "image 1 = referência",
+  "22": "image 2 = normal",
+  "23": "image 3 = frente",
+  "24": "frente 1024² (corte central)",
+  "25": "image 3 = cintura→barra (ornamentos)",
+  "26": "confira: cintura e barra visíveis?",
+  "27": "Codificação de Texto CLIP (Prompt)",
+  "28": "CondicionamentoZerar",
+  "29": "ref +",
+  "30": "normal +",
+  "31": "frente +",
+  "32": "ref −",
+  "33": "normal −",
+  "34": "frente −",
+  "35": "CFGGuider",
+  "36": "Ruído Aleatório",
+  "37": "SamplerCustomAdvanced",
+  "38": "VAE Decodificar",
+  "39": "A — Klein 4B (costas)",
+  "40": "Salvar Imagem",
+  "41": "Qwen-Image-Edit-2509 Q3_K_S (9,0 GB — cabe inteiro no T4)",
+  "42": "Lightning 4 passos (0,85 GB)",
+  "43": "Qwen2.5-VL 7B fp8 (9,4 GB) — encoder do Qwen-Image",
+  "44": "Carregar VAE",
+  "45": "ModelSamplingAuraFlow",
+  "46": "CFGNorm",
+  "47": "positivo (img1 ref, img2 silhueta, img3 ornamentos)",
+  "48": "negativo (vazio, mesmas imagens)",
+  "49": "latente = render (silhueta cinza no branco)",
+  "50": "só pinta a silhueta → enquadramento travado",
+  "51": "KSampler",
+  "52": "VAE Decodificar",
+  "53": "B — Qwen-Image-Edit Q3_K_S 768 inpaint (costas)",
+  "54": "Salvar Imagem"
+ },
+ "grafo_api": {
+  "1": {
+   "inputs": {
+    "model_file": "3d/Lia_trellis2_00001_.glb",
+    "upload 3d model": "upload3dmodel",
+    "upload extra resources": "uploadExtraResources",
+    "clear": "clear",
+    "image": {
+     "image": "threed/scene_1789384329864.png [temp]",
+     "mask": "threed/scene_mask_1789384329865.png [temp]",
+     "normal": "threed/scene_normal_1789384329863.png [temp]",
+     "camera_info": {
+      "position": {
+       "x": 10,
+       "y": 10,
+       "z": 10.000000000000002
+      },
+      "target": {
+       "x": 0,
+       "y": 0,
+       "z": 0
+      },
+      "zoom": 1,
+      "cameraType": "perspective",
+      "quaternion": {
+       "x": -0.2798481423331213,
+       "y": 0.3647051996310008,
+       "z": 0.11591689595929511,
+       "w": 0.8804762392171493
+      },
+      "fov": 35,
+      "aspect": 1,
+      "near": 0.01,
+      "far": 10000,
+      "frustum": {
+       "left": -5,
+       "right": 5,
+       "top": 5,
+       "bottom": -5
+      }
+     },
+     "recording": "",
+     "model_3d_info": []
+    },
+    "width": 1024,
+    "height": 1024
+   },
+   "class_type": "Load3D",
+   "_meta": {
+    "title": "GLB da Lia"
+   }
+  },
+  "2": {
+   "inputs": {
+    "model_3d": [
+     "1",
+     6
+    ]
+   },
+   "class_type": "Get3DComponents",
+   "_meta": {
+    "title": "Obter componentes 3D"
+   }
+  },
+  "3": {
+   "inputs": {
+    "resolution": 512,
+    "sign_mode": "udf",
+    "sign_mode.qef": false,
+    "sign_mode.drop_inverted_components": false,
+    "sign_mode.drop_enclosed_components": false,
+    "band": 1.0,
+    "project_back": 0.0,
+    "fix_poles": false,
+    "smooth_iters": 3,
+    "drop_small_components": 0.01,
+    "precluster_max_verts": 20000000,
+    "mesh": [
+     "2",
+     0
+    ]
+   },
+   "class_type": "RemeshMesh",
+   "_meta": {
+    "title": "Remalhar Malha (DC de Banda Estreita)"
+   }
+  },
+  "4": {
+   "inputs": {
+    "epsilon_rel": 1e-05,
+    "epsilon_abs": 0.0,
+    "mesh": [
+     "3",
+     0
+    ]
+   },
+   "class_type": "WeldVertices",
+   "_meta": {
+    "title": "Soldar Vértices"
+   }
+  },
+  "5": {
+   "inputs": {
+    "target_face_count": 30000,
+    "placement_mode": "midpoint",
+    "mesh": [
+     "4",
+     0
+    ]
+   },
+   "class_type": "DecimateMesh",
+   "_meta": {
+    "title": "Decimar Malha"
+   }
+  },
+  "6": {
+   "inputs": {
+    "segmenter": "pec",
+    "resolution": 2048,
+    "padding": 12,
+    "weld_distance": 0.001,
+    "mesh": [
+     "5",
+     0
+    ]
+   },
+   "class_type": "UnwrapMesh",
+   "_meta": {
+    "title": "Desdobrar UVs da malha"
+   }
+  },
+  "7": {
+   "inputs": {
+    "crease_angle": 180.0,
+    "mesh": [
+     "6",
+     0
+    ]
+   },
+   "class_type": "MeshSmoothNormals",
+   "_meta": {
+    "title": "mesh BAIXO com UV"
+   }
+  },
+  "8": {
+   "inputs": {
+    "image": "v_00067_.png"
+   },
+   "class_type": "LoadImage",
+   "_meta": {
+    "title": "Lia FRENTE 2D"
+   }
+  },
+  "10": {
+   "inputs": {
+    "view": "back",
+    "front": [
+     "8",
+     0
+    ]
+   },
+   "class_type": "LiaPickReference",
+   "_meta": {
+    "title": "referência das costas"
+   }
+  },
+  "11": {
+   "inputs": {
+    "upscale_method": "lanczos",
+    "megapixels": 1.0,
+    "resolution_steps": 1,
+    "image": [
+     "10",
+     0
+    ]
+   },
+   "class_type": "ImageScaleToTotalPixels",
+   "_meta": {
+    "title": "Redimensionar Imagem para Total de Pixels"
+   }
+  },
+  "12": {
+   "inputs": {
+    "azimuth": 180.0,
+    "elevation": 0.0,
+    "resolution": 768,
+    "frame_scale": 1.1,
+    "grow_mask_px": 12,
+    "missing_color": "grey",
+    "mesh": [
+     "7",
+     0
+    ]
+   },
+   "class_type": "LiaRenderTextured",
+   "_meta": {
+    "title": "Costas: render (tudo cinza) + normal map"
+   }
+  },
+  "13": {
+   "inputs": {
+    "images": [
+     "12",
+     3
+    ]
+   },
+   "class_type": "PreviewImage",
+   "_meta": {
+    "title": "normal map das costas"
+   }
+  },
+  "14": {
+   "inputs": {
+    "value": "back view, seen from behind. Paint this exact character from image 1 onto the pose and silhouette of the normal map in image 2. Image 2 is a flat grey silhouette of the pose: fill it completely, edge to edge, keep the exact same framing and size. Image 3 shows the character's ornaments up close: keep EVERY gold trim, the gold belt line around the waist and the embroidered border along the hem, continuous all the way around the back. Flat cel-shaded albedo texture for a game: uniform flat colors, no shadows, no folds shading, no highlights, no directional lighting, no ambient occlusion, no outlines. Plain white background. Same anime art style as image 1."
+   },
+   "class_type": "PrimitiveStringMultiline",
+   "_meta": {
+    "title": "Prompt (igual para os dois)"
+   }
+  },
+  "15": {
+   "inputs": {
+    "unet_name": "flux-2-klein-4b-fp8.safetensors",
+    "weight_dtype": "default"
+   },
+   "class_type": "UNETLoader",
+   "_meta": {
+    "title": "Carregar Modelo de Difusão"
+   }
+  },
+  "16": {
+   "inputs": {
+    "clip_name": "qwen_3_4b_fp8_mixed.safetensors",
+    "type": "flux2",
+    "device": "default"
+   },
+   "class_type": "CLIPLoader",
+   "_meta": {
+    "title": "Carregar CLIP"
+   }
+  },
+  "17": {
+   "inputs": {
+    "vae_name": "flux2-vae.safetensors"
+   },
+   "class_type": "VAELoader",
+   "_meta": {
+    "title": "Carregar VAE"
+   }
+  },
+  "18": {
+   "inputs": {
+    "steps": 4,
+    "width": 1024,
+    "height": 1024
+   },
+   "class_type": "Flux2Scheduler",
+   "_meta": {
+    "title": "Flux2Scheduler"
+   }
+  },
+  "19": {
+   "inputs": {
+    "sampler_name": "euler"
+   },
+   "class_type": "KSamplerSelect",
+   "_meta": {
+    "title": "KSamplerSelect"
+   }
+  },
+  "20": {
+   "inputs": {
+    "width": 1024,
+    "height": 1024,
+    "batch_size": 1
+   },
+   "class_type": "EmptyFlux2LatentImage",
+   "_meta": {
+    "title": "Empty Flux 2 Latent"
+   }
+  },
+  "21": {
+   "inputs": {
+    "pixels": [
+     "11",
+     0
+    ],
+    "vae": [
+     "17",
+     0
+    ]
+   },
+   "class_type": "VAEEncode",
+   "_meta": {
+    "title": "image 1 = referência"
+   }
+  },
+  "22": {
+   "inputs": {
+    "pixels": [
+     "12",
+     3
+    ],
+    "vae": [
+     "17",
+     0
+    ]
+   },
+   "class_type": "VAEEncode",
+   "_meta": {
+    "title": "image 2 = normal"
+   }
+  },
+  "23": {
+   "inputs": {
+    "pixels": [
+     "25",
+     0
+    ],
+    "vae": [
+     "17",
+     0
+    ]
+   },
+   "class_type": "VAEEncode",
+   "_meta": {
+    "title": "image 3 = frente"
+   }
+  },
+  "24": {
+   "inputs": {
+    "upscale_method": "lanczos",
+    "width": 1024,
+    "height": 1024,
+    "crop": "center",
+    "image": [
+     "8",
+     0
+    ]
+   },
+   "class_type": "ImageScale",
+   "_meta": {
+    "title": "frente 1024² (corte central)"
+   }
+  },
+  "25": {
+   "inputs": {
+    "width": 1024,
+    "height": 640,
+    "x": 0,
+    "y": 384,
+    "image": [
+     "24",
+     0
+    ]
+   },
+   "class_type": "ImageCrop",
+   "_meta": {
+    "title": "image 3 = cintura→barra (ornamentos)"
+   }
+  },
+  "26": {
+   "inputs": {
+    "images": [
+     "25",
+     0
+    ]
+   },
+   "class_type": "PreviewImage",
+   "_meta": {
+    "title": "confira: cintura e barra visíveis?"
+   }
+  },
+  "27": {
+   "inputs": {
+    "text": [
+     "14",
+     0
+    ],
+    "clip": [
+     "16",
+     0
+    ]
+   },
+   "class_type": "CLIPTextEncode",
+   "_meta": {
+    "title": "Codificação de Texto CLIP (Prompt)"
+   }
+  },
+  "28": {
+   "inputs": {
+    "conditioning": [
+     "27",
+     0
+    ]
+   },
+   "class_type": "ConditioningZeroOut",
+   "_meta": {
+    "title": "CondicionamentoZerar"
+   }
+  },
+  "29": {
+   "inputs": {
+    "conditioning": [
+     "27",
+     0
+    ],
+    "latent": [
+     "21",
+     0
+    ]
+   },
+   "class_type": "ReferenceLatent",
+   "_meta": {
+    "title": "ref +"
+   }
+  },
+  "30": {
+   "inputs": {
+    "conditioning": [
+     "29",
+     0
+    ],
+    "latent": [
+     "22",
+     0
+    ]
+   },
+   "class_type": "ReferenceLatent",
+   "_meta": {
+    "title": "normal +"
+   }
+  },
+  "31": {
+   "inputs": {
+    "conditioning": [
+     "30",
+     0
+    ],
+    "latent": [
+     "23",
+     0
+    ]
+   },
+   "class_type": "ReferenceLatent",
+   "_meta": {
+    "title": "frente +"
+   }
+  },
+  "32": {
+   "inputs": {
+    "conditioning": [
+     "28",
+     0
+    ],
+    "latent": [
+     "21",
+     0
+    ]
+   },
+   "class_type": "ReferenceLatent",
+   "_meta": {
+    "title": "ref −"
+   }
+  },
+  "33": {
+   "inputs": {
+    "conditioning": [
+     "32",
+     0
+    ],
+    "latent": [
+     "22",
+     0
+    ]
+   },
+   "class_type": "ReferenceLatent",
+   "_meta": {
+    "title": "normal −"
+   }
+  },
+  "34": {
+   "inputs": {
+    "conditioning": [
+     "33",
+     0
+    ],
+    "latent": [
+     "23",
+     0
+    ]
+   },
+   "class_type": "ReferenceLatent",
+   "_meta": {
+    "title": "frente −"
+   }
+  },
+  "35": {
+   "inputs": {
+    "cfg": 1.0,
+    "model": [
+     "15",
+     0
+    ],
+    "positive": [
+     "31",
+     0
+    ],
+    "negative": [
+     "34",
+     0
+    ]
+   },
+   "class_type": "CFGGuider",
+   "_meta": {
+    "title": "CFGGuider"
+   }
+  },
+  "36": {
+   "inputs": {
+    "noise_seed": 201
+   },
+   "class_type": "RandomNoise",
+   "_meta": {
+    "title": "Ruído Aleatório"
+   }
+  },
+  "37": {
+   "inputs": {
+    "noise": [
+     "36",
+     0
+    ],
+    "guider": [
+     "35",
+     0
+    ],
+    "sampler": [
+     "19",
+     0
+    ],
+    "sigmas": [
+     "18",
+     0
+    ],
+    "latent_image": [
+     "20",
+     0
+    ]
+   },
+   "class_type": "SamplerCustomAdvanced",
+   "_meta": {
+    "title": "SamplerCustomAdvanced"
+   }
+  },
+  "38": {
+   "inputs": {
+    "samples": [
+     "37",
+     0
+    ],
+    "vae": [
+     "17",
+     0
+    ]
+   },
+   "class_type": "VAEDecode",
+   "_meta": {
+    "title": "VAE Decodificar"
+   }
+  },
+  "39": {
+   "inputs": {
+    "images": [
+     "38",
+     0
+    ]
+   },
+   "class_type": "PreviewImage",
+   "_meta": {
+    "title": "A — Klein 4B (costas)"
+   }
+  },
+  "40": {
+   "inputs": {
+    "filename_prefix": "3d/Lia/teste_costas_A_klein",
+    "images": [
+     "38",
+     0
+    ]
+   },
+   "class_type": "SaveImage",
+   "_meta": {
+    "title": "Salvar Imagem"
+   }
+  },
+  "41": {
+   "inputs": {
+    "unet_name": "Qwen-Image-Edit-2509-Q3_K_S.gguf"
+   },
+   "class_type": "UnetLoaderGGUF",
+   "_meta": {
+    "title": "Qwen-Image-Edit-2509 Q3_K_S (9,0 GB — cabe inteiro no T4)"
+   }
+  },
+  "42": {
+   "inputs": {
+    "lora_name": "Qwen-Image-Edit-2509-Lightning-4steps-V1.0-bf16.safetensors",
+    "strength_model": 1.0,
+    "model": [
+     "41",
+     0
+    ]
+   },
+   "class_type": "LoraLoaderModelOnly",
+   "_meta": {
+    "title": "Lightning 4 passos (0,85 GB)"
+   }
+  },
+  "43": {
+   "inputs": {
+    "clip_name": "qwen_2.5_vl_7b_fp8_scaled.safetensors",
+    "type": "qwen_image",
+    "device": "default"
+   },
+   "class_type": "CLIPLoader",
+   "_meta": {
+    "title": "Qwen2.5-VL 7B fp8 (9,4 GB) — encoder do Qwen-Image"
+   }
+  },
+  "44": {
+   "inputs": {
+    "vae_name": "qwen_image_vae.safetensors"
+   },
+   "class_type": "VAELoader",
+   "_meta": {
+    "title": "Carregar VAE"
+   }
+  },
+  "45": {
+   "inputs": {
+    "shift": 3.0,
+    "sampling": "flow",
+    "model": [
+     "42",
+     0
+    ]
+   },
+   "class_type": "ModelSamplingAuraFlow",
+   "_meta": {
+    "title": "ModelSamplingAuraFlow"
+   }
+  },
+  "46": {
+   "inputs": {
+    "strength": 1.0,
+    "pre_cfg": false,
+    "model": [
+     "45",
+     0
+    ]
+   },
+   "class_type": "CFGNorm",
+   "_meta": {
+    "title": "CFGNorm"
+   }
+  },
+  "47": {
+   "inputs": {
+    "prompt": [
+     "14",
+     0
+    ],
+    "clip": [
+     "43",
+     0
+    ],
+    "vae": [
+     "44",
+     0
+    ],
+    "image1": [
+     "11",
+     0
+    ],
+    "image2": [
+     "12",
+     0
+    ],
+    "image3": [
+     "25",
+     0
+    ]
+   },
+   "class_type": "TextEncodeQwenImageEditPlus",
+   "_meta": {
+    "title": "positivo (img1 ref, img2 silhueta, img3 ornamentos)"
+   }
+  },
+  "48": {
+   "inputs": {
+    "prompt": "",
+    "clip": [
+     "43",
+     0
+    ],
+    "vae": [
+     "44",
+     0
+    ],
+    "image1": [
+     "11",
+     0
+    ],
+    "image2": [
+     "12",
+     0
+    ],
+    "image3": [
+     "25",
+     0
+    ]
+   },
+   "class_type": "TextEncodeQwenImageEditPlus",
+   "_meta": {
+    "title": "negativo (vazio, mesmas imagens)"
+   }
+  },
+  "49": {
+   "inputs": {
+    "pixels": [
+     "12",
+     0
+    ],
+    "vae": [
+     "44",
+     0
+    ]
+   },
+   "class_type": "VAEEncode",
+   "_meta": {
+    "title": "latente = render (silhueta cinza no branco)"
+   }
+  },
+  "50": {
+   "inputs": {
+    "samples": [
+     "49",
+     0
+    ],
+    "mask": [
+     "12",
+     1
+    ]
+   },
+   "class_type": "SetLatentNoiseMask",
+   "_meta": {
+    "title": "só pinta a silhueta → enquadramento travado"
+   }
+  },
+  "51": {
+   "inputs": {
+    "seed": 201,
+    "steps": 4,
+    "cfg": 1.0,
+    "sampler_name": "euler",
+    "scheduler": "simple",
+    "denoise": 1.0,
+    "model": [
+     "46",
+     0
+    ],
+    "positive": [
+     "47",
+     0
+    ],
+    "negative": [
+     "48",
+     0
+    ],
+    "latent_image": [
+     "50",
+     0
+    ]
+   },
+   "class_type": "KSampler",
+   "_meta": {
+    "title": "KSampler"
+   }
+  },
+  "52": {
+   "inputs": {
+    "samples": [
+     "51",
+     0
+    ],
+    "vae": [
+     "44",
+     0
+    ]
+   },
+   "class_type": "VAEDecode",
+   "_meta": {
+    "title": "VAE Decodificar"
+   }
+  },
+  "53": {
+   "inputs": {
+    "images": [
+     "52",
+     0
+    ]
+   },
+   "class_type": "PreviewImage",
+   "_meta": {
+    "title": "B — Qwen-Image-Edit Q3_K_S 768 inpaint (costas)"
+   }
+  },
+  "54": {
+   "inputs": {
+    "filename_prefix": "3d/Lia/teste_costas_B_qwenedit",
+    "images": [
+     "52",
+     0
+    ]
+   },
+   "class_type": "SaveImage",
+   "_meta": {
+    "title": "Salvar Imagem"
+   }
+  }
+ }
+}
