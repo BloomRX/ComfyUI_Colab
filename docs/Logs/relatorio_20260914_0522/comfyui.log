@@ -1,0 +1,325 @@
+
+===== 2026-09-14 05:02:33 $ python main.py --listen 0.0.0.0 --port 8188 --enable-cors-header '*' --output-directory /content/drive/MyDrive/ComfyUI_Data/output --input-directory /content/drive/MyDrive/ComfyUI_Data/input --user-directory /content/comfy_user --preview-method auto --disable-auto-launch --cache-none --disable-smart-memory --mmap-torch-files --enable-manager
+[32m[INFO][0m setup plugin alembic.autogenerate.schemas
+[32m[INFO][0m setup plugin alembic.autogenerate.tables
+[32m[INFO][0m setup plugin alembic.autogenerate.types
+[32m[INFO][0m setup plugin alembic.autogenerate.constraints
+[32m[INFO][0m setup plugin alembic.autogenerate.defaults
+[32m[INFO][0m setup plugin alembic.autogenerate.comments
+[32m[INFO][0m setup plugin alembic.ext.checkconstraint_byname
+[32m[INFO][0m Adding extra search path checkpoints /content/drive/MyDrive/ComfyUI_Data/models/checkpoints
+[32m[INFO][0m Adding extra search path loras /content/drive/MyDrive/ComfyUI_Data/models/loras
+[32m[INFO][0m Adding extra search path vae /content/drive/MyDrive/ComfyUI_Data/models/vae
+[32m[INFO][0m Adding extra search path clip /content/drive/MyDrive/ComfyUI_Data/models/clip
+[32m[INFO][0m Adding extra search path clip_vision /content/drive/MyDrive/ComfyUI_Data/models/clip_vision
+[32m[INFO][0m Adding extra search path controlnet /content/drive/MyDrive/ComfyUI_Data/models/controlnet
+[32m[INFO][0m Adding extra search path upscale_models /content/drive/MyDrive/ComfyUI_Data/models/upscale_models
+[32m[INFO][0m Adding extra search path embeddings /content/drive/MyDrive/ComfyUI_Data/models/embeddings
+[32m[INFO][0m Adding extra search path unet /content/drive/MyDrive/ComfyUI_Data/models/unet
+[32m[INFO][0m Adding extra search path diffusion_models /content/drive/MyDrive/ComfyUI_Data/models/diffusion_models
+[32m[INFO][0m Adding extra search path ipadapter /content/drive/MyDrive/ComfyUI_Data/models/ipadapter
+[32m[INFO][0m Adding extra search path animatediff_models /content/drive/MyDrive/ComfyUI_Data/models/animatediff_models
+[32m[INFO][0m Adding extra search path animatediff_motion_lora /content/drive/MyDrive/ComfyUI_Data/models/animatediff_motion_lora
+[32m[INFO][0m Adding extra search path sams /content/drive/MyDrive/ComfyUI_Data/models/sams
+[32m[INFO][0m Adding extra search path style_models /content/drive/MyDrive/ComfyUI_Data/models/style_models
+[32m[INFO][0m Adding extra search path text_encoders /content/drive/MyDrive/ComfyUI_Data/models/text_encoders
+[32m[INFO][0m Adding extra search path skintoken /content/drive/MyDrive/ComfyUI_Data/models/skintoken
+[32m[INFO][0m Adding extra search path trellis2 /content/drive/MyDrive/ComfyUI_Data/models/trellis2
+[32m[INFO][0m Adding extra search path birefnet /content/drive/MyDrive/ComfyUI_Data/models/birefnet
+[32m[INFO][0m Adding extra search path background_removal /content/drive/MyDrive/ComfyUI_Data/models/background_removal
+[32m[INFO][0m Adding extra search path geometry_estimation /content/drive/MyDrive/ComfyUI_Data/models/geometry_estimation
+[32m[INFO][0m Adding extra search path ultralytics_bbox /content/drive/MyDrive/ComfyUI_Data/models/ultralytics/bbox
+[32m[INFO][0m Adding extra search path ultralytics_segm /content/drive/MyDrive/ComfyUI_Data/models/ultralytics/segm
+[32m[INFO][0m Setting output directory to: /content/drive/MyDrive/ComfyUI_Data/output
+[32m[INFO][0m Setting input directory to: /content/drive/MyDrive/ComfyUI_Data/input
+[32m[INFO][0m Setting user directory to: /content/comfy_user
+[START] Security scan
+[DONE] Security scan
+** ComfyUI startup time: 2026-09-14 05:02:38.396
+** Platform: Linux
+** Python version: 3.13.15 (main, Aug  6 2026, 11:06:22) [GCC 13.3.0]
+** Python executable: /usr/bin/python3
+** ComfyUI Path: /content/ComfyUI
+** ComfyUI Base Folder Path: /content/ComfyUI
+** User directory: /content/comfy_user
+** ComfyUI-Manager config path: /content/comfy_user/__manager/config.ini
+** Log path: /content/comfy_user/comfyui.log
+[32m[INFO][0m [PRE] ComfyUI-Manager
+[1m[33m[WARNING][0m WARNING: You need pytorch with cu130 or higher to use optimized CUDA operations.
+WARNING WARNING WARNING
+If you are on nvidia 20 series and above it is required that you update your pytorch to cu130 or higher.
+
+[32m[INFO][0m Found comfy_kitchen backend cuda: {'available': True, 'disabled': True, 'unavailable_reason': None, 'capabilities': ['adaln', 'apply_rope', 'apply_rope1', 'apply_rope1_', 'apply_rope_', 'apply_rope_split_half', 'apply_rope_split_half1', 'apply_rope_split_half1_', 'apply_rope_split_half_', 'convrot_w4a4_linear', 'dequantize_convrot_w4a4_weight', 'dequantize_int8_convrot_weight', 'dequantize_int8_convrot_weight_dtype', 'dequantize_int8_simple', 'dequantize_int8_simple_dtype', 'dequantize_nvfp4', 'dequantize_per_tensor_fp8', 'dequantize_w4a8_int8_weight', 'gemv_awq_w4a16', 'int8_linear', 'na3d', 'prepare_int4_weight_for_int8_linear', 'quantize_and_rotate_rowwise', 'quantize_convrot_w4a4_weight', 'quantize_int8_convrot_weight', 'quantize_int8_rowwise', 'quantize_int8_tensorwise', 'quantize_mxfp8', 'quantize_nvfp4', 'quantize_per_tensor_fp8', 'quantize_svdquant_w4a4', 'quantize_w4a8_int8_weight', 'rms_adaln', 'rms_rope', 'rms_rope1', 'rms_rope1_', 'rms_rope_', 'rms_rope_split_half', 'rms_rope_split_half1', 'rms_rope_split_half1_', 'rms_rope_split_half_', 'rotate_int8_convrot_weight', 'scaled_mm_nvfp4', 'scaled_mm_svdquant_w4a4', 'sol_attn', 'stochastic_rounding_fp8', 'w4a8_int8_linear']}
+[32m[INFO][0m Found comfy_kitchen backend triton: {'available': True, 'disabled': True, 'unavailable_reason': None, 'capabilities': ['adaln', 'apply_rope', 'apply_rope1', 'apply_rope1_', 'apply_rope_', 'apply_rope_split_half', 'apply_rope_split_half1', 'apply_rope_split_half1_', 'apply_rope_split_half_', 'dequantize_nvfp4', 'dequantize_per_tensor_fp8', 'int8_linear', 'na3d', 'quantize_and_rotate_rowwise', 'quantize_int8_rowwise', 'quantize_mxfp8', 'quantize_nvfp4', 'quantize_per_tensor_fp8', 'rms_adaln', 'rms_rope', 'rms_rope1', 'rms_rope1_', 'rms_rope_', 'rms_rope_split_half', 'rms_rope_split_half1', 'rms_rope_split_half1_', 'rms_rope_split_half_', 'w4a8_int8_linear']}
+[32m[INFO][0m Found comfy_kitchen backend eager: {'available': True, 'disabled': False, 'unavailable_reason': None, 'capabilities': ['adaln', 'apply_rope', 'apply_rope1', 'apply_rope1_', 'apply_rope_', 'apply_rope_split_half', 'apply_rope_split_half1', 'apply_rope_split_half1_', 'apply_rope_split_half_', 'convrot_w4a4_linear', 'dequantize_convrot_w4a4_weight', 'dequantize_int8_convrot_weight', 'dequantize_int8_convrot_weight_dtype', 'dequantize_int8_embedding', 'dequantize_int8_simple', 'dequantize_int8_simple_dtype', 'dequantize_mxfp8', 'dequantize_nvfp4', 'dequantize_per_tensor_fp8', 'dequantize_w4a8_int8_weight', 'gemv_awq_w4a16', 'int8_linear', 'na3d', 'prepare_int4_weight_for_int8_linear', 'quantize_and_rotate_rowwise', 'quantize_convrot_w4a4_weight', 'quantize_int8_convrot_weight', 'quantize_int8_rowwise', 'quantize_int8_tensorwise', 'quantize_mxfp8', 'quantize_nvfp4', 'quantize_per_tensor_fp8', 'quantize_svdquant_w4a4', 'quantize_w4a8_int8_weight', 'rms_adaln', 'rms_rope', 'rms_rope1', 'rms_rope1_', 'rms_rope_', 'rms_rope_split_half', 'rms_rope_split_half1', 'rms_rope_split_half1_', 'rms_rope_split_half_', 'rotate_int8_convrot_weight', 'scaled_mm_mxfp8', 'scaled_mm_nvfp4', 'scaled_mm_svdquant_w4a4', 'sol_attn', 'stochastic_rounding_fp8', 'w4a8_int8_linear']}
+[32m[INFO][0m Found comfy_kitchen backend hip: {'available': False, 'disabled': False, 'unavailable_reason': 'PyTorch ROCm/HIP runtime not available', 'capabilities': []}
+[32m[INFO][0m Checkpoint files will always be loaded safely.
+[32m[INFO][0m Total VRAM 14913 MB, total RAM 12976 MB
+[32m[INFO][0m pytorch version: 2.11.0+cu128
+[32m[INFO][0m Set vram state to: NORMAL_VRAM
+[32m[INFO][0m Disabling smart memory management
+[32m[INFO][0m Device: cuda:0 Tesla T4 : cudaMallocAsync
+[32m[INFO][0m Using async weight offloading with 2 streams
+[32m[INFO][0m Enabled pinned memory 5190.0
+[32m[INFO][0m Using pytorch attention
+[32m[INFO][0m aimdo: /project/src/control.c:283:INFO:comfy-aimdo inited for GPU: Tesla T4 (VRAM: 14912 MB)
+[32m[INFO][0m DynamicVRAM support detected and enabled
+[32m[INFO][0m Python version: 3.13.15 (main, Aug  6 2026, 11:06:22) [GCC 13.3.0]
+[32m[INFO][0m ComfyUI version: 0.35.0
+[32m[INFO][0m comfy-aimdo version: 0.5.3
+[32m[INFO][0m comfy-kitchen version: 0.2.33
+[32m[INFO][0m comfyui-frontend-package version: 1.52.7
+[32m[INFO][0m comfyui-workflow-templates version: 0.11.59
+[32m[INFO][0m comfyui-embedded-docs version: 0.5.11
+[32m[INFO][0m comfy-kitchen version: 0.2.33
+[32m[INFO][0m comfy-aimdo version: 0.5.3
+[32m[INFO][0m [Prompt Server] web root: /usr/local/lib/python3.13/dist-packages/comfyui_frontend_package/static
+[32m[INFO][0m Asset seeder disabled
+[32m[INFO][0m [START] ComfyUI-Manager
+[ComfyUI-Manager] Using GitPython backend
+[32m[INFO][0m [ComfyUI-Manager] network_mode: personal_cloud
+[32m[INFO][0m No OpenGL_accelerate module loaded: No module named 'OpenGL_accelerate'
+[32m[INFO][0m Blocked by policy: /content/ComfyUI/custom_nodes/ComfyUI-Manager
+[patch] /userdata/<dir>/<arquivo> habilitado (proxy-safe)
+[32m[INFO][0m 
+Import times for custom nodes:
+[32m[INFO][0m    0.0 seconds: /content/ComfyUI/custom_nodes/zz_proxy_userdata
+[32m[INFO][0m    0.0 seconds: /content/ComfyUI/custom_nodes/websocket_image_save.py
+[32m[INFO][0m    0.0 seconds: /content/ComfyUI/custom_nodes/ComfyUI-Lia-TextureProjection
+[32m[INFO][0m 
+[32m[INFO][0m Context impl SQLiteImpl.
+[32m[INFO][0m Will assume non-transactional DDL.
+[32m[INFO][0m Disabling intermediate node cache.
+[32m[INFO][0m Starting server
+
+[32m[INFO][0m To see the GUI go to: http://0.0.0.0:8188
+[32m[INFO][0m [ComfyUI-Manager] The ComfyRegistry cache update is still in progress, so an outdated cache is being used.
+FETCH DATA from: /usr/local/lib/python3.13/dist-packages/comfyui_manager/custom-node-list.json [DONE]
+[32m[INFO][0m got prompt
+[32m[INFO][0m Get3DComponents: glb -> 112000 vertices, 147522 faces (1 primitives)
+
+Remesh DC:   0%|          | 0/11 [00:00<?, ?it/s]
+Remesh DC:   9%|▉         | 1/11 [00:00<00:07,  1.41it/s]
+Remesh DC:  27%|██▋       | 3/11 [00:00<00:02,  3.88it/s]
+Remesh DC:  36%|███▋      | 4/11 [00:01<00:03,  2.18it/s]
+Remesh DC:  45%|████▌     | 5/11 [00:05<00:09,  1.62s/it]
+Remesh DC:  55%|█████▍    | 6/11 [00:11<00:14,  2.93s/it]
+Remesh DC:  64%|██████▎   | 7/11 [00:11<00:08,  2.07s/it]
+Remesh DC:  73%|███████▎  | 8/11 [00:12<00:05,  1.77s/it]
+Remesh DC:  82%|████████▏ | 9/11 [00:13<00:02,  1.36s/it]
+                                                         
+[32m[INFO][0m [WeldVertices] merged 26 verts (849623 remain)
+
+QEM simplify:   0%|          | 0/100 [00:00<?, ?it/s]
+QEM simplify:   0%|          | 0/100 [00:00<?, ?it/s]
+QEM simplify:   0%|          | 0/100 [00:00<?, ?it/s]
+QEM simplify:  26%|██▌       | 26/100 [00:01<00:03, 24.10it/s]
+QEM simplify:  42%|████▏     | 42/100 [00:01<00:02, 27.79it/s]
+QEM simplify:  53%|█████▎    | 53/100 [00:01<00:01, 29.71it/s]
+QEM simplify:  60%|██████    | 60/100 [00:01<00:01, 30.72it/s]
+QEM simplify:  64%|██████▍   | 64/100 [00:02<00:01, 31.02it/s]
+QEM simplify:  66%|██████▌   | 66/100 [00:02<00:01, 30.82it/s]
+QEM simplify:  67%|██████▋   | 67/100 [00:02<00:01, 30.30it/s]
+QEM simplify:  67%|██████▋   | 67/100 [00:02<00:01, 29.44it/s]
+QEM simplify:  76%|███████▌  | 76/100 [00:02<00:00, 29.70it/s]
+QEM simplify:  82%|████████▏ | 82/100 [00:02<00:00, 29.80it/s]
+QEM simplify:  86%|████████▌ | 86/100 [00:02<00:00, 29.88it/s]
+QEM simplify:  89%|████████▉ | 89/100 [00:02<00:00, 30.10it/s]
+QEM simplify:  91%|█████████ | 91/100 [00:03<00:00, 30.29it/s]
+QEM simplify:  93%|█████████▎| 93/100 [00:03<00:00, 30.62it/s]
+QEM simplify:  93%|█████████▎| 93/100 [00:03<00:00, 30.40it/s]
+QEM simplify:  93%|█████████▎| 93/100 [00:03<00:00, 30.19it/s]
+QEM simplify:  93%|█████████▎| 93/100 [00:03<00:00, 29.98it/s]
+QEM simplify:  95%|█████████▌| 95/100 [00:03<00:00, 29.89it/s]
+QEM simplify:  97%|█████████▋| 97/100 [00:03<00:00, 30.00it/s]
+QEM simplify:  98%|█████████▊| 98/100 [00:03<00:00, 29.97it/s]
+QEM simplify:  99%|█████████▉| 99/100 [00:03<00:00, 30.05it/s]
+QEM simplify:  99%|█████████▉| 99/100 [00:03<00:00, 29.89it/s]
+QEM simplify:  99%|█████████▉| 99/100 [00:03<00:00, 29.78it/s]
+QEM simplify: 100%|██████████| 100/100 [00:03<00:00, 29.97it/s]
+                                                               
+
+unwrap: ortho checks:   0%|          | 0/357 [00:00<?, ?chart/s]
+                                                                
+
+unwrap: LSCM (large charts):   0%|          | 0/1 [00:00<?, ?chart/s]
+                                                                     
+
+unwrap: pack:   0%|          | 0/2276 [00:00<?, ?chart/s]
+unwrap: pack:  50%|█████     | 1138/2276 [00:09<00:09, 123.39chart/s]
+unwrap: pack:  95%|█████████▍| 2162/2276 [00:14<00:00, 151.38chart/s]
+                                                                     
+[32m[INFO][0m [uv_unwrap] 28501 faces -> 1138 charts, atlas 2435x2434, 15.5s
+[32m[INFO][0m FETCH ComfyRegistry Data [DONE]
+[32m[INFO][0m [ComfyUI-Manager] default cache updated: https://api.comfy.org/nodes
+FETCH DATA from: /content/comfy_user/__manager/cache/1514988643_custom-node-list.json [DONE]
+[32m[INFO][0m [ComfyUI-Manager] All startup tasks have been completed.
+[32m[INFO][0m Using pytorch attention in VAE
+[32m[INFO][0m Using pytorch attention in VAE
+[32m[INFO][0m VAE load device: cuda:0, offload device: cpu, dtype: torch.float32
+[32m[INFO][0m Requested to load AutoencoderKL
+[32m[INFO][0m Model AutoencoderKL prepared for dynamic VRAM loading. 320MB Staged. 0 patches attached. Force pre-loaded 110 weights: 187 KB.
+[32m[INFO][0m Model AutoencoderKL prepared for dynamic VRAM loading. 320MB Staged. 0 patches attached. Force pre-loaded 110 weights: 187 KB.
+[32m[INFO][0m Model AutoencoderKL prepared for dynamic VRAM loading. 320MB Staged. 0 patches attached. Force pre-loaded 110 weights: 187 KB.
+[32m[INFO][0m Found quantization metadata version 1
+[32m[INFO][0m Using MixedPrecisionOps for text encoder
+[32m[INFO][0m CLIP/text encoder model load device: cuda:0, offload device: cpu, current: cpu, dtype: torch.float16
+[32m[INFO][0m Requested to load Flux2TEModel_
+[32m[INFO][0m Model Flux2TEModel_ prepared for dynamic VRAM loading. 5370MB Staged. 0 patches attached. Force pre-loaded 145 weights: 383 KB.
+[32m[INFO][0m Found quantization metadata version 1
+[32m[INFO][0m Detected mixed precision quantization
+[32m[INFO][0m Using mixed precision operations
+[32m[INFO][0m Native ops: asym_w4a8_int8, int8_tensorwise, convrot_w4a4 , emulated ops: float8_e4m3fn, nvfp4, float8_e5m2, mxfp8
+[32m[INFO][0m model weight dtype torch.float16, manual cast: torch.float16
+[32m[INFO][0m model_type FLUX
+[32m[INFO][0m Requested to load Flux2
+[32m[INFO][0m Model Flux2 prepared for dynamic VRAM loading. 3882MB Staged. 0 patches attached. Force pre-loaded 140 weights: 54 KB.
+
+  0%|          | 0/4 [00:00<?, ?it/s]
+  0%|          | 0/4 [00:00<?, ?it/s,   Model Initializing ...  ]
+  0%|          | 0/4 [01:05<?, ?it/s,  Model Initialization complete!  ]
+ 25%|██▌       | 1/4 [01:05<03:17, 65.89s/it,  Model Initialization complete!  ]
+ 25%|██▌       | 1/4 [00:00<03:17, 65.89s/it]                                   
+ 50%|█████     | 2/4 [00:00<00:00,  2.59it/s]
+ 75%|███████▌  | 3/4 [00:11<00:10, 10.49s/it]
+100%|██████████| 4/4 [00:22<00:00, 11.04s/it]
+100%|██████████| 4/4 [00:22<00:00,  5.58s/it]
+[32m[INFO][0m Requested to load AutoencoderKL
+[32m[INFO][0m Model AutoencoderKL prepared for dynamic VRAM loading. 320MB Staged. 0 patches attached. Force pre-loaded 110 weights: 187 KB.
+[32m[INFO][0m Model AutoencoderKL prepared for dynamic VRAM loading. 320MB Staged. 0 patches attached. Force pre-loaded 110 weights: 187 KB.
+[32m[INFO][0m Model AutoencoderKL prepared for dynamic VRAM loading. 320MB Staged. 0 patches attached. Force pre-loaded 110 weights: 187 KB.
+[32m[INFO][0m Model AutoencoderKL prepared for dynamic VRAM loading. 320MB Staged. 0 patches attached. Force pre-loaded 110 weights: 187 KB.
+[32m[INFO][0m Model AutoencoderKL prepared for dynamic VRAM loading. 320MB Staged. 0 patches attached. Force pre-loaded 110 weights: 187 KB.
+[32m[INFO][0m Requested to load Flux2TEModel_
+[32m[INFO][0m Model Flux2TEModel_ prepared for dynamic VRAM loading. 5370MB Staged. 0 patches attached. Force pre-loaded 145 weights: 383 KB.
+[32m[INFO][0m Requested to load Flux2
+[32m[INFO][0m Model Flux2 prepared for dynamic VRAM loading. 3882MB Staged. 0 patches attached. Force pre-loaded 140 weights: 54 KB.
+
+  0%|          | 0/4 [00:00<?, ?it/s]
+  0%|          | 0/4 [00:00<?, ?it/s,   Model Initializing ...  ]
+  0%|          | 0/4 [00:19<?, ?it/s,  Model Initialization complete!  ]
+ 25%|██▌       | 1/4 [00:19<00:58, 19.57s/it,  Model Initialization complete!  ]
+ 25%|██▌       | 1/4 [00:01<00:58, 19.57s/it]                                   
+ 50%|█████     | 2/4 [00:01<00:01,  1.56it/s]
+ 75%|███████▌  | 3/4 [00:19<00:18, 18.56s/it]
+100%|██████████| 4/4 [00:37<00:00, 17.51s/it]
+100%|██████████| 4/4 [00:37<00:00,  9.34s/it]
+[32m[INFO][0m Requested to load AutoencoderKL
+[32m[INFO][0m Model AutoencoderKL prepared for dynamic VRAM loading. 320MB Staged. 0 patches attached. Force pre-loaded 110 weights: 187 KB.
+[32m[INFO][0m Model AutoencoderKL prepared for dynamic VRAM loading. 320MB Staged. 0 patches attached. Force pre-loaded 110 weights: 187 KB.
+[32m[INFO][0m Model AutoencoderKL prepared for dynamic VRAM loading. 320MB Staged. 0 patches attached. Force pre-loaded 110 weights: 187 KB.
+[32m[INFO][0m Model AutoencoderKL prepared for dynamic VRAM loading. 320MB Staged. 0 patches attached. Force pre-loaded 110 weights: 187 KB.
+[32m[INFO][0m Requested to load Flux2TEModel_
+[32m[INFO][0m Model Flux2TEModel_ prepared for dynamic VRAM loading. 5370MB Staged. 0 patches attached. Force pre-loaded 145 weights: 383 KB.
+[32m[INFO][0m Requested to load Flux2
+[32m[INFO][0m Model Flux2 prepared for dynamic VRAM loading. 3882MB Staged. 0 patches attached. Force pre-loaded 140 weights: 54 KB.
+
+  0%|          | 0/4 [00:00<?, ?it/s]
+  0%|          | 0/4 [00:00<?, ?it/s,   Model Initializing ...  ]
+  0%|          | 0/4 [00:19<?, ?it/s,  Model Initialization complete!  ]
+ 25%|██▌       | 1/4 [00:19<00:59, 19.90s/it,  Model Initialization complete!  ]
+ 25%|██▌       | 1/4 [00:01<00:59, 19.90s/it]                                   
+ 50%|█████     | 2/4 [00:01<00:01,  1.57it/s]
+ 75%|███████▌  | 3/4 [00:19<00:18, 18.62s/it]
+100%|██████████| 4/4 [00:37<00:00, 17.43s/it]
+100%|██████████| 4/4 [00:37<00:00,  9.33s/it]
+[32m[INFO][0m Requested to load AutoencoderKL
+[32m[INFO][0m Model AutoencoderKL prepared for dynamic VRAM loading. 320MB Staged. 0 patches attached. Force pre-loaded 110 weights: 187 KB.
+[32m[INFO][0m Model AutoencoderKL prepared for dynamic VRAM loading. 320MB Staged. 0 patches attached. Force pre-loaded 110 weights: 187 KB.
+[32m[INFO][0m Model AutoencoderKL prepared for dynamic VRAM loading. 320MB Staged. 0 patches attached. Force pre-loaded 110 weights: 187 KB.
+[32m[INFO][0m Model AutoencoderKL prepared for dynamic VRAM loading. 320MB Staged. 0 patches attached. Force pre-loaded 110 weights: 187 KB.
+[32m[INFO][0m Requested to load Flux2TEModel_
+[32m[INFO][0m Model Flux2TEModel_ prepared for dynamic VRAM loading. 5370MB Staged. 0 patches attached. Force pre-loaded 145 weights: 383 KB.
+[32m[INFO][0m Requested to load Flux2
+[32m[INFO][0m Model Flux2 prepared for dynamic VRAM loading. 3882MB Staged. 0 patches attached. Force pre-loaded 140 weights: 54 KB.
+
+  0%|          | 0/4 [00:00<?, ?it/s]
+  0%|          | 0/4 [00:00<?, ?it/s,   Model Initializing ...  ]
+  0%|          | 0/4 [00:20<?, ?it/s,  Model Initialization complete!  ]
+ 25%|██▌       | 1/4 [00:20<01:00, 20.12s/it,  Model Initialization complete!  ]
+ 25%|██▌       | 1/4 [00:01<01:00, 20.12s/it]                                   
+ 50%|█████     | 2/4 [00:01<00:01,  1.51it/s]
+ 75%|███████▌  | 3/4 [00:19<00:18, 18.59s/it]
+100%|██████████| 4/4 [00:37<00:00, 17.37s/it]
+100%|██████████| 4/4 [00:37<00:00,  9.32s/it]
+[32m[INFO][0m Requested to load AutoencoderKL
+[32m[INFO][0m Model AutoencoderKL prepared for dynamic VRAM loading. 320MB Staged. 0 patches attached. Force pre-loaded 110 weights: 187 KB.
+[32m[INFO][0m Model AutoencoderKL prepared for dynamic VRAM loading. 320MB Staged. 0 patches attached. Force pre-loaded 110 weights: 187 KB.
+[32m[INFO][0m Model AutoencoderKL prepared for dynamic VRAM loading. 320MB Staged. 0 patches attached. Force pre-loaded 110 weights: 187 KB.
+[32m[INFO][0m Model AutoencoderKL prepared for dynamic VRAM loading. 320MB Staged. 0 patches attached. Force pre-loaded 110 weights: 187 KB.
+[32m[INFO][0m Requested to load Flux2TEModel_
+[32m[INFO][0m Model Flux2TEModel_ prepared for dynamic VRAM loading. 5370MB Staged. 0 patches attached. Force pre-loaded 145 weights: 383 KB.
+[32m[INFO][0m Requested to load Flux2
+[32m[INFO][0m Model Flux2 prepared for dynamic VRAM loading. 3882MB Staged. 0 patches attached. Force pre-loaded 140 weights: 54 KB.
+
+  0%|          | 0/4 [00:00<?, ?it/s]
+  0%|          | 0/4 [00:00<?, ?it/s,   Model Initializing ...  ]
+  0%|          | 0/4 [00:20<?, ?it/s,  Model Initialization complete!  ]
+ 25%|██▌       | 1/4 [00:20<01:01, 20.37s/it,  Model Initialization complete!  ]
+ 25%|██▌       | 1/4 [00:01<01:01, 20.37s/it]                                   
+ 50%|█████     | 2/4 [00:01<00:01,  1.50it/s]
+ 75%|███████▌  | 3/4 [00:19<00:18, 18.51s/it]
+100%|██████████| 4/4 [00:37<00:00, 17.58s/it]
+100%|██████████| 4/4 [00:37<00:00,  9.36s/it]
+[32m[INFO][0m Requested to load AutoencoderKL
+[32m[INFO][0m Model AutoencoderKL prepared for dynamic VRAM loading. 320MB Staged. 0 patches attached. Force pre-loaded 110 weights: 187 KB.
+[32m[INFO][0m Model AutoencoderKL prepared for dynamic VRAM loading. 320MB Staged. 0 patches attached. Force pre-loaded 110 weights: 187 KB.
+[32m[INFO][0m Model AutoencoderKL prepared for dynamic VRAM loading. 320MB Staged. 0 patches attached. Force pre-loaded 110 weights: 187 KB.
+[32m[INFO][0m Model AutoencoderKL prepared for dynamic VRAM loading. 320MB Staged. 0 patches attached. Force pre-loaded 110 weights: 187 KB.
+[32m[INFO][0m Requested to load Flux2TEModel_
+[32m[INFO][0m Model Flux2TEModel_ prepared for dynamic VRAM loading. 5370MB Staged. 0 patches attached. Force pre-loaded 145 weights: 383 KB.
+[32m[INFO][0m Requested to load Flux2
+[32m[INFO][0m Model Flux2 prepared for dynamic VRAM loading. 3882MB Staged. 0 patches attached. Force pre-loaded 140 weights: 54 KB.
+
+  0%|          | 0/4 [00:00<?, ?it/s]
+  0%|          | 0/4 [00:00<?, ?it/s,   Model Initializing ...  ]
+  0%|          | 0/4 [00:20<?, ?it/s,  Model Initialization complete!  ]
+ 25%|██▌       | 1/4 [00:20<01:01, 20.43s/it,  Model Initialization complete!  ]
+ 25%|██▌       | 1/4 [00:01<01:01, 20.43s/it]                                   
+ 50%|█████     | 2/4 [00:01<00:01,  1.53it/s]
+ 75%|███████▌  | 3/4 [00:19<00:18, 18.52s/it]
+100%|██████████| 4/4 [00:37<00:00, 17.39s/it]
+100%|██████████| 4/4 [00:37<00:00,  9.31s/it]
+[32m[INFO][0m Requested to load AutoencoderKL
+[32m[INFO][0m Model AutoencoderKL prepared for dynamic VRAM loading. 320MB Staged. 0 patches attached. Force pre-loaded 110 weights: 187 KB.
+[32m[INFO][0m Model AutoencoderKL prepared for dynamic VRAM loading. 320MB Staged. 0 patches attached. Force pre-loaded 110 weights: 187 KB.
+[32m[INFO][0m Model AutoencoderKL prepared for dynamic VRAM loading. 320MB Staged. 0 patches attached. Force pre-loaded 110 weights: 187 KB.
+[32m[INFO][0m Model AutoencoderKL prepared for dynamic VRAM loading. 320MB Staged. 0 patches attached. Force pre-loaded 110 weights: 187 KB.
+[32m[INFO][0m Requested to load Flux2TEModel_
+[32m[INFO][0m Model Flux2TEModel_ prepared for dynamic VRAM loading. 5370MB Staged. 0 patches attached. Force pre-loaded 145 weights: 383 KB.
+[32m[INFO][0m Requested to load Flux2
+[32m[INFO][0m Model Flux2 prepared for dynamic VRAM loading. 3882MB Staged. 0 patches attached. Force pre-loaded 140 weights: 54 KB.
+
+  0%|          | 0/4 [00:00<?, ?it/s]
+  0%|          | 0/4 [00:00<?, ?it/s,   Model Initializing ...  ]
+  0%|          | 0/4 [00:19<?, ?it/s,  Model Initialization complete!  ]
+ 25%|██▌       | 1/4 [00:19<00:59, 19.78s/it,  Model Initialization complete!  ]
+ 25%|██▌       | 1/4 [00:01<00:59, 19.78s/it]                                   
+ 50%|█████     | 2/4 [00:01<00:01,  1.54it/s]
+ 75%|███████▌  | 3/4 [00:19<00:18, 18.49s/it]
+100%|██████████| 4/4 [00:37<00:00, 17.41s/it]
+100%|██████████| 4/4 [00:37<00:00,  9.30s/it]
+[32m[INFO][0m Requested to load AutoencoderKL
+[32m[INFO][0m Model AutoencoderKL prepared for dynamic VRAM loading. 320MB Staged. 0 patches attached. Force pre-loaded 110 weights: 187 KB.
+[32m[INFO][0m Model AutoencoderKL prepared for dynamic VRAM loading. 320MB Staged. 0 patches attached. Force pre-loaded 110 weights: 187 KB.
+[32m[INFO][0m Model AutoencoderKL prepared for dynamic VRAM loading. 320MB Staged. 0 patches attached. Force pre-loaded 110 weights: 187 KB.
+[32m[INFO][0m Model AutoencoderKL prepared for dynamic VRAM loading. 320MB Staged. 0 patches attached. Force pre-loaded 110 weights: 187 KB.
+[32m[INFO][0m Requested to load Flux2TEModel_
+[32m[INFO][0m Model Flux2TEModel_ prepared for dynamic VRAM loading. 5370MB Staged. 0 patches attached. Force pre-loaded 145 weights: 383 KB.
+[32m[INFO][0m Requested to load Flux2
+[32m[INFO][0m Model Flux2 prepared for dynamic VRAM loading. 3882MB Staged. 0 patches attached. Force pre-loaded 140 weights: 54 KB.
+
+  0%|          | 0/4 [00:00<?, ?it/s]
+  0%|          | 0/4 [00:00<?, ?it/s,   Model Initializing ...  ]
+  0%|          | 0/4 [00:20<?, ?it/s,  Model Initialization complete!  ]
+ 25%|██▌       | 1/4 [00:20<01:01, 20.39s/it,  Model Initialization complete!  ]
+ 25%|██▌       | 1/4 [00:01<01:01, 20.39s/it]                                   
+ 50%|█████     | 2/4 [00:01<00:01,  1.51it/s]
+ 75%|███████▌  | 3/4 [00:19<00:18, 18.55s/it]
+100%|██████████| 4/4 [00:37<00:00, 17.37s/it]
+100%|██████████| 4/4 [00:37<00:00,  9.31s/it]
+[32m[INFO][0m Requested to load AutoencoderKL
+[32m[INFO][0m Model AutoencoderKL prepared for dynamic VRAM loading. 320MB Staged. 0 patches attached. Force pre-loaded 110 weights: 187 KB.
+[32m[INFO][0m [32mPrompt executed in 00:17:30[0m
+===== 2026-09-14 05:22:36 interrompido pelo usuário
+===== 2026-09-14 05:22:36 fim (rc=-15)
