@@ -5171,3 +5171,24 @@ min/vista no T4 e sombra cozida. **Klein 4B continua no `Lia_Texturizar`.**
 registro. Modelos Qwen podem ser apagados do Drive (−32,6 GB). Aprendizado:
 a referência usada já era um desenho limpo das costas — o ganho de qualidade
 está em ter desenhos 2D por vista (frente/costas/lados), não no pintor.
+
+## v82 — `Lia_Texturizar` v3: passe de correção com Waifu-Inpaint-XL
+Ideia do usuário: Klein garante cobertura (8 vistas), e o **WAI-Inpaint**
+(SDXL inpaint anime de 9 canais, o mesmo do antigo `WaifuInpaintXL`) corrige
+o que o jogador vê de perto. Novo grupo **4b** com 5 passes: **F1 rosto em
+zoom 3×** (offset_y 0,42), F2 frente, F3 costas, F4/F5 lados. Cada passe:
+`Render Textured View` da textura atual → `GrowMask −6` (silhueta encolhida:
+fundo e enquadramento intocados) → `InpaintModelConditioning` →
+`KSampler` 24 passos, cfg 4,5, euler_a, **denoise 0,35** (rosto 0,45) →
+`ImageCompositeMasked` → `Accumulate` com **replace** (substitui o Klein,
+`min_cos` 0,25). IP-Adapter PLUS (frente 2D) para estilo/paleta;
+`ModelSamplingDiscrete v_prediction+zsnr` + `RescaleCFG 0,7` (WAI v14 é
+v-pred). Positivo/negativo em tags Danbooru (ajustar para a Lia).
+Nó: `LiaRenderTextured`/`LiaProjectTextureAccumulate` ganharam `zoom`,
+`offset_y` (vista fechada) e o Accumulate `replace` (`view_frame` aceita
+zoom/offset). Testes: test_sequential (zoom err 0,004; replace sobrescreve),
+smoke, projection — ok. Generator: 302 nós / 577 links.
+Drive: +6,9 GB `checkpoints/Waifu-Inpaint-XL` (**gated** — aceitar termos no
+HF + `HF_TOKEN` na Célula 5) + IP-Adapter SDXL 0,85 + CLIP-ViT-H 2,5 (se ainda
+não tiver dos WaifuSurvivors). Licença: OpenRAIL++-M (comercial ok) — LICENCAS,
+AUDITADOS, coletar_licencas atualizados. T4 estimado: 15–20 min no total.

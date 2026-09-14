@@ -187,6 +187,7 @@ origem (`hf_microsoft_TRELLIS.2-4B.json`, `hf_ZhengPeng7_BiRefNet.json`,
 | `qwen_2.5_vl_7b_fp8_scaled.safetensors` (v78, teste) | Apache-2.0 (Comfy-Org/Qwen-Image_ComfyUI) | Qwen/Qwen2.5-VL-7B-Instruct — Apache-2.0 | **Apache-2.0** |
 | `qwen_image_vae.safetensors` (v78, teste) | Apache-2.0 (Comfy-Org/Qwen-Image_ComfyUI) | Qwen/Qwen-Image — Apache-2.0 | **Apache-2.0** |
 | `Qwen-Image-Edit-2509-Lightning-4steps-V1.0-bf16.safetensors` (v78, teste) | — | lightx2v/Qwen-Image-Lightning — Apache-2.0 | **Apache-2.0** |
+| `Waifu-Inpaint-XL.safetensors` (v82, passe de correção do Texturizar) | — (ShinoharaHare, repo `openrail++`) | base WAI-NSFW-illustrious v14 v-pred → mesma família do `waiIllustrious` (§2–6: comercial permitido, OpenRAIL++/Fair AI) | **OpenRAIL++-M** (comercial ok, com as restrições de uso do OpenRAIL) |
 
 ### O ponto de atenção: DINOv3
 

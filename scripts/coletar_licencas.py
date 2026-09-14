@@ -71,6 +71,9 @@ HF = {
     'Comfy-Org/flux2-dev': [
         'flux2-vae.safetensors',
     ],
+    'ShinoharaHare/Waifu-Inpaint-XL': [
+        'Waifu-Inpaint-XL.safetensors',
+    ],
     # v78: teste Qwen-Image-Edit-2509 (Lia_Teste_QwenEdit)
     'QuantStack/Qwen-Image-Edit-2509-GGUF': [
         'Qwen-Image-Edit-2509-Q3_K_S.gguf',

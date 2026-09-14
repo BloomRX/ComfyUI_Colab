@@ -301,9 +301,19 @@ def cached_texel_geometry(verts, faces, uvs, size):
     return _GEOM_CACHE[key]
 
 
-def view_frame(verts, frame_scale):
+def view_frame(verts, frame_scale, zoom: float = 1.0, offset_y: float = 0.0):
+    """Enquadramento ortográfico comum a todas as vistas.
+
+    ``zoom`` > 1 aproxima (quadro = maior dimensão × frame_scale / zoom) e
+    ``offset_y`` desloca o centro ao longo do eixo Y do mesh em fração da
+    altura (0,42 ≈ centro da cabeça num corpo inteiro). Render e Accumulate
+    devem usar os MESMOS valores para a vista encaixar pixel a pixel.
+    """
     center, extent = bbox_center_extent(verts)
-    half = float(extent.max()) * 0.5 * frame_scale
+    half = float(extent.max()) * 0.5 * frame_scale / max(float(zoom), 1e-3)
+    if offset_y:
+        center = center.clone()
+        center[1] = center[1] + float(offset_y) * float(extent[1])
     return center, half, float(extent.max())
 
 
@@ -395,18 +405,21 @@ def project_texture(verts, faces, uvs, images: torch.Tensor, masks: torch.Tensor
 def accumulate_view(verts, faces, uvs, texture, wsum, image, mask, azimuth, elevation,
                     frame_scale=1.1, cos_power=4.0, depth_tolerance=0.01, min_cos=0.1,
                     view_weight=1.0, color_match=True, fill_only=False, texture_size: int = 2048,
-                    chunk: int = 1 << 20):
+                    chunk: int = 1 << 20, zoom: float = 1.0, offset_y: float = 0.0, replace: bool = False):
     """Fluxo sequencial (projeta-e-completa): soma UMA vista à textura já existente.
 
     ``texture [S,S,3]`` e ``wsum [S,S]`` são o estado acumulado (podem ser None
     para a primeira vista). ``color_match`` corrige o ganho de cor da vista nova
     usando os texels que ela tem em comum com o que já foi pintado (evita as
     costas saírem com outra paleta). ``fill_only`` só pinta texels ainda vazios.
+    ``replace`` descarta o que já existia onde esta vista enxerga (passe de
+    correção: o novo substitui, não faz média). ``zoom``/``offset_y`` como em
+    ``view_frame`` (vista fechada no rosto, por exemplo).
     Retorna ``(texture, wsum, cover, stats)``.
     """
     dev = verts.device
     S_img = image.shape[0]
-    center, half, ext = view_frame(verts, frame_scale)
+    center, half, ext = view_frame(verts, frame_scale, zoom, offset_y)
     S = texture.shape[0] if texture is not None else (wsum.shape[0] if wsum is not None else int(texture_size))
     pos, nrm, cover, vn = cached_texel_geometry(verts, faces, uvs, S)
     if texture is None:
@@ -435,12 +448,15 @@ def accumulate_view(verts, faces, uvs, texture, wsum, image, mask, azimuth, elev
             stats["gain"] = [round(g, 3)] * 3
     if fill_only:
         w = torch.where(old_w > 1e-6, torch.zeros_like(w), w)
+    was_empty = old_w <= 1e-6
+    if replace:
+        old_w = torch.where(w > 1e-6, torch.zeros_like(old_w), old_w)
     acc = old_c * old_w[:, None] + c * w[:, None]
     nw = old_w + w
     texture = texture.clone(); wsum = wsum.clone()
     texture[cover] = torch.where(nw[:, None] > 1e-8, acc / nw[:, None].clamp_min(1e-8), torch.zeros_like(acc))
     wsum[cover] = nw
-    stats["new_texels"] = int(((old_w <= 1e-6) & (w > 1e-6)).sum())
+    stats["new_texels"] = int((was_empty & (w > 1e-6)).sum())
     stats["covered_frac"] = float((wsum[cover] > 1e-6).float().mean()) if bool(cover.any()) else 0.0
     return texture, wsum, cover, stats
 
@@ -448,7 +464,8 @@ def accumulate_view(verts, faces, uvs, texture, wsum, image, mask, azimuth, elev
 @torch.no_grad()
 def render_textured(verts, faces, uvs, texture, wsum, azimuth, elevation, res: int,
                     frame_scale=1.1, missing_color=(0.5, 0.5, 0.5), background=(1.0, 1.0, 1.0),
-                    min_cos_missing: float = 0.0, edge_dilate_px: int = 4):
+                    min_cos_missing: float = 0.0, edge_dilate_px: int = 4,
+                    zoom: float = 1.0, offset_y: float = 0.0):
     """Renderiza a vista com a textura parcial aplicada.
 
     Retorna ``image [R,R,3]`` (texels sem peso = ``missing_color``, fundo =
@@ -456,7 +473,7 @@ def render_textured(verts, faces, uvs, texture, wsum, azimuth, elevation, res: i
     a máscara de inpaint), ``mask [R,R] bool`` (silhueta) e ``normal [R,R,3]``.
     """
     dev = verts.device
-    center, half, _ = view_frame(verts, frame_scale)
+    center, half, _ = view_frame(verts, frame_scale, zoom, offset_y)
     vn = vertex_normals(verts, faces)
     rv = render_view(verts, faces, center, half, azimuth, elevation, res, vn)
     m = rv["mask"]

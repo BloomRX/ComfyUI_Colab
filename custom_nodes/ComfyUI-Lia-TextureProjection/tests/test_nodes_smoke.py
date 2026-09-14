@@ -29,15 +29,20 @@ mesh = Mesh(); mesh.vertices = v[None]; mesh.faces = f[None]; mesh.uvs = uv[None
 R = nodes.LiaRenderTextured; A = nodes.LiaProjectTextureAccumulate; F = nodes.LiaTextureFinalize; PK = nodes.LiaPickReference
 state = None
 for az, el in [(0, 0), (180, 0), (0, 60)]:
-    img, mask, sil, nrm, frac = R.execute(mesh, az, el, 256, 1.1, 12, "grey", state)
+    img, mask, sil, nrm, frac = R.execute(mesh, az, el, 256, 1.1, 12, "grey", state=state)
     print(az, el, 'missing frac', round(frac, 3), tuple(img.shape), tuple(mask.shape), tuple(nrm.shape))
     assert img.shape == (1, 256, 256, 3) and mask.shape == (1, 256, 256)
     paint = torch.where(mask[0][..., None] > 0, torch.rand(3), img[0])[None]
-    state, bc, cov, info = A.execute(mesh, paint, az, el, 1.1, 512, 1.0, 4.0, 0.15, 0.01, True, False, state, mask)
+    state, bc, cov, info = A.execute(mesh, paint, az, el, 1.1, 512, 1.0, 4.0, 0.15, 0.01, True, False, state=state, mask=mask)
     print(' ', info)
 assert frac < 0.2
 bc, cov, un, fst = F.execute(mesh, state, 8, True, 48)
 assert 'texture' in fst; print('final', tuple(bc.shape), int(un.sum()))
 assert bc.shape == (1, 512, 512, 3)
 print(PK.execute("back", torch.zeros(1, 4, 4, 3))[1], '|', PK.execute("back", torch.zeros(1, 4, 4, 3), back=torch.ones(1, 4, 4, 3))[1])
+# v82: vista do rosto (zoom) + passe de correção (replace)
+imgf, maskf, silf, nrmf, fracf = R.execute(mesh, 0, 0, 256, 1.1, 0, "grey", zoom=3.0, offset_y=0.3, state=state)
+assert silf.mean() > 0.5 and fracf < 0.2
+state2, _, _, info2 = A.execute(mesh, imgf, 0, 0, 1.1, 512, 1.0, 4.0, 0.15, 0.01, False, False, zoom=3.0, offset_y=0.3, replace=True, state=state, mask=silf)
+print(' ', info2)
 print("SMOKE OK")

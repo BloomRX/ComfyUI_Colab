@@ -211,6 +211,7 @@ def r_notebook():
         'flux-2-klein-4b-fp8.safetensors',  # Apache-2.0 (black-forest-labs, 4B; o 9B NAO)
         'qwen_3_4b_fp8_mixed.safetensors',  # Apache-2.0 (Comfy-Org/z_image_turbo)
         'flux2-vae.safetensors',  # Apache-2.0 (VAE do Klein 4B; repack Comfy-Org/flux2-dev)
+        'Waifu-Inpaint-XL.safetensors',  # OpenRAIL++-M (ShinoharaHare; base WAI v14 v-pred) — v82 passe de correcao do Texturizar
         # v78 teste Qwen-Image-Edit-2509 — tudo Apache-2.0 (ver LICENCAS.md v78)
         'Qwen-Image-Edit-2509-Q3_K_S.gguf',
         'qwen_2.5_vl_7b_fp8_scaled.safetensors',

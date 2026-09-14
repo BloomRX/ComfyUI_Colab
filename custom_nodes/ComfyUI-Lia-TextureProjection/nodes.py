@@ -273,6 +273,10 @@ class LiaRenderTextured(IO.ComfyNode):
                              tooltip="Expande a máscara de inpaint para o gerador fundir a borda com o que já existe."),
                 IO.Combo.Input("missing_color", options=["grey", "white", "black", "magenta"], default="grey",
                                tooltip="Cor dos pixels ainda sem textura (cite-a no prompt)."),
+                IO.Float.Input("zoom", default=1.0, min=1.0, max=8.0, step=0.1,
+                               tooltip="Aproxima a câmera (3 = quadro com 1/3 da altura: rosto). Mesmo valor no Accumulate."),
+                IO.Float.Input("offset_y", default=0.0, min=-0.5, max=0.5, step=0.01,
+                               tooltip="Desloca o centro do quadro em fração da altura do mesh (+0.42 ≈ cabeça). Mesmo valor no Accumulate."),
                 TexState.Input("state", optional=True, tooltip="Saída do Accumulate da vista anterior. Vazio na 1ª vista."),
             ],
             outputs=[
@@ -285,14 +289,16 @@ class LiaRenderTextured(IO.ComfyNode):
         )
 
     @classmethod
-    def execute(cls, mesh, azimuth, elevation, resolution, frame_scale, grow_mask_px, missing_color, state=None):
+    def execute(cls, mesh, azimuth, elevation, resolution, frame_scale, grow_mask_px, missing_color,
+                zoom=1.0, offset_y=0.0, state=None):
         v, f, uv = _first_item(mesh)
         if uv is None:
             raise ValueError("O mesh não tem UV. Ligue um UnwrapMesh antes deste nó.")
         tex, w = _state_get(state)
         mc = {"grey": (0.5, 0.5, 0.5), "white": (1, 1, 1), "black": (0, 0, 0), "magenta": (1, 0, 1)}[missing_color]
         img, missing, sil, ncam = P.render_textured(v, f, uv, tex, w, float(azimuth), float(elevation),
-                                                    int(resolution), float(frame_scale), missing_color=mc)
+                                                    int(resolution), float(frame_scale), missing_color=mc,
+                                                    zoom=float(zoom), offset_y=float(offset_y))
         m = missing.float()
         if grow_mask_px > 0:
             k = int(grow_mask_px) * 2 + 1
@@ -332,6 +338,10 @@ class LiaProjectTextureAccumulate(IO.ComfyNode):
                 IO.Boolean.Input("color_match", default=True),
                 IO.Boolean.Input("fill_only", default=False,
                                  tooltip="Só pinta texels ainda vazios (não mistura com o que já existe). Bom para vistas de retoque."),
+                IO.Float.Input("zoom", default=1.0, min=1.0, max=8.0, step=0.1, tooltip="Igual ao do Render Textured View desta vista."),
+                IO.Float.Input("offset_y", default=0.0, min=-0.5, max=0.5, step=0.01, tooltip="Igual ao do Render Textured View desta vista."),
+                IO.Boolean.Input("replace", default=False,
+                                 tooltip="Passe de correção: onde esta vista enxerga (dentro da mask), o novo SUBSTITUI o que existia em vez de fazer média."),
                 TexState.Input("state", optional=True),
                 IO.Mask.Input("mask", optional=True, tooltip="1 = usar este pixel. Ligue a inpaint_mask (só o novo) ou a silhouette (tudo)."),
             ],
@@ -345,7 +355,8 @@ class LiaProjectTextureAccumulate(IO.ComfyNode):
 
     @classmethod
     def execute(cls, mesh, image, azimuth, elevation, frame_scale, texture_size, view_weight, cos_power,
-                min_cos, depth_tolerance, color_match, fill_only, state=None, mask=None):
+                min_cos, depth_tolerance, color_match, fill_only, zoom=1.0, offset_y=0.0, replace=False,
+                state=None, mask=None):
         v, f, uv = _first_item(mesh)
         if uv is None:
             raise ValueError("O mesh não tem UV. Ligue um UnwrapMesh antes deste nó.")
@@ -361,7 +372,8 @@ class LiaProjectTextureAccumulate(IO.ComfyNode):
                                               frame_scale=float(frame_scale), cos_power=float(cos_power),
                                               depth_tolerance=float(depth_tolerance), min_cos=float(min_cos),
                                               view_weight=float(view_weight), color_match=bool(color_match),
-                                              fill_only=bool(fill_only), texture_size=int(texture_size))
+                                              fill_only=bool(fill_only), texture_size=int(texture_size),
+                                              zoom=float(zoom), offset_y=float(offset_y), replace=bool(replace))
         cov = torch.zeros_like(tex)
         cov[..., 1] = (w > 1e-8).float()
         cov[..., 0] = (cover & (w <= 1e-8)).float()
