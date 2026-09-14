@@ -5043,3 +5043,30 @@ por **projeção de imagens 2D** da própria Lia.
 Validação estática ok. No Colab: célula 4 com `Lia_Texturizar` selecionado
 (linka o pacote), depois `validar_workflows.py --server`. Custo estimado
 no T4: ~8–12 min por personagem (4 gerações Klein dominam).
+
+## v73 — `Lia_Texturizar` v2: projeta-e-completa sequencial + retopo game-ready (estilo Modddif)
+
+Teste real da v1 (4 vistas independentes) mostrou: costas com outra paleta,
+lado interno do tênis oculto branco, buracos. Causa: cada vista era uma difusão
+separada e 4 câmeras a 0° não cobrem topo/baixo/axila. A v2 resolve com a
+arquitetura do Modddif/TEXTure, só com nós:
+
+1. **Retopo game-ready** (core, MIT): `DecimateMesh` 30 k → `UnwrapMesh` (UV
+   novo, padding 4 — substitui o UV do Trellis) → `MeshSmoothNormals`;
+   `BakeNormalMapFromMesh` + `BakeAmbientOcclusion` do mesh alto original.
+   `RemeshMesh` em bypass para GLBs sujos.
+2. **Vistas em sequência** (8: frente, costas, esq, dir, frente/cima 55°,
+   costas/cima, frente/baixo −50°, costas/baixo). Nós novos no pacote próprio:
+   `LiaRenderTextured` (render com a textura parcial + máscara do que falta),
+   `LiaProjectTextureAccumulate` (estado `LIA_TEXSTATE`, `color_match`,
+   `fill_only`), `LiaTextureFinalize`, `LiaPickReference` (referências
+   costas/lados opcionais, cai na frontal). Klein 4B em modo inpaint:
+   latente = render parcial + `SetLatentNoiseMask(inpaint_mask)`.
+3. `ApplyTextureToMesh` (albedo + normal + AO) → `SaveGLB output/3d/Lia/`;
+   PNGs `Lia_albedo/normal/ao` para MToon/VRM.
+
+Gerador: `scripts/gerar_lia_texturizar.py` (216 nós / 384 links). Testes:
+`tests/test_sequential.py` (erro 0.001, cobertura 100 % em 6 vistas,
+`color_match` corrige ganho 0.7 → 1.6) e `tests/test_nodes_smoke.py`.
+Validação estática ok; GPU ainda não. Estimativa T4: 12–16 min.
+Licenças inalteradas (tudo MIT/Apache; nada novo instalado).

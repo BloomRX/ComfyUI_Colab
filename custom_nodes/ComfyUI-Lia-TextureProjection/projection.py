@@ -30,6 +30,9 @@ Pipeline
 4. ``project_texture``: para cada vista, projeta cada texel na imagem, testa
    visibilidade contra o z-buffer daquela vista, pesa por cos^k(normal·câmera),
    acumula média ponderada; ao fim dilata as bordas.
+5. Modo sequencial ("projeta-e-completa", como Modddif/TEXTure): ``render_textured``
+   mostra a vista com o que já foi pintado + máscara do que falta; o gerador faz
+   *inpaint* só do que falta; ``accumulate_view`` soma essa vista ao estado.
 """
 from __future__ import annotations
 
@@ -274,19 +277,85 @@ def render_view(verts, faces, center, half_size, azimuth, elevation, res: int,
     ncam[~mask] = 0
     pw[~mask] = 0
     return {"depth": depth, "mask": mask, "normal": ncam, "normal_world": nw, "position": pw,
-            "fwd": fwd, "right": right, "up": up}
+            "face_idx": fidx, "bary": bary, "fwd": fwd, "right": right, "up": up}
 
 
 # --------------------------------------------------------------------------- #
 # 4. Projeção das imagens de volta no atlas
 # --------------------------------------------------------------------------- #
+_GEOM_CACHE: dict = {}
+
+
+def cached_texel_geometry(verts, faces, uvs, size):
+    """``texel_geometry`` com cache de 1 entrada (o mesmo mesh é usado em todas as
+    vistas do fluxo sequencial; rasterizar o atlas 2048² a cada nó custaria segundos)."""
+    key = (verts.data_ptr(), int(verts.shape[0]), faces.data_ptr(), int(faces.shape[0]),
+           uvs.data_ptr(), int(size), str(verts.device))
+    hit = _GEOM_CACHE.get(key)
+    if hit is not None:
+        return hit
+    vn = vertex_normals(verts, faces)
+    pos, nrm, cover = texel_geometry(verts, faces, uvs, size, vn)
+    _GEOM_CACHE.clear()
+    _GEOM_CACHE[key] = (pos, nrm, cover, vn)
+    return _GEOM_CACHE[key]
+
+
+def view_frame(verts, frame_scale):
+    center, extent = bbox_center_extent(verts)
+    half = float(extent.max()) * 0.5 * frame_scale
+    return center, half, float(extent.max())
+
+
+@torch.no_grad()
+def project_single_view(verts, faces, P, N, vn, center, half, tol, image, mask,
+                        azimuth, elevation, cos_power=4.0, min_cos=0.1, chunk: int = 1 << 20):
+    """Projeta UMA imagem ``[H,W,3]`` nos texels ``P/N [K,3]`` (posição/normal).
+
+    Retorna ``color [K,3]`` e ``weight [K]`` (0 = texel não visto nesta vista).
+    """
+    dev = verts.device
+    H, W = image.shape[0], image.shape[1]
+    rv = render_view(verts, faces, center, half, azimuth, elevation, max(H, W), vn)
+    fwd, right, up = rv["fwd"], rv["right"], rv["up"]
+    img = image.to(dev).float()
+    m = mask.to(dev).float() if mask is not None else None
+    zbuf = rv["depth"]
+    if zbuf.shape[0] != H or zbuf.shape[1] != W:
+        zb = zbuf.clone(); zb[torch.isinf(zb)] = 1e9
+        zbuf = F.interpolate(zb[None, None], size=(H, W), mode="nearest")[0, 0]
+    out_w = torch.zeros((P.shape[0],), device=dev)
+    out_c = torch.zeros((P.shape[0], 3), device=dev)
+    for s in range(0, P.shape[0], chunk):
+        p = P[s:s + chunk]; n = N[s:s + chunk]
+        x, y, z = ortho_project(p, center, fwd, right, up, half)
+        cosang = (n * -fwd).sum(-1)                              # normal virada para a câmera
+        col = (x * 0.5 + 0.5) * W - 0.5
+        row = (1.0 - (y * 0.5 + 0.5)) * H - 0.5
+        inb = (x.abs() <= 1) & (y.abs() <= 1) & (cosang > min_cos)
+        ci = col.round().long().clamp(0, W - 1)
+        ri = row.round().long().clamp(0, H - 1)
+        vis = (z - zbuf[ri, ci]).abs() <= tol
+        wgt = torch.where(inb & vis, cosang.clamp_min(0) ** cos_power, torch.zeros_like(cosang))
+        grid = torch.stack([x, -y], -1)[None, None]              # grid_sample: y para baixo
+        smp = F.grid_sample(img.permute(2, 0, 1)[None], grid, mode="bilinear",
+                            padding_mode="border", align_corners=False)[0, :, 0].T
+        if m is not None:
+            ms = F.grid_sample(m[None, None], grid, mode="bilinear",
+                               padding_mode="zeros", align_corners=False)[0, 0, 0]
+            wgt = wgt * ms
+        out_w[s:s + chunk] = wgt
+        out_c[s:s + chunk] = smp
+    return out_c, out_w
+
+
 @torch.no_grad()
 def project_texture(verts, faces, uvs, images: torch.Tensor, masks: torch.Tensor | None,
                     azimuths: Sequence[float], elevations: Sequence[float],
                     texture_size: int, frame_scale: float = 1.1, cos_power: float = 4.0,
                     depth_tolerance: float = 0.01, min_cos: float = 0.1, view_weights=None,
                     dilate_px: int = 8, chunk: int = 1 << 20):
-    """Projeta ``images [V,H,W,3]`` no atlas UV do mesh.
+    """Projeta ``images [V,H,W,3]`` no atlas UV do mesh (todas as vistas de uma vez).
 
     * Todas as vistas usam o mesmo enquadramento (``frame_scale`` × maior
       dimensão do bounding box), idêntico ao usado em ``render_view`` — as
@@ -299,60 +368,115 @@ def project_texture(verts, faces, uvs, images: torch.Tensor, masks: torch.Tensor
     por nenhuma vista) e ``cover [S,S] bool`` (texel pertence ao mesh).
     """
     dev = verts.device
-    V, H, W, _ = images.shape
-    center, extent = bbox_center_extent(verts)
-    half = float(extent.max()) * 0.5 * frame_scale
-    vn = vertex_normals(verts, faces)
-    pos, nrm, cover = texel_geometry(verts, faces, uvs, texture_size, vn)
+    V = images.shape[0]
+    center, half, ext = view_frame(verts, frame_scale)
+    pos, nrm, cover, vn = cached_texel_geometry(verts, faces, uvs, texture_size)
     S = int(texture_size)
     acc = torch.zeros((S, S, 3), device=dev)
     wsum = torch.zeros((S, S), device=dev)
-    tol = depth_tolerance * float(extent.max())
+    tol = depth_tolerance * ext
     if view_weights is None:
         view_weights = [1.0] * V
-
-    P = pos[cover]                                                   # [K,3]
-    N = nrm[cover]
+    P = pos[cover]; N = nrm[cover]
     for v in range(V):
-        rv = render_view(verts, faces, center, half, azimuths[v], elevations[v], max(H, W), vn)
-        fwd, right, up = rv["fwd"], rv["right"], rv["up"]
-        img = images[v].to(dev).float()
-        m = masks[v].to(dev).float() if masks is not None else None
-        # z-buffer reamostrado para HxW caso H != W
-        zbuf = rv["depth"]
-        if zbuf.shape[0] != H or zbuf.shape[1] != W:
-            zb = zbuf.clone(); zb[torch.isinf(zb)] = 1e9
-            zbuf = F.interpolate(zb[None, None], size=(H, W), mode="nearest")[0, 0]
-        out_w = torch.zeros((P.shape[0],), device=dev)
-        out_c = torch.zeros((P.shape[0], 3), device=dev)
-        for s in range(0, P.shape[0], chunk):
-            p = P[s:s + chunk]; n = N[s:s + chunk]
-            x, y, z = ortho_project(p, center, fwd, right, up, half)
-            cosang = (n * -fwd).sum(-1)                              # normal virada para a câmera
-            col = (x * 0.5 + 0.5) * W - 0.5
-            row = (1.0 - (y * 0.5 + 0.5)) * H - 0.5
-            inb = (x.abs() <= 1) & (y.abs() <= 1) & (cosang > min_cos)
-            # visibilidade
-            ci = col.round().long().clamp(0, W - 1)
-            ri = row.round().long().clamp(0, H - 1)
-            vis = (z - zbuf[ri, ci]).abs() <= tol
-            wgt = torch.where(inb & vis, cosang.clamp_min(0) ** cos_power, torch.zeros_like(cosang))
-            # amostragem bilinear
-            grid = torch.stack([x, -y], -1)[None, None]              # grid_sample: y para baixo
-            smp = F.grid_sample(img.permute(2, 0, 1)[None], grid, mode="bilinear",
-                                padding_mode="border", align_corners=False)[0, :, 0].T
-            if m is not None:
-                ms = F.grid_sample(m[None, None], grid, mode="bilinear",
-                                   padding_mode="zeros", align_corners=False)[0, 0, 0]
-                wgt = wgt * ms
-            out_w[s:s + chunk] = wgt * float(view_weights[v])
-            out_c[s:s + chunk] = smp
-        acc[cover] += out_c * out_w[:, None]
-        wsum[cover] += out_w
+        c, w = project_single_view(verts, faces, P, N, vn, center, half, tol, images[v],
+                                   None if masks is None else masks[v], azimuths[v], elevations[v],
+                                   cos_power, min_cos, chunk)
+        w = w * float(view_weights[v])
+        acc[cover] += c * w[:, None]
+        wsum[cover] += w
     tex = torch.where(wsum[..., None] > 1e-8, acc / wsum[..., None].clamp_min(1e-8), torch.zeros_like(acc))
     if dilate_px > 0:
         tex = dilate(tex, (wsum > 1e-8), dilate_px)
     return tex, wsum, cover
+
+
+@torch.no_grad()
+def accumulate_view(verts, faces, uvs, texture, wsum, image, mask, azimuth, elevation,
+                    frame_scale=1.1, cos_power=4.0, depth_tolerance=0.01, min_cos=0.1,
+                    view_weight=1.0, color_match=True, fill_only=False, texture_size: int = 2048,
+                    chunk: int = 1 << 20):
+    """Fluxo sequencial (projeta-e-completa): soma UMA vista à textura já existente.
+
+    ``texture [S,S,3]`` e ``wsum [S,S]`` são o estado acumulado (podem ser None
+    para a primeira vista). ``color_match`` corrige o ganho de cor da vista nova
+    usando os texels que ela tem em comum com o que já foi pintado (evita as
+    costas saírem com outra paleta). ``fill_only`` só pinta texels ainda vazios.
+    Retorna ``(texture, wsum, cover, stats)``.
+    """
+    dev = verts.device
+    S_img = image.shape[0]
+    center, half, ext = view_frame(verts, frame_scale)
+    S = texture.shape[0] if texture is not None else (wsum.shape[0] if wsum is not None else int(texture_size))
+    pos, nrm, cover, vn = cached_texel_geometry(verts, faces, uvs, S)
+    if texture is None:
+        texture = torch.zeros((S, S, 3), device=dev)
+    if wsum is None:
+        wsum = torch.zeros((S, S), device=dev)
+    texture = texture.to(dev).float(); wsum = wsum.to(dev).float()
+    P = pos[cover]; N = nrm[cover]
+    c, w = project_single_view(verts, faces, P, N, vn, center, half, depth_tolerance * ext,
+                               image, mask, azimuth, elevation, cos_power, min_cos, chunk)
+    w = w * float(view_weight)
+    old_w = wsum[cover]
+    old_c = texture[cover]
+    stats = {"gain": [1.0, 1.0, 1.0], "overlap": 0}
+    both = (w > 1e-6) & (old_w > 1e-6)
+    stats["overlap"] = int(both.sum())
+    if color_match and stats["overlap"] > 500:
+        ref = old_c[both].mean(0)
+        new = c[both].mean(0)
+        gain = (ref / new.clamp_min(1e-3)).clamp(0.6, 1.6)
+        c = (c * gain).clamp(0, 1)
+        stats["gain"] = [round(float(g), 3) for g in gain]
+    if fill_only:
+        w = torch.where(old_w > 1e-6, torch.zeros_like(w), w)
+    acc = old_c * old_w[:, None] + c * w[:, None]
+    nw = old_w + w
+    texture = texture.clone(); wsum = wsum.clone()
+    texture[cover] = torch.where(nw[:, None] > 1e-8, acc / nw[:, None].clamp_min(1e-8), torch.zeros_like(acc))
+    wsum[cover] = nw
+    stats["new_texels"] = int(((old_w <= 1e-6) & (w > 1e-6)).sum())
+    stats["covered_frac"] = float((wsum[cover] > 1e-6).float().mean()) if bool(cover.any()) else 0.0
+    return texture, wsum, cover, stats
+
+
+@torch.no_grad()
+def render_textured(verts, faces, uvs, texture, wsum, azimuth, elevation, res: int,
+                    frame_scale=1.1, missing_color=(0.5, 0.5, 0.5), background=(1.0, 1.0, 1.0),
+                    min_cos_missing: float = 0.0):
+    """Renderiza a vista com a textura parcial aplicada.
+
+    Retorna ``image [R,R,3]`` (texels sem peso = ``missing_color``, fundo =
+    ``background``), ``missing [R,R] bool`` (pixels do mesh ainda sem textura —
+    a máscara de inpaint), ``mask [R,R] bool`` (silhueta) e ``normal [R,R,3]``.
+    """
+    dev = verts.device
+    center, half, _ = view_frame(verts, frame_scale)
+    vn = vertex_normals(verts, faces)
+    rv = render_view(verts, faces, center, half, azimuth, elevation, res, vn)
+    m = rv["mask"]
+    safe = rv["face_idx"].clamp_min(0)
+    tri_uv = uvs[faces[safe]]                                   # [R,R,3,2]
+    uv = (rv["bary"][..., None] * tri_uv).sum(-2)               # [R,R,2]
+    grid = torch.stack([uv[..., 0] * 2 - 1, uv[..., 1] * 2 - 1], -1)[None]   # linha 0 = v=0
+    if texture is None or wsum is None:
+        col = torch.zeros((res, res, 3), device=dev)
+        has = torch.zeros((res, res), device=dev)
+    else:
+        tex = texture.to(dev).float().permute(2, 0, 1)[None]
+        wt = (wsum.to(dev).float() > 1e-6).float()[None, None]
+        # média só dos texels válidos (evita puxar cinza/preto das bordas do atlas)
+        cw = F.grid_sample(tex * wt, grid, mode="bilinear", padding_mode="border", align_corners=False)[0].permute(1, 2, 0)
+        ww = F.grid_sample(wt, grid, mode="bilinear", padding_mode="border", align_corners=False)[0, 0]
+        col = cw / ww.clamp_min(1e-6)[..., None]
+        has = (ww > 0.5).float()
+    missing = m & (has < 0.5)
+    mc = torch.tensor(missing_color, device=dev)
+    bg = torch.tensor(background, device=dev)
+    img = torch.where(missing[..., None], mc, col.clamp(0, 1))
+    img = torch.where(m[..., None], img, bg)
+    return img, missing, m, rv["normal"]
 
 
 @torch.no_grad()

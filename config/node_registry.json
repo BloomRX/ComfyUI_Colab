@@ -271,7 +271,11 @@
     "wd_tagger_mira": "ComfyUI_Mira",
     "LiaProjectionAngles": "ComfyUI-Lia-TextureProjection",
     "LiaRenderProjectionViews": "ComfyUI-Lia-TextureProjection",
-    "LiaProjectTexture": "ComfyUI-Lia-TextureProjection"
+    "LiaProjectTexture": "ComfyUI-Lia-TextureProjection",
+    "LiaRenderTextured": "ComfyUI-Lia-TextureProjection",
+    "LiaProjectTextureAccumulate": "ComfyUI-Lia-TextureProjection",
+    "LiaTextureFinalize": "ComfyUI-Lia-TextureProjection",
+    "LiaPickReference": "ComfyUI-Lia-TextureProjection"
   },
   "native_ignore": [
     "SaveImage",

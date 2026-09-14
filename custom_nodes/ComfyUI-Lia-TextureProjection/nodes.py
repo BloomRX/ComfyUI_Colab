@@ -13,6 +13,19 @@ Três nós:
   Sai a textura ``base_color`` [1,S,S,3] para ligar em ``ApplyTextureToMesh``.
 * ``LiaProjectionAngles`` — só monta a lista de ângulos (presets 4/6 vistas).
 
+Fluxo sequencial (v2, "projeta-e-completa" — o mesmo princípio do Modddif/TEXTure):
+
+* ``LiaRenderTextured`` — renderiza a vista com a textura parcial já acumulada;
+  devolve a imagem (buracos em cinza), a máscara de inpaint (o que falta) e o
+  normal map. O gerador só pinta o que falta, vendo o que já existe → vistas
+  coerentes entre si.
+* ``LiaProjectTextureAccumulate`` — soma UMA vista ao estado da textura
+  (``LIA_TEXSTATE``), com correção de ganho de cor contra o que já foi pintado.
+* ``LiaTextureFinalize`` — dilata bordas, preenche o que nenhuma vista viu e
+  devolve ``base_color`` + máscara UV do não-visto.
+* ``LiaPickReference`` — escolhe a imagem de referência da vista (costas/lados
+  opcionais, cai na frontal se faltar).
+
 Só depende de torch e da API pública do core (``comfy_api.latest``).
 """
 from __future__ import annotations
@@ -222,10 +235,218 @@ class LiaProjectTexture(IO.ComfyNode):
         return IO.NodeOutput(tex.clamp(0, 1)[None].to(idev), cov[None].to(idev))
 
 
+# --------------------------------------------------------------------------- #
+# v2 — fluxo sequencial
+# --------------------------------------------------------------------------- #
+TexState = IO.Custom("LIA_TEXSTATE")
+
+_VIEW_TIPS = {
+    "front": "frente (0)", "back": "costas (180)", "left": "esquerda (90)", "right": "direita (270)",
+}
+
+
+def _state_get(state):
+    if state is None:
+        return None, None
+    return state.get("texture"), state.get("wsum")
+
+
+class LiaRenderTextured(IO.ComfyNode):
+    @classmethod
+    def define_schema(cls):
+        return IO.Schema(
+            node_id="LiaRenderTextured",
+            display_name="Render Textured View (Lia)",
+            category="3d/texturing/projection",
+            description="Renderiza o mesh numa vista ortográfica com a textura parcial já acumulada. "
+                        "Pixels do mesh ainda sem textura saem em cinza e viram a máscara de inpaint. "
+                        "Sem 'state' ligado, tudo é 'faltando' (primeira vista = geração completa).",
+            inputs=[
+                IO.Mesh.Input("mesh", tooltip="Mesh COM UV (o mesmo em todos os nós Lia do fluxo)."),
+                IO.Float.Input("azimuth", default=0.0, min=-360.0, max=360.0, step=1.0,
+                               tooltip="0 = frente, 90 = lado esquerdo do personagem, 180 = costas, 270 = direito."),
+                IO.Float.Input("elevation", default=0.0, min=-89.0, max=89.0, step=1.0, tooltip="Positivo = câmera acima."),
+                IO.Int.Input("resolution", default=1024, min=256, max=2048, step=64),
+                IO.Float.Input("frame_scale", default=1.1, min=1.0, max=2.0, step=0.01,
+                               tooltip="Enquadramento; use o MESMO valor no Accumulate."),
+                IO.Int.Input("grow_mask_px", default=12, min=0, max=128,
+                             tooltip="Expande a máscara de inpaint para o gerador fundir a borda com o que já existe."),
+                IO.Combo.Input("missing_color", options=["grey", "white", "black", "magenta"], default="grey",
+                               tooltip="Cor dos pixels ainda sem textura (cite-a no prompt)."),
+                TexState.Input("state", optional=True, tooltip="Saída do Accumulate da vista anterior. Vazio na 1ª vista."),
+            ],
+            outputs=[
+                IO.Image.Output(display_name="image"),
+                IO.Mask.Output(display_name="inpaint_mask"),
+                IO.Mask.Output(display_name="silhouette"),
+                IO.Image.Output(display_name="normals"),
+                IO.Float.Output(display_name="missing_fraction"),
+            ],
+        )
+
+    @classmethod
+    def execute(cls, mesh, azimuth, elevation, resolution, frame_scale, grow_mask_px, missing_color, state=None):
+        v, f, uv = _first_item(mesh)
+        if uv is None:
+            raise ValueError("O mesh não tem UV. Ligue um UnwrapMesh antes deste nó.")
+        tex, w = _state_get(state)
+        mc = {"grey": (0.5, 0.5, 0.5), "white": (1, 1, 1), "black": (0, 0, 0), "magenta": (1, 0, 1)}[missing_color]
+        img, missing, sil, ncam = P.render_textured(v, f, uv, tex, w, float(azimuth), float(elevation),
+                                                    int(resolution), float(frame_scale), missing_color=mc)
+        m = missing.float()
+        if grow_mask_px > 0:
+            k = int(grow_mask_px) * 2 + 1
+            m = torch.nn.functional.max_pool2d(m[None, None], k, 1, k // 2)[0, 0]
+            m = m * sil.float()   # nunca pinta fora da silhueta
+        n = torch.where(sil[..., None], ncam * 0.5 + 0.5, torch.tensor([0.5, 0.5, 1.0], device=v.device))
+        frac = float(missing.sum()) / max(1.0, float(sil.sum()))
+        idev = comfy.model_management.intermediate_device()
+        return IO.NodeOutput(img[None].to(idev), m[None].to(idev), sil.float()[None].to(idev),
+                             n[None].to(idev), frac)
+
+
+class LiaProjectTextureAccumulate(IO.ComfyNode):
+    @classmethod
+    def define_schema(cls):
+        return IO.Schema(
+            node_id="LiaProjectTextureAccumulate",
+            display_name="Accumulate View Into Texture (Lia)",
+            category="3d/texturing/projection",
+            description="Projeta UMA imagem pintada no atlas UV e soma ao estado da textura. Encadeie um por "
+                        "vista (frente → costas → lados → cima/baixo). 'color_match' corrige o tom da vista "
+                        "nova pelo que já está pintado, para as costas não saírem com outra paleta.",
+            inputs=[
+                IO.Mesh.Input("mesh"),
+                IO.Image.Input("image", tooltip="A vista pintada (mesma câmera do Render Textured View)."),
+                IO.Float.Input("azimuth", default=0.0, min=-360.0, max=360.0, step=1.0),
+                IO.Float.Input("elevation", default=0.0, min=-89.0, max=89.0, step=1.0),
+                IO.Float.Input("frame_scale", default=1.1, min=1.0, max=2.0, step=0.01),
+                IO.Int.Input("texture_size", default=2048, min=256, max=4096, step=256,
+                             tooltip="Usado só na 1ª vista (sem state)."),
+                IO.Float.Input("view_weight", default=1.0, min=0.05, max=4.0, step=0.05,
+                               tooltip="Peso desta vista na média (frente 1.0; vistas de cima/baixo 0.5)."),
+                IO.Float.Input("cos_power", default=4.0, min=0.5, max=16.0, step=0.5),
+                IO.Float.Input("min_cos", default=0.15, min=0.0, max=0.9, step=0.01),
+                IO.Float.Input("depth_tolerance", default=0.01, min=0.001, max=0.1, step=0.001),
+                IO.Boolean.Input("color_match", default=True),
+                IO.Boolean.Input("fill_only", default=False,
+                                 tooltip="Só pinta texels ainda vazios (não mistura com o que já existe). Bom para vistas de retoque."),
+                TexState.Input("state", optional=True),
+                IO.Mask.Input("mask", optional=True, tooltip="1 = usar este pixel. Ligue a inpaint_mask (só o novo) ou a silhouette (tudo)."),
+            ],
+            outputs=[
+                TexState.Output(display_name="state"),
+                IO.Image.Output(display_name="base_color"),
+                IO.Image.Output(display_name="coverage"),
+                IO.String.Output(display_name="info"),
+            ],
+        )
+
+    @classmethod
+    def execute(cls, mesh, image, azimuth, elevation, frame_scale, texture_size, view_weight, cos_power,
+                min_cos, depth_tolerance, color_match, fill_only, state=None, mask=None):
+        v, f, uv = _first_item(mesh)
+        if uv is None:
+            raise ValueError("O mesh não tem UV. Ligue um UnwrapMesh antes deste nó.")
+        tex, w = _state_get(state)
+        img = image[0, ..., :3].to(v.device).float()
+        m = None
+        if mask is not None:
+            m = mask[0].to(v.device).float() if mask.ndim == 3 else mask.to(v.device).float()
+            if m.shape != img.shape[:2]:
+                m = torch.nn.functional.interpolate(m[None, None], size=img.shape[:2], mode="bilinear",
+                                                    align_corners=False)[0, 0]
+        tex, w, cover, st = P.accumulate_view(v, f, uv, tex, w, img, m, float(azimuth), float(elevation),
+                                              frame_scale=float(frame_scale), cos_power=float(cos_power),
+                                              depth_tolerance=float(depth_tolerance), min_cos=float(min_cos),
+                                              view_weight=float(view_weight), color_match=bool(color_match),
+                                              fill_only=bool(fill_only), texture_size=int(texture_size))
+        cov = torch.zeros_like(tex)
+        cov[..., 1] = (w > 1e-8).float()
+        cov[..., 0] = (cover & (w <= 1e-8)).float()
+        info = (f"az {azimuth:g} el {elevation:g}: +{st['new_texels']} texels novos, sobreposição {st['overlap']}, "
+                f"ganho RGB {st['gain']}, cobertura {st['covered_frac']*100:.1f}%")
+        idev = comfy.model_management.intermediate_device()
+        new_state = {"texture": tex.to(idev), "wsum": w.to(idev), "size": int(tex.shape[0])}
+        return IO.NodeOutput(new_state, tex.clamp(0, 1)[None].to(idev), cov[None].to(idev), info)
+
+
+class LiaTextureFinalize(IO.ComfyNode):
+    @classmethod
+    def define_schema(cls):
+        return IO.Schema(
+            node_id="LiaTextureFinalize",
+            display_name="Finalize Texture (Lia)",
+            category="3d/texturing/projection",
+            description="Fecha a textura acumulada: dilata bordas das ilhas UV, preenche o que nenhuma vista viu "
+                        "e devolve base_color para ApplyTextureToMesh + máscara UV do não-visto.",
+            inputs=[
+                IO.Mesh.Input("mesh"),
+                TexState.Input("state"),
+                IO.Int.Input("dilate_px", default=8, min=0, max=64),
+                IO.Boolean.Input("fill_unseen", default=True),
+                IO.Int.Input("fill_reach_px", default=48, min=4, max=256,
+                             tooltip="Até onde a cor vizinha é 'esticada' para dentro do não-visto antes de cair na cor média."),
+            ],
+            outputs=[
+                IO.Image.Output(display_name="base_color"),
+                IO.Image.Output(display_name="coverage"),
+                IO.Mask.Output(display_name="unseen_mask"),
+            ],
+        )
+
+    @classmethod
+    def execute(cls, mesh, state, dilate_px, fill_unseen, fill_reach_px):
+        v, f, uv = _first_item(mesh)
+        tex, w = _state_get(state)
+        if tex is None:
+            raise ValueError("state vazio")
+        tex = tex.to(v.device).float(); w = w.to(v.device).float()
+        _, _, cover, _ = P.cached_texel_geometry(v, f, uv, tex.shape[0])
+        unseen = cover & (w <= 1e-8)
+        if dilate_px > 0:
+            tex = P.dilate(tex, w > 1e-8, int(dilate_px))
+        if fill_unseen:
+            tex = P.fill_uncovered(tex, w, cover, reach_px=int(fill_reach_px))
+        cov = torch.zeros_like(tex)
+        cov[..., 1] = (w > 1e-8).float()
+        cov[..., 0] = unseen.float()
+        idev = comfy.model_management.intermediate_device()
+        return IO.NodeOutput(tex.clamp(0, 1)[None].to(idev), cov[None].to(idev), unseen.float()[None].to(idev))
+
+
+class LiaPickReference(IO.ComfyNode):
+    @classmethod
+    def define_schema(cls):
+        return IO.Schema(
+            node_id="LiaPickReference",
+            display_name="Pick Reference Image (Lia)",
+            category="3d/texturing/projection",
+            description="Escolhe a imagem de referência para a vista. Costas/lados são opcionais: se não "
+                        "estiverem ligados (ou o LoadImage estiver em bypass), usa a frontal.",
+            inputs=[
+                IO.Combo.Input("view", options=list(_VIEW_TIPS.keys()), default="front"),
+                IO.Image.Input("front"),
+                IO.Image.Input("back", optional=True),
+                IO.Image.Input("left", optional=True),
+                IO.Image.Input("right", optional=True),
+            ],
+            outputs=[IO.Image.Output(display_name="image"), IO.String.Output(display_name="used")],
+        )
+
+    @classmethod
+    def execute(cls, view, front, back=None, left=None, right=None):
+        pick = {"front": front, "back": back, "left": left, "right": right}[view]
+        if pick is None:
+            return IO.NodeOutput(front, f"{view}: sem imagem própria → usando a frontal")
+        return IO.NodeOutput(pick, f"{view}: imagem própria")
+
+
 class LiaTextureProjectionExtension(ComfyExtension):
     @override
     async def get_node_list(self):
-        return [LiaProjectionAngles, LiaRenderProjectionViews, LiaProjectTexture]
+        return [LiaProjectionAngles, LiaRenderProjectionViews, LiaProjectTexture,
+                LiaRenderTextured, LiaProjectTextureAccumulate, LiaTextureFinalize, LiaPickReference]
 
 
 async def comfy_entrypoint():
