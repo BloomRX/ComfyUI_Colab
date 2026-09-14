@@ -5192,3 +5192,9 @@ Drive: +6,9 GB `checkpoints/Waifu-Inpaint-XL` (**gated** — aceitar termos no
 HF + `HF_TOKEN` na Célula 5) + IP-Adapter SDXL 0,85 + CLIP-ViT-H 2,5 (se ainda
 não tiver dos WaifuSurvivors). Licença: OpenRAIL++-M (comercial ok) — LICENCAS,
 AUDITADOS, coletar_licencas atualizados. T4 estimado: 15–20 min no total.
+
+## v83 — relatórios de GPU removidos do repo
+Os 7 `docs/Logs/relatorio_20260914_*` (35 MB) saíram do working tree; o resumo
+com os números e decisões de cada rodada está em `docs/Logs/HISTORICO.md`.
+Continuam recuperáveis via `git show 190cfa0:docs/Logs/<pasta>/RESUMO.md`.
+Novos relatórios: commite só enquanto eu precisar analisar; depois resumo e apago.
