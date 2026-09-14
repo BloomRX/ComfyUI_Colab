@@ -343,7 +343,7 @@ class LiaProjectTextureAccumulate(IO.ComfyNode):
                 IO.Boolean.Input("replace", default=False,
                                  tooltip="Passe de correção: onde esta vista enxerga (dentro da mask), o novo SUBSTITUI o que existia em vez de fazer média."),
                 IO.Int.Input("mask_erode_px", default=3, min=0, max=32,
-                             tooltip="Encolhe a máscara antes de projetar: a borda da silhueta é anti-aliasing com o fundo (branco) e, em ângulo raso, vazava branco para dentro da roupa nas outras vistas."),
+                             tooltip="Em pixels de uma vista 1024 (escala com a resolução). Encolhe a máscara antes de projetar: a borda da silhueta é anti-aliasing com o fundo (branco) e, em ângulo raso, vazava branco para dentro da roupa nas outras vistas."),
                 TexState.Input("state", optional=True),
                 IO.Mask.Input("mask", optional=True, tooltip="1 = usar este pixel. Ligue a inpaint_mask (só o novo) ou a silhouette (tudo)."),
             ],
@@ -370,8 +370,10 @@ class LiaProjectTextureAccumulate(IO.ComfyNode):
             if m.shape != img.shape[:2]:
                 m = torch.nn.functional.interpolate(m[None, None], size=img.shape[:2], mode="bilinear",
                                                     align_corners=False)[0, 0]
-            if int(mask_erode_px) > 0:
-                k = int(mask_erode_px) * 2 + 1
+            # px referem-se a uma vista de 1024; escala para a resolução real (256 → 1 px)
+            e = int(round(int(mask_erode_px) * max(img.shape[:2]) / 1024.0))
+            if e > 0:
+                k = e * 2 + 1
                 m = -torch.nn.functional.max_pool2d(-(m > 0.5).float()[None, None], k, 1, k // 2)[0, 0]
         tex, w, cover, st = P.accumulate_view(v, f, uv, tex, w, img, m, float(azimuth), float(elevation),
                                               frame_scale=float(frame_scale), cos_power=float(cos_power),
