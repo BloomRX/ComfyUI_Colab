@@ -5198,3 +5198,12 @@ Os 7 `docs/Logs/relatorio_20260914_*` (35 MB) saíram do working tree; o resumo
 com os números e decisões de cada rodada está em `docs/Logs/HISTORICO.md`.
 Continuam recuperáveis via `git show 190cfa0:docs/Logs/<pasta>/RESUMO.md`.
 Novos relatórios: commite só enquanto eu precisar analisar; depois resumo e apago.
+
+## v84 — teste Qwen removido; workflows de concept 2D de volta
+`Workflows/Lia_Teste_QwenEdit.json` e `scripts/gerar_lia_teste_qwenedit.py`
+apagados (a Célula 5 estava oferecendo os 23 GB do Qwen de novo); entradas no
+registry e em AUDITADOS removidas (a auditoria em LICENCAS.md fica como
+registro). Voltaram de `Workflows_arquivo/` para `Workflows/`:
+`WaifuSurvivors_Concept`, `_Base`, `_CharacterSheet`, `_TrocarRoupa`
+(waiIllustrious v17 — já no Drive; IP-Adapter/CLIP-ViT-H/ControlNet-Union
+baixados pela Célula 5 se faltarem). Ativos agora: 4 Lia + 4 concept.

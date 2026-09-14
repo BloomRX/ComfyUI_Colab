@@ -791,50 +791,6 @@
         "size": "848 MB",
         "url": "https://huggingface.co/h94/IP-Adapter/resolve/main/sdxl_models/ip-adapter-plus_sdxl_vit-h.safetensors"
       }
-    ],
-    "Lia_Teste_QwenEdit.json": [
-      {
-        "file": "flux-2-klein-4b-fp8.safetensors",
-        "dir": "diffusion_models",
-        "size": "4.08 GB",
-        "url": "https://huggingface.co/black-forest-labs/FLUX.2-klein-4b-fp8/resolve/main/flux-2-klein-4b-fp8.safetensors"
-      },
-      {
-        "file": "qwen_3_4b_fp8_mixed.safetensors",
-        "dir": "text_encoders",
-        "size": "5.63 GB",
-        "url": "https://huggingface.co/Comfy-Org/z_image_turbo/resolve/main/split_files/text_encoders/qwen_3_4b_fp8_mixed.safetensors"
-      },
-      {
-        "file": "flux2-vae.safetensors",
-        "dir": "vae",
-        "size": "0.34 GB",
-        "url": "https://huggingface.co/Comfy-Org/flux2-dev/resolve/main/split_files/vae/flux2-vae.safetensors"
-      },
-      {
-        "file": "Qwen-Image-Edit-2509-Q3_K_S.gguf",
-        "dir": "unet",
-        "size": "9.04 GB",
-        "url": "https://huggingface.co/QuantStack/Qwen-Image-Edit-2509-GGUF/resolve/main/Qwen-Image-Edit-2509-Q3_K_S.gguf"
-      },
-      {
-        "file": "qwen_2.5_vl_7b_fp8_scaled.safetensors",
-        "dir": "text_encoders",
-        "size": "9.38 GB",
-        "url": "https://huggingface.co/Comfy-Org/Qwen-Image_ComfyUI/resolve/main/split_files/text_encoders/qwen_2.5_vl_7b_fp8_scaled.safetensors"
-      },
-      {
-        "file": "qwen_image_vae.safetensors",
-        "dir": "vae",
-        "size": "0.25 GB",
-        "url": "https://huggingface.co/Comfy-Org/Qwen-Image_ComfyUI/resolve/main/split_files/vae/qwen_image_vae.safetensors"
-      },
-      {
-        "file": "Qwen-Image-Edit-2509-Lightning-4steps-V1.0-bf16.safetensors",
-        "dir": "loras",
-        "size": "0.85 GB",
-        "url": "https://huggingface.co/lightx2v/Qwen-Image-Lightning/resolve/main/Qwen-Image-Edit-2509/Qwen-Image-Edit-2509-Lightning-4steps-V1.0-bf16.safetensors"
-      }
     ]
   },
   "model_notes": {
@@ -862,8 +818,7 @@
     "pixal3d_int8_convrot.safetensors": "Pixal3D single-view (5,58 GB). Nao usado: para 1 imagem usamos o TRELLIS.2; para 4 vistas, o pixal3d_multiview.",
     "pixal3d_multiview_bf16.safetensors": "Versao completa do Pixal3D MV (11 GB). Nao cabe no T4; usamos a int8_convrot.",
     "flux-2-klein-4b-fp8.safetensors": "Flux.2 Klein 4B distilled fp8 (Apache-2.0). Edicao por instrucao com referencia; usado no Lia_Klein_Partes. NAO confundir com o 9B (FLUX Non-Commercial).",
-    "qwen_3_4b_fp8_mixed.safetensors": "Text encoder do Klein 4B (mesmo arquivo do Z-Image Turbo). Alternativa menor: qwen_3_4b_fp4_mixed (3.5 GB).",
-    "Qwen-Image-Edit-2509-Q3_K_S.gguf": "Qwen-Image-Edit-2509 quantizado (Apache 2.0), models/unet. 9,0 GB: cabe inteiro na VRAM do T4 (o Q4_K_M de 13 GB ficava parcial e levava 200 s/passo)."
+    "qwen_3_4b_fp8_mixed.safetensors": "Text encoder do Klein 4B (mesmo arquivo do Z-Image Turbo). Alternativa menor: qwen_3_4b_fp4_mixed (3.5 GB)."
   },
   "never_install": [
     "ComfyUI",

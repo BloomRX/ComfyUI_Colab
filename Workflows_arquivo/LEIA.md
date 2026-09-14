@@ -17,7 +17,7 @@ esta fora dela. Ficam versionados no Git, so nao poluem a selecao.
 | `PotatCats-inpaint...` | tutorial; nunca usado |
 | `Skintoken` | exige Blender no PATH |
 | `WaifuVroid`, `WaifuVroid_FromConcept` | projeto Lia antigo (SDXL 2D); substituidos pelo `Lia_Trellis2_Image2Mesh` |
-| `WaifuSurvivors_*` (Base, Concept, CharacterSheet, TrocarRoupa, AnimateWan, VideoToSprites) | **v69: arquivados a pedido** — foco mudou para a Lia em 3D. Pipeline validado, e so mover de volta |
+| `WaifuSurvivors_*` (AnimateWan, VideoToSprites) | v69: arquivados a pedido — foco mudou para a Lia em 3D. **v84: Concept, Base, CharacterSheet e TrocarRoupa voltaram** para `Workflows/` (concepts 2D da Lia) |
 | `workflow_wai_*`, `workflow_chibi_converter_comfyui`, `AB_D_illustrious_wan_idle` | v69: idem, junto com o pacote Waifu Survivors |
 
 ## Para reativar
