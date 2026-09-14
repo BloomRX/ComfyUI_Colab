@@ -19,6 +19,8 @@ Os relatórios completos (log, JSON do grafo, PNGs; ~35 MB) ficaram no históric
 
 | 1634 | v4 (v87) + mesh novo (chifres, capa fina) | 20m06 | 7,0 GB | Silhueta em **serra** já no render da vista 1: `Remesh udf 512` + `Decimate midpoint 30k` destruíram capa/pernas finas (24 663 faces, 2289 ilhas). Pintura irrelevante. → v88: Remesh desligado por padrão, Decimate 60k QEM |
 
+| 1749 | v4.1 (v88) mesh novo, Remesh off, 60k QEM | 20m02 | 6,8 GB | Silhueta limpa (59 158 faces, 1377 ilhas). **Vista 9 (rosto zoom) funcionou**: olhos vermelhos, franja fiel (vista 1 tinha olhos verdes). Falha: lados pintaram capa/braço de **branco** (cinza grande junto ao fundo = "fundo") → v89: prompt "cinza nunca é branco", aviso de capa de perfil |
+
 Aprendizados fixos: Klein 4B 4 passos ≈ 30–40 s por vista 1024²; Remesh+Decimate+Unwrap pec ≈ 2 min;
 o rosto sai com ~150 px no atlas (motivo do passe de correção em zoom, v82).
 

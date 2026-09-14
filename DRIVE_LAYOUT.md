@@ -5242,3 +5242,10 @@ triângulos pontudos: `Remesh udf 512` fura tecido mais fino que 1 voxel e
 `Lia_Trellis2_Image2Mesh` já vem com retopo (150 k + UV), o Remesh passa a
 **bypass** por padrão (768 se ligar) e o Decimate vira **60 k QEM**. Nenhuma
 mudança de pintura — o passo 9 (rosto zoom) ainda não foi avaliado de verdade.
+
+## v89 — relatório 1749: mesh e rosto resolvidos; prompt contra "branco"
+Remesh off + 60 k QEM deu silhueta limpa; a vista 9 (rosto zoom 3×, replace)
+corrigiu olhos e franja. Restou o Klein pintar capa/braço de branco nas
+laterais (cinza grande encostado no fundo). Prompt de estilo: "toda área cinza
+é personagem, nunca branco, roupa tem a mesma cor por dentro e por fora";
+vistas 3/4 avisam que as formas finas são manga/capa de perfil.

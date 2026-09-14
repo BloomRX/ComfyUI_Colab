@@ -123,7 +123,8 @@ style = N("PrimitiveStringMultiline", (X2, 860), (400, 260),
           ["Paint this exact character from image 1 onto the pose and silhouette of the normal map in image 2. "
            "Image 3 shows the SAME character already painted from the front: keep exactly the same outfit design, neckline, "
            "trims, hair and colors as image 3. Some parts of the character are already painted; the flat grey areas are unpainted. "
-           "Fill ONLY the grey areas so they continue the already painted parts seamlessly. "
+           "Fill ONLY the grey areas so they continue the already painted parts seamlessly. Every grey area is part of the character's body or clothes "
+           "(cloth, skin, hair, boots): paint it with the character's own colors — NEVER white, never background, never blank. Clothing keeps the same color on its inside and outside. "
            "Flat unlit albedo texture: flat colors, no shadows, no highlights, no directional lighting, no outlines. "
            "Plain white background. Same art style."],
           outputs=[("STRING", "STRING")], title="Estilo comum (todas as vistas)", color=GREEN)
@@ -133,8 +134,8 @@ VIEWS = [
     # az, el, weight, ref, texto, nome
     (0, 0, 1.0, "front", "front view, facing the camera", "1 Frente"),
     (180, 0, 1.0, "back", "back view, seen from behind", "2 Costas"),
-    (90, 0, 0.8, "left", "left side view, orthographic profile", "3 Esquerda"),
-    (270, 0, 0.8, "right", "right side view, orthographic profile", "4 Direita"),
+    (90, 0, 0.8, "left", "left side view, orthographic profile. The thin shapes at the edges are the sleeves and cloak seen edge-on: same dark cloth color", "3 Esquerda"),
+    (270, 0, 0.8, "right", "right side view, orthographic profile. The thin shapes at the edges are the sleeves and cloak seen edge-on: same dark cloth color", "4 Direita"),
     (0, 30, 0.5, "front", "front view seen slightly from above (camera 30 degrees up). The top of the head is hair only, never a face; the face stays where it already is", "5 Frente/cima"),
     (180, 30, 0.5, "back", "back view seen slightly from above (camera 30 degrees up). The top of the head is hair only, never a face", "6 Costas/cima"),
     (0, -30, 0.4, "front", "front view seen slightly from below (camera 30 degrees down). Underside of the chin, sleeves and skirt hem, shoes; no extra face", "7 Frente/baixo"),
@@ -298,6 +299,9 @@ O que **realmente** melhorou o rosto foi a resolução: por isso a **vista 9 "Ro
 
 ### v4.1 (v88) — mesh "serrilhado" (relatório 1634)
 No mesh novo (capa fina, chifres, pernas finas) a silhueta saiu em **triângulos pontudos** já no render da vista 1 — o problema era o **retopo**, não a pintura: `Remesh udf 512` transforma tecido mais fino que 1 voxel em casca dupla furada, e `Decimate midpoint 30 k` termina de destruir. O GLB que vem do `Lia_Trellis2_Image2Mesh` **já é retopo** (150 k faces + UV), então: Remesh **desligado** por padrão (Ctrl+B para ligar, agora em 768), Decimate **60 k QEM**. Confira sempre o preview "1 Frente: o que já existe": a silhueta cinza tem de parecer a personagem; se estiver em serra, não adianta rodar o resto.
+
+### v4.2 (v89) — relatório 1749: mesh ok, rosto ok, faltou "branco"
+Com o Remesh desligado a silhueta ficou perfeita e a **vista 9 consertou o rosto** (olhos vermelhos, franja certa — a vista 1 tinha pintado olhos verdes). Sobrou: nas vistas laterais o Klein pintou **capa e braço de branco** (áreas cinza grandes encostadas no fundo branco viraram "fundo"), e isso vazou para a conferência. Prompt agora diz explicitamente que toda área cinza é personagem e nunca branco; lados avisam que as formas finas são manga/capa de perfil.
 
 ## Ajustes
 - Uma vista saiu ruim → mude só o seed daquela vista (`RandomNoise`, fixos 200–207); as anteriores ficam em cache.
