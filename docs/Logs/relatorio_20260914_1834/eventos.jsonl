@@ -1,0 +1,38 @@
+{"t": "2026-09-14 18:08:39", "tipo": "inicio", "comfy": "/content/ComfyUI", "output": "/content/drive/MyDrive/ComfyUI_Data/output"}
+{"t": "2026-09-14 18:09:18", "tipo": "servidor_ok", "system_stats": {"system": {"os": "linux", "ram_total": 13605830656, "ram_free": 10862514176, "comfyui_version": "0.35.0", "required_frontend_version": "1.52.7", "installed_templates_version": "0.11.59", "required_templates_version": "0.11.59", "comfy_package_versions": [{"name": "comfyui-frontend-package", "installed": "1.52.7", "required": "1.52.7"}, {"name": "comfyui-workflow-templates", "installed": "0.11.59", "required": "0.11.59"}, {"name": "comfyui-embedded-docs", "installed": "0.5.11", "required": "0.5.11"}, {"name": "comfy-kitchen", "installed": "0.2.33", "required": "0.2.33"}, {"name": "comfy-aimdo", "installed": "0.5.3", "required": "0.5.3"}], "python_version": "3.13.15 (main, Aug  6 2026, 11:06:22) [GCC 13.3.0]", "pytorch_version": "2.11.0+cu128", "embedded_python": false, "deploy_environment": "local-git", "argv": ["main.py", "--listen", "0.0.0.0", "--port", "8188", "--enable-cors-header", "*", "--output-directory", "/content/drive/MyDrive/ComfyUI_Data/output", "--input-directory", "/content/drive/MyDrive/ComfyUI_Data/input", "--user-directory", "/content/comfy_user", "--preview-method", "auto", "--disable-auto-launch", "--cache-none", "--disable-smart-memory", "--mmap-torch-files", "--enable-manager"]}, "devices": [{"name": "cuda:0 Tesla T4 : cudaMallocAsync", "type": "cuda", "index": 0, "vram_total": 15637086208, "vram_free": 15527116800, "torch_vram_total": 0, "torch_vram_free": 0}]}}
+{"t": "2026-09-14 18:09:22", "tipo": "fila", "rodando": 0, "pendente": 0}
+{"t": "2026-09-14 18:09:22", "tipo": "vram_pico", "gb": 0.1}
+{"t": "2026-09-14 18:12:07", "tipo": "fila", "rodando": 1, "pendente": 0}
+{"t": "2026-09-14 18:12:11", "tipo": "vram_pico", "gb": 0.25}
+{"t": "2026-09-14 18:12:15", "tipo": "vram_pico", "gb": 0.5}
+{"t": "2026-09-14 18:12:23", "tipo": "fila", "rodando": 0, "pendente": 0}
+{"t": "2026-09-14 18:12:23", "tipo": "prompt", "tag": "001_10c60227", "status": "error", "n_nos": 260, "imagens": 0, "erros": 0, "tipos": ["ApplyTextureToMesh", "BakeAmbientOcclusion", "BakeNormalMapFromMesh", "CFGGuider", "CLIPLoader", "CLIPTextEncode", "ConditioningZeroOut", "DecimateMesh", "Flux2Scheduler", "Get3DComponents", "ImageCompositeMasked", "ImageScaleToTotalPixels", "KSamplerSelect", "LiaPickReference", "LiaProjectTextureAccumulate", "LiaRenderTextured", "LiaTextureFinalize", "Load3D", "LoadImage", "MeshSmoothNormals", "PreviewImage", "PrimitiveStringMultiline", "RandomNoise", "ReferenceLatent", "RenderUVAtlas", "SamplerCustomAdvanced", "SaveGLB", "SaveImage", "SetLatentNoiseMask", "StringConcatenate", "UNETLoader", "UnwrapMesh", "VAEDecode", "VAEEncode", "VAELoader", "WeldVertices"]}
+{"t": "2026-09-14 18:13:12", "tipo": "fila", "rodando": 1, "pendente": 0}
+{"t": "2026-09-14 18:13:25", "tipo": "vram_pico", "gb": 2.06}
+{"t": "2026-09-14 18:13:29", "tipo": "vram_pico", "gb": 2.09}
+{"t": "2026-09-14 18:13:33", "tipo": "vram_pico", "gb": 2.62}
+{"t": "2026-09-14 18:13:37", "tipo": "vram_pico", "gb": 2.71}
+{"t": "2026-09-14 18:13:49", "tipo": "fila", "rodando": 0, "pendente": 0}
+{"t": "2026-09-14 18:13:51", "tipo": "prompt", "tag": "002_bfe36a48", "status": "success", "n_nos": 260, "imagens": 4, "erros": 0, "tipos": ["ApplyTextureToMesh", "BakeAmbientOcclusion", "BakeNormalMapFromMesh", "CFGGuider", "CLIPLoader", "CLIPTextEncode", "ConditioningZeroOut", "DecimateMesh", "Flux2Scheduler", "Get3DComponents", "ImageCompositeMasked", "ImageScaleToTotalPixels", "KSamplerSelect", "LiaPickReference", "LiaProjectTextureAccumulate", "LiaRenderTextured", "LiaTextureFinalize", "Load3D", "LoadImage", "MeshSmoothNormals", "PreviewImage", "PrimitiveStringMultiline", "RandomNoise", "ReferenceLatent", "RenderUVAtlas", "SamplerCustomAdvanced", "SaveGLB", "SaveImage", "SetLatentNoiseMask", "StringConcatenate", "UNETLoader", "UnwrapMesh", "VAEDecode", "VAEEncode", "VAELoader", "WeldVertices"]}
+{"t": "2026-09-14 18:14:27", "tipo": "fila", "rodando": 1, "pendente": 0}
+{"t": "2026-09-14 18:16:47", "tipo": "vram_pico", "gb": 2.78}
+{"t": "2026-09-14 18:16:51", "tipo": "vram_pico", "gb": 3.03}
+{"t": "2026-09-14 18:16:55", "tipo": "vram_pico", "gb": 3.35}
+{"t": "2026-09-14 18:16:59", "tipo": "vram_pico", "gb": 3.5}
+{"t": "2026-09-14 18:17:03", "tipo": "vram_pico", "gb": 3.57}
+{"t": "2026-09-14 18:17:07", "tipo": "vram_pico", "gb": 3.94}
+{"t": "2026-09-14 18:17:12", "tipo": "vram_pico", "gb": 4.29}
+{"t": "2026-09-14 18:17:16", "tipo": "vram_pico", "gb": 4.44}
+{"t": "2026-09-14 18:17:20", "tipo": "vram_pico", "gb": 4.88}
+{"t": "2026-09-14 18:17:24", "tipo": "vram_pico", "gb": 5.04}
+{"t": "2026-09-14 18:17:28", "tipo": "vram_pico", "gb": 5.51}
+{"t": "2026-09-14 18:17:32", "tipo": "vram_pico", "gb": 5.79}
+{"t": "2026-09-14 18:18:58", "tipo": "vram_pico", "gb": 5.82}
+{"t": "2026-09-14 18:19:02", "tipo": "vram_pico", "gb": 5.92}
+{"t": "2026-09-14 18:19:06", "tipo": "vram_pico", "gb": 6.01}
+{"t": "2026-09-14 18:20:23", "tipo": "vram_pico", "gb": 6.38}
+{"t": "2026-09-14 18:20:28", "tipo": "vram_pico", "gb": 6.73}
+{"t": "2026-09-14 18:20:32", "tipo": "vram_pico", "gb": 6.82}
+{"t": "2026-09-14 18:33:47", "tipo": "fila", "rodando": 0, "pendente": 0}
+{"t": "2026-09-14 18:34:02", "tipo": "prompt", "tag": "003_4e03eaea", "status": "success", "n_nos": 260, "imagens": 34, "erros": 0, "tipos": ["ApplyTextureToMesh", "BakeAmbientOcclusion", "BakeNormalMapFromMesh", "CFGGuider", "CLIPLoader", "CLIPTextEncode", "ConditioningZeroOut", "DecimateMesh", "Flux2Scheduler", "Get3DComponents", "ImageCompositeMasked", "ImageScaleToTotalPixels", "KSamplerSelect", "LiaPickReference", "LiaProjectTextureAccumulate", "LiaRenderTextured", "LiaTextureFinalize", "Load3D", "LoadImage", "MeshSmoothNormals", "PreviewImage", "PrimitiveStringMultiline", "RandomNoise", "ReferenceLatent", "RenderUVAtlas", "SamplerCustomAdvanced", "SaveGLB", "SaveImage", "SetLatentNoiseMask", "StringConcatenate", "UNETLoader", "UnwrapMesh", "VAEDecode", "VAEEncode", "VAELoader", "WeldVertices"]}
+{"t": "2026-09-14 18:34:57", "tipo": "erro_coletor", "erro": "ConnectionResetError(104, 'Connection reset by peer')"}

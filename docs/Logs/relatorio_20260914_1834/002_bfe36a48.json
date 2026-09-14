@@ -1,0 +1,4697 @@
+{
+ "prompt_id": "bfe36a48-232a-461b-aef6-84e89e839a79",
+ "registrado_em": "2026-09-14 18:13:51",
+ "status": "success",
+ "completo": true,
+ "tipos_de_no": [
+  "ApplyTextureToMesh",
+  "BakeAmbientOcclusion",
+  "BakeNormalMapFromMesh",
+  "CFGGuider",
+  "CLIPLoader",
+  "CLIPTextEncode",
+  "ConditioningZeroOut",
+  "DecimateMesh",
+  "Flux2Scheduler",
+  "Get3DComponents",
+  "ImageCompositeMasked",
+  "ImageScaleToTotalPixels",
+  "KSamplerSelect",
+  "LiaPickReference",
+  "LiaProjectTextureAccumulate",
+  "LiaRenderTextured",
+  "LiaTextureFinalize",
+  "Load3D",
+  "LoadImage",
+  "MeshSmoothNormals",
+  "PreviewImage",
+  "PrimitiveStringMultiline",
+  "RandomNoise",
+  "ReferenceLatent",
+  "RenderUVAtlas",
+  "SamplerCustomAdvanced",
+  "SaveGLB",
+  "SaveImage",
+  "SetLatentNoiseMask",
+  "StringConcatenate",
+  "UNETLoader",
+  "UnwrapMesh",
+  "VAEDecode",
+  "VAEEncode",
+  "VAELoader",
+  "WeldVertices"
+ ],
+ "n_nos": 260,
+ "erros": [],
+ "mensagens": [
+  [
+   "execution_start",
+   {
+    "prompt_id": "bfe36a48-232a-461b-aef6-84e89e839a79",
+    "timestamp": 1789409589770
+   }
+  ],
+  [
+   "execution_cached",
+   {
+    "nodes": [],
+    "prompt_id": "bfe36a48-232a-461b-aef6-84e89e839a79",
+    "timestamp": 1789409589772
+   }
+  ],
+  [
+   "execution_success",
+   {
+    "prompt_id": "bfe36a48-232a-461b-aef6-84e89e839a79",
+    "timestamp": 1789409626320
+   }
+  ]
+ ],
+ "textos_saida": {
+  "22": [
+   "az 0 el 0: 100.0% da vista ainda sem textura"
+  ]
+ },
+ "imagens": [
+  {
+   "node": "23",
+   "arquivo": "ComfyUI_temp_gagdv_00001_.png",
+   "tipo": "temp",
+   "copia": "002_bfe36a48__temp__ComfyUI_temp_gagdv_00001_.png"
+  },
+  {
+   "node": "11",
+   "arquivo": "ComfyUI_temp_txfkm_00001_.png",
+   "tipo": "temp",
+   "copia": "002_bfe36a48__temp__ComfyUI_temp_txfkm_00001_.png"
+  },
+  {
+   "node": "260",
+   "arquivo": "Lia_ao_00010_.png",
+   "tipo": "output",
+   "copia": "002_bfe36a48__output__Lia_ao_00010_.png"
+  },
+  {
+   "node": "259",
+   "arquivo": "Lia_normal_00010_.png",
+   "tipo": "output",
+   "copia": "002_bfe36a48__output__Lia_normal_00010_.png"
+  }
+ ],
+ "titulos": {
+  "1": "GLB da Lia (Trellis2 / Pixal3D)",
+  "2": "mesh ALTO (original)",
+  "4": "Weld (arestas duplicadas → normais suaves contínuas)",
+  "5": "Decimate 60 k QEM (midpoint 30 k fazia silhueta em serra)",
+  "6": "UV NOVO — pec (adaptive deu 4266 ilhas em 82 s)",
+  "7": "mesh BAIXO (game-ready, UV limpo)",
+  "8": "normal map: alto → baixo",
+  "9": "AO: alto → baixo",
+  "10": "prévia do UV novo",
+  "11": "UV novo (ilhas)",
+  "12": "Lia FRENTE (obrigatória — a mesma do mesh)",
+  "16": "Carregar Modelo de Difusão",
+  "17": "Carregar CLIP",
+  "18": "Carregar VAE",
+  "19": "Flux2Scheduler",
+  "20": "KSamplerSelect",
+  "21": "Estilo comum (todas as vistas)",
+  "22": "1 Frente: render parcial + máscara",
+  "23": "1 Frente: o que já existe (cinza = a pintar)",
+  "24": "referência da vista (front)",
+  "25": "Redimensionar Imagem para Total de Pixels",
+  "26": "image 1 = referência",
+  "27": "image 2 = normal map",
+  "28": "latente = render parcial",
+  "29": "inpaint só do que falta",
+  "30": "Vista: 1 Frente",
+  "31": "Concatenar",
+  "32": "Codificação de Texto CLIP (Prompt)",
+  "33": "CondicionamentoZerar",
+  "34": "ref 1 (referência) +",
+  "35": "ref 2 (normal) +",
+  "36": "ref 1 (referência) −",
+  "37": "ref 2 (normal) −",
+  "38": "CFGGuider",
+  "39": "Ruído Aleatório",
+  "40": "SamplerCustomAdvanced",
+  "41": "VAE Decodificar",
+  "42": "cola só a área da máscara (fora dela nada muda)",
+  "43": "1 Frente: pintada",
+  "44": "frente pintada → image 3 das outras vistas",
+  "45": "1 Frente: acumula no atlas",
+  "46": "1 Frente: cobertura (vermelho = falta)",
+  "47": "2 Costas: render parcial + máscara",
+  "48": "2 Costas: o que já existe (cinza = a pintar)",
+  "49": "referência da vista (back)",
+  "50": "Redimensionar Imagem para Total de Pixels",
+  "51": "image 1 = referência",
+  "52": "image 2 = normal map",
+  "53": "latente = render parcial",
+  "54": "inpaint só do que falta",
+  "55": "Vista: 2 Costas",
+  "56": "Concatenar",
+  "57": "Codificação de Texto CLIP (Prompt)",
+  "58": "CondicionamentoZerar",
+  "59": "ref 1 (referência) +",
+  "60": "ref 2 (normal) +",
+  "61": "ref 3 (frente pintada) +",
+  "62": "ref 1 (referência) −",
+  "63": "ref 2 (normal) −",
+  "64": "ref 3 (frente pintada) −",
+  "65": "CFGGuider",
+  "66": "Ruído Aleatório",
+  "67": "SamplerCustomAdvanced",
+  "68": "VAE Decodificar",
+  "69": "cola só a área da máscara (fora dela nada muda)",
+  "70": "2 Costas: pintada",
+  "71": "2 Costas: acumula no atlas",
+  "72": "2 Costas: cobertura (vermelho = falta)",
+  "73": "3 Esquerda: render parcial + máscara",
+  "74": "3 Esquerda: o que já existe (cinza = a pintar)",
+  "75": "referência da vista (left)",
+  "76": "Redimensionar Imagem para Total de Pixels",
+  "77": "image 1 = referência",
+  "78": "image 2 = normal map",
+  "79": "latente = render parcial",
+  "80": "inpaint só do que falta",
+  "81": "Vista: 3 Esquerda",
+  "82": "Concatenar",
+  "83": "Codificação de Texto CLIP (Prompt)",
+  "84": "CondicionamentoZerar",
+  "85": "ref 1 (referência) +",
+  "86": "ref 2 (normal) +",
+  "87": "ref 3 (frente pintada) +",
+  "88": "ref 1 (referência) −",
+  "89": "ref 2 (normal) −",
+  "90": "ref 3 (frente pintada) −",
+  "91": "CFGGuider",
+  "92": "Ruído Aleatório",
+  "93": "SamplerCustomAdvanced",
+  "94": "VAE Decodificar",
+  "95": "cola só a área da máscara (fora dela nada muda)",
+  "96": "3 Esquerda: pintada",
+  "97": "3 Esquerda: acumula no atlas",
+  "98": "3 Esquerda: cobertura (vermelho = falta)",
+  "99": "4 Direita: render parcial + máscara",
+  "100": "4 Direita: o que já existe (cinza = a pintar)",
+  "101": "referência da vista (right)",
+  "102": "Redimensionar Imagem para Total de Pixels",
+  "103": "image 1 = referência",
+  "104": "image 2 = normal map",
+  "105": "latente = render parcial",
+  "106": "inpaint só do que falta",
+  "107": "Vista: 4 Direita",
+  "108": "Concatenar",
+  "109": "Codificação de Texto CLIP (Prompt)",
+  "110": "CondicionamentoZerar",
+  "111": "ref 1 (referência) +",
+  "112": "ref 2 (normal) +",
+  "113": "ref 3 (frente pintada) +",
+  "114": "ref 1 (referência) −",
+  "115": "ref 2 (normal) −",
+  "116": "ref 3 (frente pintada) −",
+  "117": "CFGGuider",
+  "118": "Ruído Aleatório",
+  "119": "SamplerCustomAdvanced",
+  "120": "VAE Decodificar",
+  "121": "cola só a área da máscara (fora dela nada muda)",
+  "122": "4 Direita: pintada",
+  "123": "4 Direita: acumula no atlas",
+  "124": "4 Direita: cobertura (vermelho = falta)",
+  "125": "5 Frente/cima: render parcial + máscara",
+  "126": "5 Frente/cima: o que já existe (cinza = a pintar)",
+  "127": "referência da vista (front)",
+  "128": "Redimensionar Imagem para Total de Pixels",
+  "129": "image 1 = referência",
+  "130": "image 2 = normal map",
+  "131": "latente = render parcial",
+  "132": "inpaint só do que falta",
+  "133": "Vista: 5 Frente/cima",
+  "134": "Concatenar",
+  "135": "Codificação de Texto CLIP (Prompt)",
+  "136": "CondicionamentoZerar",
+  "137": "ref 1 (referência) +",
+  "138": "ref 2 (normal) +",
+  "139": "ref 3 (frente pintada) +",
+  "140": "ref 1 (referência) −",
+  "141": "ref 2 (normal) −",
+  "142": "ref 3 (frente pintada) −",
+  "143": "CFGGuider",
+  "144": "Ruído Aleatório",
+  "145": "SamplerCustomAdvanced",
+  "146": "VAE Decodificar",
+  "147": "cola só a área da máscara (fora dela nada muda)",
+  "148": "5 Frente/cima: pintada",
+  "149": "5 Frente/cima: acumula no atlas",
+  "150": "5 Frente/cima: cobertura (vermelho = falta)",
+  "151": "6 Costas/cima: render parcial + máscara",
+  "152": "6 Costas/cima: o que já existe (cinza = a pintar)",
+  "153": "referência da vista (back)",
+  "154": "Redimensionar Imagem para Total de Pixels",
+  "155": "image 1 = referência",
+  "156": "image 2 = normal map",
+  "157": "latente = render parcial",
+  "158": "inpaint só do que falta",
+  "159": "Vista: 6 Costas/cima",
+  "160": "Concatenar",
+  "161": "Codificação de Texto CLIP (Prompt)",
+  "162": "CondicionamentoZerar",
+  "163": "ref 1 (referência) +",
+  "164": "ref 2 (normal) +",
+  "165": "ref 3 (frente pintada) +",
+  "166": "ref 1 (referência) −",
+  "167": "ref 2 (normal) −",
+  "168": "ref 3 (frente pintada) −",
+  "169": "CFGGuider",
+  "170": "Ruído Aleatório",
+  "171": "SamplerCustomAdvanced",
+  "172": "VAE Decodificar",
+  "173": "cola só a área da máscara (fora dela nada muda)",
+  "174": "6 Costas/cima: pintada",
+  "175": "6 Costas/cima: acumula no atlas",
+  "176": "6 Costas/cima: cobertura (vermelho = falta)",
+  "177": "7 Frente/baixo: render parcial + máscara",
+  "178": "7 Frente/baixo: o que já existe (cinza = a pintar)",
+  "179": "referência da vista (front)",
+  "180": "Redimensionar Imagem para Total de Pixels",
+  "181": "image 1 = referência",
+  "182": "image 2 = normal map",
+  "183": "latente = render parcial",
+  "184": "inpaint só do que falta",
+  "185": "Vista: 7 Frente/baixo",
+  "186": "Concatenar",
+  "187": "Codificação de Texto CLIP (Prompt)",
+  "188": "CondicionamentoZerar",
+  "189": "ref 1 (referência) +",
+  "190": "ref 2 (normal) +",
+  "191": "ref 3 (frente pintada) +",
+  "192": "ref 1 (referência) −",
+  "193": "ref 2 (normal) −",
+  "194": "ref 3 (frente pintada) −",
+  "195": "CFGGuider",
+  "196": "Ruído Aleatório",
+  "197": "SamplerCustomAdvanced",
+  "198": "VAE Decodificar",
+  "199": "cola só a área da máscara (fora dela nada muda)",
+  "200": "7 Frente/baixo: pintada",
+  "201": "7 Frente/baixo: acumula no atlas",
+  "202": "7 Frente/baixo: cobertura (vermelho = falta)",
+  "203": "8 Costas/baixo: render parcial + máscara",
+  "204": "8 Costas/baixo: o que já existe (cinza = a pintar)",
+  "205": "referência da vista (back)",
+  "206": "Redimensionar Imagem para Total de Pixels",
+  "207": "image 1 = referência",
+  "208": "image 2 = normal map",
+  "209": "latente = render parcial",
+  "210": "inpaint só do que falta",
+  "211": "Vista: 8 Costas/baixo",
+  "212": "Concatenar",
+  "213": "Codificação de Texto CLIP (Prompt)",
+  "214": "CondicionamentoZerar",
+  "215": "ref 1 (referência) +",
+  "216": "ref 2 (normal) +",
+  "217": "ref 3 (frente pintada) +",
+  "218": "ref 1 (referência) −",
+  "219": "ref 2 (normal) −",
+  "220": "ref 3 (frente pintada) −",
+  "221": "CFGGuider",
+  "222": "Ruído Aleatório",
+  "223": "SamplerCustomAdvanced",
+  "224": "VAE Decodificar",
+  "225": "cola só a área da máscara (fora dela nada muda)",
+  "226": "8 Costas/baixo: pintada",
+  "227": "8 Costas/baixo: acumula no atlas",
+  "228": "8 Costas/baixo: cobertura (vermelho = falta)",
+  "229": "9 Rosto (zoom 3x): render parcial + máscara",
+  "230": "9 Rosto (zoom 3x): o que já existe (cinza = a pintar)",
+  "231": "referência da vista (front)",
+  "232": "Redimensionar Imagem para Total de Pixels",
+  "233": "image 1 = referência",
+  "234": "image 2 = normal map",
+  "235": "latente = render parcial",
+  "236": "inpaint só do que falta",
+  "237": "Vista: 9 Rosto (zoom 3x)",
+  "238": "Concatenar",
+  "239": "Codificação de Texto CLIP (Prompt)",
+  "240": "CondicionamentoZerar",
+  "241": "ref 1 (referência) +",
+  "242": "ref 2 (normal) +",
+  "243": "ref 3 (frente pintada) +",
+  "244": "ref 1 (referência) −",
+  "245": "ref 2 (normal) −",
+  "246": "ref 3 (frente pintada) −",
+  "247": "CFGGuider",
+  "248": "Ruído Aleatório",
+  "249": "SamplerCustomAdvanced",
+  "250": "VAE Decodificar",
+  "251": "cola só a área da máscara (fora dela nada muda)",
+  "252": "9 Rosto (zoom 3x): pintada",
+  "253": "9 Rosto (zoom 3x): acumula no atlas",
+  "254": "9 Rosto (zoom 3x): cobertura (vermelho = falta)",
+  "255": "Fecha a textura",
+  "256": "Atlas final",
+  "257": "Cobertura final",
+  "258": "PNG albedo (Blender/VRM MToon)",
+  "259": "PNG normal map",
+  "260": "PNG AO",
+  "261": "Aplicar textura à malha",
+  "262": "GLB final (game-ready: UV novo + albedo + normal + AO)",
+  "263": "Conferência 3/4 (textura FINAL; magenta = buraco real)",
+  "264": "Conferência"
+ },
+ "grafo_api": {
+  "1": {
+   "inputs": {
+    "model_file": "3d/preview3d_advanced_6bdec9a472cd4834a721e3fcc082d7fa.glb",
+    "upload 3d model": "upload3dmodel",
+    "upload extra resources": "uploadExtraResources",
+    "clear": "clear",
+    "image": {
+     "image": "threed/scene_1789409588756.png [temp]",
+     "mask": "threed/scene_mask_1789409588758.png [temp]",
+     "normal": "threed/scene_normal_1789409588759.png [temp]",
+     "camera_info": {
+      "position": {
+       "x": 1.4379873465245463,
+       "y": 1.0028937656631984,
+       "z": 1.4377924859825353
+      },
+      "target": {
+       "x": -0.00016448987071693156,
+       "y": 0.00025637934117695674,
+       "z": -0.0003593504127283967
+      },
+      "zoom": 1,
+      "cameraType": "perspective",
+      "quaternion": {
+       "x": -0.2097291315634694,
+       "y": 0.37269257030949643,
+       "z": 0.08687265071832018,
+       "w": 0.8997594578368748
+      },
+      "fov": 35,
+      "aspect": 1,
+      "near": 0.01,
+      "far": 10000,
+      "frustum": {
+       "left": -5,
+       "right": 5,
+       "top": 5,
+       "bottom": -5
+      }
+     },
+     "recording": "",
+     "model_3d_info": [
+      {
+       "position": {
+        "x": 0,
+        "y": 0,
+        "z": 0
+       },
+       "quaternion": {
+        "x": 0,
+        "y": 0,
+        "z": 0,
+        "w": 1
+       },
+       "scale": {
+        "x": 1,
+        "y": 1,
+        "z": 1
+       }
+      }
+     ]
+    },
+    "width": 1024,
+    "height": 1024
+   },
+   "class_type": "Load3D",
+   "_meta": {
+    "title": "GLB da Lia (Trellis2 / Pixal3D)"
+   }
+  },
+  "2": {
+   "inputs": {
+    "model_3d": [
+     "1",
+     6
+    ]
+   },
+   "class_type": "Get3DComponents",
+   "_meta": {
+    "title": "mesh ALTO (original)"
+   }
+  },
+  "4": {
+   "inputs": {
+    "epsilon_rel": 1e-05,
+    "epsilon_abs": 0.0,
+    "mesh": [
+     "2",
+     0
+    ]
+   },
+   "class_type": "WeldVertices",
+   "_meta": {
+    "title": "Weld (arestas duplicadas → normais suaves contínuas)"
+   }
+  },
+  "5": {
+   "inputs": {
+    "target_face_count": 60000,
+    "placement_mode": "qem",
+    "placement_mode.line_quadric_weight": 0.0,
+    "placement_mode.feature_edge_quadric_weight": 0.0,
+    "placement_mode.feature_edge_min_dihedral_deg": 30.0,
+    "placement_mode.clamp_v_to_edge": true,
+    "mesh": [
+     "4",
+     0
+    ]
+   },
+   "class_type": "DecimateMesh",
+   "_meta": {
+    "title": "Decimate 60 k QEM (midpoint 30 k fazia silhueta em serra)"
+   }
+  },
+  "6": {
+   "inputs": {
+    "segmenter": "pec",
+    "resolution": 2048,
+    "padding": 12,
+    "weld_distance": 0.001,
+    "mesh": [
+     "5",
+     0
+    ]
+   },
+   "class_type": "UnwrapMesh",
+   "_meta": {
+    "title": "UV NOVO — pec (adaptive deu 4266 ilhas em 82 s)"
+   }
+  },
+  "7": {
+   "inputs": {
+    "crease_angle": 180.0,
+    "mesh": [
+     "6",
+     0
+    ]
+   },
+   "class_type": "MeshSmoothNormals",
+   "_meta": {
+    "title": "mesh BAIXO (game-ready, UV limpo)"
+   }
+  },
+  "8": {
+   "inputs": {
+    "resolution": 2048,
+    "cage_distance": 0.05,
+    "ignore_backfaces": true,
+    "low_poly": [
+     "7",
+     0
+    ],
+    "high_poly": [
+     "2",
+     0
+    ]
+   },
+   "class_type": "BakeNormalMapFromMesh",
+   "_meta": {
+    "title": "normal map: alto → baixo"
+   }
+  },
+  "9": {
+   "inputs": {
+    "resolution": 1024,
+    "samples": 64,
+    "max_distance": 0.5,
+    "strength": 1.0,
+    "bias": 0.01,
+    "low_poly": [
+     "7",
+     0
+    ],
+    "high_poly": [
+     "2",
+     0
+    ]
+   },
+   "class_type": "BakeAmbientOcclusion",
+   "_meta": {
+    "title": "AO: alto → baixo"
+   }
+  },
+  "10": {
+   "inputs": {
+    "resolution": 1024,
+    "mesh": [
+     "7",
+     0
+    ]
+   },
+   "class_type": "RenderUVAtlas",
+   "_meta": {
+    "title": "prévia do UV novo"
+   }
+  },
+  "11": {
+   "inputs": {
+    "images": [
+     "10",
+     0
+    ]
+   },
+   "class_type": "PreviewImage",
+   "_meta": {
+    "title": "UV novo (ilhas)"
+   }
+  },
+  "12": {
+   "inputs": {
+    "image": "Lia_front.png"
+   },
+   "class_type": "LoadImage",
+   "_meta": {
+    "title": "Lia FRENTE (obrigatória — a mesma do mesh)"
+   }
+  },
+  "16": {
+   "inputs": {
+    "unet_name": "flux-2-klein-4b-fp8.safetensors",
+    "weight_dtype": "default"
+   },
+   "class_type": "UNETLoader",
+   "_meta": {
+    "title": "Carregar Modelo de Difusão"
+   }
+  },
+  "17": {
+   "inputs": {
+    "clip_name": "qwen_3_4b_fp8_mixed.safetensors",
+    "type": "flux2",
+    "device": "default"
+   },
+   "class_type": "CLIPLoader",
+   "_meta": {
+    "title": "Carregar CLIP"
+   }
+  },
+  "18": {
+   "inputs": {
+    "vae_name": "flux2-vae.safetensors"
+   },
+   "class_type": "VAELoader",
+   "_meta": {
+    "title": "Carregar VAE"
+   }
+  },
+  "19": {
+   "inputs": {
+    "steps": 4,
+    "width": 1024,
+    "height": 1024
+   },
+   "class_type": "Flux2Scheduler",
+   "_meta": {
+    "title": "Flux2Scheduler"
+   }
+  },
+  "20": {
+   "inputs": {
+    "sampler_name": "euler"
+   },
+   "class_type": "KSamplerSelect",
+   "_meta": {
+    "title": "KSamplerSelect"
+   }
+  },
+  "21": {
+   "inputs": {
+    "value": "Paint this exact character from image 1 onto the pose and silhouette of the normal map in image 2. Image 3 shows the SAME character already painted from the front: keep exactly the same outfit design, neckline, trims, hair and colors as image 3. Some parts of the character are already painted; the flat grey areas are unpainted. Fill ONLY the grey areas so they continue the already painted parts seamlessly. Every grey area is part of the character's body or clothes (cloth, skin, hair, boots): paint it with the character's own colors — NEVER white, never background, never blank. Clothing keeps the same color on its inside and outside. Flat unlit albedo texture: flat colors, no shadows, no highlights, no directional lighting, no outlines. Plain white background. Same art style."
+   },
+   "class_type": "PrimitiveStringMultiline",
+   "_meta": {
+    "title": "Estilo comum (todas as vistas)"
+   }
+  },
+  "22": {
+   "inputs": {
+    "azimuth": 0.0,
+    "elevation": 0.0,
+    "resolution": 1024,
+    "frame_scale": 1.1,
+    "grow_mask_px": 12,
+    "missing_color": "grey",
+    "zoom": 1.0,
+    "offset_y": 0.0,
+    "mesh": [
+     "7",
+     0
+    ]
+   },
+   "class_type": "LiaRenderTextured",
+   "_meta": {
+    "title": "1 Frente: render parcial + máscara"
+   }
+  },
+  "23": {
+   "inputs": {
+    "images": [
+     "22",
+     0
+    ]
+   },
+   "class_type": "PreviewImage",
+   "_meta": {
+    "title": "1 Frente: o que já existe (cinza = a pintar)"
+   }
+  },
+  "24": {
+   "inputs": {
+    "view": "front",
+    "front": [
+     "12",
+     0
+    ]
+   },
+   "class_type": "LiaPickReference",
+   "_meta": {
+    "title": "referência da vista (front)"
+   }
+  },
+  "25": {
+   "inputs": {
+    "upscale_method": "lanczos",
+    "megapixels": 1.0,
+    "resolution_steps": 1,
+    "image": [
+     "24",
+     0
+    ]
+   },
+   "class_type": "ImageScaleToTotalPixels",
+   "_meta": {
+    "title": "Redimensionar Imagem para Total de Pixels"
+   }
+  },
+  "26": {
+   "inputs": {
+    "pixels": [
+     "25",
+     0
+    ],
+    "vae": [
+     "18",
+     0
+    ]
+   },
+   "class_type": "VAEEncode",
+   "_meta": {
+    "title": "image 1 = referência"
+   }
+  },
+  "27": {
+   "inputs": {
+    "pixels": [
+     "22",
+     3
+    ],
+    "vae": [
+     "18",
+     0
+    ]
+   },
+   "class_type": "VAEEncode",
+   "_meta": {
+    "title": "image 2 = normal map"
+   }
+  },
+  "28": {
+   "inputs": {
+    "pixels": [
+     "22",
+     0
+    ],
+    "vae": [
+     "18",
+     0
+    ]
+   },
+   "class_type": "VAEEncode",
+   "_meta": {
+    "title": "latente = render parcial"
+   }
+  },
+  "29": {
+   "inputs": {
+    "samples": [
+     "28",
+     0
+    ],
+    "mask": [
+     "22",
+     1
+    ]
+   },
+   "class_type": "SetLatentNoiseMask",
+   "_meta": {
+    "title": "inpaint só do que falta"
+   }
+  },
+  "30": {
+   "inputs": {
+    "value": "front view, facing the camera"
+   },
+   "class_type": "PrimitiveStringMultiline",
+   "_meta": {
+    "title": "Vista: 1 Frente"
+   }
+  },
+  "31": {
+   "inputs": {
+    "string_a": [
+     "30",
+     0
+    ],
+    "string_b": [
+     "21",
+     0
+    ],
+    "delimiter": ". "
+   },
+   "class_type": "StringConcatenate",
+   "_meta": {
+    "title": "Concatenar"
+   }
+  },
+  "32": {
+   "inputs": {
+    "text": [
+     "31",
+     0
+    ],
+    "clip": [
+     "17",
+     0
+    ]
+   },
+   "class_type": "CLIPTextEncode",
+   "_meta": {
+    "title": "Codificação de Texto CLIP (Prompt)"
+   }
+  },
+  "33": {
+   "inputs": {
+    "conditioning": [
+     "32",
+     0
+    ]
+   },
+   "class_type": "ConditioningZeroOut",
+   "_meta": {
+    "title": "CondicionamentoZerar"
+   }
+  },
+  "34": {
+   "inputs": {
+    "conditioning": [
+     "32",
+     0
+    ],
+    "latent": [
+     "26",
+     0
+    ]
+   },
+   "class_type": "ReferenceLatent",
+   "_meta": {
+    "title": "ref 1 (referência) +"
+   }
+  },
+  "35": {
+   "inputs": {
+    "conditioning": [
+     "34",
+     0
+    ],
+    "latent": [
+     "27",
+     0
+    ]
+   },
+   "class_type": "ReferenceLatent",
+   "_meta": {
+    "title": "ref 2 (normal) +"
+   }
+  },
+  "36": {
+   "inputs": {
+    "conditioning": [
+     "33",
+     0
+    ],
+    "latent": [
+     "26",
+     0
+    ]
+   },
+   "class_type": "ReferenceLatent",
+   "_meta": {
+    "title": "ref 1 (referência) −"
+   }
+  },
+  "37": {
+   "inputs": {
+    "conditioning": [
+     "36",
+     0
+    ],
+    "latent": [
+     "27",
+     0
+    ]
+   },
+   "class_type": "ReferenceLatent",
+   "_meta": {
+    "title": "ref 2 (normal) −"
+   }
+  },
+  "38": {
+   "inputs": {
+    "cfg": 1.0,
+    "model": [
+     "16",
+     0
+    ],
+    "positive": [
+     "35",
+     0
+    ],
+    "negative": [
+     "37",
+     0
+    ]
+   },
+   "class_type": "CFGGuider",
+   "_meta": {
+    "title": "CFGGuider"
+   }
+  },
+  "39": {
+   "inputs": {
+    "noise_seed": 200
+   },
+   "class_type": "RandomNoise",
+   "_meta": {
+    "title": "Ruído Aleatório"
+   }
+  },
+  "40": {
+   "inputs": {
+    "noise": [
+     "39",
+     0
+    ],
+    "guider": [
+     "38",
+     0
+    ],
+    "sampler": [
+     "20",
+     0
+    ],
+    "sigmas": [
+     "19",
+     0
+    ],
+    "latent_image": [
+     "29",
+     0
+    ]
+   },
+   "class_type": "SamplerCustomAdvanced",
+   "_meta": {
+    "title": "SamplerCustomAdvanced"
+   }
+  },
+  "41": {
+   "inputs": {
+    "samples": [
+     "40",
+     0
+    ],
+    "vae": [
+     "18",
+     0
+    ]
+   },
+   "class_type": "VAEDecode",
+   "_meta": {
+    "title": "VAE Decodificar"
+   }
+  },
+  "42": {
+   "inputs": {
+    "x": 0,
+    "y": 0,
+    "resize_source": false,
+    "destination": [
+     "22",
+     0
+    ],
+    "source": [
+     "41",
+     0
+    ],
+    "mask": [
+     "22",
+     1
+    ]
+   },
+   "class_type": "ImageCompositeMasked",
+   "_meta": {
+    "title": "cola só a área da máscara (fora dela nada muda)"
+   }
+  },
+  "43": {
+   "inputs": {
+    "images": [
+     "42",
+     0
+    ]
+   },
+   "class_type": "PreviewImage",
+   "_meta": {
+    "title": "1 Frente: pintada"
+   }
+  },
+  "44": {
+   "inputs": {
+    "pixels": [
+     "42",
+     0
+    ],
+    "vae": [
+     "18",
+     0
+    ]
+   },
+   "class_type": "VAEEncode",
+   "_meta": {
+    "title": "frente pintada → image 3 das outras vistas"
+   }
+  },
+  "45": {
+   "inputs": {
+    "azimuth": 0.0,
+    "elevation": 0.0,
+    "frame_scale": 1.1,
+    "texture_size": 2048,
+    "view_weight": 1.0,
+    "cos_power": 4.0,
+    "min_cos": 0.1,
+    "depth_tolerance": 0.015,
+    "color_match": true,
+    "fill_only": false,
+    "zoom": 1.0,
+    "offset_y": 0.0,
+    "replace": false,
+    "mesh": [
+     "7",
+     0
+    ],
+    "image": [
+     "42",
+     0
+    ],
+    "mask": [
+     "22",
+     1
+    ]
+   },
+   "class_type": "LiaProjectTextureAccumulate",
+   "_meta": {
+    "title": "1 Frente: acumula no atlas"
+   }
+  },
+  "46": {
+   "inputs": {
+    "images": [
+     "45",
+     2
+    ]
+   },
+   "class_type": "PreviewImage",
+   "_meta": {
+    "title": "1 Frente: cobertura (vermelho = falta)"
+   }
+  },
+  "47": {
+   "inputs": {
+    "azimuth": 180.0,
+    "elevation": 0.0,
+    "resolution": 1024,
+    "frame_scale": 1.1,
+    "grow_mask_px": 12,
+    "missing_color": "grey",
+    "zoom": 1.0,
+    "offset_y": 0.0,
+    "mesh": [
+     "7",
+     0
+    ],
+    "state": [
+     "45",
+     0
+    ]
+   },
+   "class_type": "LiaRenderTextured",
+   "_meta": {
+    "title": "2 Costas: render parcial + máscara"
+   }
+  },
+  "48": {
+   "inputs": {
+    "images": [
+     "47",
+     0
+    ]
+   },
+   "class_type": "PreviewImage",
+   "_meta": {
+    "title": "2 Costas: o que já existe (cinza = a pintar)"
+   }
+  },
+  "49": {
+   "inputs": {
+    "view": "back",
+    "front": [
+     "12",
+     0
+    ]
+   },
+   "class_type": "LiaPickReference",
+   "_meta": {
+    "title": "referência da vista (back)"
+   }
+  },
+  "50": {
+   "inputs": {
+    "upscale_method": "lanczos",
+    "megapixels": 1.0,
+    "resolution_steps": 1,
+    "image": [
+     "49",
+     0
+    ]
+   },
+   "class_type": "ImageScaleToTotalPixels",
+   "_meta": {
+    "title": "Redimensionar Imagem para Total de Pixels"
+   }
+  },
+  "51": {
+   "inputs": {
+    "pixels": [
+     "50",
+     0
+    ],
+    "vae": [
+     "18",
+     0
+    ]
+   },
+   "class_type": "VAEEncode",
+   "_meta": {
+    "title": "image 1 = referência"
+   }
+  },
+  "52": {
+   "inputs": {
+    "pixels": [
+     "47",
+     3
+    ],
+    "vae": [
+     "18",
+     0
+    ]
+   },
+   "class_type": "VAEEncode",
+   "_meta": {
+    "title": "image 2 = normal map"
+   }
+  },
+  "53": {
+   "inputs": {
+    "pixels": [
+     "47",
+     0
+    ],
+    "vae": [
+     "18",
+     0
+    ]
+   },
+   "class_type": "VAEEncode",
+   "_meta": {
+    "title": "latente = render parcial"
+   }
+  },
+  "54": {
+   "inputs": {
+    "samples": [
+     "53",
+     0
+    ],
+    "mask": [
+     "47",
+     1
+    ]
+   },
+   "class_type": "SetLatentNoiseMask",
+   "_meta": {
+    "title": "inpaint só do que falta"
+   }
+  },
+  "55": {
+   "inputs": {
+    "value": "back view, seen from behind"
+   },
+   "class_type": "PrimitiveStringMultiline",
+   "_meta": {
+    "title": "Vista: 2 Costas"
+   }
+  },
+  "56": {
+   "inputs": {
+    "string_a": [
+     "55",
+     0
+    ],
+    "string_b": [
+     "21",
+     0
+    ],
+    "delimiter": ". "
+   },
+   "class_type": "StringConcatenate",
+   "_meta": {
+    "title": "Concatenar"
+   }
+  },
+  "57": {
+   "inputs": {
+    "text": [
+     "56",
+     0
+    ],
+    "clip": [
+     "17",
+     0
+    ]
+   },
+   "class_type": "CLIPTextEncode",
+   "_meta": {
+    "title": "Codificação de Texto CLIP (Prompt)"
+   }
+  },
+  "58": {
+   "inputs": {
+    "conditioning": [
+     "57",
+     0
+    ]
+   },
+   "class_type": "ConditioningZeroOut",
+   "_meta": {
+    "title": "CondicionamentoZerar"
+   }
+  },
+  "59": {
+   "inputs": {
+    "conditioning": [
+     "57",
+     0
+    ],
+    "latent": [
+     "51",
+     0
+    ]
+   },
+   "class_type": "ReferenceLatent",
+   "_meta": {
+    "title": "ref 1 (referência) +"
+   }
+  },
+  "60": {
+   "inputs": {
+    "conditioning": [
+     "59",
+     0
+    ],
+    "latent": [
+     "52",
+     0
+    ]
+   },
+   "class_type": "ReferenceLatent",
+   "_meta": {
+    "title": "ref 2 (normal) +"
+   }
+  },
+  "61": {
+   "inputs": {
+    "conditioning": [
+     "60",
+     0
+    ],
+    "latent": [
+     "44",
+     0
+    ]
+   },
+   "class_type": "ReferenceLatent",
+   "_meta": {
+    "title": "ref 3 (frente pintada) +"
+   }
+  },
+  "62": {
+   "inputs": {
+    "conditioning": [
+     "58",
+     0
+    ],
+    "latent": [
+     "51",
+     0
+    ]
+   },
+   "class_type": "ReferenceLatent",
+   "_meta": {
+    "title": "ref 1 (referência) −"
+   }
+  },
+  "63": {
+   "inputs": {
+    "conditioning": [
+     "62",
+     0
+    ],
+    "latent": [
+     "52",
+     0
+    ]
+   },
+   "class_type": "ReferenceLatent",
+   "_meta": {
+    "title": "ref 2 (normal) −"
+   }
+  },
+  "64": {
+   "inputs": {
+    "conditioning": [
+     "63",
+     0
+    ],
+    "latent": [
+     "44",
+     0
+    ]
+   },
+   "class_type": "ReferenceLatent",
+   "_meta": {
+    "title": "ref 3 (frente pintada) −"
+   }
+  },
+  "65": {
+   "inputs": {
+    "cfg": 1.0,
+    "model": [
+     "16",
+     0
+    ],
+    "positive": [
+     "61",
+     0
+    ],
+    "negative": [
+     "64",
+     0
+    ]
+   },
+   "class_type": "CFGGuider",
+   "_meta": {
+    "title": "CFGGuider"
+   }
+  },
+  "66": {
+   "inputs": {
+    "noise_seed": 201
+   },
+   "class_type": "RandomNoise",
+   "_meta": {
+    "title": "Ruído Aleatório"
+   }
+  },
+  "67": {
+   "inputs": {
+    "noise": [
+     "66",
+     0
+    ],
+    "guider": [
+     "65",
+     0
+    ],
+    "sampler": [
+     "20",
+     0
+    ],
+    "sigmas": [
+     "19",
+     0
+    ],
+    "latent_image": [
+     "54",
+     0
+    ]
+   },
+   "class_type": "SamplerCustomAdvanced",
+   "_meta": {
+    "title": "SamplerCustomAdvanced"
+   }
+  },
+  "68": {
+   "inputs": {
+    "samples": [
+     "67",
+     0
+    ],
+    "vae": [
+     "18",
+     0
+    ]
+   },
+   "class_type": "VAEDecode",
+   "_meta": {
+    "title": "VAE Decodificar"
+   }
+  },
+  "69": {
+   "inputs": {
+    "x": 0,
+    "y": 0,
+    "resize_source": false,
+    "destination": [
+     "47",
+     0
+    ],
+    "source": [
+     "68",
+     0
+    ],
+    "mask": [
+     "47",
+     1
+    ]
+   },
+   "class_type": "ImageCompositeMasked",
+   "_meta": {
+    "title": "cola só a área da máscara (fora dela nada muda)"
+   }
+  },
+  "70": {
+   "inputs": {
+    "images": [
+     "69",
+     0
+    ]
+   },
+   "class_type": "PreviewImage",
+   "_meta": {
+    "title": "2 Costas: pintada"
+   }
+  },
+  "71": {
+   "inputs": {
+    "azimuth": 180.0,
+    "elevation": 0.0,
+    "frame_scale": 1.1,
+    "texture_size": 2048,
+    "view_weight": 1.0,
+    "cos_power": 4.0,
+    "min_cos": 0.1,
+    "depth_tolerance": 0.015,
+    "color_match": true,
+    "fill_only": false,
+    "zoom": 1.0,
+    "offset_y": 0.0,
+    "replace": false,
+    "mesh": [
+     "7",
+     0
+    ],
+    "image": [
+     "69",
+     0
+    ],
+    "state": [
+     "45",
+     0
+    ],
+    "mask": [
+     "47",
+     1
+    ]
+   },
+   "class_type": "LiaProjectTextureAccumulate",
+   "_meta": {
+    "title": "2 Costas: acumula no atlas"
+   }
+  },
+  "72": {
+   "inputs": {
+    "images": [
+     "71",
+     2
+    ]
+   },
+   "class_type": "PreviewImage",
+   "_meta": {
+    "title": "2 Costas: cobertura (vermelho = falta)"
+   }
+  },
+  "73": {
+   "inputs": {
+    "azimuth": 90.0,
+    "elevation": 0.0,
+    "resolution": 1024,
+    "frame_scale": 1.1,
+    "grow_mask_px": 12,
+    "missing_color": "grey",
+    "zoom": 1.0,
+    "offset_y": 0.0,
+    "mesh": [
+     "7",
+     0
+    ],
+    "state": [
+     "71",
+     0
+    ]
+   },
+   "class_type": "LiaRenderTextured",
+   "_meta": {
+    "title": "3 Esquerda: render parcial + máscara"
+   }
+  },
+  "74": {
+   "inputs": {
+    "images": [
+     "73",
+     0
+    ]
+   },
+   "class_type": "PreviewImage",
+   "_meta": {
+    "title": "3 Esquerda: o que já existe (cinza = a pintar)"
+   }
+  },
+  "75": {
+   "inputs": {
+    "view": "left",
+    "front": [
+     "12",
+     0
+    ]
+   },
+   "class_type": "LiaPickReference",
+   "_meta": {
+    "title": "referência da vista (left)"
+   }
+  },
+  "76": {
+   "inputs": {
+    "upscale_method": "lanczos",
+    "megapixels": 1.0,
+    "resolution_steps": 1,
+    "image": [
+     "75",
+     0
+    ]
+   },
+   "class_type": "ImageScaleToTotalPixels",
+   "_meta": {
+    "title": "Redimensionar Imagem para Total de Pixels"
+   }
+  },
+  "77": {
+   "inputs": {
+    "pixels": [
+     "76",
+     0
+    ],
+    "vae": [
+     "18",
+     0
+    ]
+   },
+   "class_type": "VAEEncode",
+   "_meta": {
+    "title": "image 1 = referência"
+   }
+  },
+  "78": {
+   "inputs": {
+    "pixels": [
+     "73",
+     3
+    ],
+    "vae": [
+     "18",
+     0
+    ]
+   },
+   "class_type": "VAEEncode",
+   "_meta": {
+    "title": "image 2 = normal map"
+   }
+  },
+  "79": {
+   "inputs": {
+    "pixels": [
+     "73",
+     0
+    ],
+    "vae": [
+     "18",
+     0
+    ]
+   },
+   "class_type": "VAEEncode",
+   "_meta": {
+    "title": "latente = render parcial"
+   }
+  },
+  "80": {
+   "inputs": {
+    "samples": [
+     "79",
+     0
+    ],
+    "mask": [
+     "73",
+     1
+    ]
+   },
+   "class_type": "SetLatentNoiseMask",
+   "_meta": {
+    "title": "inpaint só do que falta"
+   }
+  },
+  "81": {
+   "inputs": {
+    "value": "left side view, orthographic profile. The thin shapes at the edges are the sleeves and cloak seen edge-on: same dark cloth color"
+   },
+   "class_type": "PrimitiveStringMultiline",
+   "_meta": {
+    "title": "Vista: 3 Esquerda"
+   }
+  },
+  "82": {
+   "inputs": {
+    "string_a": [
+     "81",
+     0
+    ],
+    "string_b": [
+     "21",
+     0
+    ],
+    "delimiter": ". "
+   },
+   "class_type": "StringConcatenate",
+   "_meta": {
+    "title": "Concatenar"
+   }
+  },
+  "83": {
+   "inputs": {
+    "text": [
+     "82",
+     0
+    ],
+    "clip": [
+     "17",
+     0
+    ]
+   },
+   "class_type": "CLIPTextEncode",
+   "_meta": {
+    "title": "Codificação de Texto CLIP (Prompt)"
+   }
+  },
+  "84": {
+   "inputs": {
+    "conditioning": [
+     "83",
+     0
+    ]
+   },
+   "class_type": "ConditioningZeroOut",
+   "_meta": {
+    "title": "CondicionamentoZerar"
+   }
+  },
+  "85": {
+   "inputs": {
+    "conditioning": [
+     "83",
+     0
+    ],
+    "latent": [
+     "77",
+     0
+    ]
+   },
+   "class_type": "ReferenceLatent",
+   "_meta": {
+    "title": "ref 1 (referência) +"
+   }
+  },
+  "86": {
+   "inputs": {
+    "conditioning": [
+     "85",
+     0
+    ],
+    "latent": [
+     "78",
+     0
+    ]
+   },
+   "class_type": "ReferenceLatent",
+   "_meta": {
+    "title": "ref 2 (normal) +"
+   }
+  },
+  "87": {
+   "inputs": {
+    "conditioning": [
+     "86",
+     0
+    ],
+    "latent": [
+     "44",
+     0
+    ]
+   },
+   "class_type": "ReferenceLatent",
+   "_meta": {
+    "title": "ref 3 (frente pintada) +"
+   }
+  },
+  "88": {
+   "inputs": {
+    "conditioning": [
+     "84",
+     0
+    ],
+    "latent": [
+     "77",
+     0
+    ]
+   },
+   "class_type": "ReferenceLatent",
+   "_meta": {
+    "title": "ref 1 (referência) −"
+   }
+  },
+  "89": {
+   "inputs": {
+    "conditioning": [
+     "88",
+     0
+    ],
+    "latent": [
+     "78",
+     0
+    ]
+   },
+   "class_type": "ReferenceLatent",
+   "_meta": {
+    "title": "ref 2 (normal) −"
+   }
+  },
+  "90": {
+   "inputs": {
+    "conditioning": [
+     "89",
+     0
+    ],
+    "latent": [
+     "44",
+     0
+    ]
+   },
+   "class_type": "ReferenceLatent",
+   "_meta": {
+    "title": "ref 3 (frente pintada) −"
+   }
+  },
+  "91": {
+   "inputs": {
+    "cfg": 1.0,
+    "model": [
+     "16",
+     0
+    ],
+    "positive": [
+     "87",
+     0
+    ],
+    "negative": [
+     "90",
+     0
+    ]
+   },
+   "class_type": "CFGGuider",
+   "_meta": {
+    "title": "CFGGuider"
+   }
+  },
+  "92": {
+   "inputs": {
+    "noise_seed": 202
+   },
+   "class_type": "RandomNoise",
+   "_meta": {
+    "title": "Ruído Aleatório"
+   }
+  },
+  "93": {
+   "inputs": {
+    "noise": [
+     "92",
+     0
+    ],
+    "guider": [
+     "91",
+     0
+    ],
+    "sampler": [
+     "20",
+     0
+    ],
+    "sigmas": [
+     "19",
+     0
+    ],
+    "latent_image": [
+     "80",
+     0
+    ]
+   },
+   "class_type": "SamplerCustomAdvanced",
+   "_meta": {
+    "title": "SamplerCustomAdvanced"
+   }
+  },
+  "94": {
+   "inputs": {
+    "samples": [
+     "93",
+     0
+    ],
+    "vae": [
+     "18",
+     0
+    ]
+   },
+   "class_type": "VAEDecode",
+   "_meta": {
+    "title": "VAE Decodificar"
+   }
+  },
+  "95": {
+   "inputs": {
+    "x": 0,
+    "y": 0,
+    "resize_source": false,
+    "destination": [
+     "73",
+     0
+    ],
+    "source": [
+     "94",
+     0
+    ],
+    "mask": [
+     "73",
+     1
+    ]
+   },
+   "class_type": "ImageCompositeMasked",
+   "_meta": {
+    "title": "cola só a área da máscara (fora dela nada muda)"
+   }
+  },
+  "96": {
+   "inputs": {
+    "images": [
+     "95",
+     0
+    ]
+   },
+   "class_type": "PreviewImage",
+   "_meta": {
+    "title": "3 Esquerda: pintada"
+   }
+  },
+  "97": {
+   "inputs": {
+    "azimuth": 90.0,
+    "elevation": 0.0,
+    "frame_scale": 1.1,
+    "texture_size": 2048,
+    "view_weight": 0.8,
+    "cos_power": 4.0,
+    "min_cos": 0.1,
+    "depth_tolerance": 0.015,
+    "color_match": true,
+    "fill_only": false,
+    "zoom": 1.0,
+    "offset_y": 0.0,
+    "replace": false,
+    "mesh": [
+     "7",
+     0
+    ],
+    "image": [
+     "95",
+     0
+    ],
+    "state": [
+     "71",
+     0
+    ],
+    "mask": [
+     "73",
+     1
+    ]
+   },
+   "class_type": "LiaProjectTextureAccumulate",
+   "_meta": {
+    "title": "3 Esquerda: acumula no atlas"
+   }
+  },
+  "98": {
+   "inputs": {
+    "images": [
+     "97",
+     2
+    ]
+   },
+   "class_type": "PreviewImage",
+   "_meta": {
+    "title": "3 Esquerda: cobertura (vermelho = falta)"
+   }
+  },
+  "99": {
+   "inputs": {
+    "azimuth": 270.0,
+    "elevation": 0.0,
+    "resolution": 1024,
+    "frame_scale": 1.1,
+    "grow_mask_px": 12,
+    "missing_color": "grey",
+    "zoom": 1.0,
+    "offset_y": 0.0,
+    "mesh": [
+     "7",
+     0
+    ],
+    "state": [
+     "97",
+     0
+    ]
+   },
+   "class_type": "LiaRenderTextured",
+   "_meta": {
+    "title": "4 Direita: render parcial + máscara"
+   }
+  },
+  "100": {
+   "inputs": {
+    "images": [
+     "99",
+     0
+    ]
+   },
+   "class_type": "PreviewImage",
+   "_meta": {
+    "title": "4 Direita: o que já existe (cinza = a pintar)"
+   }
+  },
+  "101": {
+   "inputs": {
+    "view": "right",
+    "front": [
+     "12",
+     0
+    ]
+   },
+   "class_type": "LiaPickReference",
+   "_meta": {
+    "title": "referência da vista (right)"
+   }
+  },
+  "102": {
+   "inputs": {
+    "upscale_method": "lanczos",
+    "megapixels": 1.0,
+    "resolution_steps": 1,
+    "image": [
+     "101",
+     0
+    ]
+   },
+   "class_type": "ImageScaleToTotalPixels",
+   "_meta": {
+    "title": "Redimensionar Imagem para Total de Pixels"
+   }
+  },
+  "103": {
+   "inputs": {
+    "pixels": [
+     "102",
+     0
+    ],
+    "vae": [
+     "18",
+     0
+    ]
+   },
+   "class_type": "VAEEncode",
+   "_meta": {
+    "title": "image 1 = referência"
+   }
+  },
+  "104": {
+   "inputs": {
+    "pixels": [
+     "99",
+     3
+    ],
+    "vae": [
+     "18",
+     0
+    ]
+   },
+   "class_type": "VAEEncode",
+   "_meta": {
+    "title": "image 2 = normal map"
+   }
+  },
+  "105": {
+   "inputs": {
+    "pixels": [
+     "99",
+     0
+    ],
+    "vae": [
+     "18",
+     0
+    ]
+   },
+   "class_type": "VAEEncode",
+   "_meta": {
+    "title": "latente = render parcial"
+   }
+  },
+  "106": {
+   "inputs": {
+    "samples": [
+     "105",
+     0
+    ],
+    "mask": [
+     "99",
+     1
+    ]
+   },
+   "class_type": "SetLatentNoiseMask",
+   "_meta": {
+    "title": "inpaint só do que falta"
+   }
+  },
+  "107": {
+   "inputs": {
+    "value": "right side view, orthographic profile. The thin shapes at the edges are the sleeves and cloak seen edge-on: same dark cloth color"
+   },
+   "class_type": "PrimitiveStringMultiline",
+   "_meta": {
+    "title": "Vista: 4 Direita"
+   }
+  },
+  "108": {
+   "inputs": {
+    "string_a": [
+     "107",
+     0
+    ],
+    "string_b": [
+     "21",
+     0
+    ],
+    "delimiter": ". "
+   },
+   "class_type": "StringConcatenate",
+   "_meta": {
+    "title": "Concatenar"
+   }
+  },
+  "109": {
+   "inputs": {
+    "text": [
+     "108",
+     0
+    ],
+    "clip": [
+     "17",
+     0
+    ]
+   },
+   "class_type": "CLIPTextEncode",
+   "_meta": {
+    "title": "Codificação de Texto CLIP (Prompt)"
+   }
+  },
+  "110": {
+   "inputs": {
+    "conditioning": [
+     "109",
+     0
+    ]
+   },
+   "class_type": "ConditioningZeroOut",
+   "_meta": {
+    "title": "CondicionamentoZerar"
+   }
+  },
+  "111": {
+   "inputs": {
+    "conditioning": [
+     "109",
+     0
+    ],
+    "latent": [
+     "103",
+     0
+    ]
+   },
+   "class_type": "ReferenceLatent",
+   "_meta": {
+    "title": "ref 1 (referência) +"
+   }
+  },
+  "112": {
+   "inputs": {
+    "conditioning": [
+     "111",
+     0
+    ],
+    "latent": [
+     "104",
+     0
+    ]
+   },
+   "class_type": "ReferenceLatent",
+   "_meta": {
+    "title": "ref 2 (normal) +"
+   }
+  },
+  "113": {
+   "inputs": {
+    "conditioning": [
+     "112",
+     0
+    ],
+    "latent": [
+     "44",
+     0
+    ]
+   },
+   "class_type": "ReferenceLatent",
+   "_meta": {
+    "title": "ref 3 (frente pintada) +"
+   }
+  },
+  "114": {
+   "inputs": {
+    "conditioning": [
+     "110",
+     0
+    ],
+    "latent": [
+     "103",
+     0
+    ]
+   },
+   "class_type": "ReferenceLatent",
+   "_meta": {
+    "title": "ref 1 (referência) −"
+   }
+  },
+  "115": {
+   "inputs": {
+    "conditioning": [
+     "114",
+     0
+    ],
+    "latent": [
+     "104",
+     0
+    ]
+   },
+   "class_type": "ReferenceLatent",
+   "_meta": {
+    "title": "ref 2 (normal) −"
+   }
+  },
+  "116": {
+   "inputs": {
+    "conditioning": [
+     "115",
+     0
+    ],
+    "latent": [
+     "44",
+     0
+    ]
+   },
+   "class_type": "ReferenceLatent",
+   "_meta": {
+    "title": "ref 3 (frente pintada) −"
+   }
+  },
+  "117": {
+   "inputs": {
+    "cfg": 1.0,
+    "model": [
+     "16",
+     0
+    ],
+    "positive": [
+     "113",
+     0
+    ],
+    "negative": [
+     "116",
+     0
+    ]
+   },
+   "class_type": "CFGGuider",
+   "_meta": {
+    "title": "CFGGuider"
+   }
+  },
+  "118": {
+   "inputs": {
+    "noise_seed": 203
+   },
+   "class_type": "RandomNoise",
+   "_meta": {
+    "title": "Ruído Aleatório"
+   }
+  },
+  "119": {
+   "inputs": {
+    "noise": [
+     "118",
+     0
+    ],
+    "guider": [
+     "117",
+     0
+    ],
+    "sampler": [
+     "20",
+     0
+    ],
+    "sigmas": [
+     "19",
+     0
+    ],
+    "latent_image": [
+     "106",
+     0
+    ]
+   },
+   "class_type": "SamplerCustomAdvanced",
+   "_meta": {
+    "title": "SamplerCustomAdvanced"
+   }
+  },
+  "120": {
+   "inputs": {
+    "samples": [
+     "119",
+     0
+    ],
+    "vae": [
+     "18",
+     0
+    ]
+   },
+   "class_type": "VAEDecode",
+   "_meta": {
+    "title": "VAE Decodificar"
+   }
+  },
+  "121": {
+   "inputs": {
+    "x": 0,
+    "y": 0,
+    "resize_source": false,
+    "destination": [
+     "99",
+     0
+    ],
+    "source": [
+     "120",
+     0
+    ],
+    "mask": [
+     "99",
+     1
+    ]
+   },
+   "class_type": "ImageCompositeMasked",
+   "_meta": {
+    "title": "cola só a área da máscara (fora dela nada muda)"
+   }
+  },
+  "122": {
+   "inputs": {
+    "images": [
+     "121",
+     0
+    ]
+   },
+   "class_type": "PreviewImage",
+   "_meta": {
+    "title": "4 Direita: pintada"
+   }
+  },
+  "123": {
+   "inputs": {
+    "azimuth": 270.0,
+    "elevation": 0.0,
+    "frame_scale": 1.1,
+    "texture_size": 2048,
+    "view_weight": 0.8,
+    "cos_power": 4.0,
+    "min_cos": 0.1,
+    "depth_tolerance": 0.015,
+    "color_match": true,
+    "fill_only": false,
+    "zoom": 1.0,
+    "offset_y": 0.0,
+    "replace": false,
+    "mesh": [
+     "7",
+     0
+    ],
+    "image": [
+     "121",
+     0
+    ],
+    "state": [
+     "97",
+     0
+    ],
+    "mask": [
+     "99",
+     1
+    ]
+   },
+   "class_type": "LiaProjectTextureAccumulate",
+   "_meta": {
+    "title": "4 Direita: acumula no atlas"
+   }
+  },
+  "124": {
+   "inputs": {
+    "images": [
+     "123",
+     2
+    ]
+   },
+   "class_type": "PreviewImage",
+   "_meta": {
+    "title": "4 Direita: cobertura (vermelho = falta)"
+   }
+  },
+  "125": {
+   "inputs": {
+    "azimuth": 0.0,
+    "elevation": 30.0,
+    "resolution": 1024,
+    "frame_scale": 1.1,
+    "grow_mask_px": 12,
+    "missing_color": "grey",
+    "zoom": 1.0,
+    "offset_y": 0.0,
+    "mesh": [
+     "7",
+     0
+    ],
+    "state": [
+     "123",
+     0
+    ]
+   },
+   "class_type": "LiaRenderTextured",
+   "_meta": {
+    "title": "5 Frente/cima: render parcial + máscara"
+   }
+  },
+  "126": {
+   "inputs": {
+    "images": [
+     "125",
+     0
+    ]
+   },
+   "class_type": "PreviewImage",
+   "_meta": {
+    "title": "5 Frente/cima: o que já existe (cinza = a pintar)"
+   }
+  },
+  "127": {
+   "inputs": {
+    "view": "front",
+    "front": [
+     "12",
+     0
+    ]
+   },
+   "class_type": "LiaPickReference",
+   "_meta": {
+    "title": "referência da vista (front)"
+   }
+  },
+  "128": {
+   "inputs": {
+    "upscale_method": "lanczos",
+    "megapixels": 1.0,
+    "resolution_steps": 1,
+    "image": [
+     "127",
+     0
+    ]
+   },
+   "class_type": "ImageScaleToTotalPixels",
+   "_meta": {
+    "title": "Redimensionar Imagem para Total de Pixels"
+   }
+  },
+  "129": {
+   "inputs": {
+    "pixels": [
+     "128",
+     0
+    ],
+    "vae": [
+     "18",
+     0
+    ]
+   },
+   "class_type": "VAEEncode",
+   "_meta": {
+    "title": "image 1 = referência"
+   }
+  },
+  "130": {
+   "inputs": {
+    "pixels": [
+     "125",
+     3
+    ],
+    "vae": [
+     "18",
+     0
+    ]
+   },
+   "class_type": "VAEEncode",
+   "_meta": {
+    "title": "image 2 = normal map"
+   }
+  },
+  "131": {
+   "inputs": {
+    "pixels": [
+     "125",
+     0
+    ],
+    "vae": [
+     "18",
+     0
+    ]
+   },
+   "class_type": "VAEEncode",
+   "_meta": {
+    "title": "latente = render parcial"
+   }
+  },
+  "132": {
+   "inputs": {
+    "samples": [
+     "131",
+     0
+    ],
+    "mask": [
+     "125",
+     1
+    ]
+   },
+   "class_type": "SetLatentNoiseMask",
+   "_meta": {
+    "title": "inpaint só do que falta"
+   }
+  },
+  "133": {
+   "inputs": {
+    "value": "front view seen slightly from above (camera 30 degrees up). The top of the head is hair only, never a face; the face stays where it already is"
+   },
+   "class_type": "PrimitiveStringMultiline",
+   "_meta": {
+    "title": "Vista: 5 Frente/cima"
+   }
+  },
+  "134": {
+   "inputs": {
+    "string_a": [
+     "133",
+     0
+    ],
+    "string_b": [
+     "21",
+     0
+    ],
+    "delimiter": ". "
+   },
+   "class_type": "StringConcatenate",
+   "_meta": {
+    "title": "Concatenar"
+   }
+  },
+  "135": {
+   "inputs": {
+    "text": [
+     "134",
+     0
+    ],
+    "clip": [
+     "17",
+     0
+    ]
+   },
+   "class_type": "CLIPTextEncode",
+   "_meta": {
+    "title": "Codificação de Texto CLIP (Prompt)"
+   }
+  },
+  "136": {
+   "inputs": {
+    "conditioning": [
+     "135",
+     0
+    ]
+   },
+   "class_type": "ConditioningZeroOut",
+   "_meta": {
+    "title": "CondicionamentoZerar"
+   }
+  },
+  "137": {
+   "inputs": {
+    "conditioning": [
+     "135",
+     0
+    ],
+    "latent": [
+     "129",
+     0
+    ]
+   },
+   "class_type": "ReferenceLatent",
+   "_meta": {
+    "title": "ref 1 (referência) +"
+   }
+  },
+  "138": {
+   "inputs": {
+    "conditioning": [
+     "137",
+     0
+    ],
+    "latent": [
+     "130",
+     0
+    ]
+   },
+   "class_type": "ReferenceLatent",
+   "_meta": {
+    "title": "ref 2 (normal) +"
+   }
+  },
+  "139": {
+   "inputs": {
+    "conditioning": [
+     "138",
+     0
+    ],
+    "latent": [
+     "44",
+     0
+    ]
+   },
+   "class_type": "ReferenceLatent",
+   "_meta": {
+    "title": "ref 3 (frente pintada) +"
+   }
+  },
+  "140": {
+   "inputs": {
+    "conditioning": [
+     "136",
+     0
+    ],
+    "latent": [
+     "129",
+     0
+    ]
+   },
+   "class_type": "ReferenceLatent",
+   "_meta": {
+    "title": "ref 1 (referência) −"
+   }
+  },
+  "141": {
+   "inputs": {
+    "conditioning": [
+     "140",
+     0
+    ],
+    "latent": [
+     "130",
+     0
+    ]
+   },
+   "class_type": "ReferenceLatent",
+   "_meta": {
+    "title": "ref 2 (normal) −"
+   }
+  },
+  "142": {
+   "inputs": {
+    "conditioning": [
+     "141",
+     0
+    ],
+    "latent": [
+     "44",
+     0
+    ]
+   },
+   "class_type": "ReferenceLatent",
+   "_meta": {
+    "title": "ref 3 (frente pintada) −"
+   }
+  },
+  "143": {
+   "inputs": {
+    "cfg": 1.0,
+    "model": [
+     "16",
+     0
+    ],
+    "positive": [
+     "139",
+     0
+    ],
+    "negative": [
+     "142",
+     0
+    ]
+   },
+   "class_type": "CFGGuider",
+   "_meta": {
+    "title": "CFGGuider"
+   }
+  },
+  "144": {
+   "inputs": {
+    "noise_seed": 204
+   },
+   "class_type": "RandomNoise",
+   "_meta": {
+    "title": "Ruído Aleatório"
+   }
+  },
+  "145": {
+   "inputs": {
+    "noise": [
+     "144",
+     0
+    ],
+    "guider": [
+     "143",
+     0
+    ],
+    "sampler": [
+     "20",
+     0
+    ],
+    "sigmas": [
+     "19",
+     0
+    ],
+    "latent_image": [
+     "132",
+     0
+    ]
+   },
+   "class_type": "SamplerCustomAdvanced",
+   "_meta": {
+    "title": "SamplerCustomAdvanced"
+   }
+  },
+  "146": {
+   "inputs": {
+    "samples": [
+     "145",
+     0
+    ],
+    "vae": [
+     "18",
+     0
+    ]
+   },
+   "class_type": "VAEDecode",
+   "_meta": {
+    "title": "VAE Decodificar"
+   }
+  },
+  "147": {
+   "inputs": {
+    "x": 0,
+    "y": 0,
+    "resize_source": false,
+    "destination": [
+     "125",
+     0
+    ],
+    "source": [
+     "146",
+     0
+    ],
+    "mask": [
+     "125",
+     1
+    ]
+   },
+   "class_type": "ImageCompositeMasked",
+   "_meta": {
+    "title": "cola só a área da máscara (fora dela nada muda)"
+   }
+  },
+  "148": {
+   "inputs": {
+    "images": [
+     "147",
+     0
+    ]
+   },
+   "class_type": "PreviewImage",
+   "_meta": {
+    "title": "5 Frente/cima: pintada"
+   }
+  },
+  "149": {
+   "inputs": {
+    "azimuth": 0.0,
+    "elevation": 30.0,
+    "frame_scale": 1.1,
+    "texture_size": 2048,
+    "view_weight": 0.5,
+    "cos_power": 4.0,
+    "min_cos": 0.1,
+    "depth_tolerance": 0.015,
+    "color_match": true,
+    "fill_only": true,
+    "zoom": 1.0,
+    "offset_y": 0.0,
+    "replace": false,
+    "mesh": [
+     "7",
+     0
+    ],
+    "image": [
+     "147",
+     0
+    ],
+    "state": [
+     "123",
+     0
+    ],
+    "mask": [
+     "125",
+     1
+    ]
+   },
+   "class_type": "LiaProjectTextureAccumulate",
+   "_meta": {
+    "title": "5 Frente/cima: acumula no atlas"
+   }
+  },
+  "150": {
+   "inputs": {
+    "images": [
+     "149",
+     2
+    ]
+   },
+   "class_type": "PreviewImage",
+   "_meta": {
+    "title": "5 Frente/cima: cobertura (vermelho = falta)"
+   }
+  },
+  "151": {
+   "inputs": {
+    "azimuth": 180.0,
+    "elevation": 30.0,
+    "resolution": 1024,
+    "frame_scale": 1.1,
+    "grow_mask_px": 12,
+    "missing_color": "grey",
+    "zoom": 1.0,
+    "offset_y": 0.0,
+    "mesh": [
+     "7",
+     0
+    ],
+    "state": [
+     "149",
+     0
+    ]
+   },
+   "class_type": "LiaRenderTextured",
+   "_meta": {
+    "title": "6 Costas/cima: render parcial + máscara"
+   }
+  },
+  "152": {
+   "inputs": {
+    "images": [
+     "151",
+     0
+    ]
+   },
+   "class_type": "PreviewImage",
+   "_meta": {
+    "title": "6 Costas/cima: o que já existe (cinza = a pintar)"
+   }
+  },
+  "153": {
+   "inputs": {
+    "view": "back",
+    "front": [
+     "12",
+     0
+    ]
+   },
+   "class_type": "LiaPickReference",
+   "_meta": {
+    "title": "referência da vista (back)"
+   }
+  },
+  "154": {
+   "inputs": {
+    "upscale_method": "lanczos",
+    "megapixels": 1.0,
+    "resolution_steps": 1,
+    "image": [
+     "153",
+     0
+    ]
+   },
+   "class_type": "ImageScaleToTotalPixels",
+   "_meta": {
+    "title": "Redimensionar Imagem para Total de Pixels"
+   }
+  },
+  "155": {
+   "inputs": {
+    "pixels": [
+     "154",
+     0
+    ],
+    "vae": [
+     "18",
+     0
+    ]
+   },
+   "class_type": "VAEEncode",
+   "_meta": {
+    "title": "image 1 = referência"
+   }
+  },
+  "156": {
+   "inputs": {
+    "pixels": [
+     "151",
+     3
+    ],
+    "vae": [
+     "18",
+     0
+    ]
+   },
+   "class_type": "VAEEncode",
+   "_meta": {
+    "title": "image 2 = normal map"
+   }
+  },
+  "157": {
+   "inputs": {
+    "pixels": [
+     "151",
+     0
+    ],
+    "vae": [
+     "18",
+     0
+    ]
+   },
+   "class_type": "VAEEncode",
+   "_meta": {
+    "title": "latente = render parcial"
+   }
+  },
+  "158": {
+   "inputs": {
+    "samples": [
+     "157",
+     0
+    ],
+    "mask": [
+     "151",
+     1
+    ]
+   },
+   "class_type": "SetLatentNoiseMask",
+   "_meta": {
+    "title": "inpaint só do que falta"
+   }
+  },
+  "159": {
+   "inputs": {
+    "value": "back view seen slightly from above (camera 30 degrees up). The top of the head is hair only, never a face"
+   },
+   "class_type": "PrimitiveStringMultiline",
+   "_meta": {
+    "title": "Vista: 6 Costas/cima"
+   }
+  },
+  "160": {
+   "inputs": {
+    "string_a": [
+     "159",
+     0
+    ],
+    "string_b": [
+     "21",
+     0
+    ],
+    "delimiter": ". "
+   },
+   "class_type": "StringConcatenate",
+   "_meta": {
+    "title": "Concatenar"
+   }
+  },
+  "161": {
+   "inputs": {
+    "text": [
+     "160",
+     0
+    ],
+    "clip": [
+     "17",
+     0
+    ]
+   },
+   "class_type": "CLIPTextEncode",
+   "_meta": {
+    "title": "Codificação de Texto CLIP (Prompt)"
+   }
+  },
+  "162": {
+   "inputs": {
+    "conditioning": [
+     "161",
+     0
+    ]
+   },
+   "class_type": "ConditioningZeroOut",
+   "_meta": {
+    "title": "CondicionamentoZerar"
+   }
+  },
+  "163": {
+   "inputs": {
+    "conditioning": [
+     "161",
+     0
+    ],
+    "latent": [
+     "155",
+     0
+    ]
+   },
+   "class_type": "ReferenceLatent",
+   "_meta": {
+    "title": "ref 1 (referência) +"
+   }
+  },
+  "164": {
+   "inputs": {
+    "conditioning": [
+     "163",
+     0
+    ],
+    "latent": [
+     "156",
+     0
+    ]
+   },
+   "class_type": "ReferenceLatent",
+   "_meta": {
+    "title": "ref 2 (normal) +"
+   }
+  },
+  "165": {
+   "inputs": {
+    "conditioning": [
+     "164",
+     0
+    ],
+    "latent": [
+     "44",
+     0
+    ]
+   },
+   "class_type": "ReferenceLatent",
+   "_meta": {
+    "title": "ref 3 (frente pintada) +"
+   }
+  },
+  "166": {
+   "inputs": {
+    "conditioning": [
+     "162",
+     0
+    ],
+    "latent": [
+     "155",
+     0
+    ]
+   },
+   "class_type": "ReferenceLatent",
+   "_meta": {
+    "title": "ref 1 (referência) −"
+   }
+  },
+  "167": {
+   "inputs": {
+    "conditioning": [
+     "166",
+     0
+    ],
+    "latent": [
+     "156",
+     0
+    ]
+   },
+   "class_type": "ReferenceLatent",
+   "_meta": {
+    "title": "ref 2 (normal) −"
+   }
+  },
+  "168": {
+   "inputs": {
+    "conditioning": [
+     "167",
+     0
+    ],
+    "latent": [
+     "44",
+     0
+    ]
+   },
+   "class_type": "ReferenceLatent",
+   "_meta": {
+    "title": "ref 3 (frente pintada) −"
+   }
+  },
+  "169": {
+   "inputs": {
+    "cfg": 1.0,
+    "model": [
+     "16",
+     0
+    ],
+    "positive": [
+     "165",
+     0
+    ],
+    "negative": [
+     "168",
+     0
+    ]
+   },
+   "class_type": "CFGGuider",
+   "_meta": {
+    "title": "CFGGuider"
+   }
+  },
+  "170": {
+   "inputs": {
+    "noise_seed": 205
+   },
+   "class_type": "RandomNoise",
+   "_meta": {
+    "title": "Ruído Aleatório"
+   }
+  },
+  "171": {
+   "inputs": {
+    "noise": [
+     "170",
+     0
+    ],
+    "guider": [
+     "169",
+     0
+    ],
+    "sampler": [
+     "20",
+     0
+    ],
+    "sigmas": [
+     "19",
+     0
+    ],
+    "latent_image": [
+     "158",
+     0
+    ]
+   },
+   "class_type": "SamplerCustomAdvanced",
+   "_meta": {
+    "title": "SamplerCustomAdvanced"
+   }
+  },
+  "172": {
+   "inputs": {
+    "samples": [
+     "171",
+     0
+    ],
+    "vae": [
+     "18",
+     0
+    ]
+   },
+   "class_type": "VAEDecode",
+   "_meta": {
+    "title": "VAE Decodificar"
+   }
+  },
+  "173": {
+   "inputs": {
+    "x": 0,
+    "y": 0,
+    "resize_source": false,
+    "destination": [
+     "151",
+     0
+    ],
+    "source": [
+     "172",
+     0
+    ],
+    "mask": [
+     "151",
+     1
+    ]
+   },
+   "class_type": "ImageCompositeMasked",
+   "_meta": {
+    "title": "cola só a área da máscara (fora dela nada muda)"
+   }
+  },
+  "174": {
+   "inputs": {
+    "images": [
+     "173",
+     0
+    ]
+   },
+   "class_type": "PreviewImage",
+   "_meta": {
+    "title": "6 Costas/cima: pintada"
+   }
+  },
+  "175": {
+   "inputs": {
+    "azimuth": 180.0,
+    "elevation": 30.0,
+    "frame_scale": 1.1,
+    "texture_size": 2048,
+    "view_weight": 0.5,
+    "cos_power": 4.0,
+    "min_cos": 0.1,
+    "depth_tolerance": 0.015,
+    "color_match": true,
+    "fill_only": true,
+    "zoom": 1.0,
+    "offset_y": 0.0,
+    "replace": false,
+    "mesh": [
+     "7",
+     0
+    ],
+    "image": [
+     "173",
+     0
+    ],
+    "state": [
+     "149",
+     0
+    ],
+    "mask": [
+     "151",
+     1
+    ]
+   },
+   "class_type": "LiaProjectTextureAccumulate",
+   "_meta": {
+    "title": "6 Costas/cima: acumula no atlas"
+   }
+  },
+  "176": {
+   "inputs": {
+    "images": [
+     "175",
+     2
+    ]
+   },
+   "class_type": "PreviewImage",
+   "_meta": {
+    "title": "6 Costas/cima: cobertura (vermelho = falta)"
+   }
+  },
+  "177": {
+   "inputs": {
+    "azimuth": 0.0,
+    "elevation": -30.0,
+    "resolution": 1024,
+    "frame_scale": 1.1,
+    "grow_mask_px": 12,
+    "missing_color": "grey",
+    "zoom": 1.0,
+    "offset_y": 0.0,
+    "mesh": [
+     "7",
+     0
+    ],
+    "state": [
+     "175",
+     0
+    ]
+   },
+   "class_type": "LiaRenderTextured",
+   "_meta": {
+    "title": "7 Frente/baixo: render parcial + máscara"
+   }
+  },
+  "178": {
+   "inputs": {
+    "images": [
+     "177",
+     0
+    ]
+   },
+   "class_type": "PreviewImage",
+   "_meta": {
+    "title": "7 Frente/baixo: o que já existe (cinza = a pintar)"
+   }
+  },
+  "179": {
+   "inputs": {
+    "view": "front",
+    "front": [
+     "12",
+     0
+    ]
+   },
+   "class_type": "LiaPickReference",
+   "_meta": {
+    "title": "referência da vista (front)"
+   }
+  },
+  "180": {
+   "inputs": {
+    "upscale_method": "lanczos",
+    "megapixels": 1.0,
+    "resolution_steps": 1,
+    "image": [
+     "179",
+     0
+    ]
+   },
+   "class_type": "ImageScaleToTotalPixels",
+   "_meta": {
+    "title": "Redimensionar Imagem para Total de Pixels"
+   }
+  },
+  "181": {
+   "inputs": {
+    "pixels": [
+     "180",
+     0
+    ],
+    "vae": [
+     "18",
+     0
+    ]
+   },
+   "class_type": "VAEEncode",
+   "_meta": {
+    "title": "image 1 = referência"
+   }
+  },
+  "182": {
+   "inputs": {
+    "pixels": [
+     "177",
+     3
+    ],
+    "vae": [
+     "18",
+     0
+    ]
+   },
+   "class_type": "VAEEncode",
+   "_meta": {
+    "title": "image 2 = normal map"
+   }
+  },
+  "183": {
+   "inputs": {
+    "pixels": [
+     "177",
+     0
+    ],
+    "vae": [
+     "18",
+     0
+    ]
+   },
+   "class_type": "VAEEncode",
+   "_meta": {
+    "title": "latente = render parcial"
+   }
+  },
+  "184": {
+   "inputs": {
+    "samples": [
+     "183",
+     0
+    ],
+    "mask": [
+     "177",
+     1
+    ]
+   },
+   "class_type": "SetLatentNoiseMask",
+   "_meta": {
+    "title": "inpaint só do que falta"
+   }
+  },
+  "185": {
+   "inputs": {
+    "value": "front view seen slightly from below (camera 30 degrees down). Underside of the chin, sleeves and skirt hem, shoes; no extra face"
+   },
+   "class_type": "PrimitiveStringMultiline",
+   "_meta": {
+    "title": "Vista: 7 Frente/baixo"
+   }
+  },
+  "186": {
+   "inputs": {
+    "string_a": [
+     "185",
+     0
+    ],
+    "string_b": [
+     "21",
+     0
+    ],
+    "delimiter": ". "
+   },
+   "class_type": "StringConcatenate",
+   "_meta": {
+    "title": "Concatenar"
+   }
+  },
+  "187": {
+   "inputs": {
+    "text": [
+     "186",
+     0
+    ],
+    "clip": [
+     "17",
+     0
+    ]
+   },
+   "class_type": "CLIPTextEncode",
+   "_meta": {
+    "title": "Codificação de Texto CLIP (Prompt)"
+   }
+  },
+  "188": {
+   "inputs": {
+    "conditioning": [
+     "187",
+     0
+    ]
+   },
+   "class_type": "ConditioningZeroOut",
+   "_meta": {
+    "title": "CondicionamentoZerar"
+   }
+  },
+  "189": {
+   "inputs": {
+    "conditioning": [
+     "187",
+     0
+    ],
+    "latent": [
+     "181",
+     0
+    ]
+   },
+   "class_type": "ReferenceLatent",
+   "_meta": {
+    "title": "ref 1 (referência) +"
+   }
+  },
+  "190": {
+   "inputs": {
+    "conditioning": [
+     "189",
+     0
+    ],
+    "latent": [
+     "182",
+     0
+    ]
+   },
+   "class_type": "ReferenceLatent",
+   "_meta": {
+    "title": "ref 2 (normal) +"
+   }
+  },
+  "191": {
+   "inputs": {
+    "conditioning": [
+     "190",
+     0
+    ],
+    "latent": [
+     "44",
+     0
+    ]
+   },
+   "class_type": "ReferenceLatent",
+   "_meta": {
+    "title": "ref 3 (frente pintada) +"
+   }
+  },
+  "192": {
+   "inputs": {
+    "conditioning": [
+     "188",
+     0
+    ],
+    "latent": [
+     "181",
+     0
+    ]
+   },
+   "class_type": "ReferenceLatent",
+   "_meta": {
+    "title": "ref 1 (referência) −"
+   }
+  },
+  "193": {
+   "inputs": {
+    "conditioning": [
+     "192",
+     0
+    ],
+    "latent": [
+     "182",
+     0
+    ]
+   },
+   "class_type": "ReferenceLatent",
+   "_meta": {
+    "title": "ref 2 (normal) −"
+   }
+  },
+  "194": {
+   "inputs": {
+    "conditioning": [
+     "193",
+     0
+    ],
+    "latent": [
+     "44",
+     0
+    ]
+   },
+   "class_type": "ReferenceLatent",
+   "_meta": {
+    "title": "ref 3 (frente pintada) −"
+   }
+  },
+  "195": {
+   "inputs": {
+    "cfg": 1.0,
+    "model": [
+     "16",
+     0
+    ],
+    "positive": [
+     "191",
+     0
+    ],
+    "negative": [
+     "194",
+     0
+    ]
+   },
+   "class_type": "CFGGuider",
+   "_meta": {
+    "title": "CFGGuider"
+   }
+  },
+  "196": {
+   "inputs": {
+    "noise_seed": 206
+   },
+   "class_type": "RandomNoise",
+   "_meta": {
+    "title": "Ruído Aleatório"
+   }
+  },
+  "197": {
+   "inputs": {
+    "noise": [
+     "196",
+     0
+    ],
+    "guider": [
+     "195",
+     0
+    ],
+    "sampler": [
+     "20",
+     0
+    ],
+    "sigmas": [
+     "19",
+     0
+    ],
+    "latent_image": [
+     "184",
+     0
+    ]
+   },
+   "class_type": "SamplerCustomAdvanced",
+   "_meta": {
+    "title": "SamplerCustomAdvanced"
+   }
+  },
+  "198": {
+   "inputs": {
+    "samples": [
+     "197",
+     0
+    ],
+    "vae": [
+     "18",
+     0
+    ]
+   },
+   "class_type": "VAEDecode",
+   "_meta": {
+    "title": "VAE Decodificar"
+   }
+  },
+  "199": {
+   "inputs": {
+    "x": 0,
+    "y": 0,
+    "resize_source": false,
+    "destination": [
+     "177",
+     0
+    ],
+    "source": [
+     "198",
+     0
+    ],
+    "mask": [
+     "177",
+     1
+    ]
+   },
+   "class_type": "ImageCompositeMasked",
+   "_meta": {
+    "title": "cola só a área da máscara (fora dela nada muda)"
+   }
+  },
+  "200": {
+   "inputs": {
+    "images": [
+     "199",
+     0
+    ]
+   },
+   "class_type": "PreviewImage",
+   "_meta": {
+    "title": "7 Frente/baixo: pintada"
+   }
+  },
+  "201": {
+   "inputs": {
+    "azimuth": 0.0,
+    "elevation": -30.0,
+    "frame_scale": 1.1,
+    "texture_size": 2048,
+    "view_weight": 0.4,
+    "cos_power": 4.0,
+    "min_cos": 0.1,
+    "depth_tolerance": 0.015,
+    "color_match": true,
+    "fill_only": true,
+    "zoom": 1.0,
+    "offset_y": 0.0,
+    "replace": false,
+    "mesh": [
+     "7",
+     0
+    ],
+    "image": [
+     "199",
+     0
+    ],
+    "state": [
+     "175",
+     0
+    ],
+    "mask": [
+     "177",
+     1
+    ]
+   },
+   "class_type": "LiaProjectTextureAccumulate",
+   "_meta": {
+    "title": "7 Frente/baixo: acumula no atlas"
+   }
+  },
+  "202": {
+   "inputs": {
+    "images": [
+     "201",
+     2
+    ]
+   },
+   "class_type": "PreviewImage",
+   "_meta": {
+    "title": "7 Frente/baixo: cobertura (vermelho = falta)"
+   }
+  },
+  "203": {
+   "inputs": {
+    "azimuth": 180.0,
+    "elevation": -30.0,
+    "resolution": 1024,
+    "frame_scale": 1.1,
+    "grow_mask_px": 12,
+    "missing_color": "grey",
+    "zoom": 1.0,
+    "offset_y": 0.0,
+    "mesh": [
+     "7",
+     0
+    ],
+    "state": [
+     "201",
+     0
+    ]
+   },
+   "class_type": "LiaRenderTextured",
+   "_meta": {
+    "title": "8 Costas/baixo: render parcial + máscara"
+   }
+  },
+  "204": {
+   "inputs": {
+    "images": [
+     "203",
+     0
+    ]
+   },
+   "class_type": "PreviewImage",
+   "_meta": {
+    "title": "8 Costas/baixo: o que já existe (cinza = a pintar)"
+   }
+  },
+  "205": {
+   "inputs": {
+    "view": "back",
+    "front": [
+     "12",
+     0
+    ]
+   },
+   "class_type": "LiaPickReference",
+   "_meta": {
+    "title": "referência da vista (back)"
+   }
+  },
+  "206": {
+   "inputs": {
+    "upscale_method": "lanczos",
+    "megapixels": 1.0,
+    "resolution_steps": 1,
+    "image": [
+     "205",
+     0
+    ]
+   },
+   "class_type": "ImageScaleToTotalPixels",
+   "_meta": {
+    "title": "Redimensionar Imagem para Total de Pixels"
+   }
+  },
+  "207": {
+   "inputs": {
+    "pixels": [
+     "206",
+     0
+    ],
+    "vae": [
+     "18",
+     0
+    ]
+   },
+   "class_type": "VAEEncode",
+   "_meta": {
+    "title": "image 1 = referência"
+   }
+  },
+  "208": {
+   "inputs": {
+    "pixels": [
+     "203",
+     3
+    ],
+    "vae": [
+     "18",
+     0
+    ]
+   },
+   "class_type": "VAEEncode",
+   "_meta": {
+    "title": "image 2 = normal map"
+   }
+  },
+  "209": {
+   "inputs": {
+    "pixels": [
+     "203",
+     0
+    ],
+    "vae": [
+     "18",
+     0
+    ]
+   },
+   "class_type": "VAEEncode",
+   "_meta": {
+    "title": "latente = render parcial"
+   }
+  },
+  "210": {
+   "inputs": {
+    "samples": [
+     "209",
+     0
+    ],
+    "mask": [
+     "203",
+     1
+    ]
+   },
+   "class_type": "SetLatentNoiseMask",
+   "_meta": {
+    "title": "inpaint só do que falta"
+   }
+  },
+  "211": {
+   "inputs": {
+    "value": "back view seen slightly from below (camera 30 degrees down). Underside of the hem and shoes; no extra face"
+   },
+   "class_type": "PrimitiveStringMultiline",
+   "_meta": {
+    "title": "Vista: 8 Costas/baixo"
+   }
+  },
+  "212": {
+   "inputs": {
+    "string_a": [
+     "211",
+     0
+    ],
+    "string_b": [
+     "21",
+     0
+    ],
+    "delimiter": ". "
+   },
+   "class_type": "StringConcatenate",
+   "_meta": {
+    "title": "Concatenar"
+   }
+  },
+  "213": {
+   "inputs": {
+    "text": [
+     "212",
+     0
+    ],
+    "clip": [
+     "17",
+     0
+    ]
+   },
+   "class_type": "CLIPTextEncode",
+   "_meta": {
+    "title": "Codificação de Texto CLIP (Prompt)"
+   }
+  },
+  "214": {
+   "inputs": {
+    "conditioning": [
+     "213",
+     0
+    ]
+   },
+   "class_type": "ConditioningZeroOut",
+   "_meta": {
+    "title": "CondicionamentoZerar"
+   }
+  },
+  "215": {
+   "inputs": {
+    "conditioning": [
+     "213",
+     0
+    ],
+    "latent": [
+     "207",
+     0
+    ]
+   },
+   "class_type": "ReferenceLatent",
+   "_meta": {
+    "title": "ref 1 (referência) +"
+   }
+  },
+  "216": {
+   "inputs": {
+    "conditioning": [
+     "215",
+     0
+    ],
+    "latent": [
+     "208",
+     0
+    ]
+   },
+   "class_type": "ReferenceLatent",
+   "_meta": {
+    "title": "ref 2 (normal) +"
+   }
+  },
+  "217": {
+   "inputs": {
+    "conditioning": [
+     "216",
+     0
+    ],
+    "latent": [
+     "44",
+     0
+    ]
+   },
+   "class_type": "ReferenceLatent",
+   "_meta": {
+    "title": "ref 3 (frente pintada) +"
+   }
+  },
+  "218": {
+   "inputs": {
+    "conditioning": [
+     "214",
+     0
+    ],
+    "latent": [
+     "207",
+     0
+    ]
+   },
+   "class_type": "ReferenceLatent",
+   "_meta": {
+    "title": "ref 1 (referência) −"
+   }
+  },
+  "219": {
+   "inputs": {
+    "conditioning": [
+     "218",
+     0
+    ],
+    "latent": [
+     "208",
+     0
+    ]
+   },
+   "class_type": "ReferenceLatent",
+   "_meta": {
+    "title": "ref 2 (normal) −"
+   }
+  },
+  "220": {
+   "inputs": {
+    "conditioning": [
+     "219",
+     0
+    ],
+    "latent": [
+     "44",
+     0
+    ]
+   },
+   "class_type": "ReferenceLatent",
+   "_meta": {
+    "title": "ref 3 (frente pintada) −"
+   }
+  },
+  "221": {
+   "inputs": {
+    "cfg": 1.0,
+    "model": [
+     "16",
+     0
+    ],
+    "positive": [
+     "217",
+     0
+    ],
+    "negative": [
+     "220",
+     0
+    ]
+   },
+   "class_type": "CFGGuider",
+   "_meta": {
+    "title": "CFGGuider"
+   }
+  },
+  "222": {
+   "inputs": {
+    "noise_seed": 207
+   },
+   "class_type": "RandomNoise",
+   "_meta": {
+    "title": "Ruído Aleatório"
+   }
+  },
+  "223": {
+   "inputs": {
+    "noise": [
+     "222",
+     0
+    ],
+    "guider": [
+     "221",
+     0
+    ],
+    "sampler": [
+     "20",
+     0
+    ],
+    "sigmas": [
+     "19",
+     0
+    ],
+    "latent_image": [
+     "210",
+     0
+    ]
+   },
+   "class_type": "SamplerCustomAdvanced",
+   "_meta": {
+    "title": "SamplerCustomAdvanced"
+   }
+  },
+  "224": {
+   "inputs": {
+    "samples": [
+     "223",
+     0
+    ],
+    "vae": [
+     "18",
+     0
+    ]
+   },
+   "class_type": "VAEDecode",
+   "_meta": {
+    "title": "VAE Decodificar"
+   }
+  },
+  "225": {
+   "inputs": {
+    "x": 0,
+    "y": 0,
+    "resize_source": false,
+    "destination": [
+     "203",
+     0
+    ],
+    "source": [
+     "224",
+     0
+    ],
+    "mask": [
+     "203",
+     1
+    ]
+   },
+   "class_type": "ImageCompositeMasked",
+   "_meta": {
+    "title": "cola só a área da máscara (fora dela nada muda)"
+   }
+  },
+  "226": {
+   "inputs": {
+    "images": [
+     "225",
+     0
+    ]
+   },
+   "class_type": "PreviewImage",
+   "_meta": {
+    "title": "8 Costas/baixo: pintada"
+   }
+  },
+  "227": {
+   "inputs": {
+    "azimuth": 180.0,
+    "elevation": -30.0,
+    "frame_scale": 1.1,
+    "texture_size": 2048,
+    "view_weight": 0.4,
+    "cos_power": 4.0,
+    "min_cos": 0.1,
+    "depth_tolerance": 0.015,
+    "color_match": true,
+    "fill_only": true,
+    "zoom": 1.0,
+    "offset_y": 0.0,
+    "replace": false,
+    "mesh": [
+     "7",
+     0
+    ],
+    "image": [
+     "225",
+     0
+    ],
+    "state": [
+     "201",
+     0
+    ],
+    "mask": [
+     "203",
+     1
+    ]
+   },
+   "class_type": "LiaProjectTextureAccumulate",
+   "_meta": {
+    "title": "8 Costas/baixo: acumula no atlas"
+   }
+  },
+  "228": {
+   "inputs": {
+    "images": [
+     "227",
+     2
+    ]
+   },
+   "class_type": "PreviewImage",
+   "_meta": {
+    "title": "8 Costas/baixo: cobertura (vermelho = falta)"
+   }
+  },
+  "229": {
+   "inputs": {
+    "azimuth": 0.0,
+    "elevation": 0.0,
+    "resolution": 1024,
+    "frame_scale": 1.1,
+    "grow_mask_px": 12,
+    "missing_color": "grey",
+    "zoom": 3.0,
+    "offset_y": 0.42,
+    "mesh": [
+     "7",
+     0
+    ],
+    "state": [
+     "227",
+     0
+    ]
+   },
+   "class_type": "LiaRenderTextured",
+   "_meta": {
+    "title": "9 Rosto (zoom 3x): render parcial + máscara"
+   }
+  },
+  "230": {
+   "inputs": {
+    "images": [
+     "229",
+     0
+    ]
+   },
+   "class_type": "PreviewImage",
+   "_meta": {
+    "title": "9 Rosto (zoom 3x): o que já existe (cinza = a pintar)"
+   }
+  },
+  "231": {
+   "inputs": {
+    "view": "front",
+    "front": [
+     "12",
+     0
+    ]
+   },
+   "class_type": "LiaPickReference",
+   "_meta": {
+    "title": "referência da vista (front)"
+   }
+  },
+  "232": {
+   "inputs": {
+    "upscale_method": "lanczos",
+    "megapixels": 1.0,
+    "resolution_steps": 1,
+    "image": [
+     "231",
+     0
+    ]
+   },
+   "class_type": "ImageScaleToTotalPixels",
+   "_meta": {
+    "title": "Redimensionar Imagem para Total de Pixels"
+   }
+  },
+  "233": {
+   "inputs": {
+    "pixels": [
+     "232",
+     0
+    ],
+    "vae": [
+     "18",
+     0
+    ]
+   },
+   "class_type": "VAEEncode",
+   "_meta": {
+    "title": "image 1 = referência"
+   }
+  },
+  "234": {
+   "inputs": {
+    "pixels": [
+     "229",
+     3
+    ],
+    "vae": [
+     "18",
+     0
+    ]
+   },
+   "class_type": "VAEEncode",
+   "_meta": {
+    "title": "image 2 = normal map"
+   }
+  },
+  "235": {
+   "inputs": {
+    "pixels": [
+     "229",
+     0
+    ],
+    "vae": [
+     "18",
+     0
+    ]
+   },
+   "class_type": "VAEEncode",
+   "_meta": {
+    "title": "latente = render parcial"
+   }
+  },
+  "236": {
+   "inputs": {
+    "samples": [
+     "235",
+     0
+    ],
+    "mask": [
+     "229",
+     2
+    ]
+   },
+   "class_type": "SetLatentNoiseMask",
+   "_meta": {
+    "title": "inpaint só do que falta"
+   }
+  },
+  "237": {
+   "inputs": {
+    "value": "close-up portrait: head and shoulders of the SAME character, front view, looking at the camera. Detailed face exactly like image 1: same red eyes, same expression, same bangs and hair parting, same hair color with red tips. Sharp clean lines"
+   },
+   "class_type": "PrimitiveStringMultiline",
+   "_meta": {
+    "title": "Vista: 9 Rosto (zoom 3x)"
+   }
+  },
+  "238": {
+   "inputs": {
+    "string_a": [
+     "237",
+     0
+    ],
+    "string_b": [
+     "21",
+     0
+    ],
+    "delimiter": ". "
+   },
+   "class_type": "StringConcatenate",
+   "_meta": {
+    "title": "Concatenar"
+   }
+  },
+  "239": {
+   "inputs": {
+    "text": [
+     "238",
+     0
+    ],
+    "clip": [
+     "17",
+     0
+    ]
+   },
+   "class_type": "CLIPTextEncode",
+   "_meta": {
+    "title": "Codificação de Texto CLIP (Prompt)"
+   }
+  },
+  "240": {
+   "inputs": {
+    "conditioning": [
+     "239",
+     0
+    ]
+   },
+   "class_type": "ConditioningZeroOut",
+   "_meta": {
+    "title": "CondicionamentoZerar"
+   }
+  },
+  "241": {
+   "inputs": {
+    "conditioning": [
+     "239",
+     0
+    ],
+    "latent": [
+     "233",
+     0
+    ]
+   },
+   "class_type": "ReferenceLatent",
+   "_meta": {
+    "title": "ref 1 (referência) +"
+   }
+  },
+  "242": {
+   "inputs": {
+    "conditioning": [
+     "241",
+     0
+    ],
+    "latent": [
+     "234",
+     0
+    ]
+   },
+   "class_type": "ReferenceLatent",
+   "_meta": {
+    "title": "ref 2 (normal) +"
+   }
+  },
+  "243": {
+   "inputs": {
+    "conditioning": [
+     "242",
+     0
+    ],
+    "latent": [
+     "44",
+     0
+    ]
+   },
+   "class_type": "ReferenceLatent",
+   "_meta": {
+    "title": "ref 3 (frente pintada) +"
+   }
+  },
+  "244": {
+   "inputs": {
+    "conditioning": [
+     "240",
+     0
+    ],
+    "latent": [
+     "233",
+     0
+    ]
+   },
+   "class_type": "ReferenceLatent",
+   "_meta": {
+    "title": "ref 1 (referência) −"
+   }
+  },
+  "245": {
+   "inputs": {
+    "conditioning": [
+     "244",
+     0
+    ],
+    "latent": [
+     "234",
+     0
+    ]
+   },
+   "class_type": "ReferenceLatent",
+   "_meta": {
+    "title": "ref 2 (normal) −"
+   }
+  },
+  "246": {
+   "inputs": {
+    "conditioning": [
+     "245",
+     0
+    ],
+    "latent": [
+     "44",
+     0
+    ]
+   },
+   "class_type": "ReferenceLatent",
+   "_meta": {
+    "title": "ref 3 (frente pintada) −"
+   }
+  },
+  "247": {
+   "inputs": {
+    "cfg": 1.0,
+    "model": [
+     "16",
+     0
+    ],
+    "positive": [
+     "243",
+     0
+    ],
+    "negative": [
+     "246",
+     0
+    ]
+   },
+   "class_type": "CFGGuider",
+   "_meta": {
+    "title": "CFGGuider"
+   }
+  },
+  "248": {
+   "inputs": {
+    "noise_seed": 208
+   },
+   "class_type": "RandomNoise",
+   "_meta": {
+    "title": "Ruído Aleatório"
+   }
+  },
+  "249": {
+   "inputs": {
+    "noise": [
+     "248",
+     0
+    ],
+    "guider": [
+     "247",
+     0
+    ],
+    "sampler": [
+     "20",
+     0
+    ],
+    "sigmas": [
+     "19",
+     0
+    ],
+    "latent_image": [
+     "236",
+     0
+    ]
+   },
+   "class_type": "SamplerCustomAdvanced",
+   "_meta": {
+    "title": "SamplerCustomAdvanced"
+   }
+  },
+  "250": {
+   "inputs": {
+    "samples": [
+     "249",
+     0
+    ],
+    "vae": [
+     "18",
+     0
+    ]
+   },
+   "class_type": "VAEDecode",
+   "_meta": {
+    "title": "VAE Decodificar"
+   }
+  },
+  "251": {
+   "inputs": {
+    "x": 0,
+    "y": 0,
+    "resize_source": false,
+    "destination": [
+     "229",
+     0
+    ],
+    "source": [
+     "250",
+     0
+    ],
+    "mask": [
+     "229",
+     2
+    ]
+   },
+   "class_type": "ImageCompositeMasked",
+   "_meta": {
+    "title": "cola só a área da máscara (fora dela nada muda)"
+   }
+  },
+  "252": {
+   "inputs": {
+    "images": [
+     "251",
+     0
+    ]
+   },
+   "class_type": "PreviewImage",
+   "_meta": {
+    "title": "9 Rosto (zoom 3x): pintada"
+   }
+  },
+  "253": {
+   "inputs": {
+    "azimuth": 0.0,
+    "elevation": 0.0,
+    "frame_scale": 1.1,
+    "texture_size": 2048,
+    "view_weight": 1.5,
+    "cos_power": 4.0,
+    "min_cos": 0.35,
+    "depth_tolerance": 0.015,
+    "color_match": false,
+    "fill_only": false,
+    "zoom": 3.0,
+    "offset_y": 0.42,
+    "replace": true,
+    "mesh": [
+     "7",
+     0
+    ],
+    "image": [
+     "251",
+     0
+    ],
+    "state": [
+     "227",
+     0
+    ],
+    "mask": [
+     "229",
+     2
+    ]
+   },
+   "class_type": "LiaProjectTextureAccumulate",
+   "_meta": {
+    "title": "9 Rosto (zoom 3x): acumula no atlas"
+   }
+  },
+  "254": {
+   "inputs": {
+    "images": [
+     "253",
+     2
+    ]
+   },
+   "class_type": "PreviewImage",
+   "_meta": {
+    "title": "9 Rosto (zoom 3x): cobertura (vermelho = falta)"
+   }
+  },
+  "255": {
+   "inputs": {
+    "dilate_px": 8,
+    "fill_unseen": true,
+    "fill_reach_px": 64,
+    "mesh": [
+     "7",
+     0
+    ],
+    "state": [
+     "253",
+     0
+    ]
+   },
+   "class_type": "LiaTextureFinalize",
+   "_meta": {
+    "title": "Fecha a textura"
+   }
+  },
+  "256": {
+   "inputs": {
+    "images": [
+     "255",
+     0
+    ]
+   },
+   "class_type": "PreviewImage",
+   "_meta": {
+    "title": "Atlas final"
+   }
+  },
+  "257": {
+   "inputs": {
+    "images": [
+     "255",
+     1
+    ]
+   },
+   "class_type": "PreviewImage",
+   "_meta": {
+    "title": "Cobertura final"
+   }
+  },
+  "258": {
+   "inputs": {
+    "filename_prefix": "3d/Lia/Lia_albedo",
+    "images": [
+     "255",
+     0
+    ]
+   },
+   "class_type": "SaveImage",
+   "_meta": {
+    "title": "PNG albedo (Blender/VRM MToon)"
+   }
+  },
+  "259": {
+   "inputs": {
+    "filename_prefix": "3d/Lia/Lia_normal",
+    "images": [
+     "8",
+     0
+    ]
+   },
+   "class_type": "SaveImage",
+   "_meta": {
+    "title": "PNG normal map"
+   }
+  },
+  "260": {
+   "inputs": {
+    "filename_prefix": "3d/Lia/Lia_ao",
+    "images": [
+     "9",
+     0
+    ]
+   },
+   "class_type": "SaveImage",
+   "_meta": {
+    "title": "PNG AO"
+   }
+  },
+  "261": {
+   "inputs": {
+    "mesh": [
+     "7",
+     0
+    ],
+    "base_color": [
+     "255",
+     0
+    ],
+    "occlusion": [
+     "9",
+     0
+    ],
+    "normal_map": [
+     "8",
+     0
+    ]
+   },
+   "class_type": "ApplyTextureToMesh",
+   "_meta": {
+    "title": "Aplicar textura à malha"
+   }
+  },
+  "262": {
+   "inputs": {
+    "filename_prefix": "3d/Lia/Lia_texturizado",
+    "image": "",
+    "mesh": [
+     "261",
+     0
+    ]
+   },
+   "class_type": "SaveGLB",
+   "_meta": {
+    "title": "GLB final (game-ready: UV novo + albedo + normal + AO)"
+   }
+  },
+  "263": {
+   "inputs": {
+    "azimuth": 30.0,
+    "elevation": 15.0,
+    "resolution": 1024,
+    "frame_scale": 1.1,
+    "grow_mask_px": 0,
+    "missing_color": "magenta",
+    "zoom": 1.0,
+    "offset_y": 0.0,
+    "mesh": [
+     "7",
+     0
+    ],
+    "state": [
+     "255",
+     3
+    ]
+   },
+   "class_type": "LiaRenderTextured",
+   "_meta": {
+    "title": "Conferência 3/4 (textura FINAL; magenta = buraco real)"
+   }
+  },
+  "264": {
+   "inputs": {
+    "images": [
+     "263",
+     0
+    ]
+   },
+   "class_type": "PreviewImage",
+   "_meta": {
+    "title": "Conferência"
+   }
+  }
+ }
+}
