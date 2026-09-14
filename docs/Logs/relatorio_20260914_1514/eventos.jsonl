@@ -1,0 +1,34 @@
+{"t": "2026-09-14 14:37:32", "tipo": "inicio", "comfy": "/content/ComfyUI", "output": "/content/drive/MyDrive/ComfyUI_Data/output"}
+{"t": "2026-09-14 14:38:08", "tipo": "servidor_ok", "system_stats": {"system": {"os": "linux", "ram_total": 13605830656, "ram_free": 10876293120, "comfyui_version": "0.35.0", "required_frontend_version": "1.52.7", "installed_templates_version": "0.11.59", "required_templates_version": "0.11.59", "comfy_package_versions": [{"name": "comfyui-frontend-package", "installed": "1.52.7", "required": "1.52.7"}, {"name": "comfyui-workflow-templates", "installed": "0.11.59", "required": "0.11.59"}, {"name": "comfyui-embedded-docs", "installed": "0.5.11", "required": "0.5.11"}, {"name": "comfy-kitchen", "installed": "0.2.33", "required": "0.2.33"}, {"name": "comfy-aimdo", "installed": "0.5.3", "required": "0.5.3"}], "python_version": "3.13.15 (main, Aug  6 2026, 11:06:22) [GCC 13.3.0]", "pytorch_version": "2.11.0+cu128", "embedded_python": false, "deploy_environment": "local-git", "argv": ["main.py", "--listen", "0.0.0.0", "--port", "8188", "--enable-cors-header", "*", "--output-directory", "/content/drive/MyDrive/ComfyUI_Data/output", "--input-directory", "/content/drive/MyDrive/ComfyUI_Data/input", "--user-directory", "/content/comfy_user", "--preview-method", "auto", "--disable-auto-launch", "--cache-none", "--disable-smart-memory", "--mmap-torch-files", "--enable-manager"]}, "devices": [{"name": "cuda:0 Tesla T4 : cudaMallocAsync", "type": "cuda", "index": 0, "vram_total": 15637086208, "vram_free": 15527116800, "torch_vram_total": 0, "torch_vram_free": 0}]}}
+{"t": "2026-09-14 14:38:12", "tipo": "fila", "rodando": 0, "pendente": 0}
+{"t": "2026-09-14 14:38:12", "tipo": "vram_pico", "gb": 0.1}
+{"t": "2026-09-14 14:40:53", "tipo": "fila", "rodando": 1, "pendente": 0}
+{"t": "2026-09-14 14:40:57", "tipo": "vram_pico", "gb": 0.7}
+{"t": "2026-09-14 14:41:05", "tipo": "vram_pico", "gb": 1.14}
+{"t": "2026-09-14 14:41:10", "tipo": "vram_pico", "gb": 2.74}
+{"t": "2026-09-14 14:43:20", "tipo": "vram_pico", "gb": 2.88}
+{"t": "2026-09-14 14:43:24", "tipo": "vram_pico", "gb": 2.94}
+{"t": "2026-09-14 14:43:28", "tipo": "vram_pico", "gb": 3.19}
+{"t": "2026-09-14 14:43:32", "tipo": "vram_pico", "gb": 3.48}
+{"t": "2026-09-14 14:43:36", "tipo": "vram_pico", "gb": 3.85}
+{"t": "2026-09-14 14:43:40", "tipo": "vram_pico", "gb": 4.2}
+{"t": "2026-09-14 14:43:44", "tipo": "vram_pico", "gb": 4.32}
+{"t": "2026-09-14 14:43:48", "tipo": "vram_pico", "gb": 4.76}
+{"t": "2026-09-14 14:43:52", "tipo": "vram_pico", "gb": 5.29}
+{"t": "2026-09-14 14:43:56", "tipo": "vram_pico", "gb": 5.73}
+{"t": "2026-09-14 14:45:58", "tipo": "vram_pico", "gb": 5.89}
+{"t": "2026-09-14 14:46:02", "tipo": "vram_pico", "gb": 5.98}
+{"t": "2026-09-14 14:46:14", "tipo": "vram_pico", "gb": 6.04}
+{"t": "2026-09-14 14:47:32", "tipo": "vram_pico", "gb": 6.29}
+{"t": "2026-09-14 14:47:48", "tipo": "vram_pico", "gb": 6.95}
+{"t": "2026-09-14 14:54:14", "tipo": "vram_pico", "gb": 6.98}
+{"t": "2026-09-14 15:06:51", "tipo": "vram_pico", "gb": 6.98}
+{"t": "2026-09-14 15:06:55", "tipo": "vram_pico", "gb": 7.58}
+{"t": "2026-09-14 15:06:59", "tipo": "vram_pico", "gb": 7.89}
+{"t": "2026-09-14 15:07:03", "tipo": "vram_pico", "gb": 8.3}
+{"t": "2026-09-14 15:07:07", "tipo": "vram_pico", "gb": 8.67}
+{"t": "2026-09-14 15:07:11", "tipo": "vram_pico", "gb": 8.73}
+{"t": "2026-09-14 15:07:15", "tipo": "vram_pico", "gb": 8.8}
+{"t": "2026-09-14 15:08:16", "tipo": "vram_pico", "gb": 8.89}
+{"t": "2026-09-14 15:12:12", "tipo": "fila", "rodando": 0, "pendente": 0}
+{"t": "2026-09-14 15:12:28", "tipo": "prompt", "tag": "001_289432fb", "status": "success", "n_nos": 304, "imagens": 41, "erros": 0, "tipos": ["ApplyTextureToMesh", "BakeAmbientOcclusion", "BakeNormalMapFromMesh", "CFGGuider", "CLIPLoader", "CLIPTextEncode", "CheckpointLoaderSimple", "ConditioningConcat", "ConditioningZeroOut", "ControlNetApplyAdvanced", "ControlNetLoader", "DecimateMesh", "Flux2Scheduler", "Get3DComponents", "GrowMask", "IPAdapterAdvanced", "IPAdapterUnifiedLoader", "ImageCompositeMasked", "ImageScaleToTotalPixels", "InpaintModelConditioning", "KSampler", "KSamplerSelect", "LiaPickReference", "LiaProjectTextureAccumulate", "LiaRenderTextured", "LiaTextureFinalize", "Load3D", "LoadImage", "MeshSmoothNormals", "ModelSamplingDiscrete", "PreviewImage", "PrimitiveStringMultiline", "RandomNoise", "ReferenceLatent", "RemeshMesh", "RenderUVAtlas", "RescaleCFG", "SamplerCustomAdvanced", "SaveGLB", "SaveImage"]}
