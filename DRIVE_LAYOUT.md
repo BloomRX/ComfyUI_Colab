@@ -5070,3 +5070,10 @@ Gerador: `scripts/gerar_lia_texturizar.py` (216 nós / 384 links). Testes:
 `color_match` corrige ganho 0.7 → 1.6) e `tests/test_nodes_smoke.py`.
 Validação estática ok; GPU ainda não. Estimativa T4: 12–16 min.
 Licenças inalteradas (tudo MIT/Apache; nada novo instalado).
+
+## v73b — franjas na silhueta do normal map (comparação com o Modddif "Recreate UV")
+Print `TestModddifUV.png`: à esquerda o GLB nosso com franjas coloridas nas bordas
+e sombreado quebrado; à direita o Modddif limpo. Causa nossa: `UnwrapMesh` com
+padding **1** texel em 2048 (sangra ilha vizinha/fundo no mipmap) + normais não
+soldadas. Correção: padding 8 nos três workflows 3D e `WeldVertices` antes do
+`DecimateMesh` no `Lia_Texturizar`. O bake de normal/AO do mesh alto já existia.

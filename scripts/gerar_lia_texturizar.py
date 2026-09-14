@@ -78,19 +78,21 @@ get = N("Get3DComponents", (X1 + 460, -700), (260, 46), inputs=[("model_3d", "FI
 remesh = N("RemeshMesh", (X1 + 460, -600), (340, 300), [512, "udf", False, False, False, 1, 0, False, 2, 0.01, 20000000],
            inputs=[("mesh", "MESH")], outputs=[("mesh", "MESH")], mode=BYPASS,
            title="Remesh (opcional — ligue se o GLB vier sujo/não-manifold)")
-deci = N("DecimateMesh", (X1 + 460, -260), (340, 106), [30000, "midpoint"], inputs=[("mesh", "MESH")], outputs=[("mesh", "MESH")],
+weld = N("WeldVertices", (X1 + 460, -310), (340, 82), [1e-5, 0.0], inputs=[("mesh", "MESH")], outputs=[("mesh", "MESH")],
+         title="Weld (arestas duplicadas → normais suaves contínuas)")
+deci = N("DecimateMesh", (X1 + 460, -200), (340, 106), [30000, "midpoint"], inputs=[("mesh", "MESH")], outputs=[("mesh", "MESH")],
          title="Decimate → contagem de faces de jogo")
-unwrap = N("UnwrapMesh", (X1 + 460, -120), (340, 130), ["pec", 2048, 4, 0.0002], inputs=[("mesh", "MESH")], outputs=[("mesh", "MESH")],
+unwrap = N("UnwrapMesh", (X1 + 460, -70), (340, 130), ["pec", 2048, 8, 0.0002], inputs=[("mesh", "MESH")], outputs=[("mesh", "MESH")],
            title="UV NOVO (substitui o UV do Trellis)")
 widget_in(unwrap, "resolution", "INT")
-smooth = N("MeshSmoothNormals", (X1 + 460, 40), (340, 58), [180], inputs=[("mesh", "MESH")], outputs=[("mesh", "MESH")], title="mesh BAIXO (game-ready, UV limpo)")
+smooth = N("MeshSmoothNormals", (X1 + 460, 90), (340, 58), [180], inputs=[("mesh", "MESH")], outputs=[("mesh", "MESH")], title="mesh BAIXO (game-ready, UV limpo)")
 bnorm = N("BakeNormalMapFromMesh", (X1 + 860, -700), (320, 130), [2048, 0.05, True], inputs=[("low_poly", "MESH"), ("high_poly", "MESH")],
           outputs=[("normal_map", "IMAGE")], title="normal map: alto → baixo")
 bao = N("BakeAmbientOcclusion", (X1 + 860, -520), (320, 180), [1024, 64, 0.5, 1, 0.01], inputs=[("low_poly", "MESH"), ("high_poly", "MESH")],
         outputs=[("occlusion", "IMAGE")], title="AO: alto → baixo")
 uvprev = N("RenderUVAtlas", (X1 + 860, -300), (320, 82), [1024], inputs=[("mesh", "MESH")], outputs=[("image", "IMAGE")], title="prévia do UV novo")
 uvpv = N("PreviewImage", (X1 + 860, -180), (320, 280), inputs=[("images", "IMAGE")], title="UV novo (ilhas)")
-conn(load3d, 6, get, "model_3d", "FILE_3D"); conn(get, 0, remesh, "mesh", "MESH"); conn(remesh, 0, deci, "mesh", "MESH")
+conn(load3d, 6, get, "model_3d", "FILE_3D"); conn(get, 0, remesh, "mesh", "MESH"); conn(remesh, 0, weld, "mesh", "MESH"); conn(weld, 0, deci, "mesh", "MESH")
 conn(deci, 0, unwrap, "mesh", "MESH"); conn(unwrap, 0, smooth, "mesh", "MESH")
 conn(smooth, 0, bnorm, "low_poly", "MESH"); conn(get, 0, bnorm, "high_poly", "MESH")
 conn(smooth, 0, bao, "low_poly", "MESH"); conn(get, 0, bao, "high_poly", "MESH")
@@ -244,7 +246,7 @@ Entrada: **GLB** do `Lia_Trellis2_Image2Mesh` / `Lia_Pixal3D_MultiView` + a imag
 ## O que mudou em relação à v1
 A v1 pintava 4 vistas **independentes** e misturava: costas com outra paleta, tênis de dentro branco, buracos. Agora as vistas são pintadas **em ordem**, cada uma **vendo o que já foi pintado**:
 
-1. **Retopo game-ready** — `Decimate` (30 k faces, ajuste) → `UnwrapMesh` (UV **novo**, limpo, padding 4) → normais suaves. Normal map + AO são *bakeados* do mesh alto original, então o detalhe não se perde. `Remesh` fica em bypass; ligue se o GLB vier com casca dupla/não-manifold.
+1. **Retopo game-ready** — `Weld` → `Decimate` (30 k faces, ajuste) → `UnwrapMesh` (UV **novo**, limpo, padding 8 — o padding 1 do fluxo antigo era o que causava as franjas coloridas na silhueta do normal map) → normais suaves. Normal map + AO são *bakeados* do mesh alto original, então o detalhe não se perde. `Remesh` fica em bypass; ligue se o GLB vier com casca dupla/não-manifold.
 2. **Vista 1 (frente)** — geração completa (image1 = Lia, image2 = normal map).
 3. **Vistas 2–8** — `Render Textured View` renderiza o mesh **com a textura parcial**; o que falta sai **cinza** e vira máscara. O Klein recebe esse render como latente + `SetLatentNoiseMask` e só pinta o cinza, continuando o que já existe. `Accumulate` corrige o tom da vista nova pelo que já está pintado (`color_match`) e soma no atlas.
 4. Ordem: frente → costas → esq → dir → frente/cima 55° → costas/cima → frente/baixo −50° → costas/baixo. Cima/baixo cobrem topo da cabeça, ombros, axila, queixo, solas — os "buracos" da v1. Tênis de dentro: as vistas de baixo/diagonais enxergam.
