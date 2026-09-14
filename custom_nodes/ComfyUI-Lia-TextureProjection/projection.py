@@ -424,11 +424,15 @@ def accumulate_view(verts, faces, uvs, texture, wsum, image, mask, azimuth, elev
     both = (w > 1e-6) & (old_w > 1e-6)
     stats["overlap"] = int(both.sum())
     if color_match and stats["overlap"] > 500:
-        ref = old_c[both].mean(0)
-        new = c[both].mean(0)
-        gain = (ref / new.clamp_min(1e-3)).clamp(0.6, 1.6)
-        c = (c * gain).clamp(0, 1)
-        stats["gain"] = [round(float(g), 3) for g in gain]
+        # Ganho ESCALAR (só brilho, sem mudar matiz) medido apenas onde as duas
+        # versões são claras o bastante para a razão ser estável — em roupa
+        # preta a razão de médias explode e "lava" a textura. Clamp apertado.
+        ref_l = old_c[both].mean(-1); new_l = c[both].mean(-1)
+        ok = (ref_l > 0.2) & (new_l > 0.2)
+        if int(ok.sum()) > 200:
+            g = float((ref_l[ok] / new_l[ok]).median().clamp(0.85, 1.2))
+            c = (c * g).clamp(0, 1)
+            stats["gain"] = [round(g, 3)] * 3
     if fill_only:
         w = torch.where(old_w > 1e-6, torch.zeros_like(w), w)
     acc = old_c * old_w[:, None] + c * w[:, None]

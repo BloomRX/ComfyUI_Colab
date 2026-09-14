@@ -5087,3 +5087,16 @@ pico de VRAM). Célula 7 (nova, rodar depois de parar a 6): `RESUMO.md`, zip
 em `ComfyUI_Data/relatorios/relatorio_<data>.zip` e download. Os nós
 `LiaRenderTextured`/`LiaProjectTextureAccumulate` agora exibem `info` na UI
 (`PreviewText`), então cai no relatório sem nó extra. Célula 6 = `v74-relatorio`.
+
+## v75 — `Lia_Texturizar` v2.1 (diagnóstico do 1º teste real com relatório)
+Relatório `docs/Logs/relatorio_20260914_0421` (T4, 15 min 30 s, pico 6,2 GB, sem
+erro). Achados: (1) frente ficou fiel, mas costas/lados ganharam roupa/decote
+diferentes — as costas têm 0 texels em comum com a frente, então o inpaint não
+"via" a frente; (2) `color_match` com ganho RGB 1,3–1,5 lavou o casaco preto
+(razão de médias em pixels escuros); (3) UV do `UnwrapMesh` sobre o Decimate
+direto gerou 921 ilhas em tiras → magenta nas costuras; (4) tênis/braços por
+baixo ainda falhavam (min_cos). Correções: image 3 = frente pintada em todas
+as vistas + prompt; `ImageCompositeMasked` cola só a máscara; ganho escalar de
+brilho só em pixels claros, clamp 0,85–1,2; `Remesh` 512 ligado por padrão
+antes do Decimate; cima/baixo em `fill_only`; `min_cos` 0,10, `depth_tol` 0,015.
+240 nós / 439 links. Ainda não testado em GPU.

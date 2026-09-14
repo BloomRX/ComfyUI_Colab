@@ -75,9 +75,9 @@ load3d = N("Load3D", (X1, -700), (420, 560), ["Lia_trellis2_00001_.glb", "upload
                     ("recording_video", "VIDEO"), ("model_3d", "FILE_3D"), ("model_3d_info", "LOAD3D_MODEL_INFO")],
            title="GLB da Lia (Trellis2 / Pixal3D)")
 get = N("Get3DComponents", (X1 + 460, -700), (260, 46), inputs=[("model_3d", "FILE_3D")], outputs=[("mesh", "MESH")], title="mesh ALTO (original)")
-remesh = N("RemeshMesh", (X1 + 460, -600), (340, 300), [512, "udf", False, False, False, 1, 0, False, 2, 0.01, 20000000],
-           inputs=[("mesh", "MESH")], outputs=[("mesh", "MESH")], mode=BYPASS,
-           title="Remesh (opcional — ligue se o GLB vier sujo/não-manifold)")
+remesh = N("RemeshMesh", (X1 + 460, -600), (340, 300), [512, "udf", False, False, False, 1, 0, False, 3, 0.01, 20000000],
+           inputs=[("mesh", "MESH")], outputs=[("mesh", "MESH")],
+           title="Remesh (triângulos uniformes → ilhas UV grandes; Ctrl+B para pular)")
 weld = N("WeldVertices", (X1 + 460, -310), (340, 82), [1e-5, 0.0], inputs=[("mesh", "MESH")], outputs=[("mesh", "MESH")],
          title="Weld (arestas duplicadas → normais suaves contínuas)")
 deci = N("DecimateMesh", (X1 + 460, -200), (340, 106), [30000, "midpoint"], inputs=[("mesh", "MESH")], outputs=[("mesh", "MESH")],
@@ -121,8 +121,9 @@ sched = N("Flux2Scheduler", (X2, 620), (400, 106), [4, 1024, 1024], outputs=[("S
 samp = N("KSamplerSelect", (X2, 760), (400, 58), ["euler"], outputs=[("SAMPLER", "SAMPLER")])
 style = N("PrimitiveStringMultiline", (X2, 860), (400, 260),
           ["Paint this exact character from image 1 onto the pose and silhouette of the normal map in image 2. "
-           "Some parts of the character are already painted; the flat grey areas are unpainted. Fill ONLY the grey areas so they "
-           "continue the already painted parts seamlessly: same face, hair, outfit, colors and shading. "
+           "Image 3 shows the SAME character already painted from the front: keep exactly the same outfit design, neckline, "
+           "trims, hair and colors as image 3. Some parts of the character are already painted; the flat grey areas are unpainted. "
+           "Fill ONLY the grey areas so they continue the already painted parts seamlessly. "
            "Flat unlit albedo texture: flat colors, no shadows, no highlights, no directional lighting, no outlines. "
            "Plain white background. Same art style."],
           outputs=[("STRING", "STRING")], title="Estilo comum (todas as vistas)", color=GREEN)
@@ -140,10 +141,12 @@ VIEWS = [
     (180, -50, 0.4, "back", "back view seen from below, low angle, soles and underside visible", "8 Costas/baixo"),
 ]
 X3 = -1500
-ROW = 620
+ROW = 760
 prev_state = None
 acc_nodes = []
+front_latent = None   # vista 1 pintada → image 3 das demais
 for i, (az, el, wgt, refk, vtxt, name) in enumerate(VIEWS):
+    fill_only = el != 0   # cima/baixo só preenchem o que falta
     y = -700 + i * ROW
     ren = N("LiaRenderTextured", (X3, y), (330, 250), [float(az), float(el), 1024, 1.1, 12, "grey"], inputs=[("mesh", "MESH")],
             outputs=[("image", "IMAGE"), ("inpaint_mask", "MASK"), ("silhouette", "MASK"), ("normals", "IMAGE"), ("missing_fraction", "FLOAT")],
@@ -186,26 +189,39 @@ for i, (az, el, wgt, refk, vtxt, name) in enumerate(VIEWS):
         r2 = N("ReferenceLatent", (x, yy + 70), (240, 46), inputs=[("conditioning", "CONDITIONING"), ("latent", "LATENT")], outputs=[("CONDITIONING", "CONDITIONING")], title=f"ref 2 (normal) {sign}")
         conn(cond, 0, r1, "conditioning", "CONDITIONING"); conn(renc, 0, r1, "latent", "LATENT")
         conn(r1, 0, r2, "conditioning", "CONDITIONING"); conn(nenc, 0, r2, "latent", "LATENT")
+        if front_latent is not None:
+            r3 = N("ReferenceLatent", (x, yy + 140), (240, 46), inputs=[("conditioning", "CONDITIONING"), ("latent", "LATENT")], outputs=[("CONDITIONING", "CONDITIONING")], title=f"ref 3 (frente pintada) {sign}")
+            conn(r2, 0, r3, "conditioning", "CONDITIONING"); conn(front_latent, 0, r3, "latent", "LATENT")
+            return r3
         return r2
     rp = refchain(te, X3 + 1030, y, "+")
-    rn = refchain(zo, X3 + 1030, y + 200, "−")
+    rn = refchain(zo, X3 + 1030, y + 240, "−")
     gd = N("CFGGuider", (X3 + 1310, y), (260, 98), [1], inputs=[("model", "MODEL"), ("positive", "CONDITIONING"), ("negative", "CONDITIONING")], outputs=[("GUIDER", "GUIDER")])
     nz = N("RandomNoise", (X3 + 1310, y + 140), (260, 82), [200 + i, "fixed"], outputs=[("NOISE", "NOISE")])
     sca = N("SamplerCustomAdvanced", (X3 + 1610, y), (280, 120), inputs=[("noise", "NOISE"), ("guider", "GUIDER"), ("sampler", "SAMPLER"), ("sigmas", "SIGMAS"), ("latent_image", "LATENT")],
             outputs=[("output", "LATENT"), ("denoised_output", "LATENT")])
     dec = N("VAEDecode", (X3 + 1610, y + 160), (280, 46), inputs=[("samples", "LATENT"), ("vae", "VAE")], outputs=[("IMAGE", "IMAGE")])
-    pv = N("PreviewImage", (X3 + 1610, y + 250), (280, 300), inputs=[("images", "IMAGE")], title=f"{name}: pintada")
+    comp = N("ImageCompositeMasked", (X3 + 1610, y + 250), (280, 130), [0, 0, False],
+             inputs=[("destination", "IMAGE"), ("source", "IMAGE")], outputs=[("IMAGE", "IMAGE")], title="cola só a área da máscara (fora dela nada muda)")
+    opt_in(comp, "mask", "MASK")
+    pv = N("PreviewImage", (X3 + 1610, y + 420), (280, 300), inputs=[("images", "IMAGE")], title=f"{name}: pintada")
     conn(unet, 0, gd, "model", "MODEL"); conn(rp, 0, gd, "positive", "CONDITIONING"); conn(rn, 0, gd, "negative", "CONDITIONING")
     conn(nz, 0, sca, "noise", "NOISE"); conn(gd, 0, sca, "guider", "GUIDER"); conn(samp, 0, sca, "sampler", "SAMPLER"); conn(sched, 0, sca, "sigmas", "SIGMAS")
     conn(nmask, 0, sca, "latent_image", "LATENT")
-    conn(sca, 0, dec, "samples", "LATENT"); conn(vae, 0, dec, "vae", "VAE"); conn(dec, 0, pv, "images", "IMAGE")
+    conn(sca, 0, dec, "samples", "LATENT"); conn(vae, 0, dec, "vae", "VAE")
+    conn(ren, 0, comp, "destination", "IMAGE"); conn(dec, 0, comp, "source", "IMAGE"); conn(ren, 1, comp, "mask", "MASK")
+    conn(comp, 0, pv, "images", "IMAGE")
+    if front_latent is None:
+        fenc = N("VAEEncode", (X3 + 1940, y + 420), (300, 46), inputs=[("pixels", "IMAGE"), ("vae", "VAE")], outputs=[("LATENT", "LATENT")], title="frente pintada → image 3 das outras vistas")
+        conn(comp, 0, fenc, "pixels", "IMAGE"); conn(vae, 0, fenc, "vae", "VAE")
+        front_latent = fenc
 
-    acc = N("LiaProjectTextureAccumulate", (X3 + 1940, y), (340, 350), [float(az), float(el), 1.1, 2048, wgt, 4.0, 0.15, 0.01, True, False],
+    acc = N("LiaProjectTextureAccumulate", (X3 + 1940, y), (340, 350), [float(az), float(el), 1.1, 2048, wgt, 4.0, 0.10, 0.015, True, fill_only],
             inputs=[("mesh", "MESH"), ("image", "IMAGE")],
             outputs=[("state", "LIA_TEXSTATE"), ("base_color", "IMAGE"), ("coverage", "IMAGE"), ("info", "STRING")],
             cnr=LIA, title=f"{name}: acumula no atlas", color=PURPLE)
     opt_in(acc, "state", "LIA_TEXSTATE"); opt_in(acc, "mask", "MASK")
-    conn(MESH, 0, acc, "mesh", "MESH"); conn(dec, 0, acc, "image", "IMAGE"); conn(ren, 1, acc, "mask", "MASK")
+    conn(MESH, 0, acc, "mesh", "MESH"); conn(comp, 0, acc, "image", "IMAGE"); conn(ren, 1, acc, "mask", "MASK")
     if prev_state is not None:
         conn(prev_state, 0, acc, "state", "LIA_TEXSTATE")
     pvc = N("PreviewImage", (X3 + 2320, y), (280, 280), inputs=[("images", "IMAGE")], title=f"{name}: cobertura (vermelho = falta)")
@@ -251,6 +267,13 @@ A v1 pintava 4 vistas **independentes** e misturava: costas com outra paleta, t�
 3. **Vistas 2–8** — `Render Textured View` renderiza o mesh **com a textura parcial**; o que falta sai **cinza** e vira máscara. O Klein recebe esse render como latente + `SetLatentNoiseMask` e só pinta o cinza, continuando o que já existe. `Accumulate` corrige o tom da vista nova pelo que já está pintado (`color_match`) e soma no atlas.
 4. Ordem: frente → costas → esq → dir → frente/cima 55° → costas/cima → frente/baixo −50° → costas/baixo. Cima/baixo cobrem topo da cabeça, ombros, axila, queixo, solas — os "buracos" da v1. Tênis de dentro: as vistas de baixo/diagonais enxergam.
 5. `Finalize` → `ApplyTextureToMesh` (+ normal + AO) → `SaveGLB` em `output/3d/Lia/`. PNGs separados para MToon/VRM.
+
+## v2.1 (após o 1º teste real, relatório `docs/Logs/relatorio_20260914_0421`)
+- **Image 3 = frente pintada** em todas as vistas 2–8: costas/lados nunca têm texels em comum com a frente, então o Klein não "via" a frente e inventava decote/roupa. Agora vê.
+- `ImageCompositeMasked` cola só a área da máscara de volta no render parcial: fora dela **nada** muda.
+- `color_match` virou ganho escalar de brilho, só em pixels claros, clamp 0,85–1,2 (antes lavava o casaco preto).
+- Vistas de cima/baixo em `fill_only` (só preenchem, não misturam). `min_cos` 0,10 e `depth_tolerance` 0,015 (menos frestas magenta).
+- `Remesh` ligado por padrão: triângulos uniformes → ilhas UV grandes em vez de 900 tiras.
 
 ## Ajustes
 - Uma vista saiu ruim → mude só o seed daquela vista (`RandomNoise`, fixos 200–207); as anteriores ficam em cache.
