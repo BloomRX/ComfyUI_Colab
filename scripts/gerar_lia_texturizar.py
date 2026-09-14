@@ -122,9 +122,9 @@ samp = N("KSamplerSelect", (X2, 760), (400, 58), ["euler"], outputs=[("SAMPLER",
 style = N("PrimitiveStringMultiline", (X2, 860), (400, 260),
           ["Paint this exact character from image 1 onto the pose and silhouette of the normal map in image 2. "
            "Image 3 shows the SAME character already painted from the front: keep exactly the same outfit design, neckline, "
-           "trims, hair and colors as image 3. Some parts of the character are already painted; the flat grey areas are unpainted. "
-           "Fill ONLY the grey areas so they continue the already painted parts seamlessly. Every grey area is part of the character's body or clothes "
-           "(cloth, skin, hair, boots): paint it with the character's own colors — NEVER white, never background, never blank. Clothing keeps the same color on its inside and outside. "
+           "trims, hair and colors as image 3. Some parts of the character are already painted; the bright MAGENTA areas are unpainted placeholders. "
+           "Replace every magenta area with the character's own colors, continuing the already painted parts seamlessly. Magenta is always part of the body or clothes "
+           "(cloth, skin, hair, boots): NEVER white, never background, no magenta may remain. Clothing keeps the same color on its inside and outside. "
            "Flat unlit albedo texture: flat colors, no shadows, no highlights, no directional lighting, no outlines. "
            "Plain white background. Same art style."],
           outputs=[("STRING", "STRING")], title="Estilo comum (todas as vistas)", color=GREEN)
@@ -156,14 +156,14 @@ for i, (az, el, wgt, refk, vtxt, name) in enumerate(VIEWS):
     zm, oy = FACE.get(name, (1.0, 0.0))
     face = name in FACE   # repinta tudo o que a vista vê e substitui no atlas
     y = -700 + i * ROW
-    ren = N("LiaRenderTextured", (X3, y), (330, 250), [float(az), float(el), 1024, 1.1, 12, "grey", zm, oy], inputs=[("mesh", "MESH")],
+    ren = N("LiaRenderTextured", (X3, y), (330, 250), [float(az), float(el), 1024, 1.1, 12, "magenta", zm, oy], inputs=[("mesh", "MESH")],
             outputs=[("image", "IMAGE"), ("inpaint_mask", "MASK"), ("silhouette", "MASK"), ("normals", "IMAGE"), ("missing_fraction", "FLOAT")],
             cnr=LIA, title=f"{name}: render parcial + máscara", color=BLUE)
     opt_in(ren, "state", "LIA_TEXSTATE")
     conn(MESH, 0, ren, "mesh", "MESH")
     if prev_state is not None:
         conn(prev_state, 0, ren, "state", "LIA_TEXSTATE")
-    pvr = N("PreviewImage", (X3, y + 290), (330, 300), inputs=[("images", "IMAGE")], title=f"{name}: o que já existe (cinza = a pintar)")
+    pvr = N("PreviewImage", (X3, y + 290), (330, 300), inputs=[("images", "IMAGE")], title=f"{name}: o que já existe (magenta = a pintar)")
     conn(ren, 0, pvr, "images", "IMAGE")
 
     pick = N("LiaPickReference", (X3 + 370, y), (300, 130), [refk], inputs=[("front", "IMAGE")], outputs=[("image", "IMAGE"), ("used", "STRING")],
@@ -305,6 +305,9 @@ Com o Remesh desligado a silhueta ficou perfeita e a **vista 9 consertou o rosto
 
 ### v4.3 (v90) — relatório 1834: o branco NÃO era o Klein
 O preview "o que já existe" das laterais mostrava listras **brancas já pintadas** antes do Klein tocar nelas: frente e costas, projetadas em ângulo raso (`min_cos` 0,10), amostravam a **borda anti-aliasada da silhueta** (mistura com o fundo branco) e espalhavam isso pelas laterais da capa e do braço. Correção nos dados, não no prompt: `Accumulate` **`mask_erode_px` 3** (encolhe a máscara antes de projetar — a borda não entra) e `min_cos` **0,30** nas vistas principais (ângulo raso fica para a vista que olha de frente). A cobertura por vista cai um pouco e as laterais passam a receber mais cinza para pintar — que é o certo.
+
+### v4.4 (v91) — relatório 2200: cinza → magenta
+O `mask_erode_px` resolveu o vazamento (o "o que já existe" das laterais chegou limpo), mas o Klein **pintou o cinza de branco** mesmo assim (capa e braço de perfil): cinza claro encostado em fundo branco vira "fundo" para ele. A cor de faltando passa a **magenta** — impossível de confundir com fundo ou com a personagem — e o prompt pede para substituir todo magenta.
 
 ## Ajustes
 - Uma vista saiu ruim → mude só o seed daquela vista (`RandomNoise`, fixos 200–207); as anteriores ficam em cache.
