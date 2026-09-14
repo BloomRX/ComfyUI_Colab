@@ -91,7 +91,7 @@ ref_sc = N("ImageScaleToTotalPixels", (X1 + 460, 430), (300, 106), ["lanczos", 1
 conn(pick, 0, ref_sc, "image", "IMAGE")
 
 # vista de costas: render sem estado (100% faltando) + normal
-ren = N("LiaRenderTextured", (X1 + 860, -700), (330, 250), [180.0, 0.0, 768, 1.1, 12, "grey"], inputs=[("mesh", "MESH")],
+ren = N("LiaRenderTextured", (X1 + 860, -700), (330, 250), [180.0, 0.0, 1024, 1.1, 12, "grey"], inputs=[("mesh", "MESH")],
         outputs=[("image", "IMAGE"), ("inpaint_mask", "MASK"), ("silhouette", "MASK"), ("normals", "IMAGE"), ("missing_fraction", "FLOAT")],
         cnr=LIA, title="Costas: render (tudo cinza) + normal map", color=BLUE)
 opt_in(ren, "state", "LIA_TEXSTATE"); conn(MESH, 0, ren, "mesh", "MESH")
@@ -100,7 +100,7 @@ conn(ren, 3, pvn, "images", "IMAGE")
 
 # "frente pintada" para image 3: aqui usamos a própria imagem 2D frontal (não há vista 1 neste teste)
 PROMPT = ("back view, seen from behind. Paint this exact character from image 1 onto the pose and silhouette of the normal map in image 2. "
-          "Image 2 is a flat grey silhouette of the pose: fill it completely, edge to edge, keep the exact same framing and size. Image 3 shows the character's ornaments up close: keep EVERY "
+          "Image 2 is only a pose and shape guide: do NOT copy its shading. Image 3 shows the character's ornaments up close: keep EVERY "
           "gold trim, the gold belt line around the waist and the embroidered border along the hem, continuous all the way around the back. "
           "Flat cel-shaded albedo texture for a game: uniform flat colors, no shadows, no folds shading, no highlights, no directional lighting, "
           "no ambient occlusion, no outlines. Plain white background. Same anime art style as image 1.")
@@ -172,44 +172,46 @@ qms = N("ModelSamplingAuraFlow", (X2 + 450, Y), (260, 58), [3.0], inputs=[("mode
 qcfg = N("CFGNorm", (X2 + 450, Y + 90), (260, 82), [1.0, False], inputs=[("model", "MODEL")], outputs=[("MODEL", "MODEL")])
 conn(qunet, 0, qlora, "model", "MODEL"); conn(qlora, 0, qms, "model", "MODEL"); conn(qms, 0, qcfg, "model", "MODEL")
 qpos = N("TextEncodeQwenImageEditPlus", (X2 + 450, Y + 210), (300, 170), [""], inputs=[("clip", "CLIP"), ("vae", "VAE"), ("image1", "IMAGE"), ("image2", "IMAGE"), ("image3", "IMAGE")],
-         outputs=[("CONDITIONING", "CONDITIONING")], title="positivo (img1 ref, img2 silhueta, img3 ornamentos)")
+         outputs=[("CONDITIONING", "CONDITIONING")], title="positivo (img1 ref, img2 normal, img3 frente)")
 widget_in(qpos, "prompt", "STRING")
 qneg = N("TextEncodeQwenImageEditPlus", (X2 + 450, Y + 420), (300, 170), [""], inputs=[("clip", "CLIP"), ("vae", "VAE"), ("image1", "IMAGE"), ("image2", "IMAGE"), ("image3", "IMAGE")],
          outputs=[("CONDITIONING", "CONDITIONING")], title="negativo (vazio, mesmas imagens)")
 widget_in(qneg, "prompt", "STRING")
 for q in (qpos, qneg):
     conn(qclip, 0, q, "clip", "CLIP"); conn(qvae, 0, q, "vae", "VAE")
-    conn(ref_sc, 0, q, "image1", "IMAGE"); conn(ren, 0, q, "image2", "IMAGE"); conn(fsc, 0, q, "image3", "IMAGE")  # v80: image2 = silhueta cinza, não o normal map
+    conn(ref_sc, 0, q, "image1", "IMAGE"); conn(ren, 3, q, "image2", "IMAGE"); conn(fsc, 0, q, "image3", "IMAGE")
 conn(prompt, 0, qpos, "prompt", "STRING")
-qenc = N("VAEEncode", (X2 + 800, Y + 420), (260, 46), inputs=[("pixels", "IMAGE"), ("vae", "VAE")], outputs=[("LATENT", "LATENT")], title="latente = render (silhueta cinza no branco)")
-qlat = N("SetLatentNoiseMask", (X2 + 800, Y + 500), (260, 46), inputs=[("samples", "LATENT"), ("mask", "MASK")], outputs=[("LATENT", "LATENT")], title="só pinta a silhueta → enquadramento travado")
-conn(ren, 0, qenc, "pixels", "IMAGE"); conn(qvae, 0, qenc, "vae", "VAE"); conn(qenc, 0, qlat, "samples", "LATENT"); conn(ren, 1, qlat, "mask", "MASK")
+qlat = N("EmptySD3LatentImage", (X2 + 800, Y + 420), (260, 106), [768, 768, 1], outputs=[("LATENT", "LATENT")])
 qks = N("KSampler", (X2 + 800, Y), (300, 260), [201, "fixed", 4, 1.0, "euler", "simple", 1.0],
         inputs=[("model", "MODEL"), ("positive", "CONDITIONING"), ("negative", "CONDITIONING"), ("latent_image", "LATENT")], outputs=[("LATENT", "LATENT")])
 qdec = N("VAEDecode", (X2 + 1340, Y), (280, 46), inputs=[("samples", "LATENT"), ("vae", "VAE")], outputs=[("IMAGE", "IMAGE")])
 conn(qcfg, 0, qks, "model", "MODEL"); conn(qpos, 0, qks, "positive", "CONDITIONING"); conn(qneg, 0, qks, "negative", "CONDITIONING"); conn(qlat, 0, qks, "latent_image", "LATENT")
 conn(qks, 0, qdec, "samples", "LATENT"); conn(qvae, 0, qdec, "vae", "VAE")
-pvB = N("PreviewImage", (X2 + 1660, Y), (420, 420), inputs=[("images", "IMAGE")], title="B — Qwen-Image-Edit Q3_K_S 768 inpaint (costas)")
+pvB = N("PreviewImage", (X2 + 1660, Y), (420, 420), inputs=[("images", "IMAGE")], title="B — Qwen-Image-Edit Q3_K_S 768 (costas)")
 svB = N("SaveImage", (X2 + 1660, Y + 460), (420, 100), ["3d/Lia/teste_costas_B_qwenedit"], inputs=[("images", "IMAGE")])
 conn(qdec, 0, pvB, "images", "IMAGE"); conn(qdec, 0, svB, "images", "IMAGE")
 
-N("MarkdownNote", (X1 - 720, -700), (680, 900), ["""# Teste A/B v3 — Klein 4B × Qwen-Image-Edit-2509 (costas da Lia)
+N("MarkdownNote", (X1 - 720, -700), (680, 900), ["""# Teste A/B — Klein 4B × Qwen-Image-Edit-2509 — CONCLUÍDO (v81)
 
-Rodada 2 (relatório 1032, Q3_K_S 768): cinto dourado e bordado da barra **voltaram**; Q3 coube inteiro (8,7 GB) mas ainda 137 s/passo (9 min a vista — o T4 desquantiza devagar). Dois problemas restantes:
-1. **enquadramento mudou** (Qwen cortou cabeça e pés, aproximou o zoom) — inaceitável para projeção, o pixel tem de bater com o render;
-2. ainda **sombra de dobras** na saia e brilho nas mangas (normal map como imagem 2 induz "render 3D").
+Este arquivo está na configuração da **rodada 2** (relatório 1032), a melhor que o Qwen alcançou. Fica como referência; **não vai para o `Lia_Texturizar`**.
 
-## O que mudou nesta v3
-- latente = **VAEEncode do render** (silhueta cinza no fundo branco) + `SetLatentNoiseMask` da silhueta → o fundo fica fixo e trava o enquadramento (igual ao fluxo do Klein no `Lia_Texturizar`).
-- **imagem 2 = a própria silhueta cinza**, não o normal map. Pose vem da silhueta; sem normal, menos sombra.
-- render em 768 para casar com o latente.
-- prompt: "preencha a silhueta toda, mesmo enquadramento e tamanho".
+## Resultado das 3 rodadas (costas, T4)
+| | Klein 4B | Qwen-Edit Q3/Q4 |
+|---|---|---|
+| tempo/vista | 30–40 s | 9–17 min |
+| fidelidade a tecido/cabelo | boa, chapada (albedo certo) | ótima, mas com sombra de dobras cozida |
+| ornamentos (cinto, barra) | manteve sempre | perdeu (r1), voltou com crop (r2) |
+| enquadramento = render | sim | **não** (r2 cortou cabeça/pés) |
+| inpaint com máscara (`SetLatentNoiseMask`) | funciona | **quebra** (r3: cabelo flutuando, ombros pretos) |
+
+O Qwen-Image-Edit não é modelo de inpaint: com máscara ele perde a coerência, e sem máscara muda o enquadramento — nos dois casos a projeção erra o mesh. Somado aos 9 min por vista no T4, fica fora do pipeline sequencial.
+
+## O que ficou de aprendizado (aplicado no Texturizar)
+- Na rodada 3 o Klein também ficou cinza: latente iniciado do render cinza + imagem 2 cinza + "flat colors" → ele copiou o cinza. **Normal map como imagem 2 é necessário** para o Klein.
+- A referência usada (`v_00067_.png`) já é um desenho limpo das costas: quando existe desenho 2D da vista, o pintor só reproduz — a fidelidade vem da referência, não do modelo.
 
 ## Drive
-Nada novo (Q3_K_S 9,0 · encoder 9,4 · VAE 0,25 · LoRA 0,85 já baixados). Pode apagar o Q4_K_M (13,1 GB).
-
-## Critério para migrar o `Lia_Texturizar`
-Enquadramento idêntico ao render + cinto/barra + sombra aceitável. Tempo já é conhecido: ~9 min/vista → só as **4 vistas principais** vão para o Qwen (36 min); inclinadas ficam no Klein (≈ 40 s cada).
+Pode apagar: `unet/Qwen-Image-Edit-2509-Q3_K_S.gguf` (9,0), `unet/…Q4_K_M.gguf` (13,1), `text_encoders/qwen_2.5_vl_7b_fp8_scaled` (9,4), `vae/qwen_image_vae` (0,25), `loras/…Lightning…` (0,85) → **−32,6 GB**. Só mantenha se quiser refazer o teste.
 """], title="LEIA-ME", color=BROWN)
 
 groups = [

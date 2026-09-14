@@ -5159,3 +5159,15 @@ e pés) e ainda pintou sombra de dobras. v3: latente = `VAEEncode(render)` +
 ao Klein no Texturizar); imagem 2 = silhueta cinza em vez do normal map; render
 768. Sem download novo. Plano se passar: Qwen só nas 4 vistas principais do
 `Lia_Texturizar` (~36 min), inclinadas continuam no Klein.
+
+## v81 — teste Qwen-Image-Edit CONCLUÍDO: não migra (relatório `relatorio_20260914_1141`)
+Rodada 3 (latente = render cinza + máscara de silhueta; imagem 2 = silhueta):
+os dois pioraram. Klein copiou o cinza (sem normal map e com "flat colors" ele
+não tem de onde tirar a cor); Qwen com `SetLatentNoiseMask` perdeu coerência
+(cabelo flutuando, ombros pretos) — não é modelo de inpaint. Balanço: Qwen só
+funciona sem máscara, e sem máscara muda o enquadramento (r2), além de 9–17
+min/vista no T4 e sombra cozida. **Klein 4B continua no `Lia_Texturizar`.**
+`Lia_Teste_QwenEdit.json` volta à configuração da rodada 2 e fica como
+registro. Modelos Qwen podem ser apagados do Drive (−32,6 GB). Aprendizado:
+a referência usada já era um desenho limpo das costas — o ganho de qualidade
+está em ter desenhos 2D por vista (frente/costas/lados), não no pintor.
