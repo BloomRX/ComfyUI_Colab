@@ -257,15 +257,21 @@ wneg = N("CLIPTextEncode", (XB, 310), (400, 120),
           "extra face, extra eyes, text, watermark, signature, multiple views, gradient background"],
          inputs=[("clip", "CLIP")], outputs=[("CONDITIONING", "CONDITIONING")], title="WAI negativo")
 conn(ckpt, 1, wpos, "clip", "CLIP"); conn(ckpt, 1, wneg, "clip", "CLIP")
+cnl = N("ControlNetLoader", (XB, 470), (400, 58), ["controlnet-union-sdxl-1.0.safetensors"], outputs=[("CONTROL_NET", "CONTROL_NET")],
+        props={"models": [{"name": "controlnet-union-sdxl-1.0.safetensors", "url": HF + "xinsir/controlnet-union-sdxl-1.0/resolve/main/diffusion_pytorch_model_promax.safetensors", "directory": "controlnet"}]},
+        title="ControlNet Union SDXL (2,5 GB)")
+cnt = N("SetUnionControlNetType", (XB, 560), (400, 58), ["normal"], inputs=[("control_net", "CONTROL_NET")], outputs=[("CONTROL_NET", "CONTROL_NET")],
+        title="tipo = normal (o normal map do render trava a geometria)")
+conn(cnl, 0, cnt, "control_net", "CONTROL_NET")
 
 FIX_VIEWS = [
     # az, el, zoom, offset_y, denoise, weight, texto, nome
-    (0, 0, 1.0, 0.0, 0.35, 1.0, "full body, front view, standing, arms at sides", "F1 Frente"),
-    (180, 0, 1.0, 0.0, 0.35, 1.0, "full body, from behind, back of the head is hair only", "F2 Costas"),
-    (90, 0, 1.0, 0.0, 0.35, 0.8, "full body, from side, profile", "F3 Esquerda"),
-    (270, 0, 1.0, 0.0, 0.35, 0.8, "full body, from side, profile", "F4 Direita"),
+    (0, 0, 1.0, 0.0, 0.30, 1.0, "full body, front view, standing, arms at sides", "F1 Frente"),
+    (180, 0, 1.0, 0.0, 0.30, 1.0, "full body, from behind, back of the head is hair only", "F2 Costas"),
+    (90, 0, 1.0, 0.0, 0.30, 0.8, "full body, from side, profile", "F3 Esquerda"),
+    (270, 0, 1.0, 0.0, 0.30, 0.8, "full body, from side, profile", "F4 Direita"),
     # rosto POR ÚLTIMO: com replace, quem vem depois ganha — na v82 a frente 1x sobrescrevia o rosto 3x (olhos ficaram escuros)
-    (0, 0, 3.0, 0.42, 0.45, 1.5, "close-up of the face and hair, looking at viewer, detailed red eyes, symmetrical face, small mouth", "F5 Rosto"),
+    (0, 0, 3.0, 0.42, 0.40, 1.5, "close-up of the face and hair, looking at viewer, detailed red eyes, symmetrical face, small mouth", "F5 Rosto"),
 ]
 fix_state = prev_state
 for j, (az, el, zm, oy, dn, wgt, vtxt, name) in enumerate(FIX_VIEWS):
@@ -285,10 +291,16 @@ for j, (az, el, zm, oy, dn, wgt, vtxt, name) in enumerate(FIX_VIEWS):
     conn(ckpt, 1, vtn, "clip", "CLIP")
     ccat = N("ConditioningConcat", (x0 + 370, y + 270), (300, 46), inputs=[("conditioning_to", "CONDITIONING"), ("conditioning_from", "CONDITIONING")], outputs=[("CONDITIONING", "CONDITIONING")])
     conn(wpos, 0, ccat, "conditioning_to", "CONDITIONING"); conn(vtn, 0, ccat, "conditioning_from", "CONDITIONING")
+    cna = N("ControlNetApplyAdvanced", (x0 + 370, y + 340), (300, 190), [0.85, 0.0, 0.9],
+            inputs=[("positive", "CONDITIONING"), ("negative", "CONDITIONING"), ("control_net", "CONTROL_NET"), ("image", "IMAGE")],
+            outputs=[("positive", "CONDITIONING"), ("negative", "CONDITIONING")], title="ControlNet normal 0,85: contorno do cabelo/rosto = o do mesh")
+    opt_in(cna, "vae", "VAE")
+    conn(ccat, 0, cna, "positive", "CONDITIONING"); conn(wneg, 0, cna, "negative", "CONDITIONING"); conn(cnt, 0, cna, "control_net", "CONTROL_NET")
+    conn(renf, 3, cna, "image", "IMAGE"); conn(ckpt, 2, cna, "vae", "VAE")
     imc = N("InpaintModelConditioning", (x0 + 710, y), (300, 150), [True],
             inputs=[("positive", "CONDITIONING"), ("negative", "CONDITIONING"), ("vae", "VAE"), ("pixels", "IMAGE"), ("mask", "MASK")],
             outputs=[("positive", "CONDITIONING"), ("negative", "CONDITIONING"), ("latent", "LATENT")], title="inpaint 9 canais (modelo de inpaint de verdade)")
-    conn(ccat, 0, imc, "positive", "CONDITIONING"); conn(wneg, 0, imc, "negative", "CONDITIONING"); conn(ckpt, 2, imc, "vae", "VAE")
+    conn(cna, 0, imc, "positive", "CONDITIONING"); conn(cna, 1, imc, "negative", "CONDITIONING"); conn(ckpt, 2, imc, "vae", "VAE")
     conn(renf, 0, imc, "pixels", "IMAGE"); conn(shrink, 0, imc, "mask", "MASK")
     ks = N("KSampler", (x0 + 710, y + 190), (300, 262), [300 + j, "fixed", 24, 4.5, "euler_ancestral", "normal", dn],
            inputs=[("model", "MODEL"), ("positive", "CONDITIONING"), ("negative", "CONDITIONING"), ("latent_image", "LATENT")], outputs=[("LATENT", "LATENT")],
@@ -302,7 +314,7 @@ for j, (az, el, zm, oy, dn, wgt, vtxt, name) in enumerate(FIX_VIEWS):
     conn(renf, 0, compf, "destination", "IMAGE"); conn(decf, 0, compf, "source", "IMAGE"); conn(shrink, 0, compf, "mask", "MASK")
     pvf = N("PreviewImage", (x0 + 1050, y + 260), (280, 300), inputs=[("images", "IMAGE")], title=f"{name}: depois (WAI)")
     conn(compf, 0, pvf, "images", "IMAGE")
-    accf = N("LiaProjectTextureAccumulate", (x0 + 1370, y), (340, 380), [float(az), float(el), 1.1, 2048, wgt, 4.0, 0.25, 0.015, False, False, zm, oy, True],
+    accf = N("LiaProjectTextureAccumulate", (x0 + 1370, y), (340, 380), [float(az), float(el), 1.1, 2048, wgt, 4.0, 0.35, 0.015, False, False, zm, oy, True],
              inputs=[("mesh", "MESH"), ("image", "IMAGE")],
              outputs=[("state", "LIA_TEXSTATE"), ("base_color", "IMAGE"), ("coverage", "IMAGE"), ("info", "STRING")],
              cnr=LIA, title=f"{name}: SUBSTITUI no atlas (replace)", color=PURPLE)
@@ -372,6 +384,10 @@ Depois das 8 vistas Klein (que garantem **cobertura**), 5 passes com o **Waifu-I
 - Rosto torto/duplicado → baixe o denoise F5 para 0,3 ou troque o seed (304). Trocou demais a roupa → denoise F1–F4 0,25. O rosto é o **último** passe de propósito (replace: o último ganha).
 - Não quer o passe → Ctrl+B nos 5 `KSampler` do grupo 4b (o `Finalize` continua recebendo o estado, só que sem correção)… ou mais simples: ligue o `Finalize.state` direto no último `Accumulate` do grupo 4.
 
+### v3.1 (v86)
+Relatório 1410: as imagens do WAI ficaram ótimas, mas no GLB apareceu **pele no cabelo e mechas cortadas**. Causa: sem guia de geometria, o WAI (denoise 0,35–0,45) moveu franja, contorno do cabelo e olhos alguns pixels; a projeção então colocou pele onde o mesh é cabelo. Correção: **ControlNet Union tipo `normal`** (0,85, até 90 % dos passos) alimentado pelo normal map do `Render Textured View` — o WAI agora redesenha cor/linha **dentro** do contorno do mesh. Denoise 0,30 (rosto 0,40) e `min_cos` 0,35 no replace (não substitui em ângulo raso, que era onde saíam os cortes).
+- Ainda deslocou? ControlNet 1,0 e denoise 0,25. Ficou "duro"/sem detalhe? ControlNet 0,7.
+
 ## Ajustes
 - Uma vista saiu ruim → mude só o seed daquela vista (`RandomNoise`, fixos 200–207); as anteriores ficam em cache.
 - Conferência (magenta) mostra texels que **nenhuma** vista viu; se sobrar, adicione uma vista copiando um bloco (render → Klein → accumulate) e encadeando o `state`.
@@ -379,7 +395,7 @@ Depois das 8 vistas Klein (que garantem **cobertura**), 5 passes com o **Waifu-I
 - `view_weight`: frente/costas 1.0, lados 0.8, cima/baixo 0.4–0.5 (só completam, não sobrescrevem).
 - `grow_mask_px` 12: borda extra para o Klein fundir o novo com o antigo; suba se aparecer costura, desça se ele "repintar" demais.
 
-**T4**: 8 gerações Klein 4B (~40 s cada) + 5 passes WAI (SDXL 24 passos ≈ 50–70 s cada) + bakes ≈ **15–20 min**. Drive: +6,9 GB `Waifu-Inpaint-XL` (gated — HF_TOKEN) + IP-Adapter/CLIP-ViT-H (3,4 GB, já usados nos WaifuSurvivors). Nós próprios MIT em `custom_nodes/ComfyUI-Lia-TextureProjection` (torch puro).
+**T4**: 8 gerações Klein 4B (~40 s cada) + 5 passes WAI (SDXL 24 passos ≈ 50–70 s cada) + bakes ≈ **15–20 min**. Drive: +6,9 GB `Waifu-Inpaint-XL` (gated — HF_TOKEN) + IP-Adapter/CLIP-ViT-H (3,4 GB) + ControlNet Union SDXL (2,5 GB) — os três já usados nos WaifuSurvivors. Nós próprios MIT em `custom_nodes/ComfyUI-Lia-TextureProjection` (torch puro).
 """], title="LEIA-ME", color=BROWN)
 N("MarkdownNote", (X1 - 720, 260), (680, 520), ["""## Comparação com o Modddif
 

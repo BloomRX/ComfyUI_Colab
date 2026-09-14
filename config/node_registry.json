@@ -790,6 +790,13 @@
         "dir": "ipadapter",
         "size": "848 MB",
         "url": "https://huggingface.co/h94/IP-Adapter/resolve/main/sdxl_models/ip-adapter-plus_sdxl_vit-h.safetensors"
+      },
+      {
+        "file": "controlnet-union-sdxl-1.0.safetensors",
+        "dir": "controlnet",
+        "size": "2.51 GB",
+        "url": "https://huggingface.co/xinsir/controlnet-union-sdxl-1.0/resolve/main/diffusion_pytorch_model_promax.safetensors",
+        "note": "promax = versao com mais modos (openpose, canny, depth...). O arquivo na origem chama diffusion_pytorch_model_promax.safetensors; renomeado no destino para bater com o dropdown."
       }
     ]
   },

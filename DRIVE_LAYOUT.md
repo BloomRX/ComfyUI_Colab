@@ -5214,3 +5214,13 @@ Correção: no grupo 4b a ordem agora é frente → costas → esq → dir → *
 (com `replace` o último ganha; antes a frente 1× apagava o rosto 3×).
 Workflows: só `WaifuSurvivors_Concept` fica ativo; Base/CharacterSheet/TrocarRoupa
 voltaram para `Workflows_arquivo/` a pedido.
+
+## v86 — passe WAI com ControlNet normal (pele no cabelo / cortes)
+Relatório 1410 no GLB: pele no cabelo e mechas cortadas. O WAI redesenhava
+franja/contorno alguns pixels fora do mesh; a projeção colocava pele onde o
+mesh é cabelo. Correção no grupo 4b: `ControlNetLoader` union SDXL +
+`SetUnionControlNetType normal` + `ControlNetApplyAdvanced` 0,85 (0–90 %)
+alimentado pelo normal map do próprio `Render Textured View` (contorno = mesh).
+Denoise 0,30 (rosto 0,40); `min_cos` 0,35 no replace. 309 nós / 603 links.
+Modelo: `controlnet/controlnet-union-sdxl-1.0.safetensors` (2,5 GB, o mesmo
+do CharacterSheet — provavelmente já no Drive).
