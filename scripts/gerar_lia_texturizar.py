@@ -75,13 +75,13 @@ load3d = N("Load3D", (X1, -700), (420, 560), ["Lia_trellis2_00001_.glb", "upload
                     ("recording_video", "VIDEO"), ("model_3d", "FILE_3D"), ("model_3d_info", "LOAD3D_MODEL_INFO")],
            title="GLB da Lia (Trellis2 / Pixal3D)")
 get = N("Get3DComponents", (X1 + 460, -700), (260, 46), inputs=[("model_3d", "FILE_3D")], outputs=[("mesh", "MESH")], title="mesh ALTO (original)")
-remesh = N("RemeshMesh", (X1 + 460, -600), (340, 300), [512, "udf", False, False, False, 1, 0, False, 3, 0.01, 20000000],
-           inputs=[("mesh", "MESH")], outputs=[("mesh", "MESH")],
-           title="Remesh (triângulos uniformes → ilhas UV grandes; Ctrl+B para pular)")
+remesh = N("RemeshMesh", (X1 + 460, -600), (340, 300), [768, "udf", False, False, False, 1, 0, False, 3, 0.01, 20000000],
+           inputs=[("mesh", "MESH")], outputs=[("mesh", "MESH")], mode=BYPASS,
+           title="Remesh — DESLIGADO (v88). Ligue (Ctrl+B) só se o mesh vier cru, sem retopo; destrói capas/tecidos finos")
 weld = N("WeldVertices", (X1 + 460, -310), (340, 82), [1e-5, 0.0], inputs=[("mesh", "MESH")], outputs=[("mesh", "MESH")],
          title="Weld (arestas duplicadas → normais suaves contínuas)")
-deci = N("DecimateMesh", (X1 + 460, -200), (340, 106), [30000, "midpoint"], inputs=[("mesh", "MESH")], outputs=[("mesh", "MESH")],
-         title="Decimate → contagem de faces de jogo")
+deci = N("DecimateMesh", (X1 + 460, -200), (340, 106), [60000, "qem"], inputs=[("mesh", "MESH")], outputs=[("mesh", "MESH")],
+         title="Decimate 60 k QEM (midpoint 30 k fazia silhueta em serra)")
 unwrap = N("UnwrapMesh", (X1 + 460, -70), (340, 130), ["pec", 2048, 12, 0.001], inputs=[("mesh", "MESH")], outputs=[("mesh", "MESH")],
            title="UV NOVO — pec (adaptive deu 4266 ilhas em 82 s)")
 widget_in(unwrap, "resolution", "INT")
@@ -296,10 +296,13 @@ Relatórios 1410 e 1514: as **imagens** do WAI ficavam lindas, mas no **GLB** ap
 O que **realmente** melhorou o rosto foi a resolução: por isso a **vista 9 "Rosto (zoom 3x)"** — mesma câmera frontal, quadro 3× menor centrado na cabeça (`zoom` 3, `offset_y` 0,42), o **Klein** repinta a cabeça inteira (máscara = silhueta) com image 1 = Lia 2D, image 2 = normal map em zoom, image 3 = frente já pintada, e o `Accumulate` **substitui** (`replace`, `min_cos` 0,35) o rosto de 150 px por um de ~700 px no mesmo atlas.
 - Rosto saiu diferente da 2D → troque o seed da vista 9 (208) ou aumente `offset_y` se a cabeça não estiver centrada no preview "o que já existe".
 
+### v4.1 (v88) — mesh "serrilhado" (relatório 1634)
+No mesh novo (capa fina, chifres, pernas finas) a silhueta saiu em **triângulos pontudos** já no render da vista 1 — o problema era o **retopo**, não a pintura: `Remesh udf 512` transforma tecido mais fino que 1 voxel em casca dupla furada, e `Decimate midpoint 30 k` termina de destruir. O GLB que vem do `Lia_Trellis2_Image2Mesh` **já é retopo** (150 k faces + UV), então: Remesh **desligado** por padrão (Ctrl+B para ligar, agora em 768), Decimate **60 k QEM**. Confira sempre o preview "1 Frente: o que já existe": a silhueta cinza tem de parecer a personagem; se estiver em serra, não adianta rodar o resto.
+
 ## Ajustes
 - Uma vista saiu ruim → mude só o seed daquela vista (`RandomNoise`, fixos 200–207); as anteriores ficam em cache.
 - Conferência (magenta) mostra texels que **nenhuma** vista viu; se sobrar, adicione uma vista copiando um bloco (render → Klein → accumulate) e encadeando o `state`.
-- Faces de jogo: `DecimateMesh` 15 k (mobile) / 30 k (PC/VRM) / 80 k (alta).
+- Faces de jogo: `DecimateMesh` 30 k (mobile) / 60 k (PC/VRM) / 120 k (alta), sempre QEM.
 - `view_weight`: frente/costas 1.0, lados 0.8, cima/baixo 0.4–0.5 (só completam, não sobrescrevem).
 - `grow_mask_px` 12: borda extra para o Klein fundir o novo com o antigo; suba se aparecer costura, desça se ele "repintar" demais.
 

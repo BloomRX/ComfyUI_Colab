@@ -17,6 +17,8 @@ Os relatórios completos (log, JSON do grafo, PNGs; ~35 MB) ficaram no históric
 
 | 1514 | v3.1 (v86) + ControlNet normal 0,85 | 31m18 | 8,9 GB | Pior: ControlNet normal fez o WAI pintar **olhos semicerrados** (o mesh TRELLIS não tem olhos → normal map liso). Pele no cabelo continuou. **Passe WAI removido (v87)**; o rosto passa a ser uma 9ª vista Klein em zoom 3× com replace |
 
+| 1634 | v4 (v87) + mesh novo (chifres, capa fina) | 20m06 | 7,0 GB | Silhueta em **serra** já no render da vista 1: `Remesh udf 512` + `Decimate midpoint 30k` destruíram capa/pernas finas (24 663 faces, 2289 ilhas). Pintura irrelevante. → v88: Remesh desligado por padrão, Decimate 60k QEM |
+
 Aprendizados fixos: Klein 4B 4 passos ≈ 30–40 s por vista 1024²; Remesh+Decimate+Unwrap pec ≈ 2 min;
 o rosto sai com ~150 px no atlas (motivo do passe de correção em zoom, v82).
 

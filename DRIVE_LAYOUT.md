@@ -5234,3 +5234,11 @@ do `workflow_models`). No lugar: vista **9 "Rosto (zoom 3x)"** no próprio grupo
 4 — Klein, câmera frontal `zoom 3` / `offset_y 0.42`, máscara = silhueta
 (repinta a cabeça), refs = Lia 2D + normal map em zoom + frente pintada,
 `Accumulate` com `replace` e `min_cos 0.35`. 266 nós / 491 links; T4 ≈ 10–12 min.
+
+## v88 — mesh em serra (relatório 1634): Remesh desligado, Decimate 60 k QEM
+O GLB novo (capa fina, chifres) chegou ao render da vista 1 como silhueta de
+triângulos pontudos: `Remesh udf 512` fura tecido mais fino que 1 voxel e
+`Decimate midpoint 30 k` termina o estrago (24 663 faces). Como o GLB do
+`Lia_Trellis2_Image2Mesh` já vem com retopo (150 k + UV), o Remesh passa a
+**bypass** por padrão (768 se ligar) e o Decimate vira **60 k QEM**. Nenhuma
+mudança de pintura — o passo 9 (rosto zoom) ainda não foi avaliado de verdade.
