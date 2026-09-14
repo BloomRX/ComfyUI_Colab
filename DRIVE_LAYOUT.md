@@ -5149,3 +5149,13 @@ frente (`ImageScale 1024 center` → `ImageCrop 1024×640 @ y 384`, com preview
 para conferir). Drive: +9,0 GB (`unet/Qwen-Image-Edit-2509-Q3_K_S.gguf`); o
 Q4_K_M pode ser apagado. Critério para migrar o `Lia_Texturizar`: sem sombra de
 dobra, cinto/barra presentes, ≤ 4 min por vista.
+
+## v80 — `Lia_Teste_QwenEdit` v3 (relatório `relatorio_20260914_1032`)
+Rodada 2 (Q3_K_S, 768, crop de ornamentos): cinto e bordado da barra voltaram;
+Q3 carregou inteiro (8,7 GB) mas 137 s/passo → 9 min/vista (desquantização no
+T4, não é offload). Problemas: o Qwen **mudou o enquadramento** (cortou cabeça
+e pés) e ainda pintou sombra de dobras. v3: latente = `VAEEncode(render)` +
+`SetLatentNoiseMask(silhueta)` (fundo branco fixo trava o enquadramento, igual
+ao Klein no Texturizar); imagem 2 = silhueta cinza em vez do normal map; render
+768. Sem download novo. Plano se passar: Qwen só nas 4 vistas principais do
+`Lia_Texturizar` (~36 min), inclinadas continuam no Klein.

@@ -1,8 +1,8 @@
 {
-  "id": "733de19e-1cfa-468e-8a55-69e8b366b6f7",
+  "id": "7cbb1f33-399b-45c4-8084-16258bfb1901",
   "revision": 0,
-  "last_node_id": 54,
-  "last_link_id": 69,
+  "last_node_id": 55,
+  "last_link_id": 73,
   "nodes": [
     {
       "id": 1,
@@ -550,12 +550,18 @@
         {
           "name": "image",
           "type": "IMAGE",
-          "links": []
+          "links": [
+            54,
+            59,
+            62
+          ]
         },
         {
           "name": "inpaint_mask",
           "type": "MASK",
-          "links": []
+          "links": [
+            65
+          ]
         },
         {
           "name": "silhouette",
@@ -567,9 +573,7 @@
           "type": "IMAGE",
           "links": [
             11,
-            14,
-            54,
-            59
+            14
           ]
         },
         {
@@ -585,7 +589,7 @@
       "widgets_values": [
         180.0,
         0.0,
-        1024,
+        768,
         1.1,
         12,
         "grey"
@@ -655,7 +659,7 @@
         "ver": "0.16.3"
       },
       "widgets_values": [
-        "back view, seen from behind. Paint this exact character from image 1 onto the pose and silhouette of the normal map in image 2. Image 2 is only a pose and shape guide: do NOT copy its shading. Image 3 shows the character's ornaments up close: keep EVERY gold trim, the gold belt line around the waist and the embroidered border along the hem, continuous all the way around the back. Flat cel-shaded albedo texture for a game: uniform flat colors, no shadows, no folds shading, no highlights, no directional lighting, no ambient occlusion, no outlines. Plain white background. Same anime art style as image 1."
+        "back view, seen from behind. Paint this exact character from image 1 onto the pose and silhouette of the normal map in image 2. Image 2 is a flat grey silhouette of the pose: fill it completely, edge to edge, keep the exact same framing and size. Image 3 shows the character's ornaments up close: keep EVERY gold trim, the gold belt line around the waist and the embroidered border along the hem, continuous all the way around the back. Flat cel-shaded albedo texture for a game: uniform flat colors, no shadows, no folds shading, no highlights, no directional lighting, no ambient occlusion, no outlines. Plain white background. Same anime art style as image 1."
       ],
       "title": "Prompt (igual para os dois)",
       "color": "#232",
@@ -1887,7 +1891,8 @@
           "links": [
             52,
             57,
-            67
+            63,
+            71
           ]
         }
       ],
@@ -1972,7 +1977,7 @@
           "name": "MODEL",
           "type": "MODEL",
           "links": [
-            62
+            66
           ]
         }
       ],
@@ -2040,7 +2045,7 @@
           "name": "CONDITIONING",
           "type": "CONDITIONING",
           "links": [
-            63
+            67
           ]
         }
       ],
@@ -2052,7 +2057,7 @@
       "widgets_values": [
         ""
       ],
-      "title": "positivo (img1 ref, img2 normal, img3 frente)"
+      "title": "positivo (img1 ref, img2 silhueta, img3 ornamentos)"
     },
     {
       "id": 48,
@@ -2108,7 +2113,7 @@
           "name": "CONDITIONING",
           "type": "CONDITIONING",
           "links": [
-            64
+            68
           ]
         }
       ],
@@ -2124,41 +2129,92 @@
     },
     {
       "id": 49,
-      "type": "EmptySD3LatentImage",
+      "type": "VAEEncode",
       "pos": [
         -700,
         720
       ],
       "size": [
         260,
-        106
+        46
       ],
       "flags": {},
       "order": 49,
       "mode": 0,
-      "inputs": [],
+      "inputs": [
+        {
+          "name": "pixels",
+          "type": "IMAGE",
+          "link": 62
+        },
+        {
+          "name": "vae",
+          "type": "VAE",
+          "link": 63
+        }
+      ],
       "outputs": [
         {
           "name": "LATENT",
           "type": "LATENT",
           "links": [
-            65
+            64
           ]
         }
       ],
       "properties": {
-        "Node name for S&R": "EmptySD3LatentImage",
+        "Node name for S&R": "VAEEncode",
         "cnr_id": "comfy-core",
         "ver": "0.16.3"
       },
-      "widgets_values": [
-        768,
-        768,
-        1
-      ]
+      "widgets_values": [],
+      "title": "latente = render (silhueta cinza no branco)"
     },
     {
       "id": 50,
+      "type": "SetLatentNoiseMask",
+      "pos": [
+        -700,
+        800
+      ],
+      "size": [
+        260,
+        46
+      ],
+      "flags": {},
+      "order": 50,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "samples",
+          "type": "LATENT",
+          "link": 64
+        },
+        {
+          "name": "mask",
+          "type": "MASK",
+          "link": 65
+        }
+      ],
+      "outputs": [
+        {
+          "name": "LATENT",
+          "type": "LATENT",
+          "links": [
+            69
+          ]
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "SetLatentNoiseMask",
+        "cnr_id": "comfy-core",
+        "ver": "0.16.3"
+      },
+      "widgets_values": [],
+      "title": "só pinta a silhueta → enquadramento travado"
+    },
+    {
+      "id": 51,
       "type": "KSampler",
       "pos": [
         -700,
@@ -2169,28 +2225,28 @@
         260
       ],
       "flags": {},
-      "order": 50,
+      "order": 51,
       "mode": 0,
       "inputs": [
         {
           "name": "model",
           "type": "MODEL",
-          "link": 62
+          "link": 66
         },
         {
           "name": "positive",
           "type": "CONDITIONING",
-          "link": 63
+          "link": 67
         },
         {
           "name": "negative",
           "type": "CONDITIONING",
-          "link": 64
+          "link": 68
         },
         {
           "name": "latent_image",
           "type": "LATENT",
-          "link": 65
+          "link": 69
         }
       ],
       "outputs": [
@@ -2198,7 +2254,7 @@
           "name": "LATENT",
           "type": "LATENT",
           "links": [
-            66
+            70
           ]
         }
       ],
@@ -2218,7 +2274,7 @@
       ]
     },
     {
-      "id": 51,
+      "id": 52,
       "type": "VAEDecode",
       "pos": [
         -160,
@@ -2229,18 +2285,18 @@
         46
       ],
       "flags": {},
-      "order": 51,
+      "order": 52,
       "mode": 0,
       "inputs": [
         {
           "name": "samples",
           "type": "LATENT",
-          "link": 66
+          "link": 70
         },
         {
           "name": "vae",
           "type": "VAE",
-          "link": 67
+          "link": 71
         }
       ],
       "outputs": [
@@ -2248,8 +2304,8 @@
           "name": "IMAGE",
           "type": "IMAGE",
           "links": [
-            68,
-            69
+            72,
+            73
           ]
         }
       ],
@@ -2261,7 +2317,7 @@
       "widgets_values": []
     },
     {
-      "id": 52,
+      "id": 53,
       "type": "PreviewImage",
       "pos": [
         160,
@@ -2272,13 +2328,13 @@
         420
       ],
       "flags": {},
-      "order": 52,
+      "order": 53,
       "mode": 0,
       "inputs": [
         {
           "name": "images",
           "type": "IMAGE",
-          "link": 68
+          "link": 72
         }
       ],
       "outputs": [],
@@ -2288,10 +2344,10 @@
         "ver": "0.16.3"
       },
       "widgets_values": [],
-      "title": "B — Qwen-Image-Edit Q3_K_S 768 (costas)"
+      "title": "B — Qwen-Image-Edit Q3_K_S 768 inpaint (costas)"
     },
     {
-      "id": 53,
+      "id": 54,
       "type": "SaveImage",
       "pos": [
         160,
@@ -2302,13 +2358,13 @@
         100
       ],
       "flags": {},
-      "order": 53,
+      "order": 54,
       "mode": 0,
       "inputs": [
         {
           "name": "images",
           "type": "IMAGE",
-          "link": 69
+          "link": 73
         }
       ],
       "outputs": [],
@@ -2322,7 +2378,7 @@
       ]
     },
     {
-      "id": 54,
+      "id": 55,
       "type": "MarkdownNote",
       "pos": [
         -3320,
@@ -2333,7 +2389,7 @@
         900
       ],
       "flags": {},
-      "order": 54,
+      "order": 55,
       "mode": 0,
       "inputs": [],
       "outputs": [],
@@ -2343,7 +2399,7 @@
         "ver": "0.16.3"
       },
       "widgets_values": [
-        "# Teste A/B v2 — Klein 4B × Qwen-Image-Edit-2509 (costas da Lia)\n\nRodada 1 (relatório 0919, Q4_K_M, 1024): Qwen preservou tecido/cabelo muito melhor, mas (a) pintou **sombra das dobras** (luz cozida no albedo — ruim para VRM), (b) perdeu o **cinto dourado e o bordado da barra**, (c) levou **17 min** porque o Q4 não coube na VRAM (200 s/passo).\n\n## O que mudou nesta v2\n- **Q3_K_S** (9,0 GB) → cabe inteiro nos ~9,6 GB usáveis do T4; meta: < 1 min/passo.\n- latente **768²** (VRAM) — o Klein continua em 1024 para comparar com a rodada anterior.\n- prompt: \"image 2 é só guia de pose, não copie o sombreado\"; \"mantenha TODA linha dourada da cintura e o bordado da barra\"; \"flat cel-shaded albedo\".\n- **imagem 3 = crop cintura→barra** da frente 2D (o encoder VL vê as imagens em 384²; a frente inteira apagava o ornamento). Confira no preview se cintura e barra aparecem; se a sua imagem tiver outro enquadramento, ajuste `y`/`height` no `ImageCrop`.\n\n## Espaço no Drive\n| arquivo | pasta | GB |\n|---|---|---|\n| Qwen-Image-Edit-2509-**Q3_K_S**.gguf | unet | 9,0 |\n| qwen_2.5_vl_7b_fp8_scaled.safetensors | text_encoders | 9,4 (já baixado) |\n| qwen_image_vae.safetensors | vae | 0,25 (já) |\n| Lightning 4 passos bf16 | loras | 0,85 (já) |\n\nO `Q4_K_M` (13,1 GB) pode ser apagado de `models/unet` depois deste teste.\n\n## Critério\n- B sem sombra de dobra + cinto/barra presentes + ≤ 4 min → migro as 4 vistas principais do `Lia_Texturizar` para o Qwen (inclinadas ficam no Klein).\n- Se o Q3 perder muito detalhe, próximo passo é Q4_K_S com latente 768 (12,2 GB, ainda parcial).\n"
+        "# Teste A/B v3 — Klein 4B × Qwen-Image-Edit-2509 (costas da Lia)\n\nRodada 2 (relatório 1032, Q3_K_S 768): cinto dourado e bordado da barra **voltaram**; Q3 coube inteiro (8,7 GB) mas ainda 137 s/passo (9 min a vista — o T4 desquantiza devagar). Dois problemas restantes:\n1. **enquadramento mudou** (Qwen cortou cabeça e pés, aproximou o zoom) — inaceitável para projeção, o pixel tem de bater com o render;\n2. ainda **sombra de dobras** na saia e brilho nas mangas (normal map como imagem 2 induz \"render 3D\").\n\n## O que mudou nesta v3\n- latente = **VAEEncode do render** (silhueta cinza no fundo branco) + `SetLatentNoiseMask` da silhueta → o fundo fica fixo e trava o enquadramento (igual ao fluxo do Klein no `Lia_Texturizar`).\n- **imagem 2 = a própria silhueta cinza**, não o normal map. Pose vem da silhueta; sem normal, menos sombra.\n- render em 768 para casar com o latente.\n- prompt: \"preencha a silhueta toda, mesmo enquadramento e tamanho\".\n\n## Drive\nNada novo (Q3_K_S 9,0 · encoder 9,4 · VAE 0,25 · LoRA 0,85 já baixados). Pode apagar o Q4_K_M (13,1 GB).\n\n## Critério para migrar o `Lia_Texturizar`\nEnquadramento idêntico ao render + cinto/barra + sombra aceitável. Tempo já é conhecido: ~9 min/vista → só as **4 vistas principais** vão para o Qwen (36 min); inclinadas ficam no Klein (≈ 40 s cada).\n"
       ],
       "title": "LEIA-ME",
       "color": "#432",
@@ -2778,7 +2834,7 @@
     [
       54,
       12,
-      3,
+      0,
       47,
       3,
       "IMAGE"
@@ -2818,7 +2874,7 @@
     [
       59,
       12,
-      3,
+      0,
       48,
       3,
       "IMAGE"
@@ -2841,65 +2897,97 @@
     ],
     [
       62,
-      46,
+      12,
       0,
-      50,
-      0,
-      "MODEL"
-    ],
-    [
-      63,
-      47,
-      0,
-      50,
-      1,
-      "CONDITIONING"
-    ],
-    [
-      64,
-      48,
-      0,
-      50,
-      2,
-      "CONDITIONING"
-    ],
-    [
-      65,
       49,
-      0,
-      50,
-      3,
-      "LATENT"
-    ],
-    [
-      66,
-      50,
-      0,
-      51,
-      0,
-      "LATENT"
-    ],
-    [
-      67,
-      44,
-      0,
-      51,
-      1,
-      "VAE"
-    ],
-    [
-      68,
-      51,
-      0,
-      52,
       0,
       "IMAGE"
     ],
     [
-      69,
+      63,
+      44,
+      0,
+      49,
+      1,
+      "VAE"
+    ],
+    [
+      64,
+      49,
+      0,
+      50,
+      0,
+      "LATENT"
+    ],
+    [
+      65,
+      12,
+      1,
+      50,
+      1,
+      "MASK"
+    ],
+    [
+      66,
+      46,
+      0,
       51,
       0,
+      "MODEL"
+    ],
+    [
+      67,
+      47,
+      0,
+      51,
+      1,
+      "CONDITIONING"
+    ],
+    [
+      68,
+      48,
+      0,
+      51,
+      2,
+      "CONDITIONING"
+    ],
+    [
+      69,
+      50,
+      0,
+      51,
+      3,
+      "LATENT"
+    ],
+    [
+      70,
+      51,
+      0,
+      52,
+      0,
+      "LATENT"
+    ],
+    [
+      71,
+      44,
+      0,
+      52,
+      1,
+      "VAE"
+    ],
+    [
+      72,
+      52,
+      0,
       53,
+      0,
+      "IMAGE"
+    ],
+    [
+      73,
+      52,
+      0,
+      54,
       0,
       "IMAGE"
     ]
