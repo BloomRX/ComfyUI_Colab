@@ -1,5 +1,5 @@
 {
-  "id": "4db92f35-154e-425b-a8f7-fefaa5774a61",
+  "id": "ff9b9440-0b0a-4442-aaa8-d21f5168d973",
   "revision": 0,
   "last_node_id": 302,
   "last_link_id": 577,
@@ -11030,10 +11030,10 @@
         1.1,
         0,
         "grey",
-        3.0,
-        0.42
+        1.0,
+        0.0
       ],
-      "title": "F1 Rosto: render da textura Klein (zoom 3)",
+      "title": "F1 Frente: render da textura Klein (zoom 1)",
       "color": "#223",
       "bgcolor": "#335"
     },
@@ -11065,7 +11065,7 @@
         "ver": "0.16.3"
       },
       "widgets_values": [],
-      "title": "F1 Rosto: antes"
+      "title": "F1 Frente: antes"
     },
     {
       "id": 238,
@@ -11146,9 +11146,9 @@
         "ver": "0.16.3"
       },
       "widgets_values": [
-        "close-up of the face and hair, looking at viewer, detailed eyes, symmetrical face, small mouth"
+        "full body, front view, standing, arms at sides"
       ],
-      "title": "F1 Rosto: tags da vista"
+      "title": "F1 Frente: tags da vista"
     },
     {
       "id": 240,
@@ -11323,9 +11323,9 @@
         4.5,
         "euler_ancestral",
         "normal",
-        0.45
+        0.35
       ],
-      "title": "F1 Rosto: denoise 0.45 (sobe = muda mais)"
+      "title": "F1 Frente: denoise 0.35 (sobe = muda mais)"
     },
     {
       "id": 243,
@@ -11450,7 +11450,7 @@
         "ver": "0.16.3"
       },
       "widgets_values": [],
-      "title": "F1 Rosto: depois (WAI)"
+      "title": "F1 Frente: depois (WAI)"
     },
     {
       "id": 246,
@@ -11522,17 +11522,17 @@
         0.0,
         1.1,
         2048,
-        1.5,
+        1.0,
         4.0,
         0.25,
         0.015,
         false,
         false,
-        3.0,
-        0.42,
+        1.0,
+        0.0,
         true
       ],
-      "title": "F1 Rosto: SUBSTITUI no atlas (replace)",
+      "title": "F1 Frente: SUBSTITUI no atlas (replace)",
       "color": "#323",
       "bgcolor": "#535"
     },
@@ -11600,7 +11600,7 @@
         "aux_id": "BloomRX/ComfyUI_Colab"
       },
       "widgets_values": [
-        0.0,
+        180.0,
         0.0,
         1024,
         1.1,
@@ -11609,7 +11609,7 @@
         1.0,
         0.0
       ],
-      "title": "F2 Frente: render da textura Klein (zoom 1)",
+      "title": "F2 Costas: render da textura Klein (zoom 1)",
       "color": "#223",
       "bgcolor": "#335"
     },
@@ -11641,7 +11641,7 @@
         "ver": "0.16.3"
       },
       "widgets_values": [],
-      "title": "F2 Frente: antes"
+      "title": "F2 Costas: antes"
     },
     {
       "id": 249,
@@ -11722,9 +11722,9 @@
         "ver": "0.16.3"
       },
       "widgets_values": [
-        "full body, front view, standing, arms at sides"
+        "full body, from behind, back of the head is hair only"
       ],
-      "title": "F2 Frente: tags da vista"
+      "title": "F2 Costas: tags da vista"
     },
     {
       "id": 251,
@@ -11901,7 +11901,7 @@
         "normal",
         0.35
       ],
-      "title": "F2 Frente: denoise 0.35 (sobe = muda mais)"
+      "title": "F2 Costas: denoise 0.35 (sobe = muda mais)"
     },
     {
       "id": 254,
@@ -12026,7 +12026,7 @@
         "ver": "0.16.3"
       },
       "widgets_values": [],
-      "title": "F2 Frente: depois (WAI)"
+      "title": "F2 Costas: depois (WAI)"
     },
     {
       "id": 257,
@@ -12094,7 +12094,7 @@
         "aux_id": "BloomRX/ComfyUI_Colab"
       },
       "widgets_values": [
-        0.0,
+        180.0,
         0.0,
         1.1,
         2048,
@@ -12108,7 +12108,7 @@
         0.0,
         true
       ],
-      "title": "F2 Frente: SUBSTITUI no atlas (replace)",
+      "title": "F2 Costas: SUBSTITUI no atlas (replace)",
       "color": "#323",
       "bgcolor": "#535"
     },
@@ -12176,7 +12176,7 @@
         "aux_id": "BloomRX/ComfyUI_Colab"
       },
       "widgets_values": [
-        180.0,
+        90.0,
         0.0,
         1024,
         1.1,
@@ -12185,7 +12185,7 @@
         1.0,
         0.0
       ],
-      "title": "F3 Costas: render da textura Klein (zoom 1)",
+      "title": "F3 Esquerda: render da textura Klein (zoom 1)",
       "color": "#223",
       "bgcolor": "#335"
     },
@@ -12217,7 +12217,7 @@
         "ver": "0.16.3"
       },
       "widgets_values": [],
-      "title": "F3 Costas: antes"
+      "title": "F3 Esquerda: antes"
     },
     {
       "id": 260,
@@ -12298,9 +12298,9 @@
         "ver": "0.16.3"
       },
       "widgets_values": [
-        "full body, from behind, back of the head is hair only"
+        "full body, from side, profile"
       ],
-      "title": "F3 Costas: tags da vista"
+      "title": "F3 Esquerda: tags da vista"
     },
     {
       "id": 262,
@@ -12477,7 +12477,7 @@
         "normal",
         0.35
       ],
-      "title": "F3 Costas: denoise 0.35 (sobe = muda mais)"
+      "title": "F3 Esquerda: denoise 0.35 (sobe = muda mais)"
     },
     {
       "id": 265,
@@ -12602,7 +12602,7 @@
         "ver": "0.16.3"
       },
       "widgets_values": [],
-      "title": "F3 Costas: depois (WAI)"
+      "title": "F3 Esquerda: depois (WAI)"
     },
     {
       "id": 268,
@@ -12670,11 +12670,11 @@
         "aux_id": "BloomRX/ComfyUI_Colab"
       },
       "widgets_values": [
-        180.0,
+        90.0,
         0.0,
         1.1,
         2048,
-        1.0,
+        0.8,
         4.0,
         0.25,
         0.015,
@@ -12684,7 +12684,7 @@
         0.0,
         true
       ],
-      "title": "F3 Costas: SUBSTITUI no atlas (replace)",
+      "title": "F3 Esquerda: SUBSTITUI no atlas (replace)",
       "color": "#323",
       "bgcolor": "#535"
     },
@@ -12752,7 +12752,7 @@
         "aux_id": "BloomRX/ComfyUI_Colab"
       },
       "widgets_values": [
-        90.0,
+        270.0,
         0.0,
         1024,
         1.1,
@@ -12761,7 +12761,7 @@
         1.0,
         0.0
       ],
-      "title": "F4 Esquerda: render da textura Klein (zoom 1)",
+      "title": "F4 Direita: render da textura Klein (zoom 1)",
       "color": "#223",
       "bgcolor": "#335"
     },
@@ -12793,7 +12793,7 @@
         "ver": "0.16.3"
       },
       "widgets_values": [],
-      "title": "F4 Esquerda: antes"
+      "title": "F4 Direita: antes"
     },
     {
       "id": 271,
@@ -12876,7 +12876,7 @@
       "widgets_values": [
         "full body, from side, profile"
       ],
-      "title": "F4 Esquerda: tags da vista"
+      "title": "F4 Direita: tags da vista"
     },
     {
       "id": 273,
@@ -13053,7 +13053,7 @@
         "normal",
         0.35
       ],
-      "title": "F4 Esquerda: denoise 0.35 (sobe = muda mais)"
+      "title": "F4 Direita: denoise 0.35 (sobe = muda mais)"
     },
     {
       "id": 276,
@@ -13178,7 +13178,7 @@
         "ver": "0.16.3"
       },
       "widgets_values": [],
-      "title": "F4 Esquerda: depois (WAI)"
+      "title": "F4 Direita: depois (WAI)"
     },
     {
       "id": 279,
@@ -13246,7 +13246,7 @@
         "aux_id": "BloomRX/ComfyUI_Colab"
       },
       "widgets_values": [
-        90.0,
+        270.0,
         0.0,
         1.1,
         2048,
@@ -13260,7 +13260,7 @@
         0.0,
         true
       ],
-      "title": "F4 Esquerda: SUBSTITUI no atlas (replace)",
+      "title": "F4 Direita: SUBSTITUI no atlas (replace)",
       "color": "#323",
       "bgcolor": "#535"
     },
@@ -13328,16 +13328,16 @@
         "aux_id": "BloomRX/ComfyUI_Colab"
       },
       "widgets_values": [
-        270.0,
+        0.0,
         0.0,
         1024,
         1.1,
         0,
         "grey",
-        1.0,
-        0.0
+        3.0,
+        0.42
       ],
-      "title": "F5 Direita: render da textura Klein (zoom 1)",
+      "title": "F5 Rosto: render da textura Klein (zoom 3)",
       "color": "#223",
       "bgcolor": "#335"
     },
@@ -13369,7 +13369,7 @@
         "ver": "0.16.3"
       },
       "widgets_values": [],
-      "title": "F5 Direita: antes"
+      "title": "F5 Rosto: antes"
     },
     {
       "id": 282,
@@ -13450,9 +13450,9 @@
         "ver": "0.16.3"
       },
       "widgets_values": [
-        "full body, from side, profile"
+        "close-up of the face and hair, looking at viewer, detailed red eyes, symmetrical face, small mouth"
       ],
-      "title": "F5 Direita: tags da vista"
+      "title": "F5 Rosto: tags da vista"
     },
     {
       "id": 284,
@@ -13627,9 +13627,9 @@
         4.5,
         "euler_ancestral",
         "normal",
-        0.35
+        0.45
       ],
-      "title": "F5 Direita: denoise 0.35 (sobe = muda mais)"
+      "title": "F5 Rosto: denoise 0.45 (sobe = muda mais)"
     },
     {
       "id": 287,
@@ -13754,7 +13754,7 @@
         "ver": "0.16.3"
       },
       "widgets_values": [],
-      "title": "F5 Direita: depois (WAI)"
+      "title": "F5 Rosto: depois (WAI)"
     },
     {
       "id": 290,
@@ -13821,21 +13821,21 @@
         "aux_id": "BloomRX/ComfyUI_Colab"
       },
       "widgets_values": [
-        270.0,
+        0.0,
         0.0,
         1.1,
         2048,
-        0.8,
+        1.5,
         4.0,
         0.25,
         0.015,
         false,
         false,
-        1.0,
-        0.0,
+        3.0,
+        0.42,
         true
       ],
-      "title": "F5 Direita: SUBSTITUI no atlas (replace)",
+      "title": "F5 Rosto: SUBSTITUI no atlas (replace)",
       "color": "#323",
       "bgcolor": "#535"
     },
@@ -14284,7 +14284,7 @@
         "ver": "0.16.3"
       },
       "widgets_values": [
-        "# Lia → textura por projeção **v2** (projeta-e-completa, estilo Modddif)\n\nEntrada: **GLB** do `Lia_Trellis2_Image2Mesh` / `Lia_Pixal3D_MultiView` + a imagem 2D **frontal** da Lia (obrigatória) e, se tiver, costas/esquerda/direita (as mesmas do Pixal3D — opcionais, ligue com Ctrl+B).\n\n## O que mudou em relação à v1\nA v1 pintava 4 vistas **independentes** e misturava: costas com outra paleta, tênis de dentro branco, buracos. Agora as vistas são pintadas **em ordem**, cada uma **vendo o que já foi pintado**:\n\n1. **Retopo game-ready** — `Weld` → `Decimate` (30 k faces, ajuste) → `UnwrapMesh` (UV **novo**, limpo, padding 8 — o padding 1 do fluxo antigo era o que causava as franjas coloridas na silhueta do normal map) → normais suaves. Normal map + AO são *bakeados* do mesh alto original, então o detalhe não se perde. `Remesh` fica em bypass; ligue se o GLB vier com casca dupla/não-manifold.\n2. **Vista 1 (frente)** — geração completa (image1 = Lia, image2 = normal map).\n3. **Vistas 2–8** — `Render Textured View` renderiza o mesh **com a textura parcial**; o que falta sai **cinza** e vira máscara. O Klein recebe esse render como latente + `SetLatentNoiseMask` e só pinta o cinza, continuando o que já existe. `Accumulate` corrige o tom da vista nova pelo que já está pintado (`color_match`) e soma no atlas.\n4. Ordem: frente → costas → esq → dir → frente/cima 30° → costas/cima → frente/baixo −30° → costas/baixo. As inclinadas fecham ombros, axila, queixo, parte de dentro do tênis. O **topo absoluto** da cabeça e as solas ficam para o preenchimento por vizinhança do `Finalize` (cabelo continua cabelo) — a 55° o Klein pintava um rosto no topo da cabeça.\n5. `Finalize` → `ApplyTextureToMesh` (+ normal + AO) → `SaveGLB` em `output/3d/Lia/`. PNGs separados para MToon/VRM.\n\n## v2.1 (após o 1º teste real, relatório `docs/Logs/relatorio_20260914_0421`)\n- **Image 3 = frente pintada** em todas as vistas 2–8: costas/lados nunca têm texels em comum com a frente, então o Klein não \"via\" a frente e inventava decote/roupa. Agora vê.\n- `ImageCompositeMasked` cola só a área da máscara de volta no render parcial: fora dela **nada** muda.\n- `color_match` virou ganho escalar de brilho, só em pixels claros, clamp 0,85–1,2 (antes lavava o casaco preto).\n- Vistas de cima/baixo em `fill_only` (só preenchem, não misturam). `min_cos` 0,10 e `depth_tolerance` 0,015 (menos frestas magenta).\n- `Remesh` ligado por padrão: triângulos uniformes → ilhas UV grandes em vez de 900 tiras.\n\n## v2.2\n- Vistas inclinadas 55°/−50° → **±30°**: a 55° faltava só o topo da cabeça e o Klein inventava um rosto ali (olhos no cabelo). A ±30° o que falta são frestas que ele continua do vizinho.\n- Conferência agora usa a textura **finalizada** (antes mostrava costuras de UV ainda não dilatadas como magenta).\n\n## v2.3\n- `Render Textured View` dilata a textura 4 texels para dentro das bordas das ilhas antes de amostrar → acaba o chuvisco magenta/cinza espalhado (era borda de ilha UV, não buraco). O inpaint agora só recebe buracos reais.\n- `UnwrapMesh` **pec** com weld 0,001 e padding 12 (v78: o `adaptive` foi testado e gerou 4266 ilhas em 82 s — pior que as 921 do pec).\n\n## v3 (v82) — passe de correção com Waifu-Inpaint-XL\nDepois das 8 vistas Klein (que garantem **cobertura**), 5 passes com o **Waifu-Inpaint-XL** (SDXL inpaint anime, 9 canais) refinam o que o jogador vê de perto: **rosto em zoom 3×** (o Klein pintava o rosto com ~150 px; agora são ~700 px de rosto no mesmo atlas), frente, costas e lados. Cada passe: render da textura atual → `InpaintModelConditioning` (máscara = silhueta encolhida, então o fundo e o enquadramento **não mudam**) → KSampler denoise 0,35–0,45 (img2img: mantém a composição do Klein, redesenha linha/cor no estilo anime) → `Accumulate` com **replace** (o novo substitui o Klein onde a vista enxerga, `min_cos` 0,25 para não substituir em ângulo raso). IP-Adapter PLUS com a frente 2D segura estilo e paleta. `ModelSamplingDiscrete v_prediction+zsnr` e `RescaleCFG 0,7` porque o WAI v14 é v-pred. Teste no Qwen-Image-Edit (relatórios 0919–1141) foi descartado: 9–17 min/vista e quebra com máscara.\n- **Tags**: o positivo do WAI está genérico (\"black hair with red tips, black dress with gold trim…\") — ajuste para a sua Lia; é Illustrious, responde a tags Danbooru.\n- Rosto torto/duplicado → baixe o denoise F1 para 0,3 ou troque o seed (300). Trocou demais a roupa → denoise F2–F5 0,25.\n- Não quer o passe → Ctrl+B nos 5 `KSampler` do grupo 4b (o `Finalize` continua recebendo o estado, só que sem correção)… ou mais simples: ligue o `Finalize.state` direto no último `Accumulate` do grupo 4.\n\n## Ajustes\n- Uma vista saiu ruim → mude só o seed daquela vista (`RandomNoise`, fixos 200–207); as anteriores ficam em cache.\n- Conferência (magenta) mostra texels que **nenhuma** vista viu; se sobrar, adicione uma vista copiando um bloco (render → Klein → accumulate) e encadeando o `state`.\n- Faces de jogo: `DecimateMesh` 15 k (mobile) / 30 k (PC/VRM) / 80 k (alta).\n- `view_weight`: frente/costas 1.0, lados 0.8, cima/baixo 0.4–0.5 (só completam, não sobrescrevem).\n- `grow_mask_px` 12: borda extra para o Klein fundir o novo com o antigo; suba se aparecer costura, desça se ele \"repintar\" demais.\n\n**T4**: 8 gerações Klein 4B (~40 s cada) + 5 passes WAI (SDXL 24 passos ≈ 50–70 s cada) + bakes ≈ **15–20 min**. Drive: +6,9 GB `Waifu-Inpaint-XL` (gated — HF_TOKEN) + IP-Adapter/CLIP-ViT-H (3,4 GB, já usados nos WaifuSurvivors). Nós próprios MIT em `custom_nodes/ComfyUI-Lia-TextureProjection` (torch puro).\n"
+        "# Lia → textura por projeção **v2** (projeta-e-completa, estilo Modddif)\n\nEntrada: **GLB** do `Lia_Trellis2_Image2Mesh` / `Lia_Pixal3D_MultiView` + a imagem 2D **frontal** da Lia (obrigatória) e, se tiver, costas/esquerda/direita (as mesmas do Pixal3D — opcionais, ligue com Ctrl+B).\n\n## O que mudou em relação à v1\nA v1 pintava 4 vistas **independentes** e misturava: costas com outra paleta, tênis de dentro branco, buracos. Agora as vistas são pintadas **em ordem**, cada uma **vendo o que já foi pintado**:\n\n1. **Retopo game-ready** — `Weld` → `Decimate` (30 k faces, ajuste) → `UnwrapMesh` (UV **novo**, limpo, padding 8 — o padding 1 do fluxo antigo era o que causava as franjas coloridas na silhueta do normal map) → normais suaves. Normal map + AO são *bakeados* do mesh alto original, então o detalhe não se perde. `Remesh` fica em bypass; ligue se o GLB vier com casca dupla/não-manifold.\n2. **Vista 1 (frente)** — geração completa (image1 = Lia, image2 = normal map).\n3. **Vistas 2–8** — `Render Textured View` renderiza o mesh **com a textura parcial**; o que falta sai **cinza** e vira máscara. O Klein recebe esse render como latente + `SetLatentNoiseMask` e só pinta o cinza, continuando o que já existe. `Accumulate` corrige o tom da vista nova pelo que já está pintado (`color_match`) e soma no atlas.\n4. Ordem: frente → costas → esq → dir → frente/cima 30° → costas/cima → frente/baixo −30° → costas/baixo. As inclinadas fecham ombros, axila, queixo, parte de dentro do tênis. O **topo absoluto** da cabeça e as solas ficam para o preenchimento por vizinhança do `Finalize` (cabelo continua cabelo) — a 55° o Klein pintava um rosto no topo da cabeça.\n5. `Finalize` → `ApplyTextureToMesh` (+ normal + AO) → `SaveGLB` em `output/3d/Lia/`. PNGs separados para MToon/VRM.\n\n## v2.1 (após o 1º teste real, relatório `docs/Logs/relatorio_20260914_0421`)\n- **Image 3 = frente pintada** em todas as vistas 2–8: costas/lados nunca têm texels em comum com a frente, então o Klein não \"via\" a frente e inventava decote/roupa. Agora vê.\n- `ImageCompositeMasked` cola só a área da máscara de volta no render parcial: fora dela **nada** muda.\n- `color_match` virou ganho escalar de brilho, só em pixels claros, clamp 0,85–1,2 (antes lavava o casaco preto).\n- Vistas de cima/baixo em `fill_only` (só preenchem, não misturam). `min_cos` 0,10 e `depth_tolerance` 0,015 (menos frestas magenta).\n- `Remesh` ligado por padrão: triângulos uniformes → ilhas UV grandes em vez de 900 tiras.\n\n## v2.2\n- Vistas inclinadas 55°/−50° → **±30°**: a 55° faltava só o topo da cabeça e o Klein inventava um rosto ali (olhos no cabelo). A ±30° o que falta são frestas que ele continua do vizinho.\n- Conferência agora usa a textura **finalizada** (antes mostrava costuras de UV ainda não dilatadas como magenta).\n\n## v2.3\n- `Render Textured View` dilata a textura 4 texels para dentro das bordas das ilhas antes de amostrar → acaba o chuvisco magenta/cinza espalhado (era borda de ilha UV, não buraco). O inpaint agora só recebe buracos reais.\n- `UnwrapMesh` **pec** com weld 0,001 e padding 12 (v78: o `adaptive` foi testado e gerou 4266 ilhas em 82 s — pior que as 921 do pec).\n\n## v3 (v82) — passe de correção com Waifu-Inpaint-XL\nDepois das 8 vistas Klein (que garantem **cobertura**), 5 passes com o **Waifu-Inpaint-XL** (SDXL inpaint anime, 9 canais) refinam o que o jogador vê de perto: **rosto em zoom 3×** (o Klein pintava o rosto com ~150 px; agora são ~700 px de rosto no mesmo atlas), frente, costas e lados. Cada passe: render da textura atual → `InpaintModelConditioning` (máscara = silhueta encolhida, então o fundo e o enquadramento **não mudam**) → KSampler denoise 0,35–0,45 (img2img: mantém a composição do Klein, redesenha linha/cor no estilo anime) → `Accumulate` com **replace** (o novo substitui o Klein onde a vista enxerga, `min_cos` 0,25 para não substituir em ângulo raso). IP-Adapter PLUS com a frente 2D segura estilo e paleta. `ModelSamplingDiscrete v_prediction+zsnr` e `RescaleCFG 0,7` porque o WAI v14 é v-pred. Teste no Qwen-Image-Edit (relatórios 0919–1141) foi descartado: 9–17 min/vista e quebra com máscara.\n- **Tags**: o positivo do WAI está genérico (\"black hair with red tips, black dress with gold trim…\") — ajuste para a sua Lia; é Illustrious, responde a tags Danbooru.\n- Rosto torto/duplicado → baixe o denoise F5 para 0,3 ou troque o seed (304). Trocou demais a roupa → denoise F1–F4 0,25. O rosto é o **último** passe de propósito (replace: o último ganha).\n- Não quer o passe → Ctrl+B nos 5 `KSampler` do grupo 4b (o `Finalize` continua recebendo o estado, só que sem correção)… ou mais simples: ligue o `Finalize.state` direto no último `Accumulate` do grupo 4.\n\n## Ajustes\n- Uma vista saiu ruim → mude só o seed daquela vista (`RandomNoise`, fixos 200–207); as anteriores ficam em cache.\n- Conferência (magenta) mostra texels que **nenhuma** vista viu; se sobrar, adicione uma vista copiando um bloco (render → Klein → accumulate) e encadeando o `state`.\n- Faces de jogo: `DecimateMesh` 15 k (mobile) / 30 k (PC/VRM) / 80 k (alta).\n- `view_weight`: frente/costas 1.0, lados 0.8, cima/baixo 0.4–0.5 (só completam, não sobrescrevem).\n- `grow_mask_px` 12: borda extra para o Klein fundir o novo com o antigo; suba se aparecer costura, desça se ele \"repintar\" demais.\n\n**T4**: 8 gerações Klein 4B (~40 s cada) + 5 passes WAI (SDXL 24 passos ≈ 50–70 s cada) + bakes ≈ **15–20 min**. Drive: +6,9 GB `Waifu-Inpaint-XL` (gated — HF_TOKEN) + IP-Adapter/CLIP-ViT-H (3,4 GB, já usados nos WaifuSurvivors). Nós próprios MIT em `custom_nodes/ComfyUI-Lia-TextureProjection` (torch puro).\n"
       ],
       "title": "LEIA-ME",
       "color": "#432",

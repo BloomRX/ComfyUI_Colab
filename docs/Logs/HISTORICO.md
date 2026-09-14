@@ -13,6 +13,8 @@ Os relatórios completos (log, JSON do grafo, PNGs; ~35 MB) ficaram no históric
 | 0552 | v2.2 | ~16m | 7,0 GB | conferência 1,3 % faltando, mas "chuvisco" magenta por toda a vista e manchas cinzas (borda de ilha UV virava faltando). → v2.3: dilata 4 texels no render, Finalize valid = mesh + margem; UnwrapMesh adaptive testado |
 | 0643 | v2.3 | ~16m | 6,9 GB | **0,0 % faltando, sem magenta — primeiro resultado utilizável**. Cobertura 48,5 %. `adaptive` deu 4266 ilhas em 82 s (pec 921) → voltou a pec (v78). Vistas 5/7 previews estranhos mas só 0,4–9 % usados |
 
+| 1410 | v3 (v82) Klein + passe WAI-Inpaint | 28m52 | 7,1 GB | **Melhor resultado**: rosto (zoom 3×) nítido com olhos vermelhos, lados sem "escorrido", conferência 0,0 %. Bug: F2 frente 1× rodava depois do rosto e o sobrescrevia (replace) → v85: rosto é o último passe |
+
 Aprendizados fixos: Klein 4B 4 passos ≈ 30–40 s por vista 1024²; Remesh+Decimate+Unwrap pec ≈ 2 min;
 o rosto sai com ~150 px no atlas (motivo do passe de correção em zoom, v82).
 

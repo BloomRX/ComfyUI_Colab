@@ -260,11 +260,12 @@ conn(ckpt, 1, wpos, "clip", "CLIP"); conn(ckpt, 1, wneg, "clip", "CLIP")
 
 FIX_VIEWS = [
     # az, el, zoom, offset_y, denoise, weight, texto, nome
-    (0, 0, 3.0, 0.42, 0.45, 1.5, "close-up of the face and hair, looking at viewer, detailed eyes, symmetrical face, small mouth", "F1 Rosto"),
-    (0, 0, 1.0, 0.0, 0.35, 1.0, "full body, front view, standing, arms at sides", "F2 Frente"),
-    (180, 0, 1.0, 0.0, 0.35, 1.0, "full body, from behind, back of the head is hair only", "F3 Costas"),
-    (90, 0, 1.0, 0.0, 0.35, 0.8, "full body, from side, profile", "F4 Esquerda"),
-    (270, 0, 1.0, 0.0, 0.35, 0.8, "full body, from side, profile", "F5 Direita"),
+    (0, 0, 1.0, 0.0, 0.35, 1.0, "full body, front view, standing, arms at sides", "F1 Frente"),
+    (180, 0, 1.0, 0.0, 0.35, 1.0, "full body, from behind, back of the head is hair only", "F2 Costas"),
+    (90, 0, 1.0, 0.0, 0.35, 0.8, "full body, from side, profile", "F3 Esquerda"),
+    (270, 0, 1.0, 0.0, 0.35, 0.8, "full body, from side, profile", "F4 Direita"),
+    # rosto POR ÚLTIMO: com replace, quem vem depois ganha — na v82 a frente 1x sobrescrevia o rosto 3x (olhos ficaram escuros)
+    (0, 0, 3.0, 0.42, 0.45, 1.5, "close-up of the face and hair, looking at viewer, detailed red eyes, symmetrical face, small mouth", "F5 Rosto"),
 ]
 fix_state = prev_state
 for j, (az, el, zm, oy, dn, wgt, vtxt, name) in enumerate(FIX_VIEWS):
@@ -368,7 +369,7 @@ A v1 pintava 4 vistas **independentes** e misturava: costas com outra paleta, t�
 ## v3 (v82) — passe de correção com Waifu-Inpaint-XL
 Depois das 8 vistas Klein (que garantem **cobertura**), 5 passes com o **Waifu-Inpaint-XL** (SDXL inpaint anime, 9 canais) refinam o que o jogador vê de perto: **rosto em zoom 3×** (o Klein pintava o rosto com ~150 px; agora são ~700 px de rosto no mesmo atlas), frente, costas e lados. Cada passe: render da textura atual → `InpaintModelConditioning` (máscara = silhueta encolhida, então o fundo e o enquadramento **não mudam**) → KSampler denoise 0,35–0,45 (img2img: mantém a composição do Klein, redesenha linha/cor no estilo anime) → `Accumulate` com **replace** (o novo substitui o Klein onde a vista enxerga, `min_cos` 0,25 para não substituir em ângulo raso). IP-Adapter PLUS com a frente 2D segura estilo e paleta. `ModelSamplingDiscrete v_prediction+zsnr` e `RescaleCFG 0,7` porque o WAI v14 é v-pred. Teste no Qwen-Image-Edit (relatórios 0919–1141) foi descartado: 9–17 min/vista e quebra com máscara.
 - **Tags**: o positivo do WAI está genérico ("black hair with red tips, black dress with gold trim…") — ajuste para a sua Lia; é Illustrious, responde a tags Danbooru.
-- Rosto torto/duplicado → baixe o denoise F1 para 0,3 ou troque o seed (300). Trocou demais a roupa → denoise F2–F5 0,25.
+- Rosto torto/duplicado → baixe o denoise F5 para 0,3 ou troque o seed (304). Trocou demais a roupa → denoise F1–F4 0,25. O rosto é o **último** passe de propósito (replace: o último ganha).
 - Não quer o passe → Ctrl+B nos 5 `KSampler` do grupo 4b (o `Finalize` continua recebendo o estado, só que sem correção)… ou mais simples: ligue o `Finalize.state` direto no último `Accumulate` do grupo 4.
 
 ## Ajustes

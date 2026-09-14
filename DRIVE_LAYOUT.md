@@ -5207,3 +5207,10 @@ registro). Voltaram de `Workflows_arquivo/` para `Workflows/`:
 `WaifuSurvivors_Concept`, `_Base`, `_CharacterSheet`, `_TrocarRoupa`
 (waiIllustrious v17 — já no Drive; IP-Adapter/CLIP-ViT-H/ControlNet-Union
 baixados pela Célula 5 se faltarem). Ativos agora: 4 Lia + 4 concept.
+
+## v85 — v3 validado (relatório 1410, resumido em HISTORICO.md); rosto vira o último passe
+Passe WAI funcionou: rosto nítido, lados limpos, conferência 0,0 %, 28m52 no T4.
+Correção: no grupo 4b a ordem agora é frente → costas → esq → dir → **rosto**
+(com `replace` o último ganha; antes a frente 1× apagava o rosto 3×).
+Workflows: só `WaifuSurvivors_Concept` fica ativo; Base/CharacterSheet/TrocarRoupa
+voltaram para `Workflows_arquivo/` a pedido.
