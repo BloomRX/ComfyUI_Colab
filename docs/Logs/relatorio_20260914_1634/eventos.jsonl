@@ -1,0 +1,36 @@
+{"t": "2026-09-14 15:44:22", "tipo": "inicio", "comfy": "/content/ComfyUI", "output": "/content/drive/MyDrive/ComfyUI_Data/output"}
+{"t": "2026-09-14 15:44:58", "tipo": "servidor_ok", "system_stats": {"system": {"os": "linux", "ram_total": 13605830656, "ram_free": 10886901760, "comfyui_version": "0.35.0", "required_frontend_version": "1.52.7", "installed_templates_version": "0.11.59", "required_templates_version": "0.11.59", "comfy_package_versions": [{"name": "comfyui-frontend-package", "installed": "1.52.7", "required": "1.52.7"}, {"name": "comfyui-workflow-templates", "installed": "0.11.59", "required": "0.11.59"}, {"name": "comfyui-embedded-docs", "installed": "0.5.11", "required": "0.5.11"}, {"name": "comfy-kitchen", "installed": "0.2.33", "required": "0.2.33"}, {"name": "comfy-aimdo", "installed": "0.5.3", "required": "0.5.3"}], "python_version": "3.13.15 (main, Aug  6 2026, 11:06:22) [GCC 13.3.0]", "pytorch_version": "2.11.0+cu128", "embedded_python": false, "deploy_environment": "local-git", "argv": ["main.py", "--listen", "0.0.0.0", "--port", "8188", "--enable-cors-header", "*", "--output-directory", "/content/drive/MyDrive/ComfyUI_Data/output", "--input-directory", "/content/drive/MyDrive/ComfyUI_Data/input", "--user-directory", "/content/comfy_user", "--preview-method", "auto", "--disable-auto-launch", "--cache-none", "--disable-smart-memory", "--mmap-torch-files", "--enable-manager"]}, "devices": [{"name": "cuda:0 Tesla T4 : cudaMallocAsync", "type": "cuda", "index": 0, "vram_total": 15637086208, "vram_free": 15527116800, "torch_vram_total": 0, "torch_vram_free": 0}]}}
+{"t": "2026-09-14 15:45:02", "tipo": "fila", "rodando": 0, "pendente": 0}
+{"t": "2026-09-14 15:45:02", "tipo": "vram_pico", "gb": 0.1}
+{"t": "2026-09-14 15:47:43", "tipo": "fila", "rodando": 1, "pendente": 0}
+{"t": "2026-09-14 15:47:51", "tipo": "vram_pico", "gb": 0.15}
+{"t": "2026-09-14 15:48:07", "tipo": "vram_pico", "gb": 1.87}
+{"t": "2026-09-14 15:49:03", "tipo": "vram_pico", "gb": 2.45}
+{"t": "2026-09-14 15:49:08", "tipo": "vram_pico", "gb": 2.64}
+{"t": "2026-09-14 15:49:12", "tipo": "vram_pico", "gb": 2.92}
+{"t": "2026-09-14 15:49:16", "tipo": "vram_pico", "gb": 3.1}
+{"t": "2026-09-14 15:49:20", "tipo": "vram_pico", "gb": 3.39}
+{"t": "2026-09-14 15:49:24", "tipo": "vram_pico", "gb": 3.51}
+{"t": "2026-09-14 15:52:30", "tipo": "vram_pico", "gb": 4.51}
+{"t": "2026-09-14 15:52:34", "tipo": "vram_pico", "gb": 4.55}
+{"t": "2026-09-14 15:52:38", "tipo": "vram_pico", "gb": 4.73}
+{"t": "2026-09-14 15:52:42", "tipo": "vram_pico", "gb": 5.05}
+{"t": "2026-09-14 15:52:46", "tipo": "vram_pico", "gb": 5.33}
+{"t": "2026-09-14 15:52:50", "tipo": "vram_pico", "gb": 5.45}
+{"t": "2026-09-14 15:52:54", "tipo": "vram_pico", "gb": 5.58}
+{"t": "2026-09-14 15:52:58", "tipo": "vram_pico", "gb": 5.61}
+{"t": "2026-09-14 16:05:14", "tipo": "fila", "rodando": 0, "pendente": 0}
+{"t": "2026-09-14 16:05:20", "tipo": "prompt", "tag": "001_4c39a20c", "status": "success", "n_nos": 57, "imagens": 9, "erros": 0, "tipos": ["ApplyTextureToMesh", "BakeAmbientOcclusion", "BakeNormalMapFromMesh", "BakeTextureFromVoxel", "CFGOverride", "CLIPVisionLoader", "ComfySwitchNode", "DecimateMesh", "EmptyTrellis2LatentStructure", "GetMeshInfo", "ImageCropToMask", "KSampler", "LoadBackgroundRemovalModel", "LoadImage", "MaskPreview", "MeshSmoothNormals", "MeshToFile3D", "ModelSamplingSD3", "PaintMesh", "Preview3DAdvanced", "PreviewImage", "PrimitiveInt", "RemeshMesh", "RemoveBackground", "RenderMesh", "RenderUVAtlas", "RescaleCFG", "SaveGLB", "Trellis2Conditioning", "Trellis2ShapeStage", "Trellis2TextureStage", "Trellis2UpsampleStage", "UNETLoader", "UnwrapMesh", "VAELoader", "VaeDecodeShapeTrellis", "VaeDecodeStructureTrellis2", "VaeDecodeTextureTrellis", "VoxelToMesh"]}
+{"t": "2026-09-14 16:08:09", "tipo": "fila", "rodando": 1, "pendente": 0}
+{"t": "2026-09-14 16:13:23", "tipo": "vram_pico", "gb": 5.67}
+{"t": "2026-09-14 16:13:27", "tipo": "vram_pico", "gb": 5.7}
+{"t": "2026-09-14 16:13:31", "tipo": "vram_pico", "gb": 5.89}
+{"t": "2026-09-14 16:13:39", "tipo": "vram_pico", "gb": 6.01}
+{"t": "2026-09-14 16:13:43", "tipo": "vram_pico", "gb": 6.07}
+{"t": "2026-09-14 16:15:00", "tipo": "vram_pico", "gb": 6.14}
+{"t": "2026-09-14 16:15:05", "tipo": "vram_pico", "gb": 6.57}
+{"t": "2026-09-14 16:15:25", "tipo": "vram_pico", "gb": 6.85}
+{"t": "2026-09-14 16:18:36", "tipo": "vram_pico", "gb": 6.89}
+{"t": "2026-09-14 16:25:26", "tipo": "vram_pico", "gb": 6.95}
+{"t": "2026-09-14 16:28:17", "tipo": "fila", "rodando": 0, "pendente": 0}
+{"t": "2026-09-14 16:28:31", "tipo": "prompt", "tag": "002_f6274696", "status": "success", "n_nos": 261, "imagens": 34, "erros": 0, "tipos": ["ApplyTextureToMesh", "BakeAmbientOcclusion", "BakeNormalMapFromMesh", "CFGGuider", "CLIPLoader", "CLIPTextEncode", "ConditioningZeroOut", "DecimateMesh", "Flux2Scheduler", "Get3DComponents", "ImageCompositeMasked", "ImageScaleToTotalPixels", "KSamplerSelect", "LiaPickReference", "LiaProjectTextureAccumulate", "LiaRenderTextured", "LiaTextureFinalize", "Load3D", "LoadImage", "MeshSmoothNormals", "PreviewImage", "PrimitiveStringMultiline", "RandomNoise", "ReferenceLatent", "RemeshMesh", "RenderUVAtlas", "SamplerCustomAdvanced", "SaveGLB", "SaveImage", "SetLatentNoiseMask", "StringConcatenate", "UNETLoader", "UnwrapMesh", "VAEDecode", "VAEEncode", "VAELoader", "WeldVertices"]}
