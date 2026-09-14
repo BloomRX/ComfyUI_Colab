@@ -36,7 +36,7 @@ import torch
 from typing_extensions import override
 
 import comfy.model_management
-from comfy_api.latest import ComfyExtension, IO
+from comfy_api.latest import ComfyExtension, IO, UI
 
 from . import projection as P
 
@@ -302,7 +302,8 @@ class LiaRenderTextured(IO.ComfyNode):
         frac = float(missing.sum()) / max(1.0, float(sil.sum()))
         idev = comfy.model_management.intermediate_device()
         return IO.NodeOutput(img[None].to(idev), m[None].to(idev), sil.float()[None].to(idev),
-                             n[None].to(idev), frac)
+                             n[None].to(idev), frac,
+                             ui=UI.PreviewText(f"az {azimuth:g} el {elevation:g}: {frac*100:.1f}% da vista ainda sem textura"))
 
 
 class LiaProjectTextureAccumulate(IO.ComfyNode):
@@ -368,7 +369,8 @@ class LiaProjectTextureAccumulate(IO.ComfyNode):
                 f"ganho RGB {st['gain']}, cobertura {st['covered_frac']*100:.1f}%")
         idev = comfy.model_management.intermediate_device()
         new_state = {"texture": tex.to(idev), "wsum": w.to(idev), "size": int(tex.shape[0])}
-        return IO.NodeOutput(new_state, tex.clamp(0, 1)[None].to(idev), cov[None].to(idev), info)
+        return IO.NodeOutput(new_state, tex.clamp(0, 1)[None].to(idev), cov[None].to(idev), info,
+                             ui=UI.PreviewText(info))
 
 
 class LiaTextureFinalize(IO.ComfyNode):

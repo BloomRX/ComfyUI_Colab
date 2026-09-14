@@ -5,9 +5,11 @@ class _In:
     def __init__(self, *a, **k): pass
 class _T:
     Input = _In; Output = _In
-io = types.SimpleNamespace(ComfyNode=object, Schema=lambda **k: k, NodeOutput=lambda *a: a,
+io = types.SimpleNamespace(ComfyNode=object, Schema=lambda **k: k, NodeOutput=lambda *a, **k: a,
                            Combo=_T, String=_T, Float=_T, Int=_T, Boolean=_T, Image=_T, Mask=_T, Mesh=_T, Custom=lambda s: _T)
-m = types.ModuleType('comfy_api.latest'); m.IO = io; m.ComfyExtension = object
+class _PT:
+    def __init__(self, v, **k): self.value = v
+m = types.ModuleType('comfy_api.latest'); m.IO = io; m.ComfyExtension = object; m.UI = types.SimpleNamespace(PreviewText=_PT)
 sys.modules['comfy_api'] = types.ModuleType('comfy_api'); sys.modules['comfy_api.latest'] = m
 comfy = types.ModuleType('comfy'); mm = types.ModuleType('comfy.model_management')
 mm.get_torch_device = lambda: torch.device('cpu'); mm.intermediate_device = lambda: torch.device('cpu')

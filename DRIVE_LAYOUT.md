@@ -5077,3 +5077,13 @@ e sombreado quebrado; à direita o Modddif limpo. Causa nossa: `UnwrapMesh` com
 padding **1** texel em 2048 (sangra ilha vizinha/fundo no mipmap) + normais não
 soldadas. Correção: padding 8 nos três workflows 3D e `WeldVertices` antes do
 `DecimateMesh` no `Lia_Texturizar`. O bake de normal/AO do mesh alto já existia.
+
+## v74 — relatório de sessão (toggle na Célula 1, download na Célula 7)
+`config/relatorio.py`. Com `RELATORIO = True`: Célula 6 grava `comfyui.log`
+(tee do servidor) e um coletor lê `/history` a cada 4 s → `prompts/NNN_id.json`
+(grafo API com valores dos widgets, status, erros, textos de saída dos nós,
+lista de imagens) + miniaturas 768 px em `imagens/` + `eventos.jsonl` (fila,
+pico de VRAM). Célula 7 (nova, rodar depois de parar a 6): `RESUMO.md`, zip
+em `ComfyUI_Data/relatorios/relatorio_<data>.zip` e download. Os nós
+`LiaRenderTextured`/`LiaProjectTextureAccumulate` agora exibem `info` na UI
+(`PreviewText`), então cai no relatório sem nó extra. Célula 6 = `v74-relatorio`.
