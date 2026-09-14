@@ -5100,3 +5100,10 @@ as vistas + prompt; `ImageCompositeMasked` cola só a máscara; ganho escalar de
 brilho só em pixels claros, clamp 0,85–1,2; `Remesh` 512 ligado por padrão
 antes do Decimate; cima/baixo em `fill_only`; `min_cos` 0,10, `depth_tol` 0,015.
 240 nós / 439 links. Ainda não testado em GPU.
+
+## v76 — `Lia_Texturizar` v2.2 (relatório `relatorio_20260914_0522`)
+v2.1 confirmado: frente/costas/lados coerentes, ganho 1,13–1,2, 7,0 GB. Restava:
+vistas 55°/−50° com só 2–4 % faltando → Klein pintava um rosto no topo da
+cabeça; conferência mostrava costuras UV pré-Finalize como magenta. Agora:
+inclinadas a ±30° com prompt explícito, `Finalize` ganhou saída `state`
+(textura final) e a conferência lê dela; `fill_reach_px` 64.

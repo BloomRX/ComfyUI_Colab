@@ -1,5 +1,5 @@
 {
-  "id": "38794a3e-b1a7-4505-8385-904c3ae385d3",
+  "id": "fa243d2a-7a03-49a5-a07a-aa52ab1cc61e",
   "revision": 0,
   "last_node_id": 240,
   "last_link_id": 439,
@@ -5835,7 +5835,7 @@
       },
       "widgets_values": [
         0.0,
-        55.0,
+        30.0,
         1024,
         1.1,
         12,
@@ -6179,7 +6179,7 @@
         "ver": "0.16.3"
       },
       "widgets_values": [
-        "front view seen from above, high angle, top of the head and shoulders visible"
+        "front view seen slightly from above (camera 30 degrees up). The top of the head is hair only, never a face; the face stays where it already is"
       ],
       "title": "Vista: 5 Frente/cima"
     },
@@ -6917,7 +6917,7 @@
       },
       "widgets_values": [
         0.0,
-        55.0,
+        30.0,
         1.1,
         2048,
         0.5,
@@ -7030,7 +7030,7 @@
       },
       "widgets_values": [
         180.0,
-        55.0,
+        30.0,
         1024,
         1.1,
         12,
@@ -7374,7 +7374,7 @@
         "ver": "0.16.3"
       },
       "widgets_values": [
-        "back view seen from above, high angle, top of the head visible"
+        "back view seen slightly from above (camera 30 degrees up). The top of the head is hair only, never a face"
       ],
       "title": "Vista: 6 Costas/cima"
     },
@@ -8112,7 +8112,7 @@
       },
       "widgets_values": [
         180.0,
-        55.0,
+        30.0,
         1.1,
         2048,
         0.5,
@@ -8225,7 +8225,7 @@
       },
       "widgets_values": [
         0.0,
-        -50.0,
+        -30.0,
         1024,
         1.1,
         12,
@@ -8569,7 +8569,7 @@
         "ver": "0.16.3"
       },
       "widgets_values": [
-        "front view seen from below, low angle, underside of the chin, arms and shoes visible"
+        "front view seen slightly from below (camera 30 degrees down). Underside of the chin, sleeves and skirt hem, shoes; no extra face"
       ],
       "title": "Vista: 7 Frente/baixo"
     },
@@ -9307,7 +9307,7 @@
       },
       "widgets_values": [
         0.0,
-        -50.0,
+        -30.0,
         1.1,
         2048,
         0.4,
@@ -9420,7 +9420,7 @@
       },
       "widgets_values": [
         180.0,
-        -50.0,
+        -30.0,
         1024,
         1.1,
         12,
@@ -9764,7 +9764,7 @@
         "ver": "0.16.3"
       },
       "widgets_values": [
-        "back view seen from below, low angle, soles and underside visible"
+        "back view seen slightly from below (camera 30 degrees down). Underside of the hem and shoes; no extra face"
       ],
       "title": "Vista: 8 Costas/baixo"
     },
@@ -10474,8 +10474,7 @@
           "name": "state",
           "type": "LIA_TEXSTATE",
           "links": [
-            426,
-            438
+            426
           ]
         },
         {
@@ -10502,7 +10501,7 @@
       },
       "widgets_values": [
         180.0,
-        -50.0,
+        -30.0,
         1.1,
         2048,
         0.4,
@@ -10593,6 +10592,13 @@
           "name": "unseen_mask",
           "type": "MASK",
           "links": []
+        },
+        {
+          "name": "state",
+          "type": "LIA_TEXSTATE",
+          "links": [
+            438
+          ]
         }
       ],
       "properties": {
@@ -10602,7 +10608,7 @@
       "widgets_values": [
         8,
         true,
-        48
+        64
       ],
       "title": "Fecha a textura",
       "color": "#323",
@@ -10926,7 +10932,7 @@
         0,
         "magenta"
       ],
-      "title": "Conferência 3/4 (magenta = texel nunca visto)",
+      "title": "Conferência 3/4 (textura FINAL; magenta = buraco real)",
       "color": "#223",
       "bgcolor": "#335"
     },
@@ -10982,7 +10988,7 @@
         "ver": "0.16.3"
       },
       "widgets_values": [
-        "# Lia → textura por projeção **v2** (projeta-e-completa, estilo Modddif)\n\nEntrada: **GLB** do `Lia_Trellis2_Image2Mesh` / `Lia_Pixal3D_MultiView` + a imagem 2D **frontal** da Lia (obrigatória) e, se tiver, costas/esquerda/direita (as mesmas do Pixal3D — opcionais, ligue com Ctrl+B).\n\n## O que mudou em relação à v1\nA v1 pintava 4 vistas **independentes** e misturava: costas com outra paleta, tênis de dentro branco, buracos. Agora as vistas são pintadas **em ordem**, cada uma **vendo o que já foi pintado**:\n\n1. **Retopo game-ready** — `Weld` → `Decimate` (30 k faces, ajuste) → `UnwrapMesh` (UV **novo**, limpo, padding 8 — o padding 1 do fluxo antigo era o que causava as franjas coloridas na silhueta do normal map) → normais suaves. Normal map + AO são *bakeados* do mesh alto original, então o detalhe não se perde. `Remesh` fica em bypass; ligue se o GLB vier com casca dupla/não-manifold.\n2. **Vista 1 (frente)** — geração completa (image1 = Lia, image2 = normal map).\n3. **Vistas 2–8** — `Render Textured View` renderiza o mesh **com a textura parcial**; o que falta sai **cinza** e vira máscara. O Klein recebe esse render como latente + `SetLatentNoiseMask` e só pinta o cinza, continuando o que já existe. `Accumulate` corrige o tom da vista nova pelo que já está pintado (`color_match`) e soma no atlas.\n4. Ordem: frente → costas → esq → dir → frente/cima 55° → costas/cima → frente/baixo −50° → costas/baixo. Cima/baixo cobrem topo da cabeça, ombros, axila, queixo, solas — os \"buracos\" da v1. Tênis de dentro: as vistas de baixo/diagonais enxergam.\n5. `Finalize` → `ApplyTextureToMesh` (+ normal + AO) → `SaveGLB` em `output/3d/Lia/`. PNGs separados para MToon/VRM.\n\n## v2.1 (após o 1º teste real, relatório `docs/Logs/relatorio_20260914_0421`)\n- **Image 3 = frente pintada** em todas as vistas 2–8: costas/lados nunca têm texels em comum com a frente, então o Klein não \"via\" a frente e inventava decote/roupa. Agora vê.\n- `ImageCompositeMasked` cola só a área da máscara de volta no render parcial: fora dela **nada** muda.\n- `color_match` virou ganho escalar de brilho, só em pixels claros, clamp 0,85–1,2 (antes lavava o casaco preto).\n- Vistas de cima/baixo em `fill_only` (só preenchem, não misturam). `min_cos` 0,10 e `depth_tolerance` 0,015 (menos frestas magenta).\n- `Remesh` ligado por padrão: triângulos uniformes → ilhas UV grandes em vez de 900 tiras.\n\n## Ajustes\n- Uma vista saiu ruim → mude só o seed daquela vista (`RandomNoise`, fixos 200–207); as anteriores ficam em cache.\n- Conferência (magenta) mostra texels que **nenhuma** vista viu; se sobrar, adicione uma vista copiando um bloco (render → Klein → accumulate) e encadeando o `state`.\n- Faces de jogo: `DecimateMesh` 15 k (mobile) / 30 k (PC/VRM) / 80 k (alta).\n- `view_weight`: frente/costas 1.0, lados 0.8, cima/baixo 0.4–0.5 (só completam, não sobrescrevem).\n- `grow_mask_px` 12: borda extra para o Klein fundir o novo com o antigo; suba se aparecer costura, desça se ele \"repintar\" demais.\n\n**T4**: 8 gerações Klein 4B (~1–1,5 min cada) + bakes ≈ **12–16 min**. Nós próprios MIT em `custom_nodes/ComfyUI-Lia-TextureProjection` (torch puro).\n"
+        "# Lia → textura por projeção **v2** (projeta-e-completa, estilo Modddif)\n\nEntrada: **GLB** do `Lia_Trellis2_Image2Mesh` / `Lia_Pixal3D_MultiView` + a imagem 2D **frontal** da Lia (obrigatória) e, se tiver, costas/esquerda/direita (as mesmas do Pixal3D — opcionais, ligue com Ctrl+B).\n\n## O que mudou em relação à v1\nA v1 pintava 4 vistas **independentes** e misturava: costas com outra paleta, tênis de dentro branco, buracos. Agora as vistas são pintadas **em ordem**, cada uma **vendo o que já foi pintado**:\n\n1. **Retopo game-ready** — `Weld` → `Decimate` (30 k faces, ajuste) → `UnwrapMesh` (UV **novo**, limpo, padding 8 — o padding 1 do fluxo antigo era o que causava as franjas coloridas na silhueta do normal map) → normais suaves. Normal map + AO são *bakeados* do mesh alto original, então o detalhe não se perde. `Remesh` fica em bypass; ligue se o GLB vier com casca dupla/não-manifold.\n2. **Vista 1 (frente)** — geração completa (image1 = Lia, image2 = normal map).\n3. **Vistas 2–8** — `Render Textured View` renderiza o mesh **com a textura parcial**; o que falta sai **cinza** e vira máscara. O Klein recebe esse render como latente + `SetLatentNoiseMask` e só pinta o cinza, continuando o que já existe. `Accumulate` corrige o tom da vista nova pelo que já está pintado (`color_match`) e soma no atlas.\n4. Ordem: frente → costas → esq → dir → frente/cima 30° → costas/cima → frente/baixo −30° → costas/baixo. As inclinadas fecham ombros, axila, queixo, parte de dentro do tênis. O **topo absoluto** da cabeça e as solas ficam para o preenchimento por vizinhança do `Finalize` (cabelo continua cabelo) — a 55° o Klein pintava um rosto no topo da cabeça.\n5. `Finalize` → `ApplyTextureToMesh` (+ normal + AO) → `SaveGLB` em `output/3d/Lia/`. PNGs separados para MToon/VRM.\n\n## v2.1 (após o 1º teste real, relatório `docs/Logs/relatorio_20260914_0421`)\n- **Image 3 = frente pintada** em todas as vistas 2–8: costas/lados nunca têm texels em comum com a frente, então o Klein não \"via\" a frente e inventava decote/roupa. Agora vê.\n- `ImageCompositeMasked` cola só a área da máscara de volta no render parcial: fora dela **nada** muda.\n- `color_match` virou ganho escalar de brilho, só em pixels claros, clamp 0,85–1,2 (antes lavava o casaco preto).\n- Vistas de cima/baixo em `fill_only` (só preenchem, não misturam). `min_cos` 0,10 e `depth_tolerance` 0,015 (menos frestas magenta).\n- `Remesh` ligado por padrão: triângulos uniformes → ilhas UV grandes em vez de 900 tiras.\n\n## v2.2\n- Vistas inclinadas 55°/−50° → **±30°**: a 55° faltava só o topo da cabeça e o Klein inventava um rosto ali (olhos no cabelo). A ±30° o que falta são frestas que ele continua do vizinho.\n- Conferência agora usa a textura **finalizada** (antes mostrava costuras de UV ainda não dilatadas como magenta).\n\n## Ajustes\n- Uma vista saiu ruim → mude só o seed daquela vista (`RandomNoise`, fixos 200–207); as anteriores ficam em cache.\n- Conferência (magenta) mostra texels que **nenhuma** vista viu; se sobrar, adicione uma vista copiando um bloco (render → Klein → accumulate) e encadeando o `state`.\n- Faces de jogo: `DecimateMesh` 15 k (mobile) / 30 k (PC/VRM) / 80 k (alta).\n- `view_weight`: frente/costas 1.0, lados 0.8, cima/baixo 0.4–0.5 (só completam, não sobrescrevem).\n- `grow_mask_px` 12: borda extra para o Klein fundir o novo com o antigo; suba se aparecer costura, desça se ele \"repintar\" demais.\n\n**T4**: 8 gerações Klein 4B (~1–1,5 min cada) + bakes ≈ **12–16 min**. Nós próprios MIT em `custom_nodes/ComfyUI-Lia-TextureProjection` (torch puro).\n"
       ],
       "title": "LEIA-ME",
       "color": "#432",
@@ -14516,8 +14522,8 @@
     ],
     [
       438,
-      227,
-      0,
+      229,
+      3,
       237,
       1,
       "LIA_TEXSTATE"

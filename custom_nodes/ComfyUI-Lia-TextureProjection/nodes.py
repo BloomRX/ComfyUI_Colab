@@ -394,6 +394,7 @@ class LiaTextureFinalize(IO.ComfyNode):
                 IO.Image.Output(display_name="base_color"),
                 IO.Image.Output(display_name="coverage"),
                 IO.Mask.Output(display_name="unseen_mask"),
+                TexState.Output(display_name="state", tooltip="Textura final como estado (para Render Textured View de conferência ou mais vistas de retoque)."),
             ],
         )
 
@@ -414,7 +415,8 @@ class LiaTextureFinalize(IO.ComfyNode):
         cov[..., 1] = (w > 1e-8).float()
         cov[..., 0] = unseen.float()
         idev = comfy.model_management.intermediate_device()
-        return IO.NodeOutput(tex.clamp(0, 1)[None].to(idev), cov[None].to(idev), unseen.float()[None].to(idev))
+        final_state = {"texture": tex.clamp(0, 1).to(idev), "wsum": cover.float().to(idev), "size": int(tex.shape[0])}
+        return IO.NodeOutput(tex.clamp(0, 1)[None].to(idev), cov[None].to(idev), unseen.float()[None].to(idev), final_state)
 
 
 class LiaPickReference(IO.ComfyNode):

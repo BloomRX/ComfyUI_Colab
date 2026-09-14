@@ -36,7 +36,8 @@ for az, el in [(0, 0), (180, 0), (0, 60)]:
     state, bc, cov, info = A.execute(mesh, paint, az, el, 1.1, 512, 1.0, 4.0, 0.15, 0.01, True, False, state, mask)
     print(' ', info)
 assert frac < 0.2
-bc, cov, un = F.execute(mesh, state, 8, True, 48); print('final', tuple(bc.shape), int(un.sum()))
+bc, cov, un, fst = F.execute(mesh, state, 8, True, 48)
+assert 'texture' in fst; print('final', tuple(bc.shape), int(un.sum()))
 assert bc.shape == (1, 512, 512, 3)
 print(PK.execute("back", torch.zeros(1, 4, 4, 3))[1], '|', PK.execute("back", torch.zeros(1, 4, 4, 3), back=torch.ones(1, 4, 4, 3))[1])
 print("SMOKE OK")

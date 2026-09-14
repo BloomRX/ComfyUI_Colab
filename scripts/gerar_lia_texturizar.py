@@ -135,10 +135,10 @@ VIEWS = [
     (180, 0, 1.0, "back", "back view, seen from behind", "2 Costas"),
     (90, 0, 0.8, "left", "left side view, orthographic profile", "3 Esquerda"),
     (270, 0, 0.8, "right", "right side view, orthographic profile", "4 Direita"),
-    (0, 55, 0.5, "front", "front view seen from above, high angle, top of the head and shoulders visible", "5 Frente/cima"),
-    (180, 55, 0.5, "back", "back view seen from above, high angle, top of the head visible", "6 Costas/cima"),
-    (0, -50, 0.4, "front", "front view seen from below, low angle, underside of the chin, arms and shoes visible", "7 Frente/baixo"),
-    (180, -50, 0.4, "back", "back view seen from below, low angle, soles and underside visible", "8 Costas/baixo"),
+    (0, 30, 0.5, "front", "front view seen slightly from above (camera 30 degrees up). The top of the head is hair only, never a face; the face stays where it already is", "5 Frente/cima"),
+    (180, 30, 0.5, "back", "back view seen slightly from above (camera 30 degrees up). The top of the head is hair only, never a face", "6 Costas/cima"),
+    (0, -30, 0.4, "front", "front view seen slightly from below (camera 30 degrees down). Underside of the chin, sleeves and skirt hem, shoes; no extra face", "7 Frente/baixo"),
+    (180, -30, 0.4, "back", "back view seen slightly from below (camera 30 degrees down). Underside of the hem and shoes; no extra face", "8 Costas/baixo"),
 ]
 X3 = -1500
 ROW = 760
@@ -231,8 +231,8 @@ for i, (az, el, wgt, refk, vtxt, name) in enumerate(VIEWS):
 
 # ---------------------------------------------------------------- 5. finalização
 X4 = X3 + 2700
-fin = N("LiaTextureFinalize", (X4, -700), (340, 170), [8, True, 48], inputs=[("mesh", "MESH"), ("state", "LIA_TEXSTATE")],
-        outputs=[("base_color", "IMAGE"), ("coverage", "IMAGE"), ("unseen_mask", "MASK")], cnr=LIA, title="Fecha a textura", color=PURPLE)
+fin = N("LiaTextureFinalize", (X4, -700), (340, 170), [8, True, 64], inputs=[("mesh", "MESH"), ("state", "LIA_TEXSTATE")],
+        outputs=[("base_color", "IMAGE"), ("coverage", "IMAGE"), ("unseen_mask", "MASK"), ("state", "LIA_TEXSTATE")], cnr=LIA, title="Fecha a textura", color=PURPLE)
 conn(MESH, 0, fin, "mesh", "MESH"); conn(prev_state, 0, fin, "state", "LIA_TEXSTATE")
 pt = N("PreviewImage", (X4, -480), (340, 340), inputs=[("images", "IMAGE")], title="Atlas final")
 pc = N("PreviewImage", (X4, -100), (340, 340), inputs=[("images", "IMAGE")], title="Cobertura final")
@@ -248,9 +248,9 @@ sg = N("SaveGLB", (X4, 480), (340, 500), ["3d/Lia/Lia_texturizado", ""], inputs=
 conn(app, 0, sg, "mesh", "MESH")
 chk = N("LiaRenderTextured", (X4 + 760, -700), (330, 250), [30.0, 15.0, 1024, 1.1, 0, "magenta"], inputs=[("mesh", "MESH")],
         outputs=[("image", "IMAGE"), ("inpaint_mask", "MASK"), ("silhouette", "MASK"), ("normals", "IMAGE"), ("missing_fraction", "FLOAT")],
-        cnr=LIA, title="Conferência 3/4 (magenta = texel nunca visto)", color=BLUE)
+        cnr=LIA, title="Conferência 3/4 (textura FINAL; magenta = buraco real)", color=BLUE)
 opt_in(chk, "state", "LIA_TEXSTATE")
-conn(MESH, 0, chk, "mesh", "MESH"); conn(prev_state, 0, chk, "state", "LIA_TEXSTATE")
+conn(MESH, 0, chk, "mesh", "MESH"); conn(fin, 3, chk, "state", "LIA_TEXSTATE")
 pvk = N("PreviewImage", (X4 + 760, -420), (330, 330), inputs=[("images", "IMAGE")], title="Conferência")
 conn(chk, 0, pvk, "images", "IMAGE")
 
@@ -265,7 +265,7 @@ A v1 pintava 4 vistas **independentes** e misturava: costas com outra paleta, t�
 1. **Retopo game-ready** — `Weld` → `Decimate` (30 k faces, ajuste) → `UnwrapMesh` (UV **novo**, limpo, padding 8 — o padding 1 do fluxo antigo era o que causava as franjas coloridas na silhueta do normal map) → normais suaves. Normal map + AO são *bakeados* do mesh alto original, então o detalhe não se perde. `Remesh` fica em bypass; ligue se o GLB vier com casca dupla/não-manifold.
 2. **Vista 1 (frente)** — geração completa (image1 = Lia, image2 = normal map).
 3. **Vistas 2–8** — `Render Textured View` renderiza o mesh **com a textura parcial**; o que falta sai **cinza** e vira máscara. O Klein recebe esse render como latente + `SetLatentNoiseMask` e só pinta o cinza, continuando o que já existe. `Accumulate` corrige o tom da vista nova pelo que já está pintado (`color_match`) e soma no atlas.
-4. Ordem: frente → costas → esq → dir → frente/cima 55° → costas/cima → frente/baixo −50° → costas/baixo. Cima/baixo cobrem topo da cabeça, ombros, axila, queixo, solas — os "buracos" da v1. Tênis de dentro: as vistas de baixo/diagonais enxergam.
+4. Ordem: frente → costas → esq → dir → frente/cima 30° → costas/cima → frente/baixo −30° → costas/baixo. As inclinadas fecham ombros, axila, queixo, parte de dentro do tênis. O **topo absoluto** da cabeça e as solas ficam para o preenchimento por vizinhança do `Finalize` (cabelo continua cabelo) — a 55° o Klein pintava um rosto no topo da cabeça.
 5. `Finalize` → `ApplyTextureToMesh` (+ normal + AO) → `SaveGLB` em `output/3d/Lia/`. PNGs separados para MToon/VRM.
 
 ## v2.1 (após o 1º teste real, relatório `docs/Logs/relatorio_20260914_0421`)
@@ -274,6 +274,10 @@ A v1 pintava 4 vistas **independentes** e misturava: costas com outra paleta, t�
 - `color_match` virou ganho escalar de brilho, só em pixels claros, clamp 0,85–1,2 (antes lavava o casaco preto).
 - Vistas de cima/baixo em `fill_only` (só preenchem, não misturam). `min_cos` 0,10 e `depth_tolerance` 0,015 (menos frestas magenta).
 - `Remesh` ligado por padrão: triângulos uniformes → ilhas UV grandes em vez de 900 tiras.
+
+## v2.2
+- Vistas inclinadas 55°/−50° → **±30°**: a 55° faltava só o topo da cabeça e o Klein inventava um rosto ali (olhos no cabelo). A ±30° o que falta são frestas que ele continua do vizinho.
+- Conferência agora usa a textura **finalizada** (antes mostrava costuras de UV ainda não dilatadas como magenta).
 
 ## Ajustes
 - Uma vista saiu ruim → mude só o seed daquela vista (`RandomNoise`, fixos 200–207); as anteriores ficam em cache.
