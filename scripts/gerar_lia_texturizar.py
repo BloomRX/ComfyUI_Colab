@@ -82,8 +82,8 @@ weld = N("WeldVertices", (X1 + 460, -310), (340, 82), [1e-5, 0.0], inputs=[("mes
          title="Weld (arestas duplicadas → normais suaves contínuas)")
 deci = N("DecimateMesh", (X1 + 460, -200), (340, 106), [30000, "midpoint"], inputs=[("mesh", "MESH")], outputs=[("mesh", "MESH")],
          title="Decimate → contagem de faces de jogo")
-unwrap = N("UnwrapMesh", (X1 + 460, -70), (340, 130), ["adaptive", 2048, 12, 0.001], inputs=[("mesh", "MESH")], outputs=[("mesh", "MESH")],
-           title="UV NOVO — adaptive = ilhas grandes (pec dava 900 tiras)")
+unwrap = N("UnwrapMesh", (X1 + 460, -70), (340, 130), ["pec", 2048, 12, 0.001], inputs=[("mesh", "MESH")], outputs=[("mesh", "MESH")],
+           title="UV NOVO — pec (adaptive deu 4266 ilhas em 82 s)")
 widget_in(unwrap, "resolution", "INT")
 smooth = N("MeshSmoothNormals", (X1 + 460, 90), (340, 58), [180], inputs=[("mesh", "MESH")], outputs=[("mesh", "MESH")], title="mesh BAIXO (game-ready, UV limpo)")
 bnorm = N("BakeNormalMapFromMesh", (X1 + 860, -700), (320, 130), [2048, 0.05, True], inputs=[("low_poly", "MESH"), ("high_poly", "MESH")],
@@ -281,7 +281,7 @@ A v1 pintava 4 vistas **independentes** e misturava: costas com outra paleta, t�
 
 ## v2.3
 - `Render Textured View` dilata a textura 4 texels para dentro das bordas das ilhas antes de amostrar → acaba o chuvisco magenta/cinza espalhado (era borda de ilha UV, não buraco). O inpaint agora só recebe buracos reais.
-- `UnwrapMesh` **adaptive** (CPU, ~1–2 min) com weld 0,001 e padding 12: o `pec` gerava 900+ ilhas em tiras finas — cada tira é uma costura, e costura é onde a projeção falha.
+- `UnwrapMesh` **pec** com weld 0,001 e padding 12 (v78: o `adaptive` foi testado e gerou 4266 ilhas em 82 s — pior que as 921 do pec).
 
 ## Ajustes
 - Uma vista saiu ruim → mude só o seed daquela vista (`RandomNoise`, fixos 200–207); as anteriores ficam em cache.

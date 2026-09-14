@@ -183,6 +183,10 @@ origem (`hf_microsoft_TRELLIS.2-4B.json`, `hf_ZhengPeng7_BiRefNet.json`,
 | `flux-2-klein-4b-fp8.safetensors` | — (publicado pela própria BFL) | black-forest-labs/FLUX.2-klein-4B — Apache-2.0 | **Apache-2.0** |
 | `qwen_3_4b_fp8_mixed.safetensors` | Apache-2.0 (Comfy-Org/z_image_turbo) | Qwen/Qwen3-4B — Apache-2.0 | **Apache-2.0** |
 | `flux2-vae.safetensors` | repo Comfy-Org/flux2-dev marcado `other` | mesmo arquivo (sha256 idêntico) do black-forest-labs/FLUX.2-klein-4B — Apache-2.0 | **Apache-2.0** (ver nota) |
+| `Qwen-Image-Edit-2509-Q4_K_M.gguf` (v78, teste) | Apache-2.0 (QuantStack, quantização GGUF) | Qwen/Qwen-Image-Edit-2509 — Apache-2.0 | **Apache-2.0** |
+| `qwen_2.5_vl_7b_fp8_scaled.safetensors` (v78, teste) | Apache-2.0 (Comfy-Org/Qwen-Image_ComfyUI) | Qwen/Qwen2.5-VL-7B-Instruct — Apache-2.0 | **Apache-2.0** |
+| `qwen_image_vae.safetensors` (v78, teste) | Apache-2.0 (Comfy-Org/Qwen-Image_ComfyUI) | Qwen/Qwen-Image — Apache-2.0 | **Apache-2.0** |
+| `Qwen-Image-Edit-2509-Lightning-4steps-V1.0-bf16.safetensors` (v78, teste) | — | lightx2v/Qwen-Image-Lightning — Apache-2.0 | **Apache-2.0** |
 
 ### O ponto de atenção: DINOv3
 

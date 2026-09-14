@@ -5116,3 +5116,25 @@ faltando; o Klein então "inpaintava" milhares de pontinhos e sujava a roupa.
 Correção no `render_textured`: dilata textura/validade 4 texels antes de
 amostrar. `Finalize.state` marca válido = mesh + margem. `UnwrapMesh` →
 `adaptive`, weld 0,001, padding 12 (pec gerava 900+ tiras).
+
+## v78 — `Lia_Teste_QwenEdit` (A/B Klein × Qwen-Image-Edit) + pec de volta
+v2.3 (relatório `relatorio_20260914_0643`): conferência **0,0 % faltando**, sem
+magenta — primeiro resultado utilizável. Mas o `adaptive` do UnwrapMesh deu
+4266 ilhas em 82 s (pec dava 921) → `Lia_Texturizar` volta para **pec**.
+
+Novo `Workflows/Lia_Teste_QwenEdit.json` (gerado por
+`scripts/gerar_lia_teste_qwenedit.py`, 52 nós): **uma vista** (costas), mesma
+máscara/prompt/3 imagens, pintada por **A** Klein 4B (fluxo atual) e por **B**
+Qwen-Image-Edit-2509 **Q4_K_M GGUF** + LoRA Lightning 4 passos
+(`UnetLoaderGGUF` → `LoraLoaderModelOnly` → `ModelSamplingAuraFlow 3` →
+`CFGNorm` → `KSampler euler/simple 4 passos cfg 1`; encoder
+`TextEncodeQwenImageEditPlus` com img1 ref, img2 normal map, img3 frente).
+Saídas `3d/Lia/teste_costas_A_klein` e `teste_costas_B_qwenedit`.
+
+Drive: **+23,6 GB** (`unet/Qwen-Image-Edit-2509-Q4_K_M.gguf` 13,1 ·
+`text_encoders/qwen_2.5_vl_7b_fp8_scaled` 9,4 · `vae/qwen_image_vae` 0,25 ·
+`loras/…Lightning-4steps…bf16` 0,85). Célula 5 baixa tudo pelo
+`workflow_models` do registry. Licenças: tudo Apache-2.0 (LICENCAS.md,
+`checar_regras` AUDITADOS, `coletar_licencas`). T4: esperar 4–7 min na vista B
+e RAM no limite ao carregar o encoder de 9,4 GB (se o kernel cair, Qwen-Edit
+está fora para o T4).

@@ -71,12 +71,25 @@ HF = {
     'Comfy-Org/flux2-dev': [
         'flux2-vae.safetensors',
     ],
+    # v78: teste Qwen-Image-Edit-2509 (Lia_Teste_QwenEdit)
+    'QuantStack/Qwen-Image-Edit-2509-GGUF': [
+        'Qwen-Image-Edit-2509-Q4_K_M.gguf',
+    ],
+    'Comfy-Org/Qwen-Image_ComfyUI': [
+        'qwen_2.5_vl_7b_fp8_scaled.safetensors',
+        'qwen_image_vae.safetensors',
+    ],
+    'lightx2v/Qwen-Image-Lightning': [
+        'Qwen-Image-Edit-2509-Lightning-4steps-V1.0-bf16.safetensors',
+    ],
     # bases dos repackages acima (a licenca que vale e a do ORIGINAL)
     'microsoft/TRELLIS.2-4B': [],
     'TencentARC/Pixal3D': [],
     'ZhengPeng7/BiRefNet': [],
     'facebook/dinov3-vitl16-pretrain-lvd1689m': [],
     'black-forest-labs/FLUX.2-klein-4B': [],
+    'Qwen/Qwen-Image-Edit-2509': [],
+    'Qwen/Qwen2.5-VL-7B-Instruct': [],
 }
 
 GH = [
