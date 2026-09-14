@@ -5257,3 +5257,10 @@ da silhueta (fundo branco) e projetavam isso nos texels laterais. Correção:
 `LiaProjectTextureAccumulate` ganhou `mask_erode_px` (default 3: encolhe a
 máscara antes de projetar) e o Texturizar usa `min_cos` 0,30 nas vistas
 principais. Prompt da v89 fica. Smoke test ok.
+
+## v91 — cor de "faltando" vira magenta (relatório 2200)
+Erode/min_cos limparam o atlas, mas o Klein ainda pintou de branco as áreas
+cinza grandes das laterais (capa e braço de perfil): cinza claro colado no
+fundo branco é lido como fundo. `Render Textured View` das 9 vistas passa a
+`missing_color = magenta` e o prompt pede "substitua todo magenta pelas cores
+da personagem, nunca branco". Sem custo.
