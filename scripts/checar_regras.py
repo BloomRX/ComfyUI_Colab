@@ -212,7 +212,7 @@ def r_notebook():
         'qwen_3_4b_fp8_mixed.safetensors',  # Apache-2.0 (Comfy-Org/z_image_turbo)
         'flux2-vae.safetensors',  # Apache-2.0 (VAE do Klein 4B; repack Comfy-Org/flux2-dev)
         # v78 teste Qwen-Image-Edit-2509 — tudo Apache-2.0 (ver LICENCAS.md v78)
-        'Qwen-Image-Edit-2509-Q4_K_M.gguf',
+        'Qwen-Image-Edit-2509-Q3_K_S.gguf',
         'qwen_2.5_vl_7b_fp8_scaled.safetensors',
         'qwen_image_vae.safetensors',
         'Qwen-Image-Edit-2509-Lightning-4steps-V1.0-bf16.safetensors',

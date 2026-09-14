@@ -1,8 +1,8 @@
 {
-  "id": "25b194f6-557e-483d-9ab5-e6c247428a52",
+  "id": "733de19e-1cfa-468e-8a55-69e8b366b6f7",
   "revision": 0,
-  "last_node_id": 52,
-  "last_link_id": 67,
+  "last_node_id": 54,
+  "last_link_id": 69,
   "nodes": [
     {
       "id": 1,
@@ -504,8 +504,8 @@
           "type": "IMAGE",
           "links": [
             12,
-            51,
-            56
+            53,
+            58
           ]
         }
       ],
@@ -568,8 +568,8 @@
           "links": [
             11,
             14,
-            52,
-            57
+            54,
+            59
           ]
         },
         {
@@ -644,8 +644,8 @@
           "name": "STRING",
           "type": "STRING",
           "links": [
-            20,
-            59
+            22,
+            61
           ]
         }
       ],
@@ -655,7 +655,7 @@
         "ver": "0.16.3"
       },
       "widgets_values": [
-        "back view, seen from behind. Paint this exact character from image 1 onto the pose and silhouette of the normal map in image 2. Same character as image 3 (front view): same outfit design, trims, hair and colors. Flat unlit albedo texture: flat colors, no shadows, no highlights, no directional lighting, no outlines. Plain white background. Same art style."
+        "back view, seen from behind. Paint this exact character from image 1 onto the pose and silhouette of the normal map in image 2. Image 2 is only a pose and shape guide: do NOT copy its shading. Image 3 shows the character's ornaments up close: keep EVERY gold trim, the gold belt line around the waist and the embroidered border along the hem, continuous all the way around the back. Flat cel-shaded albedo texture for a game: uniform flat colors, no shadows, no folds shading, no highlights, no directional lighting, no ambient occlusion, no outlines. Plain white background. Same anime art style as image 1."
       ],
       "title": "Prompt (igual para os dois)",
       "color": "#232",
@@ -681,7 +681,7 @@
           "name": "MODEL",
           "type": "MODEL",
           "links": [
-            34
+            36
           ]
         }
       ],
@@ -722,7 +722,7 @@
           "name": "CLIP",
           "type": "CLIP",
           "links": [
-            19
+            21
           ]
         }
       ],
@@ -766,8 +766,8 @@
           "links": [
             13,
             15,
-            18,
-            43
+            19,
+            45
           ]
         }
       ],
@@ -807,7 +807,7 @@
           "name": "SIGMAS",
           "type": "SIGMAS",
           "links": [
-            40
+            42
           ]
         }
       ],
@@ -842,7 +842,7 @@
           "name": "SAMPLER",
           "type": "SAMPLER",
           "links": [
-            39
+            41
           ]
         }
       ],
@@ -875,7 +875,7 @@
           "name": "LATENT",
           "type": "LATENT",
           "links": [
-            41
+            43
           ]
         }
       ],
@@ -921,8 +921,8 @@
           "name": "LATENT",
           "type": "LATENT",
           "links": [
-            23,
-            29
+            25,
+            31
           ]
         }
       ],
@@ -965,8 +965,8 @@
           "name": "LATENT",
           "type": "LATENT",
           "links": [
-            25,
-            31
+            27,
+            33
           ]
         }
       ],
@@ -996,12 +996,12 @@
         {
           "name": "pixels",
           "type": "IMAGE",
-          "link": 17
+          "link": 18
         },
         {
           "name": "vae",
           "type": "VAE",
-          "link": 18
+          "link": 19
         }
       ],
       "outputs": [
@@ -1009,8 +1009,8 @@
           "name": "LATENT",
           "type": "LATENT",
           "links": [
-            27,
-            33
+            29,
+            35
           ]
         }
       ],
@@ -1024,14 +1024,14 @@
     },
     {
       "id": 24,
-      "type": "ImageScaleToTotalPixels",
+      "type": "ImageScale",
       "pos": [
-        -1050,
-        -460
+        -1740,
+        280
       ],
       "size": [
-        260,
-        106
+        330,
+        130
       ],
       "flags": {},
       "order": 24,
@@ -1048,25 +1048,101 @@
           "name": "IMAGE",
           "type": "IMAGE",
           "links": [
-            17,
-            53,
-            58
+            17
           ]
         }
       ],
       "properties": {
-        "Node name for S&R": "ImageScaleToTotalPixels",
+        "Node name for S&R": "ImageScale",
         "cnr_id": "comfy-core",
         "ver": "0.16.3"
       },
       "widgets_values": [
         "lanczos",
-        1,
-        1
-      ]
+        1024,
+        1024,
+        "center"
+      ],
+      "title": "frente 1024² (corte central)"
     },
     {
       "id": 25,
+      "type": "ImageCrop",
+      "pos": [
+        -1740,
+        450
+      ],
+      "size": [
+        330,
+        130
+      ],
+      "flags": {},
+      "order": 25,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "image",
+          "type": "IMAGE",
+          "link": 17
+        }
+      ],
+      "outputs": [
+        {
+          "name": "IMAGE",
+          "type": "IMAGE",
+          "links": [
+            18,
+            20,
+            55,
+            60
+          ]
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "ImageCrop",
+        "cnr_id": "comfy-core",
+        "ver": "0.16.3"
+      },
+      "widgets_values": [
+        1024,
+        640,
+        0,
+        384
+      ],
+      "title": "image 3 = cintura→barra (ornamentos)"
+    },
+    {
+      "id": 26,
+      "type": "PreviewImage",
+      "pos": [
+        -1740,
+        620
+      ],
+      "size": [
+        330,
+        240
+      ],
+      "flags": {},
+      "order": 26,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "images",
+          "type": "IMAGE",
+          "link": 20
+        }
+      ],
+      "outputs": [],
+      "properties": {
+        "Node name for S&R": "PreviewImage",
+        "cnr_id": "comfy-core",
+        "ver": "0.16.3"
+      },
+      "widgets_values": [],
+      "title": "confira: cintura e barra visíveis?"
+    },
+    {
+      "id": 27,
       "type": "CLIPTextEncode",
       "pos": [
         -1050,
@@ -1077,13 +1153,13 @@
         80
       ],
       "flags": {},
-      "order": 25,
+      "order": 27,
       "mode": 0,
       "inputs": [
         {
           "name": "clip",
           "type": "CLIP",
-          "link": 19
+          "link": 21
         },
         {
           "name": "text",
@@ -1091,7 +1167,7 @@
           "widget": {
             "name": "text"
           },
-          "link": 20
+          "link": 22
         }
       ],
       "outputs": [
@@ -1099,8 +1175,8 @@
           "name": "CONDITIONING",
           "type": "CONDITIONING",
           "links": [
-            21,
-            22
+            23,
+            24
           ]
         }
       ],
@@ -1114,7 +1190,7 @@
       ]
     },
     {
-      "id": 26,
+      "id": 28,
       "type": "ConditioningZeroOut",
       "pos": [
         -1050,
@@ -1125,13 +1201,13 @@
         26
       ],
       "flags": {},
-      "order": 26,
+      "order": 28,
       "mode": 0,
       "inputs": [
         {
           "name": "conditioning",
           "type": "CONDITIONING",
-          "link": 21
+          "link": 23
         }
       ],
       "outputs": [
@@ -1139,7 +1215,7 @@
           "name": "CONDITIONING",
           "type": "CONDITIONING",
           "links": [
-            28
+            30
           ]
         }
       ],
@@ -1151,7 +1227,7 @@
       "widgets_values": []
     },
     {
-      "id": 27,
+      "id": 29,
       "type": "ReferenceLatent",
       "pos": [
         -740,
@@ -1162,50 +1238,7 @@
         46
       ],
       "flags": {},
-      "order": 27,
-      "mode": 0,
-      "inputs": [
-        {
-          "name": "conditioning",
-          "type": "CONDITIONING",
-          "link": 22
-        },
-        {
-          "name": "latent",
-          "type": "LATENT",
-          "link": 23
-        }
-      ],
-      "outputs": [
-        {
-          "name": "CONDITIONING",
-          "type": "CONDITIONING",
-          "links": [
-            24
-          ]
-        }
-      ],
-      "properties": {
-        "Node name for S&R": "ReferenceLatent",
-        "cnr_id": "comfy-core",
-        "ver": "0.16.3"
-      },
-      "widgets_values": [],
-      "title": "ref +"
-    },
-    {
-      "id": 28,
-      "type": "ReferenceLatent",
-      "pos": [
-        -740,
-        -640
-      ],
-      "size": [
-        240,
-        46
-      ],
-      "flags": {},
-      "order": 28,
+      "order": 29,
       "mode": 0,
       "inputs": [
         {
@@ -1234,21 +1267,21 @@
         "ver": "0.16.3"
       },
       "widgets_values": [],
-      "title": "normal +"
+      "title": "ref +"
     },
     {
-      "id": 29,
+      "id": 30,
       "type": "ReferenceLatent",
       "pos": [
         -740,
-        -580
+        -640
       ],
       "size": [
         240,
         46
       ],
       "flags": {},
-      "order": 29,
+      "order": 30,
       "mode": 0,
       "inputs": [
         {
@@ -1267,7 +1300,7 @@
           "name": "CONDITIONING",
           "type": "CONDITIONING",
           "links": [
-            35
+            28
           ]
         }
       ],
@@ -1277,21 +1310,21 @@
         "ver": "0.16.3"
       },
       "widgets_values": [],
-      "title": "frente +"
+      "title": "normal +"
     },
     {
-      "id": 30,
+      "id": 31,
       "type": "ReferenceLatent",
       "pos": [
         -740,
-        -480
+        -580
       ],
       "size": [
         240,
         46
       ],
       "flags": {},
-      "order": 30,
+      "order": 31,
       "mode": 0,
       "inputs": [
         {
@@ -1310,7 +1343,7 @@
           "name": "CONDITIONING",
           "type": "CONDITIONING",
           "links": [
-            30
+            37
           ]
         }
       ],
@@ -1320,21 +1353,21 @@
         "ver": "0.16.3"
       },
       "widgets_values": [],
-      "title": "ref −"
+      "title": "frente +"
     },
     {
-      "id": 31,
+      "id": 32,
       "type": "ReferenceLatent",
       "pos": [
         -740,
-        -420
+        -480
       ],
       "size": [
         240,
         46
       ],
       "flags": {},
-      "order": 31,
+      "order": 32,
       "mode": 0,
       "inputs": [
         {
@@ -1363,21 +1396,21 @@
         "ver": "0.16.3"
       },
       "widgets_values": [],
-      "title": "normal −"
+      "title": "ref −"
     },
     {
-      "id": 32,
+      "id": 33,
       "type": "ReferenceLatent",
       "pos": [
         -740,
-        -360
+        -420
       ],
       "size": [
         240,
         46
       ],
       "flags": {},
-      "order": 32,
+      "order": 33,
       "mode": 0,
       "inputs": [
         {
@@ -1396,7 +1429,50 @@
           "name": "CONDITIONING",
           "type": "CONDITIONING",
           "links": [
-            36
+            34
+          ]
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "ReferenceLatent",
+        "cnr_id": "comfy-core",
+        "ver": "0.16.3"
+      },
+      "widgets_values": [],
+      "title": "normal −"
+    },
+    {
+      "id": 34,
+      "type": "ReferenceLatent",
+      "pos": [
+        -740,
+        -360
+      ],
+      "size": [
+        240,
+        46
+      ],
+      "flags": {},
+      "order": 34,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "conditioning",
+          "type": "CONDITIONING",
+          "link": 34
+        },
+        {
+          "name": "latent",
+          "type": "LATENT",
+          "link": 35
+        }
+      ],
+      "outputs": [
+        {
+          "name": "CONDITIONING",
+          "type": "CONDITIONING",
+          "links": [
+            38
           ]
         }
       ],
@@ -1409,7 +1485,7 @@
       "title": "frente −"
     },
     {
-      "id": 33,
+      "id": 35,
       "type": "CFGGuider",
       "pos": [
         -460,
@@ -1420,23 +1496,23 @@
         98
       ],
       "flags": {},
-      "order": 33,
+      "order": 35,
       "mode": 0,
       "inputs": [
         {
           "name": "model",
           "type": "MODEL",
-          "link": 34
+          "link": 36
         },
         {
           "name": "positive",
           "type": "CONDITIONING",
-          "link": 35
+          "link": 37
         },
         {
           "name": "negative",
           "type": "CONDITIONING",
-          "link": 36
+          "link": 38
         }
       ],
       "outputs": [
@@ -1444,7 +1520,7 @@
           "name": "GUIDER",
           "type": "GUIDER",
           "links": [
-            38
+            40
           ]
         }
       ],
@@ -1458,7 +1534,7 @@
       ]
     },
     {
-      "id": 34,
+      "id": 36,
       "type": "RandomNoise",
       "pos": [
         -460,
@@ -1469,7 +1545,7 @@
         82
       ],
       "flags": {},
-      "order": 34,
+      "order": 36,
       "mode": 0,
       "inputs": [],
       "outputs": [
@@ -1477,7 +1553,7 @@
           "name": "NOISE",
           "type": "NOISE",
           "links": [
-            37
+            39
           ]
         }
       ],
@@ -1492,7 +1568,7 @@
       ]
     },
     {
-      "id": 35,
+      "id": 37,
       "type": "SamplerCustomAdvanced",
       "pos": [
         -160,
@@ -1503,33 +1579,33 @@
         120
       ],
       "flags": {},
-      "order": 35,
+      "order": 37,
       "mode": 0,
       "inputs": [
         {
           "name": "noise",
           "type": "NOISE",
-          "link": 37
+          "link": 39
         },
         {
           "name": "guider",
           "type": "GUIDER",
-          "link": 38
+          "link": 40
         },
         {
           "name": "sampler",
           "type": "SAMPLER",
-          "link": 39
+          "link": 41
         },
         {
           "name": "sigmas",
           "type": "SIGMAS",
-          "link": 40
+          "link": 42
         },
         {
           "name": "latent_image",
           "type": "LATENT",
-          "link": 41
+          "link": 43
         }
       ],
       "outputs": [
@@ -1537,7 +1613,7 @@
           "name": "output",
           "type": "LATENT",
           "links": [
-            42
+            44
           ]
         },
         {
@@ -1554,7 +1630,7 @@
       "widgets_values": []
     },
     {
-      "id": 36,
+      "id": 38,
       "type": "VAEDecode",
       "pos": [
         -160,
@@ -1565,18 +1641,18 @@
         46
       ],
       "flags": {},
-      "order": 36,
+      "order": 38,
       "mode": 0,
       "inputs": [
         {
           "name": "samples",
           "type": "LATENT",
-          "link": 42
+          "link": 44
         },
         {
           "name": "vae",
           "type": "VAE",
-          "link": 43
+          "link": 45
         }
       ],
       "outputs": [
@@ -1584,8 +1660,8 @@
           "name": "IMAGE",
           "type": "IMAGE",
           "links": [
-            44,
-            45
+            46,
+            47
           ]
         }
       ],
@@ -1597,7 +1673,7 @@
       "widgets_values": []
     },
     {
-      "id": 37,
+      "id": 39,
       "type": "PreviewImage",
       "pos": [
         160,
@@ -1608,13 +1684,13 @@
         420
       ],
       "flags": {},
-      "order": 37,
+      "order": 39,
       "mode": 0,
       "inputs": [
         {
           "name": "images",
           "type": "IMAGE",
-          "link": 44
+          "link": 46
         }
       ],
       "outputs": [],
@@ -1627,7 +1703,7 @@
       "title": "A — Klein 4B (costas)"
     },
     {
-      "id": 38,
+      "id": 40,
       "type": "SaveImage",
       "pos": [
         160,
@@ -1638,13 +1714,13 @@
         100
       ],
       "flags": {},
-      "order": 38,
+      "order": 40,
       "mode": 0,
       "inputs": [
         {
           "name": "images",
           "type": "IMAGE",
-          "link": 45
+          "link": 47
         }
       ],
       "outputs": [],
@@ -1658,7 +1734,7 @@
       ]
     },
     {
-      "id": 39,
+      "id": 41,
       "type": "UnetLoaderGGUF",
       "pos": [
         -1500,
@@ -1669,7 +1745,7 @@
         58
       ],
       "flags": {},
-      "order": 39,
+      "order": 41,
       "mode": 0,
       "inputs": [],
       "outputs": [
@@ -1677,7 +1753,7 @@
           "name": "MODEL",
           "type": "MODEL",
           "links": [
-            46
+            48
           ]
         }
       ],
@@ -1686,19 +1762,19 @@
         "aux_id": "city96/ComfyUI-GGUF",
         "models": [
           {
-            "name": "Qwen-Image-Edit-2509-Q4_K_M.gguf",
-            "url": "https://huggingface.co/QuantStack/Qwen-Image-Edit-2509-GGUF/resolve/main/Qwen-Image-Edit-2509-Q4_K_M.gguf",
+            "name": "Qwen-Image-Edit-2509-Q3_K_S.gguf",
+            "url": "https://huggingface.co/QuantStack/Qwen-Image-Edit-2509-GGUF/resolve/main/Qwen-Image-Edit-2509-Q3_K_S.gguf",
             "directory": "unet"
           }
         ]
       },
       "widgets_values": [
-        "Qwen-Image-Edit-2509-Q4_K_M.gguf"
+        "Qwen-Image-Edit-2509-Q3_K_S.gguf"
       ],
-      "title": "Qwen-Image-Edit-2509 Q4_K_M (13,1 GB)"
+      "title": "Qwen-Image-Edit-2509 Q3_K_S (9,0 GB — cabe inteiro no T4)"
     },
     {
-      "id": 40,
+      "id": 42,
       "type": "LoraLoaderModelOnly",
       "pos": [
         -1500,
@@ -1709,13 +1785,13 @@
         82
       ],
       "flags": {},
-      "order": 40,
+      "order": 42,
       "mode": 0,
       "inputs": [
         {
           "name": "model",
           "type": "MODEL",
-          "link": 46
+          "link": 48
         }
       ],
       "outputs": [
@@ -1723,7 +1799,7 @@
           "name": "MODEL",
           "type": "MODEL",
           "links": [
-            47
+            49
           ]
         }
       ],
@@ -1746,7 +1822,7 @@
       "title": "Lightning 4 passos (0,85 GB)"
     },
     {
-      "id": 41,
+      "id": 43,
       "type": "CLIPLoader",
       "pos": [
         -1500,
@@ -1757,7 +1833,7 @@
         106
       ],
       "flags": {},
-      "order": 41,
+      "order": 43,
       "mode": 0,
       "inputs": [],
       "outputs": [
@@ -1765,8 +1841,8 @@
           "name": "CLIP",
           "type": "CLIP",
           "links": [
-            49,
-            54
+            51,
+            56
           ]
         }
       ],
@@ -1790,7 +1866,7 @@
       "title": "Qwen2.5-VL 7B fp8 (9,4 GB) — encoder do Qwen-Image"
     },
     {
-      "id": 42,
+      "id": 44,
       "type": "VAELoader",
       "pos": [
         -1500,
@@ -1801,7 +1877,7 @@
         58
       ],
       "flags": {},
-      "order": 42,
+      "order": 44,
       "mode": 0,
       "inputs": [],
       "outputs": [
@@ -1809,9 +1885,9 @@
           "name": "VAE",
           "type": "VAE",
           "links": [
-            50,
-            55,
-            65
+            52,
+            57,
+            67
           ]
         }
       ],
@@ -1832,7 +1908,7 @@
       ]
     },
     {
-      "id": 43,
+      "id": 45,
       "type": "ModelSamplingAuraFlow",
       "pos": [
         -1050,
@@ -1843,13 +1919,13 @@
         58
       ],
       "flags": {},
-      "order": 43,
+      "order": 45,
       "mode": 0,
       "inputs": [
         {
           "name": "model",
           "type": "MODEL",
-          "link": 47
+          "link": 49
         }
       ],
       "outputs": [
@@ -1857,7 +1933,7 @@
           "name": "MODEL",
           "type": "MODEL",
           "links": [
-            48
+            50
           ]
         }
       ],
@@ -1871,7 +1947,7 @@
       ]
     },
     {
-      "id": 44,
+      "id": 46,
       "type": "CFGNorm",
       "pos": [
         -1050,
@@ -1882,13 +1958,13 @@
         82
       ],
       "flags": {},
-      "order": 44,
+      "order": 46,
       "mode": 0,
       "inputs": [
         {
           "name": "model",
           "type": "MODEL",
-          "link": 48
+          "link": 50
         }
       ],
       "outputs": [
@@ -1896,7 +1972,7 @@
           "name": "MODEL",
           "type": "MODEL",
           "links": [
-            60
+            62
           ]
         }
       ],
@@ -1911,7 +1987,7 @@
       ]
     },
     {
-      "id": 45,
+      "id": 47,
       "type": "TextEncodeQwenImageEditPlus",
       "pos": [
         -1050,
@@ -1922,33 +1998,33 @@
         170
       ],
       "flags": {},
-      "order": 45,
+      "order": 47,
       "mode": 0,
       "inputs": [
         {
           "name": "clip",
           "type": "CLIP",
-          "link": 49
+          "link": 51
         },
         {
           "name": "vae",
           "type": "VAE",
-          "link": 50
+          "link": 52
         },
         {
           "name": "image1",
           "type": "IMAGE",
-          "link": 51
+          "link": 53
         },
         {
           "name": "image2",
           "type": "IMAGE",
-          "link": 52
+          "link": 54
         },
         {
           "name": "image3",
           "type": "IMAGE",
-          "link": 53
+          "link": 55
         },
         {
           "name": "prompt",
@@ -1956,7 +2032,7 @@
           "widget": {
             "name": "prompt"
           },
-          "link": 59
+          "link": 61
         }
       ],
       "outputs": [
@@ -1964,7 +2040,7 @@
           "name": "CONDITIONING",
           "type": "CONDITIONING",
           "links": [
-            61
+            63
           ]
         }
       ],
@@ -1979,7 +2055,7 @@
       "title": "positivo (img1 ref, img2 normal, img3 frente)"
     },
     {
-      "id": 46,
+      "id": 48,
       "type": "TextEncodeQwenImageEditPlus",
       "pos": [
         -1050,
@@ -1990,33 +2066,33 @@
         170
       ],
       "flags": {},
-      "order": 46,
+      "order": 48,
       "mode": 0,
       "inputs": [
         {
           "name": "clip",
           "type": "CLIP",
-          "link": 54
+          "link": 56
         },
         {
           "name": "vae",
           "type": "VAE",
-          "link": 55
+          "link": 57
         },
         {
           "name": "image1",
           "type": "IMAGE",
-          "link": 56
+          "link": 58
         },
         {
           "name": "image2",
           "type": "IMAGE",
-          "link": 57
+          "link": 59
         },
         {
           "name": "image3",
           "type": "IMAGE",
-          "link": 58
+          "link": 60
         },
         {
           "name": "prompt",
@@ -2032,7 +2108,7 @@
           "name": "CONDITIONING",
           "type": "CONDITIONING",
           "links": [
-            62
+            64
           ]
         }
       ],
@@ -2047,7 +2123,7 @@
       "title": "negativo (vazio, mesmas imagens)"
     },
     {
-      "id": 47,
+      "id": 49,
       "type": "EmptySD3LatentImage",
       "pos": [
         -700,
@@ -2058,7 +2134,7 @@
         106
       ],
       "flags": {},
-      "order": 47,
+      "order": 49,
       "mode": 0,
       "inputs": [],
       "outputs": [
@@ -2066,7 +2142,7 @@
           "name": "LATENT",
           "type": "LATENT",
           "links": [
-            63
+            65
           ]
         }
       ],
@@ -2076,13 +2152,13 @@
         "ver": "0.16.3"
       },
       "widgets_values": [
-        1024,
-        1024,
+        768,
+        768,
         1
       ]
     },
     {
-      "id": 48,
+      "id": 50,
       "type": "KSampler",
       "pos": [
         -700,
@@ -2093,28 +2169,28 @@
         260
       ],
       "flags": {},
-      "order": 48,
+      "order": 50,
       "mode": 0,
       "inputs": [
         {
           "name": "model",
           "type": "MODEL",
-          "link": 60
+          "link": 62
         },
         {
           "name": "positive",
           "type": "CONDITIONING",
-          "link": 61
+          "link": 63
         },
         {
           "name": "negative",
           "type": "CONDITIONING",
-          "link": 62
+          "link": 64
         },
         {
           "name": "latent_image",
           "type": "LATENT",
-          "link": 63
+          "link": 65
         }
       ],
       "outputs": [
@@ -2122,7 +2198,7 @@
           "name": "LATENT",
           "type": "LATENT",
           "links": [
-            64
+            66
           ]
         }
       ],
@@ -2142,7 +2218,7 @@
       ]
     },
     {
-      "id": 49,
+      "id": 51,
       "type": "VAEDecode",
       "pos": [
         -160,
@@ -2153,18 +2229,18 @@
         46
       ],
       "flags": {},
-      "order": 49,
+      "order": 51,
       "mode": 0,
       "inputs": [
         {
           "name": "samples",
           "type": "LATENT",
-          "link": 64
+          "link": 66
         },
         {
           "name": "vae",
           "type": "VAE",
-          "link": 65
+          "link": 67
         }
       ],
       "outputs": [
@@ -2172,8 +2248,8 @@
           "name": "IMAGE",
           "type": "IMAGE",
           "links": [
-            66,
-            67
+            68,
+            69
           ]
         }
       ],
@@ -2185,7 +2261,7 @@
       "widgets_values": []
     },
     {
-      "id": 50,
+      "id": 52,
       "type": "PreviewImage",
       "pos": [
         160,
@@ -2196,13 +2272,13 @@
         420
       ],
       "flags": {},
-      "order": 50,
+      "order": 52,
       "mode": 0,
       "inputs": [
         {
           "name": "images",
           "type": "IMAGE",
-          "link": 66
+          "link": 68
         }
       ],
       "outputs": [],
@@ -2212,10 +2288,10 @@
         "ver": "0.16.3"
       },
       "widgets_values": [],
-      "title": "B — Qwen-Image-Edit Q4 (costas)"
+      "title": "B — Qwen-Image-Edit Q3_K_S 768 (costas)"
     },
     {
-      "id": 51,
+      "id": 53,
       "type": "SaveImage",
       "pos": [
         160,
@@ -2226,13 +2302,13 @@
         100
       ],
       "flags": {},
-      "order": 51,
+      "order": 53,
       "mode": 0,
       "inputs": [
         {
           "name": "images",
           "type": "IMAGE",
-          "link": 67
+          "link": 69
         }
       ],
       "outputs": [],
@@ -2246,7 +2322,7 @@
       ]
     },
     {
-      "id": 52,
+      "id": 54,
       "type": "MarkdownNote",
       "pos": [
         -3320,
@@ -2254,10 +2330,10 @@
       ],
       "size": [
         680,
-        820
+        900
       ],
       "flags": {},
-      "order": 52,
+      "order": 54,
       "mode": 0,
       "inputs": [],
       "outputs": [],
@@ -2267,7 +2343,7 @@
         "ver": "0.16.3"
       },
       "widgets_values": [
-        "# Teste A/B — Klein 4B × Qwen-Image-Edit-2509 (costas da Lia)\n\nUma única vista (costas, az 180), **mesmo prompt, mesmas 3 imagens** (referência, normal map, frente 2D). Compare A e B em fidelidade à roupa/cabelo e em tempo. Nada vai para o atlas; é só para decidir se o `Lia_Texturizar` migra para o Qwen.\n\n## Espaço no Drive (novo)\n| arquivo | pasta | GB |\n|---|---|---|\n| Qwen-Image-Edit-2509-Q4_K_M.gguf | unet | 13,1 |\n| qwen_2.5_vl_7b_fp8_scaled.safetensors | text_encoders | 9,4 |\n| qwen_image_vae.safetensors | vae | 0,25 |\n| Qwen-Image-Edit-2509-Lightning-4steps-V1.0-bf16.safetensors | loras | 0,85 |\n| **total** | | **≈ 23,6 GB** |\n\nKlein já está no Drive (10 GB). Se quiser economizar 3,4 GB: `Q3_K_M` (9,8 GB) em vez de `Q4_K_M` — perde um pouco de fidelidade.\n\n## T4: o que esperar\n- O DiT Q4 (13 GB) **não cabe inteiro** na VRAM junto com o encoder; o ComfyUI descarrega/recarrega por etapa. Estimativa **4–7 min** para a vista B (Klein ≈ 1 min).\n- RAM do Colab (12,7 GB) fica no limite ao carregar o encoder de 9,4 GB. Se o kernel morrer: Célula 6 com `VRAM = lowvram`, ou troque o encoder por `qwen_2.5_vl_7b_nvfp4` (6,1 GB — só funciona em GPU Blackwell, **não no T4**) → na prática, se morrer, o Qwen-Edit está fora para o T4.\n- Rode com o **relatório ligado**: o tempo de cada nó fica no `comfyui.log`.\n\n## Se B ganhar\nMigro o bloco Klein do `Lia_Texturizar` para o Qwen (o `TextEncodeQwenImageEditPlus` aceita as 3 imagens direto, sem `ReferenceLatent`; inpaint via `SetLatentNoiseMask` igual).\n\n## Licenças\nQwen-Image-Edit-2509 e a LoRA Lightning: **Apache 2.0**. GGUF é só reempacotamento (mesma licença). `ComfyUI-GGUF` (city96): Apache 2.0. Nada muda no `LICENCAS.md`.\n"
+        "# Teste A/B v2 — Klein 4B × Qwen-Image-Edit-2509 (costas da Lia)\n\nRodada 1 (relatório 0919, Q4_K_M, 1024): Qwen preservou tecido/cabelo muito melhor, mas (a) pintou **sombra das dobras** (luz cozida no albedo — ruim para VRM), (b) perdeu o **cinto dourado e o bordado da barra**, (c) levou **17 min** porque o Q4 não coube na VRAM (200 s/passo).\n\n## O que mudou nesta v2\n- **Q3_K_S** (9,0 GB) → cabe inteiro nos ~9,6 GB usáveis do T4; meta: < 1 min/passo.\n- latente **768²** (VRAM) — o Klein continua em 1024 para comparar com a rodada anterior.\n- prompt: \"image 2 é só guia de pose, não copie o sombreado\"; \"mantenha TODA linha dourada da cintura e o bordado da barra\"; \"flat cel-shaded albedo\".\n- **imagem 3 = crop cintura→barra** da frente 2D (o encoder VL vê as imagens em 384²; a frente inteira apagava o ornamento). Confira no preview se cintura e barra aparecem; se a sua imagem tiver outro enquadramento, ajuste `y`/`height` no `ImageCrop`.\n\n## Espaço no Drive\n| arquivo | pasta | GB |\n|---|---|---|\n| Qwen-Image-Edit-2509-**Q3_K_S**.gguf | unet | 9,0 |\n| qwen_2.5_vl_7b_fp8_scaled.safetensors | text_encoders | 9,4 (já baixado) |\n| qwen_image_vae.safetensors | vae | 0,25 (já) |\n| Lightning 4 passos bf16 | loras | 0,85 (já) |\n\nO `Q4_K_M` (13,1 GB) pode ser apagado de `models/unet` depois deste teste.\n\n## Critério\n- B sem sombra de dobra + cinto/barra presentes + ≤ 4 min → migro as 4 vistas principais do `Lia_Texturizar` para o Qwen (inclinadas ficam no Klein).\n- Se o Q3 perder muito detalhe, próximo passo é Q4_K_S com latente 768 (12,2 GB, ainda parcial).\n"
       ],
       "title": "LEIA-ME",
       "color": "#432",
@@ -2407,12 +2483,20 @@
       17,
       24,
       0,
-      23,
+      25,
       0,
       "IMAGE"
     ],
     [
       18,
+      25,
+      0,
+      23,
+      0,
+      "IMAGE"
+    ],
+    [
+      19,
       17,
       0,
       23,
@@ -2420,394 +2504,402 @@
       "VAE"
     ],
     [
-      19,
-      16,
-      0,
-      25,
-      0,
-      "CLIP"
-    ],
-    [
       20,
-      14,
-      0,
-      25,
-      1,
-      "STRING"
-    ],
-    [
-      21,
       25,
       0,
       26,
       0,
-      "CONDITIONING"
+      "IMAGE"
+    ],
+    [
+      21,
+      16,
+      0,
+      27,
+      0,
+      "CLIP"
     ],
     [
       22,
-      25,
-      0,
-      27,
-      0,
-      "CONDITIONING"
-    ],
-    [
-      23,
-      21,
+      14,
       0,
       27,
       1,
-      "LATENT"
+      "STRING"
+    ],
+    [
+      23,
+      27,
+      0,
+      28,
+      0,
+      "CONDITIONING"
     ],
     [
       24,
       27,
       0,
-      28,
+      29,
       0,
       "CONDITIONING"
     ],
     [
       25,
-      22,
+      21,
       0,
-      28,
+      29,
       1,
       "LATENT"
     ],
     [
       26,
-      28,
-      0,
       29,
+      0,
+      30,
       0,
       "CONDITIONING"
     ],
     [
       27,
-      23,
+      22,
       0,
-      29,
+      30,
       1,
       "LATENT"
     ],
     [
       28,
-      26,
-      0,
       30,
+      0,
+      31,
       0,
       "CONDITIONING"
     ],
     [
       29,
-      21,
+      23,
       0,
-      30,
+      31,
       1,
       "LATENT"
     ],
     [
       30,
-      30,
+      28,
       0,
-      31,
+      32,
       0,
       "CONDITIONING"
     ],
     [
       31,
-      22,
+      21,
       0,
-      31,
+      32,
       1,
       "LATENT"
     ],
     [
       32,
-      31,
-      0,
       32,
+      0,
+      33,
       0,
       "CONDITIONING"
     ],
     [
       33,
-      23,
+      22,
       0,
-      32,
+      33,
       1,
       "LATENT"
     ],
     [
       34,
+      33,
+      0,
+      34,
+      0,
+      "CONDITIONING"
+    ],
+    [
+      35,
+      23,
+      0,
+      34,
+      1,
+      "LATENT"
+    ],
+    [
+      36,
       15,
       0,
-      33,
+      35,
       0,
       "MODEL"
     ],
     [
-      35,
-      29,
+      37,
+      31,
       0,
-      33,
+      35,
       1,
       "CONDITIONING"
     ],
     [
-      36,
-      32,
+      38,
+      34,
       0,
-      33,
+      35,
       2,
       "CONDITIONING"
     ],
     [
-      37,
-      34,
+      39,
+      36,
       0,
-      35,
+      37,
       0,
       "NOISE"
     ],
     [
-      38,
-      33,
-      0,
+      40,
       35,
+      0,
+      37,
       1,
       "GUIDER"
     ],
     [
-      39,
+      41,
       19,
       0,
-      35,
+      37,
       2,
       "SAMPLER"
     ],
     [
-      40,
+      42,
       18,
       0,
-      35,
+      37,
       3,
       "SIGMAS"
     ],
     [
-      41,
+      43,
       20,
       0,
-      35,
+      37,
       4,
       "LATENT"
     ],
     [
-      42,
-      35,
+      44,
+      37,
       0,
-      36,
+      38,
       0,
       "LATENT"
     ],
     [
-      43,
+      45,
       17,
       0,
-      36,
+      38,
       1,
       "VAE"
     ],
     [
-      44,
-      36,
-      0,
-      37,
-      0,
-      "IMAGE"
-    ],
-    [
-      45,
-      36,
-      0,
+      46,
       38,
       0,
-      "IMAGE"
-    ],
-    [
-      46,
       39,
       0,
-      40,
-      0,
-      "MODEL"
+      "IMAGE"
     ],
     [
       47,
+      38,
+      0,
       40,
       0,
-      43,
-      0,
-      "MODEL"
+      "IMAGE"
     ],
     [
       48,
-      43,
+      41,
       0,
-      44,
+      42,
       0,
       "MODEL"
     ],
     [
       49,
-      41,
-      0,
-      45,
-      0,
-      "CLIP"
-    ],
-    [
-      50,
       42,
       0,
       45,
-      1,
-      "VAE"
-    ],
-    [
-      51,
-      11,
-      0,
-      45,
-      2,
-      "IMAGE"
-    ],
-    [
-      52,
-      12,
-      3,
-      45,
-      3,
-      "IMAGE"
-    ],
-    [
-      53,
-      24,
-      0,
-      45,
-      4,
-      "IMAGE"
-    ],
-    [
-      54,
-      41,
-      0,
-      46,
-      0,
-      "CLIP"
-    ],
-    [
-      55,
-      42,
-      0,
-      46,
-      1,
-      "VAE"
-    ],
-    [
-      56,
-      11,
-      0,
-      46,
-      2,
-      "IMAGE"
-    ],
-    [
-      57,
-      12,
-      3,
-      46,
-      3,
-      "IMAGE"
-    ],
-    [
-      58,
-      24,
-      0,
-      46,
-      4,
-      "IMAGE"
-    ],
-    [
-      59,
-      14,
-      0,
-      45,
-      5,
-      "STRING"
-    ],
-    [
-      60,
-      44,
-      0,
-      48,
       0,
       "MODEL"
     ],
     [
-      61,
+      50,
       45,
+      0,
+      46,
+      0,
+      "MODEL"
+    ],
+    [
+      51,
+      43,
+      0,
+      47,
+      0,
+      "CLIP"
+    ],
+    [
+      52,
+      44,
+      0,
+      47,
+      1,
+      "VAE"
+    ],
+    [
+      53,
+      11,
+      0,
+      47,
+      2,
+      "IMAGE"
+    ],
+    [
+      54,
+      12,
+      3,
+      47,
+      3,
+      "IMAGE"
+    ],
+    [
+      55,
+      25,
+      0,
+      47,
+      4,
+      "IMAGE"
+    ],
+    [
+      56,
+      43,
+      0,
+      48,
+      0,
+      "CLIP"
+    ],
+    [
+      57,
+      44,
       0,
       48,
       1,
-      "CONDITIONING"
+      "VAE"
+    ],
+    [
+      58,
+      11,
+      0,
+      48,
+      2,
+      "IMAGE"
+    ],
+    [
+      59,
+      12,
+      3,
+      48,
+      3,
+      "IMAGE"
+    ],
+    [
+      60,
+      25,
+      0,
+      48,
+      4,
+      "IMAGE"
+    ],
+    [
+      61,
+      14,
+      0,
+      47,
+      5,
+      "STRING"
     ],
     [
       62,
       46,
       0,
-      48,
-      2,
-      "CONDITIONING"
+      50,
+      0,
+      "MODEL"
     ],
     [
       63,
       47,
       0,
-      48,
-      3,
-      "LATENT"
+      50,
+      1,
+      "CONDITIONING"
     ],
     [
       64,
       48,
       0,
+      50,
+      2,
+      "CONDITIONING"
+    ],
+    [
+      65,
       49,
+      0,
+      50,
+      3,
+      "LATENT"
+    ],
+    [
+      66,
+      50,
+      0,
+      51,
       0,
       "LATENT"
     ],
     [
-      65,
-      42,
+      67,
+      44,
       0,
-      49,
+      51,
       1,
       "VAE"
     ],
     [
-      66,
-      49,
+      68,
+      51,
       0,
-      50,
+      52,
       0,
       "IMAGE"
     ],
     [
-      67,
-      49,
-      0,
+      69,
       51,
+      0,
+      53,
       0,
       "IMAGE"
     ]
@@ -2839,7 +2931,7 @@
     },
     {
       "id": 3,
-      "title": "B — Qwen-Image-Edit-2509 Q4_K_M + Lightning 4 passos",
+      "title": "B — Qwen-Image-Edit-2509 Q3_K_S + Lightning 4 passos (768)",
       "bounding": [
         -1520,
         240,

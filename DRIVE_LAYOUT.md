@@ -5138,3 +5138,14 @@ Drive: **+23,6 GB** (`unet/Qwen-Image-Edit-2509-Q4_K_M.gguf` 13,1 ·
 `checar_regras` AUDITADOS, `coletar_licencas`). T4: esperar 4–7 min na vista B
 e RAM no limite ao carregar o encoder de 9,4 GB (se o kernel cair, Qwen-Edit
 está fora para o T4).
+
+## v79 — `Lia_Teste_QwenEdit` v2 (relatório `relatorio_20260914_0919`)
+Rodada 1 (Q4_K_M, 1024): Qwen ganhou em tecido/cabelo, mas pintou sombra das
+dobras (luz cozida no albedo), perdeu cinto dourado e bordado da barra, e levou
+17 min (Q4 não coube: 3,1 GB descarregados → 200 s/passo; Klein 38 s).
+v2: **Q3_K_S** (9,0 GB, cabe inteiro), latente **768²**, prompt anti-sombra +
+"mantenha toda linha dourada/bordado", **imagem 3 = crop cintura→barra** da
+frente (`ImageScale 1024 center` → `ImageCrop 1024×640 @ y 384`, com preview
+para conferir). Drive: +9,0 GB (`unet/Qwen-Image-Edit-2509-Q3_K_S.gguf`); o
+Q4_K_M pode ser apagado. Critério para migrar o `Lia_Texturizar`: sem sombra de
+dobra, cinto/barra presentes, ≤ 4 min por vista.

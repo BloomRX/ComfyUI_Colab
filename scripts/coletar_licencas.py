@@ -73,7 +73,7 @@ HF = {
     ],
     # v78: teste Qwen-Image-Edit-2509 (Lia_Teste_QwenEdit)
     'QuantStack/Qwen-Image-Edit-2509-GGUF': [
-        'Qwen-Image-Edit-2509-Q4_K_M.gguf',
+        'Qwen-Image-Edit-2509-Q3_K_S.gguf',
     ],
     'Comfy-Org/Qwen-Image_ComfyUI': [
         'qwen_2.5_vl_7b_fp8_scaled.safetensors',

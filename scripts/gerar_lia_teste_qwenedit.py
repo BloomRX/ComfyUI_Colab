@@ -3,7 +3,7 @@
 """Gera Workflows/Lia_Teste_QwenEdit.json — teste A/B de UMA vista (costas).
 
 Mesma máscara, mesmas referências: o Klein 4B (fluxo atual) e o
-Qwen-Image-Edit-2509 Q4_K_M GGUF + LoRA Lightning 4 passos pintam as costas da
+Qwen-Image-Edit-2509 Q3_K_S GGUF + LoRA Lightning 4 passos (v79: Q3_K_S cabe inteiro na VRAM do T4; latente 768; prompt anti-sombra; imagem 3 = crop dos ornamentos) pintam as costas da
 Lia. Os dois resultados vão para Preview/Save lado a lado. Nada é acumulado no
 atlas — é só para decidir se vale migrar o Lia_Texturizar.
 
@@ -100,8 +100,10 @@ conn(ren, 3, pvn, "images", "IMAGE")
 
 # "frente pintada" para image 3: aqui usamos a própria imagem 2D frontal (não há vista 1 neste teste)
 PROMPT = ("back view, seen from behind. Paint this exact character from image 1 onto the pose and silhouette of the normal map in image 2. "
-          "Same character as image 3 (front view): same outfit design, trims, hair and colors. Flat unlit albedo texture: flat colors, "
-          "no shadows, no highlights, no directional lighting, no outlines. Plain white background. Same art style.")
+          "Image 2 is only a pose and shape guide: do NOT copy its shading. Image 3 shows the character's ornaments up close: keep EVERY "
+          "gold trim, the gold belt line around the waist and the embroidered border along the hem, continuous all the way around the back. "
+          "Flat cel-shaded albedo texture for a game: uniform flat colors, no shadows, no folds shading, no highlights, no directional lighting, "
+          "no ambient occlusion, no outlines. Plain white background. Same anime art style as image 1.")
 prompt = N("PrimitiveStringMultiline", (X1 + 860, 20), (330, 220), [PROMPT], outputs=[("STRING", "STRING")], title="Prompt (igual para os dois)", color=GREEN)
 
 # ---------------------------------------------------------------- 2. A — Klein 4B (fluxo atual)
@@ -121,8 +123,11 @@ nenc = N("VAEEncode", (X2 + 450, -620), (260, 46), inputs=[("pixels", "IMAGE"), 
 fenc = N("VAEEncode", (X2 + 450, -540), (260, 46), inputs=[("pixels", "IMAGE"), ("vae", "VAE")], outputs=[("LATENT", "LATENT")], title="image 3 = frente")
 conn(ref_sc, 0, renc, "pixels", "IMAGE"); conn(vae, 0, renc, "vae", "VAE")
 conn(ren, 3, nenc, "pixels", "IMAGE"); conn(vae, 0, nenc, "vae", "VAE")
-fsc = N("ImageScaleToTotalPixels", (X2 + 450, -460), (260, 106), ["lanczos", 1, 1], inputs=[("image", "IMAGE")], outputs=[("IMAGE", "IMAGE")])
-conn(front, 0, fsc, "image", "IMAGE"); conn(fsc, 0, fenc, "pixels", "IMAGE"); conn(vae, 0, fenc, "vae", "VAE")
+fsc0 = N("ImageScale", (X1 + 860, 280), (330, 130), ["lanczos", 1024, 1024, "center"], inputs=[("image", "IMAGE")], outputs=[("IMAGE", "IMAGE")], title="frente 1024² (corte central)")
+fsc = N("ImageCrop", (X1 + 860, 450), (330, 130), [1024, 640, 0, 384], inputs=[("image", "IMAGE")], outputs=[("IMAGE", "IMAGE")], title="image 3 = cintura→barra (ornamentos)")
+conn(front, 0, fsc0, "image", "IMAGE"); conn(fsc0, 0, fsc, "image", "IMAGE"); conn(fsc, 0, fenc, "pixels", "IMAGE"); conn(vae, 0, fenc, "vae", "VAE")
+pvc = N("PreviewImage", (X1 + 860, 620), (330, 240), inputs=[("images", "IMAGE")], title="confira: cintura e barra visíveis?")
+conn(fsc, 0, pvc, "images", "IMAGE")
 te = N("CLIPTextEncode", (X2 + 450, -320), (260, 80), [""], inputs=[("clip", "CLIP")], outputs=[("CONDITIONING", "CONDITIONING")]); widget_in(te, "text", "STRING")
 zo = N("ConditioningZeroOut", (X2 + 450, -200), (260, 26), inputs=[("conditioning", "CONDITIONING")], outputs=[("CONDITIONING", "CONDITIONING")])
 conn(clip, 0, te, "clip", "CLIP"); conn(prompt, 0, te, "text", "STRING"); conn(te, 0, zo, "conditioning", "CONDITIONING")
@@ -152,9 +157,9 @@ conn(dec, 0, pvA, "images", "IMAGE"); conn(dec, 0, svA, "images", "IMAGE")
 
 # ---------------------------------------------------------------- 3. B — Qwen-Image-Edit-2509 Q4_K_M GGUF + Lightning 4 passos
 Y = 300
-qunet = N("UnetLoaderGGUF", (X2, Y), (400, 58), ["Qwen-Image-Edit-2509-Q4_K_M.gguf"], outputs=[("MODEL", "MODEL")], cnr=GGUF,
-          props={"models": [{"name": "Qwen-Image-Edit-2509-Q4_K_M.gguf", "url": HF + "QuantStack/Qwen-Image-Edit-2509-GGUF/resolve/main/Qwen-Image-Edit-2509-Q4_K_M.gguf", "directory": "unet"}]},
-          title="Qwen-Image-Edit-2509 Q4_K_M (13,1 GB)")
+qunet = N("UnetLoaderGGUF", (X2, Y), (400, 58), ["Qwen-Image-Edit-2509-Q3_K_S.gguf"], outputs=[("MODEL", "MODEL")], cnr=GGUF,
+          props={"models": [{"name": "Qwen-Image-Edit-2509-Q3_K_S.gguf", "url": HF + "QuantStack/Qwen-Image-Edit-2509-GGUF/resolve/main/Qwen-Image-Edit-2509-Q3_K_S.gguf", "directory": "unet"}]},
+          title="Qwen-Image-Edit-2509 Q3_K_S (9,0 GB — cabe inteiro no T4)")
 qlora = N("LoraLoaderModelOnly", (X2, Y + 90), (400, 82), ["Qwen-Image-Edit-2509-Lightning-4steps-V1.0-bf16.safetensors", 1.0], inputs=[("model", "MODEL")], outputs=[("MODEL", "MODEL")],
           props={"models": [{"name": "Qwen-Image-Edit-2509-Lightning-4steps-V1.0-bf16.safetensors", "url": HF + "lightx2v/Qwen-Image-Lightning/resolve/main/Qwen-Image-Edit-2509/Qwen-Image-Edit-2509-Lightning-4steps-V1.0-bf16.safetensors", "directory": "loras"}]},
           title="Lightning 4 passos (0,85 GB)")
@@ -176,47 +181,45 @@ for q in (qpos, qneg):
     conn(qclip, 0, q, "clip", "CLIP"); conn(qvae, 0, q, "vae", "VAE")
     conn(ref_sc, 0, q, "image1", "IMAGE"); conn(ren, 3, q, "image2", "IMAGE"); conn(fsc, 0, q, "image3", "IMAGE")
 conn(prompt, 0, qpos, "prompt", "STRING")
-qlat = N("EmptySD3LatentImage", (X2 + 800, Y + 420), (260, 106), [1024, 1024, 1], outputs=[("LATENT", "LATENT")])
+qlat = N("EmptySD3LatentImage", (X2 + 800, Y + 420), (260, 106), [768, 768, 1], outputs=[("LATENT", "LATENT")])
 qks = N("KSampler", (X2 + 800, Y), (300, 260), [201, "fixed", 4, 1.0, "euler", "simple", 1.0],
         inputs=[("model", "MODEL"), ("positive", "CONDITIONING"), ("negative", "CONDITIONING"), ("latent_image", "LATENT")], outputs=[("LATENT", "LATENT")])
 qdec = N("VAEDecode", (X2 + 1340, Y), (280, 46), inputs=[("samples", "LATENT"), ("vae", "VAE")], outputs=[("IMAGE", "IMAGE")])
 conn(qcfg, 0, qks, "model", "MODEL"); conn(qpos, 0, qks, "positive", "CONDITIONING"); conn(qneg, 0, qks, "negative", "CONDITIONING"); conn(qlat, 0, qks, "latent_image", "LATENT")
 conn(qks, 0, qdec, "samples", "LATENT"); conn(qvae, 0, qdec, "vae", "VAE")
-pvB = N("PreviewImage", (X2 + 1660, Y), (420, 420), inputs=[("images", "IMAGE")], title="B — Qwen-Image-Edit Q4 (costas)")
+pvB = N("PreviewImage", (X2 + 1660, Y), (420, 420), inputs=[("images", "IMAGE")], title="B — Qwen-Image-Edit Q3_K_S 768 (costas)")
 svB = N("SaveImage", (X2 + 1660, Y + 460), (420, 100), ["3d/Lia/teste_costas_B_qwenedit"], inputs=[("images", "IMAGE")])
 conn(qdec, 0, pvB, "images", "IMAGE"); conn(qdec, 0, svB, "images", "IMAGE")
 
-N("MarkdownNote", (X1 - 720, -700), (680, 820), ["""# Teste A/B — Klein 4B × Qwen-Image-Edit-2509 (costas da Lia)
+N("MarkdownNote", (X1 - 720, -700), (680, 900), ["""# Teste A/B v2 — Klein 4B × Qwen-Image-Edit-2509 (costas da Lia)
 
-Uma única vista (costas, az 180), **mesmo prompt, mesmas 3 imagens** (referência, normal map, frente 2D). Compare A e B em fidelidade à roupa/cabelo e em tempo. Nada vai para o atlas; é só para decidir se o `Lia_Texturizar` migra para o Qwen.
+Rodada 1 (relatório 0919, Q4_K_M, 1024): Qwen preservou tecido/cabelo muito melhor, mas (a) pintou **sombra das dobras** (luz cozida no albedo — ruim para VRM), (b) perdeu o **cinto dourado e o bordado da barra**, (c) levou **17 min** porque o Q4 não coube na VRAM (200 s/passo).
 
-## Espaço no Drive (novo)
+## O que mudou nesta v2
+- **Q3_K_S** (9,0 GB) → cabe inteiro nos ~9,6 GB usáveis do T4; meta: < 1 min/passo.
+- latente **768²** (VRAM) — o Klein continua em 1024 para comparar com a rodada anterior.
+- prompt: "image 2 é só guia de pose, não copie o sombreado"; "mantenha TODA linha dourada da cintura e o bordado da barra"; "flat cel-shaded albedo".
+- **imagem 3 = crop cintura→barra** da frente 2D (o encoder VL vê as imagens em 384²; a frente inteira apagava o ornamento). Confira no preview se cintura e barra aparecem; se a sua imagem tiver outro enquadramento, ajuste `y`/`height` no `ImageCrop`.
+
+## Espaço no Drive
 | arquivo | pasta | GB |
 |---|---|---|
-| Qwen-Image-Edit-2509-Q4_K_M.gguf | unet | 13,1 |
-| qwen_2.5_vl_7b_fp8_scaled.safetensors | text_encoders | 9,4 |
-| qwen_image_vae.safetensors | vae | 0,25 |
-| Qwen-Image-Edit-2509-Lightning-4steps-V1.0-bf16.safetensors | loras | 0,85 |
-| **total** | | **≈ 23,6 GB** |
+| Qwen-Image-Edit-2509-**Q3_K_S**.gguf | unet | 9,0 |
+| qwen_2.5_vl_7b_fp8_scaled.safetensors | text_encoders | 9,4 (já baixado) |
+| qwen_image_vae.safetensors | vae | 0,25 (já) |
+| Lightning 4 passos bf16 | loras | 0,85 (já) |
 
-Klein já está no Drive (10 GB). Se quiser economizar 3,4 GB: `Q3_K_M` (9,8 GB) em vez de `Q4_K_M` — perde um pouco de fidelidade.
+O `Q4_K_M` (13,1 GB) pode ser apagado de `models/unet` depois deste teste.
 
-## T4: o que esperar
-- O DiT Q4 (13 GB) **não cabe inteiro** na VRAM junto com o encoder; o ComfyUI descarrega/recarrega por etapa. Estimativa **4–7 min** para a vista B (Klein ≈ 1 min).
-- RAM do Colab (12,7 GB) fica no limite ao carregar o encoder de 9,4 GB. Se o kernel morrer: Célula 6 com `VRAM = lowvram`, ou troque o encoder por `qwen_2.5_vl_7b_nvfp4` (6,1 GB — só funciona em GPU Blackwell, **não no T4**) → na prática, se morrer, o Qwen-Edit está fora para o T4.
-- Rode com o **relatório ligado**: o tempo de cada nó fica no `comfyui.log`.
-
-## Se B ganhar
-Migro o bloco Klein do `Lia_Texturizar` para o Qwen (o `TextEncodeQwenImageEditPlus` aceita as 3 imagens direto, sem `ReferenceLatent`; inpaint via `SetLatentNoiseMask` igual).
-
-## Licenças
-Qwen-Image-Edit-2509 e a LoRA Lightning: **Apache 2.0**. GGUF é só reempacotamento (mesma licença). `ComfyUI-GGUF` (city96): Apache 2.0. Nada muda no `LICENCAS.md`.
+## Critério
+- B sem sombra de dobra + cinto/barra presentes + ≤ 4 min → migro as 4 vistas principais do `Lia_Texturizar` para o Qwen (inclinadas ficam no Klein).
+- Se o Q3 perder muito detalhe, próximo passo é Q4_K_S com latente 768 (12,2 GB, ainda parcial).
 """], title="LEIA-ME", color=BROWN)
 
 groups = [
     {"id": 1, "title": "1. Mesh + vista de costas + referências", "bounding": [X1 - 20, -780, 1260, 1850], "color": "#3f789e", "flags": {}},
     {"id": 2, "title": "A — Flux.2 Klein 4B (atual)", "bounding": [X2 - 20, -780, 2140, 1000], "color": "#8A8", "flags": {}},
-    {"id": 3, "title": "B — Qwen-Image-Edit-2509 Q4_K_M + Lightning 4 passos", "bounding": [X2 - 20, Y - 60, 2140, 700], "color": "#b58b2a", "flags": {}},
+    {"id": 3, "title": "B — Qwen-Image-Edit-2509 Q3_K_S + Lightning 4 passos (768)", "bounding": [X2 - 20, Y - 60, 2140, 700], "color": "#b58b2a", "flags": {}},
 ]
 wf = {"id": str(uuid.uuid4()), "revision": 0, "last_node_id": nid[0], "last_link_id": lid[0], "nodes": nodes, "links": links,
       "groups": groups, "config": {}, "extra": {"ds": {"scale": 0.35, "offset": [3400, 850]}, "frontendVersion": "1.49.6"}, "version": 0.4}
