@@ -448,7 +448,7 @@ def accumulate_view(verts, faces, uvs, texture, wsum, image, mask, azimuth, elev
 @torch.no_grad()
 def render_textured(verts, faces, uvs, texture, wsum, azimuth, elevation, res: int,
                     frame_scale=1.1, missing_color=(0.5, 0.5, 0.5), background=(1.0, 1.0, 1.0),
-                    min_cos_missing: float = 0.0):
+                    min_cos_missing: float = 0.0, edge_dilate_px: int = 4):
     """Renderiza a vista com a textura parcial aplicada.
 
     Retorna ``image [R,R,3]`` (texels sem peso = ``missing_color``, fundo =
@@ -468,8 +468,16 @@ def render_textured(verts, faces, uvs, texture, wsum, azimuth, elevation, res: i
         col = torch.zeros((res, res, 3), device=dev)
         has = torch.zeros((res, res), device=dev)
     else:
-        tex = texture.to(dev).float().permute(2, 0, 1)[None]
-        wt = (wsum.to(dev).float() > 1e-6).float()[None, None]
+        # Dilata a textura válida alguns texels para dentro das bordas das ilhas
+        # UV antes de amostrar: sem isso, texels de borda (não rasterizados no
+        # atlas) viram "faltando" espalhado por toda a vista (chuvisco magenta /
+        # manchas cinzas que o inpaint depois pinta mal).
+        valid = wsum.to(dev).float() > 1e-6
+        tex_d = dilate(texture.to(dev).float(), valid, int(edge_dilate_px)) if edge_dilate_px > 0 else texture.to(dev).float()
+        vk = 2 * int(edge_dilate_px) + 1
+        valid_d = F.max_pool2d(valid.float()[None, None], vk, 1, vk // 2)[0, 0] if edge_dilate_px > 0 else valid.float()
+        tex = tex_d.permute(2, 0, 1)[None]
+        wt = valid_d[None, None]
         # média só dos texels válidos (evita puxar cinza/preto das bordas do atlas)
         cw = F.grid_sample(tex * wt, grid, mode="bilinear", padding_mode="border", align_corners=False)[0].permute(1, 2, 0)
         ww = F.grid_sample(wt, grid, mode="bilinear", padding_mode="border", align_corners=False)[0, 0]

@@ -415,7 +415,10 @@ class LiaTextureFinalize(IO.ComfyNode):
         cov[..., 1] = (w > 1e-8).float()
         cov[..., 0] = unseen.float()
         idev = comfy.model_management.intermediate_device()
-        final_state = {"texture": tex.clamp(0, 1).to(idev), "wsum": cover.float().to(idev), "size": int(tex.shape[0])}
+        # estado final: válido = mesh + a margem dilatada (a textura já foi empurrada para lá)
+        k = 2 * int(max(dilate_px, 1)) + 1
+        valid_final = torch.nn.functional.max_pool2d(cover.float()[None, None], k, 1, k // 2)[0, 0]
+        final_state = {"texture": tex.clamp(0, 1).to(idev), "wsum": valid_final.to(idev), "size": int(tex.shape[0])}
         return IO.NodeOutput(tex.clamp(0, 1)[None].to(idev), cov[None].to(idev), unseen.float()[None].to(idev), final_state)
 
 

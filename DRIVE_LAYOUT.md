@@ -5107,3 +5107,12 @@ vistas 55°/−50° com só 2–4 % faltando → Klein pintava um rosto no topo 
 cabeça; conferência mostrava costuras UV pré-Finalize como magenta. Agora:
 inclinadas a ±30° com prompt explícito, `Finalize` ganhou saída `state`
 (textura final) e a conferência lê dela; `fill_reach_px` 64.
+
+## v77 — `Lia_Texturizar` v2.3 (relatório `relatorio_20260914_0552`)
+v2.2 ok: nenhum rosto no topo da cabeça; conferência 1,3 % faltando. Restava
+"chuvisco" magenta por toda a vista e manchas cinzas nas vistas inclinadas:
+texels de **borda de ilha UV** (não rasterizados no atlas) apareciam como
+faltando; o Klein então "inpaintava" milhares de pontinhos e sujava a roupa.
+Correção no `render_textured`: dilata textura/validade 4 texels antes de
+amostrar. `Finalize.state` marca válido = mesh + margem. `UnwrapMesh` →
+`adaptive`, weld 0,001, padding 12 (pec gerava 900+ tiras).
